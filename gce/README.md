@@ -125,7 +125,8 @@ end
 - Outputs support only top level JSON nodes so return responses with JSON subnodes have been removed with the top level node containing the full JSON. (Untested) 
 
 ## Getting Help
-Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins. Visit http://chat.rightscale.com/ to join!
+Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.
+Visit http://chat.rightscale.com/ to join!
 
 ## License
 The GCE Plugin source code is subject to the MIT license, see the [LICENSE](https://github.com/rightscale/rightscale-plugins/blob/master/LICENSE) file.
