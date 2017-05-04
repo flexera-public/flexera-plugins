@@ -27,8 +27,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/addresses.
   type "address" do
-    href_templates "/projects/$project/regions/$region/addresses/{{name}}","/projects/$project/regions/$region/addresses/{{items[*].name}}"
-
+    href_templates "{{region}}/addresses/{{name}}","{{items[*}.region}}/addresses/{{items[*].name}}"
     field "region" do
       location "path"
       required true
@@ -48,7 +47,7 @@ plugin "gce" do
       type "string"
     end
 
-    output "address","creationTimestamp","description","id","kind","name","region","selfLink","status","users"
+    output "address","creationTimestamp","description","id","kind","name","selfLink","status","users","region"
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/addresses/aggregatedList.
     action "aggregatedList" do 
@@ -61,26 +60,31 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/addresses/delete.
     action "delete" do 
       verb "DELETE"
-      path "/projects/$project/regions/$region/addresses/$name"
+      path "$href"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/addresses/get.
-    action "get" do 
+    action "get" do
       verb "GET"
-      path "/projects/$project/regions/$region/addresses/$name"
+      path "$href"
       type "address"
     end
-
+h
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/addresses/insert.
-    action "insert" do 
+    action "insert" do
       verb "POST"
       path "/projects/$project/regions/$region/addresses"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/addresses/list.
-    action "list" do 
+    action "list" do
+      field "region" do
+        location "path"
+        #required true
+        #type "string"
+      end
       verb "GET"
       path "/projects/$project/regions/$region/addresses"
       type "address"
@@ -1988,21 +1992,17 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/globalOperations.
   type "operation" do
-    href_templates "$selfLink"
+    href_templates "{{selfLink}}"
 
     output "clientOperationId","creationTimestamp","description","endTime","error","httpErrorMessage","httpErrorStatusCode","id","insertTime","kind","name","operationType","progress","region","selfLink","startTime","status","statusMessage","targetId","targetLink","user","warnings","zone"
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/globalOperations/delete.
-    action "delete" do 
-      verb "DELETE"
-      path "/projects/$project/global/operations/$name"
-    end
+    action "delete"
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/globalOperations/get.
-    action "get" do 
+    action "get" do
       verb "GET"
-      path "/projects/$project/global/operations/$name"
-      type "operation"
+      path "$href"
     end
 
     link "region" do
@@ -3588,20 +3588,33 @@ define provision_resource(@raw) return @resource do
   call sys_log.set_task_target(@@deployment)
   call sys_log.summary(join(["Provision ",$type]))
   call sys_log.detail($raw)
+  
   @operation = gce.$type.insert($fields)
   call sys_log.detail(to_object(@operation))
-  sub timeout: 2m do
-    sleep_until @operation.status == "DONE"
-  end
+  call sys_log.detail(@operation.status)
+  # sub timeout: 2m, on_timeout: skip do
+  #   sleep_until(@operation.status == "DONE")
+  # end
+  sleep(60)
   call sys_log.detail(to_object(@operation))
+  initiate_debug_report()
   @resource = @operation.targetLink()
+  $debug_report = complete_debug_report()
+  call sys_log.detail($debug_report)
   call sys_log.detail(to_object(@resource))
 end
 
-define delete_resource(@resource) return @resource do
+define delete_resource(@resource) do
+  $type = to_object(@resource)["type"]
+  call sys_log.set_task_target(@@deployment)
+  call sys_log.summary(join(["Delete ",$type,": ",@resource.name]))
   @operation = @resource.delete()
-  sleep_until @operation.status == "DONE"
-  @resource = @resource.get()
+  # sub timeout: 2m, on_timeout: skip do
+  #   sleep_until(@operation.status == "DONE")
+  # end
+  $debug_report = complete_debug_report()
+  call sys_log.detail($debug_report)
+  call sys_log.detail(to_object(@operation))
 end
 
 resource_pool "gce" do
