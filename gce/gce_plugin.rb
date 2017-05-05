@@ -27,7 +27,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/addresses.
   type "address" do
-    href_templates "{{region}}/addresses/{{name}}","{{items[*}.region}}/addresses/{{items[*].name}}"
+    href_templates "{{region}}/addresses/{{name}}","{{items[*].region}}/addresses/{{items[*].name}}"
     field "region" do
       location "path"
       required true
@@ -70,7 +70,7 @@ plugin "gce" do
       path "$href"
       type "address"
     end
-h
+
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/addresses/insert.
     action "insert" do
       verb "POST"
@@ -80,11 +80,6 @@ h
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/addresses/list.
     action "list" do
-      field "region" do
-        location "path"
-        #required true
-        #type "string"
-      end
       verb "GET"
       path "/projects/$project/regions/$region/addresses"
       type "address"
@@ -662,7 +657,7 @@ h
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/forwardingRules.
   type "forwardingRule" do
-    href_templates "/projects/$project/regions/$region/forwardingRules/{{name}}","/projects/$project/regions/$region/forwardingRules/{{items[*].name}}"
+    href_templates "{{region}}/forwardingRules/{{name}}","{{region}}/forwardingRules/{{items[*].name}}"
 
     field "region" do
       location "path"
@@ -727,14 +722,14 @@ h
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/forwardingRules/delete.
     action "delete" do 
       verb "DELETE"
-      path "/projects/$project/regions/$region/forwardingRules/$name"
+      path "$href"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/forwardingRules/get.
     action "get" do 
       verb "GET"
-      path "/projects/$project/regions/$region/forwardingRules/$name"
+      path "$href"
       type "forwardingRule"
     end
 
@@ -756,7 +751,7 @@ h
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/forwardingRules/setTarget.
     action "setTarget" do 
       verb "POST"
-      path "/projects/$project/regions/$region/forwardingRules/$name/setTarget"
+      path "$href/setTarget"
       type "operation"
     end
 
@@ -3033,7 +3028,7 @@ h
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/targetPools.
   type "targetPool" do
-    href_templates "/projects/$project/regions/$region/targetPools/{{name}}","/projects/$project/regions/$region/targetPools/{{items[*].name}}"
+    href_templates "{{region}}/targetPools/{{name}}","{{region}}/targetPools/{{items[*].name}}"
 
     field "region" do
       location "path"
@@ -3074,14 +3069,14 @@ h
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/targetPools/addHealthCheck.
     action "addHealthCheck" do 
       verb "POST"
-      path "/projects/$project/regions/$region/targetPools/$name/addHealthCheck"
+      path "$href/addHealthCheck"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/targetPools/addInstance.
     action "addInstance" do 
       verb "POST"
-      path "/projects/$project/regions/$region/targetPools/$name/addInstance"
+      path "$href/addInstance"
       type "operation"
     end
 
@@ -3096,21 +3091,21 @@ h
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/targetPools/delete.
     action "delete" do 
       verb "DELETE"
-      path "/projects/$project/regions/$region/targetPools/$name"
+      path "$href"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/targetPools/get.
     action "get" do 
       verb "GET"
-      path "/projects/$project/regions/$region/targetPools/$name"
+      path "$href"
       type "targetPool"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/targetPools/getHealth.
     action "getHealth" do 
       verb "POST"
-      path "/projects/$project/regions/$region/targetPools/$name/getHealth"
+      path "$href/getHealth"
       type "targetPoolInstanceHealth"
     end
 
@@ -3132,21 +3127,21 @@ h
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/targetPools/removeHealthCheck.
     action "removeHealthCheck" do 
       verb "POST"
-      path "/projects/$project/regions/$region/targetPools/$name/removeHealthCheck"
+      path "$href/removeHealthCheck"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/targetPools/removeInstance.
     action "removeInstance" do 
       verb "POST"
-      path "/projects/$project/regions/$region/targetPools/$name/removeInstance"
+      path "$href/removeInstance"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/targetPools/setBackup.
     action "setBackup" do 
       verb "POST"
-      path "/projects/$project/regions/$region/targetPools/$name/setBackup"
+      path "$href/setBackup"
       type "operation"
     end
 
@@ -3605,9 +3600,11 @@ define provision_resource(@raw) return @resource do
 end
 
 define delete_resource(@resource) do
-  $type = to_object(@resource)["type"]
+  $resource = to_object(@resource)
+  #$type = $resource["type"]
   call sys_log.set_task_target(@@deployment)
-  call sys_log.summary(join(["Delete ",$type,": ",@resource.name]))
+  call sys_log.summary(join(["Delete: ",@resource.name]))
+  initiate_debug_report()
   @operation = @resource.delete()
   # sub timeout: 2m, on_timeout: skip do
   #   sleep_until(@operation.status == "DONE")
@@ -3634,4 +3631,3 @@ resource_pool "gce" do
     end
   end
 end
-
