@@ -96,19 +96,23 @@ end
   
 # end
 
-# define terminate(@elb_address) return @elb_address do
-#   call sys_log.set_task_target(@@deployment)
-#   call sys_log.summary("Terminate")
-
-#   call sys_log.detail("Delete Address")
-#   call sys_log.detail(to_object(@elb_address))
-#   delete(@elb_address)
-# end
-
-  
-define audit() do
+define terminate(@elb_address,@elb_health,@elb_target_pool,@elb_forwarding_rule) do
   call sys_log.set_task_target(@@deployment)
-  call sys_log.summary("Debug Report")
-  $debug_report = complete_debug_report()
-  call sys_log.detail($debug_report)
+  call sys_log.summary("Terminate")
+
+  call sys_log.detail("Delete Health")
+  call sys_log.detail(to_object(@elb_health))
+  delete(@elb_health)
+  
+  call sys_log.detail("Delete Forwarding Rule")
+  call sys_log.detail(to_object(@elb_forwarding_rule))
+  delete(@elb_forwarding_rule)
+
+  call sys_log.detail("Delete Address")
+  call sys_log.detail(to_object(@elb_address))
+  delete(@elb_address)
+
+  call sys_log.detail("Delete TargetPool")
+  call sys_log.detail(to_object(@elb_target_pool))
+  delete(@elb_target_pool)
 end

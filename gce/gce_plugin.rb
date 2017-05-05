@@ -3599,19 +3599,33 @@ define provision_resource(@raw) return @resource do
   call sys_log.detail(to_object(@resource))
 end
 
-define delete_resource(@resource) do
+define delete_resource(@resource) on_error: stop_debugging() do
+  call start_debugging()
   $resource = to_object(@resource)
   #$type = $resource["type"]
   call sys_log.set_task_target(@@deployment)
   call sys_log.summary(join(["Delete: ",@resource.name]))
-  initiate_debug_report()
   @operation = @resource.delete()
   # sub timeout: 2m, on_timeout: skip do
   #   sleep_until(@operation.status == "DONE")
   # end
-  $debug_report = complete_debug_report()
-  call sys_log.detail($debug_report)
+  call stop_debugging()
   call sys_log.detail(to_object(@operation))
+end
+
+define start_debugging() do
+  if $$debugging == false || logic_and($$debugging != false, $$debugging != true)
+    initiate_debug_report()
+    $$debugging = true
+  end
+end
+
+define stop_debugging() do
+  if $$debugging == true
+    $debug_report = complete_debug_report()
+    call sys_log.detail($debug_report)
+    $$debugging = false
+  end
 end
 
 resource_pool "gce" do
