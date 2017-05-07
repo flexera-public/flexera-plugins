@@ -3603,14 +3603,26 @@ define delete_resource(@resource) on_error: stop_debugging() do
   call start_debugging()
   $resource = to_object(@resource)
   #$type = $resource["type"]
-  call sys_log.set_task_target(@@deployment)
-  call sys_log.summary(join(["Delete: ",@resource.name]))
-  @operation = @resource.delete()
-  # sub timeout: 2m, on_timeout: skip do
-  #   sleep_until(@operation.status == "DONE")
-  # end
-  call stop_debugging()
-  call sys_log.detail(to_object(@operation))
+  if !empty?(@resource)
+    call sys_log.set_task_target(@@deployment)
+    call sys_log.summary(join(["Delete: ",@resource.name]))
+    sub on_error: skip_not_found_error() do
+      @operation = @resource.delete()
+      # sub timeout: 2m, on_timeout: skip do
+      #   sleep_until(@operation.status == "DONE")
+      # end
+      sleep(60)
+      call stop_debugging()
+      call sys_log.detail(to_object(@operation))
+    end
+  end
+end
+
+define skip_not_found_error() do
+  if $_error["message"] =~ "/not found/i"
+    log_info($_error["type"] + ": " + $_error["message"])
+    $_error_behavior = "skip"
+  end
 end
 
 define start_debugging() do
