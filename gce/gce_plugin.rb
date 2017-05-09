@@ -740,6 +740,16 @@ plugin "gce" do
       verb "POST"
       path "/projects/$project/regions/$region/forwardingRules"
       type "operation"
+
+      field "ipAddress" do
+        location "body"
+        alias_for "IPAddress"
+      end
+
+      field "ipProtocol" do
+        location "body"
+        alias_for "IPProtocol"
+      end
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/forwardingRules/list.
@@ -3648,12 +3658,12 @@ resource_pool "gce" do
   auth "my_google_auth", type: "oauth2" do
     token_url "https://www.googleapis.com/oauth2/v4/token"
     grant type: "jwt_bearer" do
-      iss cred("GCE_SS_LB_ACCOUNT")
+      iss cred("GCE_PLUGIN_ACCOUNT")
       aud "https://www.googleapis.com/oauth2/v4/token"
       additional_claims do {
         "scope" => "https://www.googleapis.com/auth/compute"
       } end
-      signing_key cred("GCE_SS_LB_PRIVATE_KEY")
+      signing_key cred("GCE_PLUGIN_PRIVATE_KEY")
     end
   end
 end

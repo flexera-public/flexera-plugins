@@ -1,0 +1,18 @@
+module rightscale_login_policy 1.0;
+
+require {
+  type sshd_t;
+  type var_lib_t;
+  type chkpwd_t;
+  type unconfined_t;
+  type oddjob_mkhomedir_exec_t;
+  class file { open read entrypoint ioctl getattr };
+}
+
+#============= sshd_t ==============
+allow sshd_t var_lib_t:file { ioctl open read getattr };
+allow chkpwd_t var_lib_t:file { ioctl open read getattr };
+
+
+#============= unconfined_t ==============
+allow unconfined_t oddjob_mkhomedir_exec_t:file entrypoint;

@@ -16,7 +16,7 @@ The GCE Plugin consumes the Google Compute v1 API and exposes the supported reso
   - `GCE_PLUGIN_ACCOUNT`
   - `GCE_PLUGIN_PRIVATE_KEY`
 - The following packages are also required (See the Installation section for details):
-  - `sys_log` []()
+  - `[sys_log](sys_log.rb)`
 
 ## Getting Started
 ### Creating a GCE Service Account
@@ -117,8 +117,7 @@ end
 | [Zones](https://cloud.google.com/compute/docs/reference/latest/zones) | gce.zones | Untested |
 
 ## Examples
-
-**Comming Soon**
+- [GCE External Network LoadBalancer](examples/gce_external_network_lb/README.md)
 	
 ## Known Limitations
 - Resource fields that take a nested JSON object must be passed a string containing the JSON. (Untested)
