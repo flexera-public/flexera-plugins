@@ -667,10 +667,12 @@ plugin "gce" do
 
     field "ipAddress" do
       type "string"
+      alias_for "IPAddress"
     end
 
     field "ipProtocol" do
       type "string"
+      alias_for "IPProtocol"
     end
 
     field "backendService" do
@@ -3576,7 +3578,8 @@ end
 define no_operation() do
 end
 
-define provision_resource(@raw) return @resource do
+define provision_resource(@raw) return @resource on_error: stop_debugging() do
+  call start_debugging()
   $raw = to_object(@raw)
   $fields = $raw["fields"]
   $type = $raw["type"]
@@ -3587,16 +3590,14 @@ define provision_resource(@raw) return @resource do
   @operation = gce.$type.insert($fields)
   call sys_log.detail(to_object(@operation))
   call sys_log.detail(@operation.status)
-  # sub timeout: 2m, on_timeout: skip do
-  #   sleep_until(@operation.status == "DONE")
-  # end
-  sleep(60)
+  sub timeout: 2m, on_timeout: skip do
+    sleep_until(@operation.status == "DONE")
+  end
   call sys_log.detail(to_object(@operation))
-  initiate_debug_report()
   @resource = @operation.targetLink()
-  $debug_report = complete_debug_report()
   call sys_log.detail($debug_report)
   call sys_log.detail(to_object(@resource))
+  call stop_debugging()
 end
 
 define delete_resource(@resource) on_error: stop_debugging() do
@@ -3608,10 +3609,9 @@ define delete_resource(@resource) on_error: stop_debugging() do
     call sys_log.summary(join(["Delete: ",@resource.name]))
     sub on_error: skip_not_found_error() do
       @operation = @resource.delete()
-      # sub timeout: 2m, on_timeout: skip do
-      #   sleep_until(@operation.status == "DONE")
-      # end
-      sleep(60)
+      sub timeout: 2m, on_timeout: skip do
+        sleep_until(@operation.status == "DONE")
+      end
       call stop_debugging()
       call sys_log.detail(to_object(@operation))
     end
