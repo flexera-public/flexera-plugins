@@ -54,7 +54,7 @@ plugin "gce" do
       verb "GET"
       path "/projects/$project/aggregated/addresses"
       type "address"
-      output_path "items.*.addresss"
+      output_path "items.*.addresses"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/addresses/delete.

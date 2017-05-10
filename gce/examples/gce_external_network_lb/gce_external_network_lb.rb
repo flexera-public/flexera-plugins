@@ -148,7 +148,7 @@ resource "web_array", type: "server_array" do
   array_type "alert"
   elasticity_params do {
       'bounds' => {
-        'min_count' => '1',
+        'min_count' => '2',
         'max_count' => '2',},
       'pacing' => {'resize_calm_time'     => '5',
         'resize_down_by'       => '1',
