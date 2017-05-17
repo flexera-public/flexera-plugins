@@ -40,9 +40,6 @@ This will remove all the GCE resources.
 - Instance types were reduced to f1.micro to reduce cost and increase resource availability in the cloud.
 
 ## Known Issues
-- Although the CAT successfully launches and an internal load balancer created, the instances which serve the traffic don't currently get configured properly.
-  - The instances seem to launch without a public accessible network currently.
-  - The startup-script isn't formatted correctly to run on boot.
 - There is a known issue in the gce_plugin during provision where 404 errors might be observed.
   - This is caused by a cloud error during the insert call which doesn't currently get passed back from the provision call
 
