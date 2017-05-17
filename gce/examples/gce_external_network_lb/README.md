@@ -1,7 +1,7 @@
 
 # GCE External Network Loadbalancer
 
-**Disclaimer: This example application CAT is intended to demonstrate how one could use the gce_plugin to create resources in GCE. It is intended for use in production and should not be used as a reference design.**
+**Disclaimer: This example application CAT is intended to demonstrate how one could use the gce_plugin to create resources in GCE. It is *not* intended for use in production and should not be used as a reference design.**
 
 ## Overview
 This example uses the `gce_plugin` to configure an [External Network LoadBalancer](https://cloud.google.com/compute/docs/load-balancing/network/example), creates a RightScale Server Array and attaches each instance in that array to the targetPool of the External LoadBalancer.
