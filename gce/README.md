@@ -119,9 +119,11 @@ end
 ## Examples
 - [GCE External Network LoadBalancer](examples/gce_external_network_lb/README.md)
 	
-## Known Limitations
-- Resource fields that take a nested JSON object must be passed a string containing the JSON. (Untested)
-- Outputs support only top level JSON nodes so return responses with JSON subnodes have been removed with the top level node containing the full JSON. (Untested) 
+## Known Issues / Limitations
+- List and AggregatedList actions cause an error when no results are returned.
+- Delete/Provision produce a 404 error if the operation returns an error.
+- actions which return a JSON response that isn't a resource is untested.
+- Outputs support only top level JSON nodes so return responses with JSON subnodes have been removed with the top level node containing the full JSON. (Untested)
 
 ## Getting Help
 Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.

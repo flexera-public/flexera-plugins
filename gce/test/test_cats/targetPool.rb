@@ -89,7 +89,7 @@ define launch(@address,$gce_project,$region) do
     call cat_spec.start_debugging()
     @list_addresses = gce.address.list({region: $region})
     call cat_spec.stop_debugging()
-    call cat_spec.expect_type_eq(@list_addresses, "gce.address") on_error: skip
+    call cat_spec.expect_type_eq(@list_addresses, "gce.addresss") on_error: skip
     $expect_all_resources = {"kind": "compute#address"}
     call cat_spec.expect_all_resources_contain(@list_addresses, $expect_all_resources) on_error: skip
     $expect_contains = {"status": "RESERVED", "name": @address.name, "kind": "compute#address"}

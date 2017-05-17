@@ -27,7 +27,8 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/addresses.
   type "address" do
-    href_templates "{{region}}/addresses/{{name}}","{{items[*].region}}/addresses/{{items[*].name}}"
+    href_templates "{{selfLink}}","{{items[*].selfLink}}","{{items.*.addresses[].selfLink}}"
+
     field "region" do
       location "path"
       required true
@@ -47,14 +48,14 @@ plugin "gce" do
       type "string"
     end
 
-    output "address","creationTimestamp","description","id","kind","name","selfLink","status","users","region"
+    output "address","creationTimestamp","description","id","kind","name","region","selfLink","status","users"
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/addresses/aggregatedList.
     action "aggregatedList" do 
       verb "GET"
       path "/projects/$project/aggregated/addresses"
       type "address"
-      output_path "items.*.addresses"
+      output_path "items.*.addresses[]"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/addresses/delete.
@@ -65,21 +66,21 @@ plugin "gce" do
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/addresses/get.
-    action "get" do
+    action "get" do 
       verb "GET"
       path "$href"
       type "address"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/addresses/insert.
-    action "insert" do
+    action "insert" do 
       verb "POST"
       path "/projects/$project/regions/$region/addresses"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/addresses/list.
-    action "list" do
+    action "list" do 
       verb "GET"
       path "/projects/$project/regions/$region/addresses"
       type "address"
@@ -99,7 +100,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/autoscalers.
   type "autoscaler" do
-    href_templates "/projects/$project/zones/$zone/autoscalers/{{name}}","/projects/$project/zones/$zone/autoscalers/{{items[*].name}}"
+    href_templates "{{selfLink}}","{{items[*].selfLink}}","{{items.*.autoscalers[].selfLink}}"
 
     field "zone" do
       location "path"
@@ -108,7 +109,7 @@ plugin "gce" do
     end
 
     field "autoscalingPolicy" do
-      type "string"
+      type "object"
     end
 
     field "description" do
@@ -130,20 +131,20 @@ plugin "gce" do
       verb "GET"
       path "/projects/$project/aggregated/autoscalers"
       type "autoscaler"
-      output_path "items.*.autoscalers"
+      output_path "items.*.autoscalers[]"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/autoscalers/delete.
     action "delete" do 
       verb "DELETE"
-      path "/projects/$project/zones/$zone/autoscalers/$name"
+      path "$href"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/autoscalers/get.
     action "get" do 
       verb "GET"
-      path "/projects/$project/zones/$zone/autoscalers/$name"
+      path "$href"
       type "autoscaler"
     end
 
@@ -194,7 +195,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/backendBuckets.
   type "backendBucket" do
-    href_templates "/projects/$project/global/backendBuckets/{{name}}","/projects/$project/global/backendBuckets/{{items[*].name}}"
+    href_templates "{{selfLink}}","{{items[*].selfLink}}"
 
     field "bucketName" do
       type "string"
@@ -221,14 +222,14 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/backendBuckets/delete.
     action "delete" do 
       verb "DELETE"
-      path "/projects/$project/global/backendBuckets/$name"
+      path "$href"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/backendBuckets/get.
     action "get" do 
       verb "GET"
-      path "/projects/$project/global/backendBuckets/$name"
+      path "$href"
       type "backendBucket"
     end
 
@@ -250,14 +251,14 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/backendBuckets/patch.
     action "patch" do 
       verb "PATCH"
-      path "/projects/$project/global/backendBuckets/$name"
+      path "$href"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/backendBuckets/update.
     action "update" do 
       verb "PUT"
-      path "/projects/$project/global/backendBuckets/$name"
+      path "$href"
       type "operation"
     end
 
@@ -269,7 +270,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/backendServices.
   type "backendService" do
-    href_templates "/projects/$project/global/backendServices/{{name}}","/projects/$project/global/backendServices/{{items[*].name}}"
+    href_templates "{{selfLink}}","{{items[*].selfLink}}","{{items.*.backendServices[].selfLink}}"
 
     field "affinityCookieTtlSec" do
       type "number"
@@ -280,11 +281,11 @@ plugin "gce" do
     end
 
     field "cdnPolicy" do
-      type "string"
+      type "object"
     end
 
     field "connectionDraining" do
-      type "string"
+      type "object"
     end
 
     field "description" do
@@ -338,27 +339,27 @@ plugin "gce" do
       verb "GET"
       path "/projects/$project/aggregated/backendServices"
       type "backendService"
-      output_path "items.*.backendServices"
+      output_path "items.*.backendServices[]"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/backendServices/delete.
     action "delete" do 
       verb "DELETE"
-      path "/projects/$project/global/backendServices/$name"
+      path "$href"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/backendServices/get.
     action "get" do 
       verb "GET"
-      path "/projects/$project/global/backendServices/$name"
+      path "$href"
       type "backendService"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/backendServices/getHealth.
     action "getHealth" do 
       verb "POST"
-      path "/projects/$project/global/backendServices/$name/getHealth"
+      path "$href/getHealth"
       type "backendServiceGroupHealth"
     end
 
@@ -380,14 +381,14 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/backendServices/patch.
     action "patch" do 
       verb "PATCH"
-      path "/projects/$project/global/backendServices/$name"
+      path "$href"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/backendServices/update.
     action "update" do 
       verb "PUT"
-      path "/projects/$project/global/backendServices/$name"
+      path "$href"
       type "operation"
     end
 
@@ -404,7 +405,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/diskTypes.
   type "diskType" do
-    href_templates "/projects/$project/zones/$zone/diskTypes/{{name}}","/projects/$project/zones/$zone/diskTypes/{{items[*].name}}"
+    href_templates "{{selfLink}}","{{items[*].selfLink}}","{{items.*.diskTypes[].selfLink}}"
 
     output "creationTimestamp","defaultDiskSizeGb","deprecated","description","id","kind","name","selfLink","validDiskSize","zone"
 
@@ -413,13 +414,13 @@ plugin "gce" do
       verb "GET"
       path "/projects/$project/aggregated/diskTypes"
       type "diskType"
-      output_path "items.*.diskTypes"
+      output_path "items.*.diskTypes[]"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/diskTypes/get.
     action "get" do 
       verb "GET"
-      path "/projects/$project/zones/$zone/diskTypes/$name"
+      path "$href"
       type "diskType"
     end
 
@@ -444,7 +445,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/disks.
   type "disk" do
-    href_templates "/projects/$project/zones/$zone/disks/{{name}}","/projects/$project/zones/$zone/disks/{{items[*].name}}"
+    href_templates "{{selfLink}}","{{items[*].selfLink}}","{{items.*.disks[].selfLink}}"
 
     field "zone" do
       location "path"
@@ -462,7 +463,7 @@ plugin "gce" do
     end
 
     field "diskEncryptionKey" do
-      type "string"
+      type "object"
     end
 
     field "licenses" do
@@ -483,7 +484,7 @@ plugin "gce" do
     end
 
     field "sourceImageEncryptionKey" do
-      type "string"
+      type "object"
     end
 
     field "sourceSnapshot" do
@@ -491,7 +492,7 @@ plugin "gce" do
     end
 
     field "sourceSnapshotEncryptionKey" do
-      type "string"
+      type "object"
     end
 
     field "type" do
@@ -505,27 +506,27 @@ plugin "gce" do
       verb "GET"
       path "/projects/$project/aggregated/disks"
       type "disk"
-      output_path "items.*.disks"
+      output_path "items.*.disks[]"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/disks/createSnapshot.
     action "createSnapshot" do 
       verb "POST"
-      path "/projects/$project/zones/$zone/disks/$name/createSnapshot"
+      path "$href/createSnapshot"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/disks/delete.
     action "delete" do 
       verb "DELETE"
-      path "/projects/$project/zones/$zone/disks/$name"
+      path "$href"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/disks/get.
     action "get" do 
       verb "GET"
-      path "/projects/$project/zones/$zone/disks/$name"
+      path "$href"
       type "disk"
     end
 
@@ -547,7 +548,7 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/disks/resize.
     action "resize" do 
       verb "POST"
-      path "/projects/$project/zones/$zone/disks/$name/resize"
+      path "$href/resize"
       type "operation"
     end
 
@@ -564,7 +565,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/firewalls.
   type "firewall" do
-    href_templates "/projects/$project/global/firewalls/{{name}}","/projects/$project/global/firewalls/{{items[*].name}}"
+    href_templates "{{selfLink}}","{{items[*].selfLink}}"
 
     field "allowed" do
       type "array"
@@ -604,14 +605,14 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/firewalls/delete.
     action "delete" do 
       verb "DELETE"
-      path "/projects/$project/global/firewalls/$name"
+      path "$href"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/firewalls/get.
     action "get" do 
       verb "GET"
-      path "/projects/$project/global/firewalls/$name"
+      path "$href"
       type "firewall"
     end
 
@@ -633,14 +634,14 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/firewalls/patch.
     action "patch" do 
       verb "PATCH"
-      path "/projects/$project/global/firewalls/$name"
+      path "$href"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/firewalls/update.
     action "update" do 
       verb "PUT"
-      path "/projects/$project/global/firewalls/$name"
+      path "$href"
       type "operation"
     end
 
@@ -657,7 +658,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/forwardingRules.
   type "forwardingRule" do
-    href_templates "{{region}}/forwardingRules/{{name}}","{{region}}/forwardingRules/{{items[*].name}}"
+    href_templates "{{selfLink}}","{{items[*].selfLink}}","{{items.*.forwardingRules[].selfLink}}"
 
     field "region" do
       location "path"
@@ -666,13 +667,13 @@ plugin "gce" do
     end
 
     field "ipAddress" do
-      type "string"
       alias_for "IPAddress"
+      type "string"
     end
 
     field "ipProtocol" do
-      type "string"
       alias_for "IPProtocol"
+      type "string"
     end
 
     field "backendService" do
@@ -718,7 +719,7 @@ plugin "gce" do
       verb "GET"
       path "/projects/$project/aggregated/forwardingRules"
       type "forwardingRule"
-      output_path "items.*.forwardingRules"
+      output_path "items.*.forwardingRules[]"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/forwardingRules/delete.
@@ -740,16 +741,6 @@ plugin "gce" do
       verb "POST"
       path "/projects/$project/regions/$region/forwardingRules"
       type "operation"
-
-      field "ipAddress" do
-        location "body"
-        alias_for "IPAddress"
-      end
-
-      field "ipProtocol" do
-        location "body"
-        alias_for "IPProtocol"
-      end
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/forwardingRules/list.
@@ -822,13 +813,15 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/globalForwardingRules.
   type "globalForwardingRule" do
-    href_templates "/projects/$project/global/forwardingRules/{{name}}","/projects/$project/global/forwardingRules/{{items[*].name}}"
+    href_templates "{{selfLink}}","{{items[*].selfLink}}"
 
     field "ipAddress" do
+      alias_for "IPAddress"
       type "string"
     end
 
     field "ipProtocol" do
+      alias_for "IPProtocol"
       type "string"
     end
 
@@ -873,7 +866,7 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/globalForwardingRules/get.
     action "get" do 
       verb "GET"
-      path "/projects/$project/global/forwardingRules/{{name}}"
+      path "$href"
       type "forwardingRule"
     end
 
@@ -910,15 +903,15 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/globalOperations/aggregatedList.
     action "aggregatedList" do 
       verb "GET"
-      path "/projects/$project/aggregated/operations"
+      path "$href/operations"
       type "operation"
-      output_path "items.*.operations"
+      output_path "items.*.globalOperations[]"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/globalOperations/list.
     action "list" do 
       verb "GET"
-      path "/projects/$project/global/operations"
+      path "$href/operations"
       type "operation"
       output_path "items"
     end
@@ -941,7 +934,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/healthChecks.
   type "healthCheck" do
-    href_templates "/projects/$project/global/healthChecks/{{name}}","/projects/$project/global/healthChecks/{{items[*].name}}"
+    href_templates "{{selfLink}}","{{items[*].selfLink}}"
 
     field "checkIntervalSec" do
       type "number"
@@ -956,11 +949,11 @@ plugin "gce" do
     end
 
     field "httpHealthCheck" do
-      type "string"
+      type "object"
     end
 
     field "httpsHealthCheck" do
-      type "string"
+      type "object"
     end
 
     field "kind" do
@@ -972,11 +965,11 @@ plugin "gce" do
     end
 
     field "sslHealthCheck" do
-      type "string"
+      type "object"
     end
 
     field "tcpHealthCheck" do
-      type "string"
+      type "object"
     end
 
     field "timeoutSec" do
@@ -996,14 +989,14 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/healthChecks/delete.
     action "delete" do 
       verb "DELETE"
-      path "/projects/$project/global/healthChecks/$name"
+      path "$href"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/healthChecks/get.
     action "get" do 
       verb "GET"
-      path "/projects/$project/global/healthChecks/$name"
+      path "$href"
       type "healthCheck"
     end
 
@@ -1025,14 +1018,14 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/healthChecks/patch.
     action "patch" do 
       verb "PATCH"
-      path "/projects/$project/global/healthChecks/$name"
+      path "$href"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/healthChecks/update.
     action "update" do 
       verb "PUT"
-      path "/projects/$project/global/healthChecks/$name"
+      path "$href"
       type "operation"
     end
 
@@ -1044,7 +1037,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/httpHealthChecks.
   type "httpHealthCheck" do
-    href_templates "/projects/$project/global/httpHealthChecks/{{name}}","/projects/$project/global/httpHealthChecks/{{items[*].name}}"
+    href_templates "{{selfLink}}","{{items[*].selfLink}}"
 
     field "checkIntervalSec" do
       type "number"
@@ -1087,14 +1080,14 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/httpHealthChecks/delete.
     action "delete" do 
       verb "DELETE"
-      path "/projects/$project/global/httpHealthChecks/$name"
+      path "$href"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/httpHealthChecks/get.
     action "get" do 
       verb "GET"
-      path "/projects/$project/global/httpHealthChecks/$name"
+      path "$href"
       type "httpHealthCheck"
     end
 
@@ -1116,14 +1109,14 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/httpHealthChecks/patch.
     action "patch" do 
       verb "PATCH"
-      path "/projects/$project/global/httpHealthChecks/$name"
+      path "$href"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/httpHealthChecks/update.
     action "update" do 
       verb "PUT"
-      path "/projects/$project/global/httpHealthChecks/$name"
+      path "$href"
       type "operation"
     end
 
@@ -1135,7 +1128,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/httpsHealthChecks.
   type "httpsHealthCheck" do
-    href_templates "/projects/$project/global/httpsHealthChecks/{{name}}","/projects/$project/global/httpsHealthChecks/{{items[*].name}}"
+    href_templates "{{selfLink}}","{{items[*].selfLink}}"
 
     field "checkIntervalSec" do
       type "number"
@@ -1182,14 +1175,14 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/httpsHealthChecks/delete.
     action "delete" do 
       verb "DELETE"
-      path "/projects/$project/global/httpsHealthChecks/$name"
+      path "$href"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/httpsHealthChecks/get.
     action "get" do 
       verb "GET"
-      path "/projects/$project/global/httpsHealthChecks/$name"
+      path "$href"
       type "httpsHealthCheck"
     end
 
@@ -1211,14 +1204,14 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/httpsHealthChecks/patch.
     action "patch" do 
       verb "PATCH"
-      path "/projects/$project/global/httpsHealthChecks/$name"
+      path "$href"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/httpsHealthChecks/update.
     action "update" do 
       verb "PUT"
-      path "/projects/$project/global/httpsHealthChecks/$name"
+      path "$href"
       type "operation"
     end
 
@@ -1230,14 +1223,14 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/images.
   type "image" do
-    href_templates "/projects/$project/global/images/{{name}}","/projects/$project/global/images/{{items[*].name}}"
+    href_templates "{{selfLink}}","{{items[*].selfLink}}"
 
     field "archiveSizeBytes" do
       type "number"
     end
 
     field "deprecated" do
-      type "string"
+      type "object"
     end
 
     field "description" do
@@ -1257,7 +1250,7 @@ plugin "gce" do
     end
 
     field "imageEncryptionKey" do
-      type "string"
+      type "object"
     end
 
     field "licenses" do
@@ -1278,7 +1271,7 @@ plugin "gce" do
     end
 
     field "sourceDiskEncryptionKey" do
-      type "string"
+      type "object"
     end
 
     field "sourceDiskId" do
@@ -1294,28 +1287,28 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/images/delete.
     action "delete" do 
       verb "DELETE"
-      path "/projects/$project/global/images/$name"
+      path "$href"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/images/deprecate.
     action "deprecate" do 
       verb "POST"
-      path "/projects/$project/global/images/$name/deprecate"
+      path "$href/deprecate"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/images/get.
     action "get" do 
       verb "GET"
-      path "/projects/$project/global/images/$name"
+      path "$href"
       type "image"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/images/getFromFamily.
     action "getFromFamily" do 
       verb "GET"
-      path "/projects/$project/global/images/family/$family"
+      path "$href/$family"
       type "image"
     end
 
@@ -1342,7 +1335,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instanceGroupManagers.
   type "instanceGroupManager" do
-    href_templates "/projects/$project/zones/$zone/instanceGroupManagers/{{name}}","/projects/$project/zones/$zone/instanceGroupManagers/{{items[*].name}}"
+    href_templates "{{selfLink}}","{{items[*].selfLink}}","{{items.*.instanceGroupManagers[].selfLink}}"
 
     field "zone" do
       location "path"
@@ -1386,7 +1379,7 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instanceGroupManagers/abandonInstances.
     action "abandonInstances" do 
       verb "POST"
-      path "/projects/$project/zones/$zone/instanceGroupManagers/$name/abandonInstances"
+      path "$href/abandonInstances"
       type "operation"
     end
 
@@ -1395,27 +1388,27 @@ plugin "gce" do
       verb "GET"
       path "/projects/$project/aggregated/instanceGroupManagers"
       type "instanceGroupManager"
-      output_path "items.*.instanceGroupManagers"
+      output_path "items.*.instanceGroupManagers[]"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instanceGroupManagers/delete.
     action "delete" do 
       verb "DELETE"
-      path "/projects/$project/zones/$zone/instanceGroupManagers/$name"
+      path "$href"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instanceGroupManagers/deleteInstances.
     action "deleteInstances" do 
       verb "POST"
-      path "/projects/$project/zones/$zone/instanceGroupManagers/$name/deleteInstances"
+      path "$href/deleteInstances"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instanceGroupManagers/get.
     action "get" do 
       verb "GET"
-      path "/projects/$project/zones/$zone/instanceGroupManagers/$name"
+      path "$href"
       type "instanceGroupManager"
     end
 
@@ -1437,28 +1430,28 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instanceGroupManagers/recreateInstances.
     action "recreateInstances" do 
       verb "POST"
-      path "/projects/$project/zones/$zone/instanceGroupManagers/$name/recreateInstances"
+      path "$href/recreateInstances"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instanceGroupManagers/resize.
     action "resize" do 
       verb "POST"
-      path "/projects/$project/zones/$zone/instanceGroupManagers/$name/resize"
+      path "$href/resize"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instanceGroupManagers/setInstanceTemplate.
     action "setInstanceTemplate" do 
       verb "POST"
-      path "/projects/$project/zones/$zone/instanceGroupManagers/$name/setInstanceTemplate"
+      path "$href/setInstanceTemplate"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instanceGroupManagers/setTargetPools.
     action "setTargetPools" do 
       verb "POST"
-      path "/projects/$project/zones/$zone/instanceGroupManagers/$name/setTargetPools"
+      path "$href/setTargetPools"
       type "operation"
     end
 
@@ -1490,7 +1483,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instanceGroups.
   type "instanceGroup" do
-    href_templates "/projects/$project/zones/$zone/instanceGroups/{{name}}","/projects/$project/zones/$zone/instanceGroups/{{items[*].name}}"
+    href_templates "{{selfLink}}","{{items[*].selfLink}}","{{items.*.instanceGroups[].selfLink}}"
 
     field "zone" do
       location "path"
@@ -1527,7 +1520,7 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instanceGroups/addInstances.
     action "addInstances" do 
       verb "POST"
-      path "/projects/$project/zones/$zone/instanceGroups/$name/addInstances"
+      path "$href/addInstances"
       type "operation"
     end
 
@@ -1536,20 +1529,20 @@ plugin "gce" do
       verb "GET"
       path "/projects/$project/aggregated/instanceGroups"
       type "instanceGroup"
-      output_path "items.*.instanceGroups"
+      output_path "items.*.instanceGroups[]"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instanceGroups/delete.
     action "delete" do 
       verb "DELETE"
-      path "/projects/$project/zones/$zone/instanceGroups/$name"
+      path "$href"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instanceGroups/get.
     action "get" do 
       verb "GET"
-      path "/projects/$project/zones/$zone/instanceGroups/$name"
+      path "$href"
       type "instanceGroup"
     end
 
@@ -1571,21 +1564,21 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instanceGroups/listInstances.
     action "listInstances" do 
       verb "POST"
-      path "/projects/$project/zones/$zone/instanceGroups/$name/listInstances"
+      path "$href/listInstances"
       type "instanceGroupsListInstances"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instanceGroups/removeInstances.
     action "removeInstances" do 
       verb "POST"
-      path "/projects/$project/zones/$zone/instanceGroups/$name/removeInstances"
+      path "$href/removeInstances"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instanceGroups/setNamedPorts.
     action "setNamedPorts" do 
       verb "POST"
-      path "/projects/$project/zones/$zone/instanceGroups/$name/setNamedPorts"
+      path "$href/setNamedPorts"
       type "operation"
     end
 
@@ -1617,7 +1610,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instanceTemplates.
   type "instanceTemplate" do
-    href_templates "/projects/$project/global/instanceTemplates/{{name}}","/projects/$project/global/instanceTemplates/{{items[*].name}}"
+    href_templates "{{selfLink}}","{{items[*].selfLink}}"
 
     field "description" do
       type "string"
@@ -1629,7 +1622,7 @@ plugin "gce" do
     end
 
     field "properties" do
-      type "string"
+      type "object"
     end
 
     output "creationTimestamp","description","id","kind","name","properties","selfLink"
@@ -1637,14 +1630,14 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instanceTemplates/delete.
     action "delete" do 
       verb "DELETE"
-      path "/projects/$project/global/instanceTemplates/$name"
+      path "$href"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instanceTemplates/get.
     action "get" do 
       verb "GET"
-      path "/projects/$project/global/instanceTemplates/$name"
+      path "$href"
       type "instanceTemplate"
     end
 
@@ -1671,7 +1664,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instances.
   type "instance" do
-    href_templates "/projects/$project/zones/$zone/instances/{{name}}","/projects/$project/zones/$zone/instances/{{items[*].name}}"
+    href_templates "{{selfLink}}","{{items[*].selfLink}}","{{items.*.instances[].selfLink}}"
 
     field "zone" do
       location "path"
@@ -1697,7 +1690,7 @@ plugin "gce" do
     end
 
     field "metadata" do
-      type "string"
+      type "object"
     end
 
     field "name" do
@@ -1710,7 +1703,7 @@ plugin "gce" do
     end
 
     field "scheduling" do
-      type "string"
+      type "object"
     end
 
     field "serviceAccounts" do
@@ -1718,7 +1711,7 @@ plugin "gce" do
     end
 
     field "tags" do
-      type "string"
+      type "object"
     end
 
     output "canIpForward","cpuPlatform","creationTimestamp","description","disks","id","kind","machineType","metadata","name","networkInterfaces","scheduling","selfLink","serviceAccounts","status","statusMessage","tags","zone"
@@ -1726,7 +1719,7 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instances/addAccessConfig.
     action "addAccessConfig" do 
       verb "POST"
-      path "/projects/$project/zones/$zone/instances/$name/addAccessConfig"
+      path "$href/addAccessConfig"
       type "operation"
     end
 
@@ -1735,48 +1728,48 @@ plugin "gce" do
       verb "GET"
       path "/projects/$project/aggregated/instances"
       type "instance"
-      output_path "items.*.instances"
+      output_path "items.*.instances[]"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instances/attachDisk.
     action "attachDisk" do 
       verb "POST"
-      path "/projects/$project/zones/$zone/instances/$name/attachDisk"
+      path "$href/attachDisk"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instances/delete.
     action "delete" do 
       verb "DELETE"
-      path "/projects/$project/zones/$zone/instances/$name"
+      path "$href"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instances/deleteAccessConfig.
     action "deleteAccessConfig" do 
       verb "POST"
-      path "/projects/$project/zones/$zone/instances/$name/deleteAccessConfig"
+      path "$href/deleteAccessConfig"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instances/detachDisk.
     action "detachDisk" do 
       verb "POST"
-      path "/projects/$project/zones/$zone/instances/$name/detachDisk"
+      path "$href/detachDisk"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instances/get.
     action "get" do 
       verb "GET"
-      path "/projects/$project/zones/$zone/instances/$name"
+      path "$href"
       type "instance"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instances/getSerialPortOutput.
     action "getSerialPortOutput" do 
       verb "GET"
-      path "/projects/$project/zones/$zone/instances/$name/serialPort"
+      path "$href/serialPort"
       type "serialPortOutput"
     end
 
@@ -1798,63 +1791,63 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instances/reset.
     action "reset" do 
       verb "POST"
-      path "/projects/$project/zones/$zone/instances/$name/reset"
+      path "$href/reset"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instances/setDiskAutoDelete.
     action "setDiskAutoDelete" do 
       verb "POST"
-      path "/projects/$project/zones/$zone/instances/$name/setDiskAutoDelete"
+      path "$href/setDiskAutoDelete"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instances/setMachineType.
     action "setMachineType" do 
       verb "POST"
-      path "/projects/$project/zones/$zone/instances/$name/setMachineType"
+      path "$href/setMachineType"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instances/setMetadata.
     action "setMetadata" do 
       verb "POST"
-      path "/projects/$project/zones/$zone/instances/$name/setMetadata"
+      path "$href/setMetadata"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instances/setScheduling.
     action "setScheduling" do 
       verb "POST"
-      path "/projects/$project/zones/$zone/instances/$name/setScheduling"
+      path "$href/setScheduling"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instances/setTags.
     action "setTags" do 
       verb "POST"
-      path "/projects/$project/zones/$zone/instances/$name/setTags"
+      path "$href/setTags"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instances/start.
     action "start" do 
       verb "POST"
-      path "/projects/$project/zones/$zone/instances/$name/start"
+      path "$href/start"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instances/startWithEncryptionKey.
     action "startWithEncryptionKey" do 
       verb "POST"
-      path "/projects/$project/zones/$zone/instances/$name/startWithEncryptionKey"
+      path "$href/startWithEncryptionKey"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instances/stop.
     action "stop" do 
       verb "POST"
-      path "/projects/$project/zones/$zone/instances/$name/stop"
+      path "$href/stop"
       type "operation"
     end
 
@@ -1876,14 +1869,14 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/licenses.
   type "license" do
-    href_templates "/projects/$project/global/licenses/{{name}}","/projects/$project/global/licenses/{{items[*].name}}"
+    href_templates "{{selfLink}}"
 
     output "chargesUseFee","kind","name","selfLink"
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/licenses/get.
     action "get" do 
       verb "GET"
-      path "/projects/$project/global/licenses/$name"
+      path "$href"
       type "license"
     end
 
@@ -1895,7 +1888,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/machineTypes.
   type "machineType" do
-    href_templates "/projects/$project/zones/$zone/machineTypes/{{name}}","/projects/$project/zones/$zone/machineTypes/{{items[*].name}}"
+    href_templates "{{selfLink}}","{{items[*].selfLink}}","{{items.*.machineTypes[].selfLink}}"
 
     output "creationTimestamp","deprecated","description","guestCpus","id","imageSpaceGb","isSharedCpu","kind","maximumPersistentDisks","maximumPersistentDisksSizeGb","memoryMb","name","scratchDisks","selfLink","zone"
 
@@ -1904,13 +1897,13 @@ plugin "gce" do
       verb "GET"
       path "/projects/$project/aggregated/machineTypes"
       type "machineType"
-      output_path "items.*.machineTypes"
+      output_path "items.*.machineTypes[]"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/machineTypes/get.
     action "get" do 
       verb "GET"
-      path "/projects/$project/zones/$zone/machineTypes/$name"
+      path "$href"
       type "machineType"
     end
 
@@ -1930,9 +1923,10 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/networks.
   type "network" do
-    href_templates "/projects/$project/global/networks/{{name}}","/projects/$project/global/networks/{{items[*].name}}"
+    href_templates "{{selfLink}}","{{items[*].selfLink}}"
 
     field "ipv4Range" do
+      alias_for "IPv4Range"
       type "string"
     end
 
@@ -1958,14 +1952,14 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/networks/delete.
     action "delete" do 
       verb "DELETE"
-      path "/projects/$project/global/networks/$name"
+      path "$href"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/networks/get.
     action "get" do 
       verb "GET"
-      path "/projects/$project/global/networks/$name"
+      path "$href"
       type "network"
     end
 
@@ -1987,7 +1981,7 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/networks/switchToCustomMode.
     action "switchToCustomMode" do 
       verb "POST"
-      path "/projects/$project/global/networks/$name/switchToCustomMode"
+      path "$href/switchToCustomMode"
       type "operation"
     end
 
@@ -2004,12 +1998,16 @@ plugin "gce" do
     output "clientOperationId","creationTimestamp","description","endTime","error","httpErrorMessage","httpErrorStatusCode","id","insertTime","kind","name","operationType","progress","region","selfLink","startTime","status","statusMessage","targetId","targetLink","user","warnings","zone"
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/globalOperations/delete.
-    action "delete"
+    action "delete" do 
+      verb "DELETE"
+      path "$href"
+    end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/globalOperations/get.
-    action "get" do
+    action "get" do 
       verb "GET"
       path "$href"
+      type "operation"
     end
 
     link "region" do
@@ -2029,10 +2027,10 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/projects.
   type "project" do
-    href_templates "/projects/{{name}}","/projects/{{items[*].name}}"
+    href_templates "{{selfLink}}"
 
     field "commonInstanceMetadata" do
-      type "string"
+      type "object"
     end
 
     field "description" do
@@ -2048,7 +2046,7 @@ plugin "gce" do
     end
 
     field "usageExportLocation" do
-      type "string"
+      type "object"
     end
 
     output "commonInstanceMetadata","creationTimestamp","defaultServiceAccount","description","enabledFeatures","id","kind","name","quotas","selfLink","usageExportLocation"
@@ -2056,35 +2054,35 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/projects/get.
     action "get" do 
       verb "GET"
-      path "/projects/$name"
+      path "$href"
       type "project"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/projects/moveDisk.
     action "moveDisk" do 
       verb "POST"
-      path "/projects/$name/moveDisk"
+      path "$href/moveDisk"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/projects/moveInstance.
     action "moveInstance" do 
       verb "POST"
-      path "/projects/$name/moveInstance"
+      path "$href/moveInstance"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/projects/setCommonInstanceMetadata.
     action "setCommonInstanceMetadata" do 
       verb "POST"
-      path "/projects/$name/setCommonInstanceMetadata"
+      path "$href/setCommonInstanceMetadata"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/projects/setUsageExportBucket.
     action "setUsageExportBucket" do 
       verb "POST"
-      path "/projects/$name/setUsageExportBucket"
+      path "$href/setUsageExportBucket"
       type "operation"
     end
 
@@ -2103,7 +2101,7 @@ plugin "gce" do
     end
 
     field "autoscalingPolicy" do
-      type "string"
+      type "object"
     end
 
     field "description" do
@@ -2167,7 +2165,7 @@ plugin "gce" do
     end
 
     field "connectionDraining" do
-      type "string"
+      type "object"
     end
 
     field "description" do
@@ -2358,7 +2356,7 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/regionInstanceGroups/listInstances.
     action "listInstances" do 
       verb "POST"
-      path "/projects/$project/regions/$region/instanceGroups/{{name}}/listInstances"
+      path "$href/listInstances"
       type "regionInstanceGroupsListInstances"
     end
 
@@ -2395,7 +2393,7 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/regionOperations/list.
     action "list" do 
       verb "GET"
-      path "/projects/$project/regions/$region/operations"
+      path "$href/operations"
       type "operation"
       output_path "items"
     end
@@ -2418,14 +2416,14 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/regions.
   type "region" do
-    href_templates "/projects/$project/regions/{{name}}","/projects/$project/regions/{{items[*].name}}"
+    href_templates "{{selfLink}}","{{items[*].selfLink}}"
 
     output "creationTimestamp","deprecated","description","id","kind","name","quotas","selfLink","status","zones"
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/regions/get.
     action "get" do 
       verb "GET"
-      path "/projects/$project/regions/$name"
+      path "$href"
       type "region"
     end
 
@@ -2445,7 +2443,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/routers.
   type "router" do
-    href_templates "/projects/$project/regions/$region/routers/{{name}}","/projects/$project/regions/$region/routers/{{items[*].name}}"
+    href_templates "{{selfLink}}","{{items[*].selfLink}}","{{items.*.routers[].selfLink}}"
 
     field "region" do
       location "path"
@@ -2454,7 +2452,7 @@ plugin "gce" do
     end
 
     field "bgp" do
-      type "string"
+      type "object"
     end
 
     field "bgpPeers" do
@@ -2486,20 +2484,20 @@ plugin "gce" do
       verb "GET"
       path "/projects/$project/aggregated/routers"
       type "router"
-      output_path "items.*.routers"
+      output_path "items.*.routers[]"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/routers/delete.
     action "delete" do 
       verb "DELETE"
-      path "/projects/$project/regions/$region/routers/$name"
+      path "$href"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/routers/get.
     action "get" do 
       verb "GET"
-      path "/projects/$project/regions/$region/routers/$name"
+      path "$href"
       type "router"
     end
 
@@ -2521,14 +2519,14 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/routers/patch.
     action "patch" do 
       verb "PATCH"
-      path "/projects/$project/regions/$region/routers/$name"
+      path "$href"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/routers/update.
     action "update" do 
       verb "PUT"
-      path "/projects/$project/regions/$region/routers/$name"
+      path "$href"
       type "operation"
     end
 
@@ -2540,7 +2538,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/routes.
   type "route" do
-    href_templates "/projects/$project/global/routes/{{name}}","/projects/$project/global/routes/{{items[*].name}}"
+    href_templates "{{selfLink}}","{{items[*].selfLink}}"
 
     field "description" do
       type "string"
@@ -2595,14 +2593,14 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/routes/delete.
     action "delete" do 
       verb "DELETE"
-      path "/projects/$project/global/routes/$name"
+      path "$href"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/routes/get.
     action "get" do 
       verb "GET"
-      path "/projects/$project/global/routes/$name"
+      path "$href"
       type "route"
     end
 
@@ -2634,7 +2632,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/snapshots.
   type "snapshot" do
-    href_templates "/projects/$project/global/snapshots/{{name}}","/projects/$project/global/snapshots/{{items[*].name}}"
+    href_templates "{{selfLink}}","{{items[*].selfLink}}"
 
     field "description" do
       type "string"
@@ -2645,11 +2643,11 @@ plugin "gce" do
     end
 
     field "snapshotEncryptionKey" do
-      type "string"
+      type "object"
     end
 
     field "sourceDiskEncryptionKey" do
-      type "string"
+      type "object"
     end
 
     output "creationTimestamp","description","diskSizeGb","id","kind","licenses","name","selfLink","snapshotEncryptionKey","sourceDisk","sourceDiskEncryptionKey","sourceDiskId","status","storageBytes","storageBytesStatus"
@@ -2657,14 +2655,14 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/snapshots/delete.
     action "delete" do 
       verb "DELETE"
-      path "/projects/$project/global/snapshots/$name"
+      path "$href"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/snapshots/get.
     action "get" do 
       verb "GET"
-      path "/projects/$project/global/snapshots/$name"
+      path "$href"
       type "snapshot"
     end
 
@@ -2684,7 +2682,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/sslCertificates.
   type "sslCertificate" do
-    href_templates "/projects/$project/global/sslCertificates/{{name}}","/projects/$project/global/sslCertificates/{{items[*].name}}"
+    href_templates "{{selfLink}}","{{items[*].selfLink}}"
 
     field "certificate" do
       type "string"
@@ -2711,14 +2709,14 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/sslCertificates/delete.
     action "delete" do 
       verb "DELETE"
-      path "/projects/$project/global/sslCertificates/$name"
+      path "$href"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/sslCertificates/get.
     action "get" do 
       verb "GET"
-      path "/projects/$project/global/sslCertificates/$name"
+      path "$href"
       type "sslCertificate"
     end
 
@@ -2745,7 +2743,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/subnetworks.
   type "subnetwork" do
-    href_templates "/projects/$project/regions/$region/subnetworks/{{name}}","/projects/$project/regions/$region/subnetworks/{{items[*].name}}"
+    href_templates "{{selfLink}}","{{items[*].selfLink}}","{{items.*.subnetworks[].selfLink}}"
 
     field "region" do
       location "path"
@@ -2776,27 +2774,27 @@ plugin "gce" do
       verb "GET"
       path "/projects/$project/aggregated/subnetworks"
       type "subnetwork"
-      output_path "items.*.subnetworks"
+      output_path "items.*.subnetworks[]"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/subnetworks/delete.
     action "delete" do 
       verb "DELETE"
-      path "/projects/$project/regions/$region/subnetworks/$name"
+      path "$href"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/subnetworks/expandIpCidrRange.
     action "expandIpCidrRange" do 
       verb "POST"
-      path "/projects/$project/regions/$region/subnetworks/$name/expandIpCidrRange"
+      path "$href/expandIpCidrRange"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/subnetworks/get.
     action "get" do 
       verb "GET"
-      path "/projects/$project/regions/$region/subnetworks/$name"
+      path "$href"
       type "subnetwork"
     end
 
@@ -2833,7 +2831,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/targetHttpProxies.
   type "targetHttpProxy" do
-    href_templates "/projects/$project/global/targetHttpProxies/{{name}}","/projects/$project/global/targetHttpProxies/{{items[*].name}}"
+    href_templates "{{selfLink}}","{{items[*].selfLink}}"
 
     field "description" do
       type "string"
@@ -2852,14 +2850,14 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/targetHttpProxies/delete.
     action "delete" do 
       verb "DELETE"
-      path "/projects/$project/global/targetHttpProxies/$name"
+      path "$href"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/targetHttpProxies/get.
     action "get" do 
       verb "GET"
-      path "/projects/$project/global/targetHttpProxies/$name"
+      path "$href"
       type "targetHttpProxy"
     end
 
@@ -2881,7 +2879,7 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/targetHttpProxies/setUrlMap.
     action "setUrlMap" do 
       verb "POST"
-      path "/projects/$project/targetHttpProxies/$name/setUrlMap"
+      path "$href/setUrlMap"
       type "operation"
     end
 
@@ -2893,7 +2891,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/targetHttpsProxies.
   type "targetHttpsProxy" do
-    href_templates "/projects/$project/global/targetHttpsProxies/{{name}}","/projects/$project/global/targetHttpsProxies/{{items[*].name}}"
+    href_templates "{{selfLink}}","{{items[*].selfLink}}"
 
     field "description" do
       type "string"
@@ -2916,14 +2914,14 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/targetHttpsProxies/delete.
     action "delete" do 
       verb "DELETE"
-      path "/projects/$project/global/targetHttpsProxies/$name"
+      path "$href"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/targetHttpsProxies/get.
     action "get" do 
       verb "GET"
-      path "/projects/$project/global/targetHttpsProxies/$name"
+      path "$href"
       type "targetHttpsProxy"
     end
 
@@ -2945,14 +2943,14 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/targetHttpsProxies/setSslCertificates.
     action "setSslCertificates" do 
       verb "POST"
-      path "/projects/$project/targetHttpsProxies/$name/setSslCertificates"
+      path "$href/setSslCertificates"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/targetHttpsProxies/setUrlMap.
     action "setUrlMap" do 
       verb "POST"
-      path "/projects/$project/targetHttpsProxies/$name/setUrlMap"
+      path "$href/setUrlMap"
       type "operation"
     end
 
@@ -2964,7 +2962,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/targetInstances.
   type "targetInstance" do
-    href_templates "/projects/$project/zones/$zone/targetInstances/{{name}}","/projects/$project/zones/$zone/targetInstances/{{items[*].name}}"
+    href_templates "{{selfLink}}","{{items[*].selfLink}}","{{items.*.targetInstances[].selfLink}}"
 
     field "zone" do
       location "path"
@@ -2995,20 +2993,20 @@ plugin "gce" do
       verb "GET"
       path "/projects/$project/aggregated/targetInstances"
       type "targetInstance"
-      output_path "items.*.targetInstances"
+      output_path "items.*.targetInstances[]"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/targetInstances/delete.
     action "delete" do 
       verb "DELETE"
-      path "/projects/$project/zones/$zone/targetInstances/$name"
+      path "$href"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/targetInstances/get.
     action "get" do 
       verb "GET"
-      path "/projects/$project/zones/$zone/targetInstances/$name"
+      path "$href"
       type "targetInstance"
     end
 
@@ -3040,7 +3038,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/targetPools.
   type "targetPool" do
-    href_templates "{{region}}/targetPools/{{name}}","{{region}}/targetPools/{{items[*].name}}"
+    href_templates "{{selfLink}}","{{items[*].selfLink}}","{{items.*.targetPools[].selfLink}}"
 
     field "region" do
       location "path"
@@ -3097,7 +3095,7 @@ plugin "gce" do
       verb "GET"
       path "/projects/$project/aggregated/targetPools"
       type "targetPool"
-      output_path "items.*.targetPools"
+      output_path "items.*.targetPools[]"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/targetPools/delete.
@@ -3170,7 +3168,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/targetSslProxies.
   type "targetSslProxy" do
-    href_templates "/projects/$project/global/targetSslProxies/{{name}}","/projects/$project/global/targetSslProxies/{{items[*].name}}"
+    href_templates "{{selfLink}}","{{items[*].selfLink}}"
 
     field "description" do
       type "string"
@@ -3197,14 +3195,14 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/targetSslProxies/delete.
     action "delete" do 
       verb "DELETE"
-      path "/projects/$project/global/targetSslProxies/$name"
+      path "$href"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/targetSslProxies/get.
     action "get" do 
       verb "GET"
-      path "/projects/$project/global/targetSslProxies/$name"
+      path "$href"
       type "targetSslProxy"
     end
 
@@ -3226,21 +3224,21 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/targetSslProxies/setBackendService.
     action "setBackendService" do 
       verb "POST"
-      path "/projects/$project/global/targetSslProxies/$name/setBackendService"
+      path "$href/setBackendService"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/targetSslProxies/setProxyHeader.
     action "setProxyHeader" do 
       verb "POST"
-      path "/projects/$project/global/targetSslProxies/$name/setProxyHeader"
+      path "$href/setProxyHeader"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/targetSslProxies/setSslCertificates.
     action "setSslCertificates" do 
       verb "POST"
-      path "/projects/$project/global/targetSslProxies/$name/setSslCertificates"
+      path "$href/setSslCertificates"
       type "operation"
     end
 
@@ -3252,7 +3250,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/targetVpnGateways.
   type "targetVpnGateway" do
-    href_templates "/projects/$project/regions/$region/targetVpnGateways/{{name}}","/projects/$project/regions/$region/targetVpnGateways/{{items[*].name}}"
+    href_templates "{{selfLink}}","{{items[*].selfLink}}","{{items.*.targetVpnGateways[].selfLink}}"
 
     field "region" do
       location "path"
@@ -3281,20 +3279,20 @@ plugin "gce" do
       verb "GET"
       path "/projects/$project/aggregated/targetVpnGateways"
       type "targetVpnGateway"
-      output_path "items.*.targetVpnGateways"
+      output_path "items.*.targetVpnGateways[]"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/targetVpnGateways/delete.
     action "delete" do 
       verb "DELETE"
-      path "/projects/$project/regions/$region/targetVpnGateways/$name"
+      path "$href"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/targetVpnGateways/get.
     action "get" do 
       verb "GET"
-      path "/projects/$project/regions/$region/targetVpnGateways/$name"
+      path "$href"
       type "targetVpnGateway"
     end
 
@@ -3331,7 +3329,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/urlMaps.
   type "urlMap" do
-    href_templates "/projects/$project/global/urlMaps/{{name}}","/projects/$project/global/urlMaps/{{items[*].name}}"
+    href_templates "{{selfLink}}","{{items[*].selfLink}}"
 
     field "defaultService" do
       type "string"
@@ -3366,14 +3364,14 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/urlMaps/delete.
     action "delete" do 
       verb "DELETE"
-      path "/projects/$project/global/urlMaps/$name"
+      path "$href"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/urlMaps/get.
     action "get" do 
       verb "GET"
-      path "/projects/$project/global/urlMaps/$name"
+      path "$href"
       type "urlMap"
     end
 
@@ -3387,7 +3385,7 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/urlMaps/invalidateCache.
     action "invalidateCache" do 
       verb "POST"
-      path "/projects/$project/global/urlMaps/$name/invalidateCache"
+      path "$href/invalidateCache"
       type "operation"
     end
 
@@ -3402,14 +3400,14 @@ plugin "gce" do
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/urlMaps/patch.
     action "patch" do 
       verb "PATCH"
-      path "/projects/$project/global/urlMaps/$name"
+      path "$href"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/urlMaps/update.
     action "update" do 
       verb "PUT"
-      path "/projects/$project/global/urlMaps/$name"
+      path "$href"
       type "operation"
     end
 
@@ -3421,7 +3419,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/vpnTunnels.
   type "vpnTunnel" do
-    href_templates "/projects/$project/regions/$region/vpnTunnels/{{name}}","/projects/$project/regions/$region/vpnTunnels/{{items[*].name}}"
+    href_templates "{{selfLink}}","{{items[*].selfLink}}","{{items.*.vpnTunnels[].selfLink}}"
 
     field "region" do
       location "path"
@@ -3478,20 +3476,20 @@ plugin "gce" do
       verb "GET"
       path "/projects/$project/aggregated/vpnTunnels"
       type "vpnTunnel"
-      output_path "items.*.vpnTunnels"
+      output_path "items.*.vpnTunnels[]"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/vpnTunnels/delete.
     action "delete" do 
       verb "DELETE"
-      path "/projects/$project/regions/$region/vpnTunnels/$name"
+      path "$href"
       type "operation"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/vpnTunnels/get.
     action "get" do 
       verb "GET"
-      path "/projects/$project/regions/$region/vpnTunnels/$name"
+      path "$href"
       type "vpnTunnel"
     end
 
@@ -3528,14 +3526,14 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/zoneOperations.
   type "zoneOperation" do
-    href_templates "/projects/$project/zones/$zone/operations/{{name}}","/projects/$project/zones/$zone/operations/{{items[*].name}}"
+    href_templates "{{selfLink}}","{{items[*].selfLink}}"
 
     output "clientOperationId","creationTimestamp","description","endTime","error","httpErrorMessage","httpErrorStatusCode","id","insertTime","kind","name","operationType","progress","region","selfLink","startTime","status","statusMessage","targetId","targetLink","user","warnings","zone"
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/zoneOperations/list.
     action "list" do 
       verb "GET"
-      path "/projects/$project/zones/$zone/operations"
+      path "$href/operations"
       type "operation"
       output_path "items"
     end
@@ -3558,14 +3556,14 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/zones.
   type "zone" do
-    href_templates "/projects/$project/zones/{{name}}","/projects/$project/zones/{{items[*].name}}"
+    href_templates "{{selfLink}}","{{items[*].selfLink}}"
 
     output "creationTimestamp","deprecated","description","id","kind","name","region","selfLink","status"
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/zones/get.
     action "get" do 
       verb "GET"
-      path "/projects/$project/zones/$name"
+      path "$href"
       type "zone"
     end
 
@@ -3596,24 +3594,18 @@ define provision_resource(@raw) return @resource on_error: stop_debugging() do
   call sys_log.set_task_target(@@deployment)
   call sys_log.summary(join(["Provision ",$type]))
   call sys_log.detail($raw)
-  
   @operation = gce.$type.insert($fields)
   call sys_log.detail(to_object(@operation))
-  call sys_log.detail(@operation.status)
   sub timeout: 2m, on_timeout: skip do
-    sleep_until(@operation.status == "DONE")
+    sleep_until @operation.status == "DONE"
   end
-  call sys_log.detail(to_object(@operation))
-  @resource = @operation.targetLink()
-  call sys_log.detail($debug_report)
   call sys_log.detail(to_object(@resource))
+  @resource = @operation.targetLink()
   call stop_debugging()
 end
 
 define delete_resource(@resource) on_error: stop_debugging() do
   call start_debugging()
-  $resource = to_object(@resource)
-  #$type = $resource["type"]
   if !empty?(@resource)
     call sys_log.set_task_target(@@deployment)
     call sys_log.summary(join(["Delete: ",@resource.name]))
@@ -3622,7 +3614,6 @@ define delete_resource(@resource) on_error: stop_debugging() do
       sub timeout: 2m, on_timeout: skip do
         sleep_until(@operation.status == "DONE")
       end
-      call stop_debugging()
       call sys_log.detail(to_object(@operation))
     end
   end
@@ -3634,7 +3625,6 @@ define skip_not_found_error() do
     $_error_behavior = "skip"
   end
 end
-
 define start_debugging() do
   if $$debugging == false || logic_and($$debugging != false, $$debugging != true)
     initiate_debug_report()
@@ -3649,7 +3639,6 @@ define stop_debugging() do
     $$debugging = false
   end
 end
-
 resource_pool "gce" do
   plugin $gce
   parameter_values do
@@ -3667,3 +3656,4 @@ resource_pool "gce" do
     end
   end
 end
+
