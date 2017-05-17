@@ -1750,6 +1750,13 @@ plugin "gce" do
       verb "POST"
       path "$href/deleteAccessConfig"
       type "operation"
+
+      field "accessConfig" do
+        location "query"
+      end
+      field "networkInterface" do
+        location "query"
+      end
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instances/detachDisk.

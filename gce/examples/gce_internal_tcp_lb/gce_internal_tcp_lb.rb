@@ -118,7 +118,12 @@ resource "ig_us_central1_1", type: "gce.instance" do
   ]end
   networkInterfaces do [
     {
-      "subnetwork": @my_custom_subnet
+      "accessConfigs": [
+                         {
+                           "name": "external-nat"
+                         }
+                       ],
+     "subnetwork": @my_custom_subnet
     }
   ]end
   metadata do {
@@ -162,6 +167,11 @@ resource "ig_us_central1_2", type: "gce.instance" do
   ]end
   networkInterfaces do [
     {
+      "accessConfigs": [
+                         {
+                           "name": "external-nat"
+                         }
+                       ],
       "subnetwork": @my_custom_subnet
     }
   ]end
@@ -206,7 +216,12 @@ resource "ig_us_central1_3", type: "gce.instance" do
   ]end
   networkInterfaces do [
     {
-      "subnetwork": @my_custom_subnet
+      "accessConfigs": [
+                         {
+                           "name": "external-nat"
+                         }
+                       ],
+     "subnetwork": @my_custom_subnet
     }
   ]end
   metadata do {
@@ -250,6 +265,11 @@ resource "ig_us_central1_4", type: "gce.instance" do
   ]end
   networkInterfaces do [
     {
+      "accessConfigs": [
+                         {
+                           "name": "external-nat"
+                         }
+                       ],
       "subnetwork": @my_custom_subnet
     }
   ]end
@@ -373,7 +393,12 @@ resource "standalone_instance_1", type: "gce.instance" do
   ]end
   networkInterfaces do [
     {
-      "subnetwork": @my_custom_subnet
+      "accessConfigs": [
+                         {
+                           "name": "external-nat"
+                         }
+                       ],
+     "subnetwork": @my_custom_subnet
     }
   ]end
 end
@@ -459,21 +484,24 @@ define launch(@my_custom_network,@my_custom_subnet,@allow_all_10_128_0_0_20,@all
 
   # gcloud compute instances delete-access-config ig-us-central1-1 \
   #   --access-config-name external-nat --zone us-central1-b
+  @operation = @ig_us_central1_1.deleteAccessConfig({"accessConfig": "external-nat", "networkInterface": "nic0"})
+  call wait_for_operation_done(@operation)
+
   # gcloud compute instances delete-access-config ig-us-central1-2 \
   #   --access-config-name external-nat --zone us-central1-b
+  @operation = @ig_us_central1_2.deleteAccessConfig({"accessConfig": "external-nat", "networkInterface": "nic0"})
+  call wait_for_operation_done(@operation)
+
   # gcloud compute instances delete-access-config ig-us-central1-3 \
   #   --access-config-name external-nat --zone us-central1-c
+  @operation = @ig_us_central1_3.deleteAccessConfig({"accessConfig": "external-nat", "networkInterface": "nic0"})
+  call wait_for_operation_done(@operation)
+
   # gcloud compute instances delete-access-config ig-us-central1-4 \
   #   --access-config-name external-nat --zone us-central1-c
-
-  # @operation = @ig_us_central1_1.deleteAccessConfig({"accessConfig": "external-nat","networkInterface": "???"})
-  # call wait_for_operation_done(@operation)
-  # @operation = @ig_us_central1_2.deleteAccessConfig({"accessConfig": "external-nat","networkInterface": "???"})
-  # call wait_for_operation_done(@operation)
-  # @operation = @ig_us_central1_3.deleteAccessConfig({"accessConfig": "external-nat","networkInterface": "???"})
-  # call wait_for_operation_done(@operation)
-  # @operation = @ig_us_central1_4.deleteAccessConfig({"accessConfig": "external-nat","networkInterface": "???"})
-  # call wait_for_operation_done(@operation)
+  @operation = @ig_us_central1_4.deleteAccessConfig({"accessConfig": "external-nat", "networkInterface": "nic0"})
+  call wait_for_operation_done(@operation)
+  
   call stop_debugging()
 end
 
