@@ -23,7 +23,11 @@ The GCE Plugin consumes the Google Compute v1 API and exposes the supported reso
 This procedure will create a GCE Service account with the appropriate permissions to use this plugin.
 1. Review the [Using OAuth 2.0 for Server to Server Applications](https://developers.google.com/identity/protocols/OAuth2ServiceAccount) documenatation.
 1. Follow the section named _Creating a service account_
-    - Role needs to include Compute Instance Admin (beta). Permissions can be restricted but may effect the permissions required to interact with certain resources with this plugin. Dueing so is unsupported
+    - Roles needs to include:
+      - Compute Instance Admin (beta)
+      - Compute Network Admin
+      - Compute Security Admin
+    - Permissions can be restricted but may effect the permissions required to interact with certain resources with this plugin. Doing so is unsupported
    - Enabling G Suite Domain-wide Delegation is not required
    - Furnish a new private key selecting the JSON option
 1. Download the Private Key and record the Service account ID (These will be stored in a RightScale Credential in a future step)
