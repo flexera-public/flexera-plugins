@@ -3,15 +3,9 @@ type 'plugin'
 rs_ca_ver 20161221
 short_description "Amazon Web Services - Relational Database Service"
 
-parameter "aws_region" do
-  type "string"
-  label "AWS Region"
-  category "AWS Plugin"
-  default "us-east-1"
-
 plugin "aws_rds" do
   endpoint do
-    default_host "rds.$region.amazonaws.com"
+    default_host "rds.us-east-1.amazonaws.com"
     default_scheme "https"
     path "/"
     query do {
@@ -481,7 +475,7 @@ plugin "aws_rds" do
       type      "string"
       location  "query"
     end
-
+ 
     field "description" do
       alias_for "DBSecurityGroupDescription"
       type      "string"
@@ -534,14 +528,10 @@ end
 resource_pool "rds" do
   plugin $aws_rds
 
-  parameter_values do
-    region $aws_region
-  end 
-
   auth "key", type: "aws" do
     version     4
     service    'rds'
-    region     $aws_region
+    region     'us-east-1'
     access_key cred('AWS_ACCESS_KEY_ID')
     secret_key cred('AWS_SECRET_ACCESS_KEY')
   end
@@ -564,10 +554,6 @@ define list_security_groups() return $object do
   $object = to_object(@security_groups)
 
   $object = to_s($object)
-end
-
-define handle_error() do
-  $error_info = complete_debug_report()
 end
 
 define delete_sg(@sec_group) do
@@ -595,13 +581,13 @@ define list_db_instances() return $object do
   $object = to_s($object)
 end
 
-define handle_error() do
-  $error_info = complete_debug_report()
-end
-
 define delete_db_instance(@db_instance) do
   sub on_error: handle_error() do
     initiate_debug_report()
     @db_instance.destroy()
   end
+end
+
+define handle_error() do
+  $error_info = complete_debug_report()
 end
