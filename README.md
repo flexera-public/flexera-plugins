@@ -1,2 +1,4 @@
-# rightscale-plugins
-Library of open source RightScale plugins
+# AWS RDS Plugin
+
+**In development & untested!!**
+
