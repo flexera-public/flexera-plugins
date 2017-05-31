@@ -3,7 +3,7 @@ type 'plugin'
 rs_ca_ver 20161221
 short_description "Amazon Web Services - Relational Database Service"
 
-plugin "aws_rds" do
+plugin "rs_aws_rds" do
   endpoint do
     default_host "rds.us-east-1.amazonaws.com"
     default_scheme "https"
@@ -13,10 +13,10 @@ plugin "aws_rds" do
     } end
   end
 
-  type "db_instances" do
+  type "rds" do
     href_templates "/?Action=DescribeDBInstances&DBInstanceIdentifier={{//DBInstance/DBInstanceIdentifier}}"
 
-    field "allocatedStorage" do
+    field "allocated_storage" do
       alias_for "AllocatedStorage"
       type "number"
       location "query"
@@ -30,7 +30,7 @@ plugin "aws_rds" do
         # SQL Server - Must be an integer from 200 to 4096 (Standard Edition and Enterprise Edition) or from 20 to 4096 (Express Edition and Web Edition)
     end 
 
-    field "autoMinorVersionUpgrade" do
+    field "auto_minor_version_upgrade" do
       alias_for "AutoMinorVersionUpgrade"
       type "string" 
       location "query"
@@ -39,7 +39,7 @@ plugin "aws_rds" do
       # NOTE: This parameter in AWS is actually boolean. The only valid values are "true" or "false".  
     end
 
-    field "availabilityZone" do
+    field "zone" do
       alias_for "AvailabilityZone"
       type "string"
       location "query"
@@ -48,7 +48,7 @@ plugin "aws_rds" do
       # NOTE: The AvailabilityZone parameter cannot be specified if the MultiAZ parameter is set to true. 
     end
 
-    field "backupRetentionPeriod" do
+    field "backup_retention_period" do
       alias_for "BackupRetentionPeriod"
       type "number"
       location "query"
@@ -57,14 +57,14 @@ plugin "aws_rds" do
       # NOTE: Must be a value from 0 to 35.  Cannot be set to 0 if the DB instance is a source to Read Replicas
     end
 
-    field "characterSetName" do
+    field "character_set_name" do
       alias_for "CharacterSetName"
       type "string"
       location "query"
       # DESCRIPTION: For supported engines, indicates that the DB instance should be associated with the specified CharacterSet.
     end 
 
-    field "copyTagsToSnapshot" do
+    field "copy_tags_to_snapshot" do
       alias_for "CopyTagsToSnapshot"
       type "string"
       location "query"
@@ -73,14 +73,14 @@ plugin "aws_rds" do
       # NOTE: This parameter in AWS is actually boolean.  The only valid values are "true" or "false"
     end
 
-    field "dbClusterIdentifier" do
+    field "db_cluster_identifier" do
       alias_for "DBClusterIdentifier"
       type "string"
       location "query"
       # DESCRIPTION: The identifier of the DB cluster that the instance will belong to.
     end
 
-    field "dbInstanceClass" do
+    field "db_instance_type" do
       alias_for "DBInstanceClass"
       type "string"
       location "query"
@@ -89,7 +89,7 @@ plugin "aws_rds" do
       # VALID VALUES: db.t1.micro | db.m1.small | db.m1.medium | db.m1.large | db.m1.xlarge | db.m2.xlarge |db.m2.2xlarge | db.m2.4xlarge | db.m3.medium | db.m3.large | db.m3.xlarge | db.m3.2xlarge | db.m4.large | db.m4.xlarge | db.m4.2xlarge | db.m4.4xlarge | db.m4.10xlarge | db.r3.large | db.r3.xlarge | db.r3.2xlarge | db.r3.4xlarge | db.r3.8xlarge | db.t2.micro | db.t2.small | db.t2.medium | db.t2.large
     end
 
-    field "dbInstanceIdentifier" do
+    field "db_instance_identifier" do
       alias_for "DBInstanceIdentifier"
       type "string"
       location "query"
@@ -98,7 +98,7 @@ plugin "aws_rds" do
       # NOTE: Must contain from 1 to 63 alphanumeric characters or hyphens (1 to 15 for SQL Server). First character must be a letter. Cannot end with a hyphen or contain two consecutive hyphens.
     end
 
-    field "dbName" do
+    field "db_name" do
       alias_for "DBName"
       type "string"
       location "query"
@@ -111,7 +111,7 @@ plugin "aws_rds" do
         # Amazon Aurora - The name of the database to create when the primary instance of the DB cluster is created. If this parameter is not specified, no database is created in the DB instance. Must contain 1 to 64 alphanumeric characters. Cannot be a word reserved by the specified database engine.
     end 
 
-    field "dbParameterGroupName" do
+    field "db_parameter_group_name" do
       alias_for "DBParameterGroupName"
       type "string"
       location "query"
@@ -119,7 +119,7 @@ plugin "aws_rds" do
       # NOTE: Must be 1 to 255 alphanumeric characters. First character must be a letter. Cannot end with a hyphen or contain two consecutive hyphens
     end
 
-    field "dbSecurityGroup" do
+    field "db_security_group" do
       alias_for "DBSecurityGroups.member.1"
       type "string"
       location "query"
@@ -127,7 +127,7 @@ plugin "aws_rds" do
       # DEFAULT VALUE: The default DB security group for the database engine.
     end 
 
-    field "dbSubnetGroupName" do
+    field "db_subnet_group" do
       alias_for "DBSubnetGroupName"
       type "string"
       location "query"
@@ -142,14 +142,14 @@ plugin "aws_rds" do
       # DESCRIPTION: Specify the Active Directory Domain to create the instance in.
     end 
 
-    field "domainIAMRoleName" do 
+    field "domain_IAM_role" do 
       alias_for "DomainIAMRoleName"
       type "string"
       location "query"
       # DESCRIPTION: Specify the name of the IAM role to be used when making API calls to the Directory Service.
     end 
 
-    field "enableIAMDatabaseAuthentication" do 
+    field "enable_IAM_db_auth" do 
       alias_for "EnableIAMDatabaseAuthentication"
       type "string"
       location "query"
@@ -170,7 +170,7 @@ plugin "aws_rds" do
       # NOTE: Not every database engine is available for every AWS region.
     end 
 
-    field "engineVersion" do
+    field "engine_version" do
       alias_for "EngineVersion"
       type "string"
       location "query"
@@ -241,7 +241,7 @@ plugin "aws_rds" do
       # NOTE: Must be a multiple between 3 and 10 of the storage amount for the DB instance. Must also be an integer multiple of 1000. For example, if the size of your DB instance is 500 GB, then your Iops value can be 2000, 3000, 4000, or 5000.
     end 
 
-    field "kmsKeyId" do 
+    field "kms_key_id" do 
       alias_for "KmsKeyId"
       type "string"
       location "query"
@@ -249,7 +249,7 @@ plugin "aws_rds" do
       # NOTE: The KMS key identifier is the Amazon Resource Name (ARN) for the KMS encryption key. If you are creating a DB instance with the same AWS account that owns the KMS encryption key used to encrypt the new DB instance, then you can use the KMS key alias instead of the ARN for the KM encryption key. If the StorageEncrypted parameter is true, and you do not specify a value for the KmsKeyId parameter, then Amazon RDS will use your default encryption key. AWS KMS creates the default encryption key for your AWS account. Your AWS account has a different default encryption key for each AWS region.
     end 
 
-    field "licenseModel" do
+    field "license_model" do
       alias_for "LicenseModel"
       type "string"
       location "query"
@@ -257,7 +257,7 @@ plugin "aws_rds" do
       # VALID VALUES: license-included | bring-your-own-license | general-public-license
     end 
 
-    field "masterUsername" do
+    field "master_username" do
       alias_for "MasterUsername"
       type "string"
       location "query"
@@ -271,7 +271,7 @@ plugin "aws_rds" do
         # PostgreSQL - Must be 1 to 63 alphanumeric characters. First character must be a letter. Cannot be a reserved word for the chosen database engine. 
     end 
 
-    field "masterUserPassword" do
+    field "master_password" do
       alias_for "MasterUserPassword"
       type "string"
       location "query"
@@ -285,16 +285,17 @@ plugin "aws_rds" do
         # PostgreSQL - Must contain from 8 to 128 characters.
     end 
 
-    field "monitoringInterval" do
+    field "monitoring_interval" do
       alias_for "MonitoringInterval"
       type "number"
       location "query"
-      # DESCRIPTION: The interval, in seconds, between points when Enhanced Monitoring metrics are collected for the DB instance. To disable collecting Enhanced Monitoring metrics, specify 0. The default is 0.
+      # DESCRIPTION: The interval, in seconds, between points when Enhanced Monitoring metrics are collected for the DB instance. To disable collecting Enhanced Monitoring metrics, specify 0.
+      # DEFAULT VALUE: 0
       # VALID VALUES: 0, 1, 5, 10, 15, 30, 60
       # NOTE: If MonitoringRoleArn is specified, then you must also set MonitoringInterval to a value other than 0.
     end 
 
-    field "monitoringRoleArn" do
+    field "monitoring_role_arn" do
       alias_for "MonitoringRoleArn"
       type "string"
       location "query"
@@ -302,7 +303,7 @@ plugin "aws_rds" do
       # NOTE: If MonitoringInterval is set to a value other than 0, then you must supply a MonitoringRoleArn value.
     end 
 
-    field "multiAZ" do
+    field "multi_az" do
       alias_for "MultiAZ"
       type "string"
       location "query"
@@ -310,7 +311,7 @@ plugin "aws_rds" do
       # NOTE: This parameter in AWS is actually boolean. The only valid values are "true" or "false". 
     end 
 
-    field "optionGroupName" do
+    field "option_group" do
       alias_for "OptionGroupName"
       type "string"
       location "query"
@@ -344,7 +345,7 @@ plugin "aws_rds" do
           # Valid Values: 1150-65535
     end
 
-    field "preferredBackupWindow" do
+    field "backup_window" do
       alias_for "PreferredBackupWindow"
       type "string"
       location "query"
@@ -353,7 +354,7 @@ plugin "aws_rds" do
       # NOTE: Must be in the format hh24:mi-hh24:mi. Times should be in Universal Coordinated Time (UTC). Must not conflict with the preferred maintenance window. Must be at least 30 minutes.
     end 
 
-    field "preferredMaintenanceWindow" do
+    field "maintenance_window" do
       alias_for "PreferredMaintenanceWindow"
       type "string"
       location "query"
@@ -365,7 +366,7 @@ plugin "aws_rds" do
         # Minimum 30-minute window
     end 
 
-    field "promotionTier" do
+    field "promotion_tier" do
       alias_for "PromotionTier"
       type "number"
       location "query"
@@ -374,7 +375,7 @@ plugin "aws_rds" do
       # VALID VALUES: 0-15
     end 
 
-    field "publiclyAccessible" do
+    field "publicly_accessible" do
       alias_for "PubliclyAccessible"
       type "string"
       location "query"
@@ -383,7 +384,7 @@ plugin "aws_rds" do
       # NOTE: This parameter in AWS is actually boolean. The only valid values are "true" or "false". If no DB subnet group has been specified as part of the request and the PubliclyAccessible value has not been set, the DB instance will be publicly accessible. If a specific DB subnet group has been specified as part of the request and the PubliclyAccessible value has not been set, the DB instance will be private.
     end 
 
-    field "storageEncrypted" do
+    field "storage_encrypted" do
       alias_for "StorageEncrypted"
       type "string"
       location "query"
@@ -392,7 +393,7 @@ plugin "aws_rds" do
       # NOTE: This parameter in AWS is actually boolean. The only valid values are "true" or "false". 
     end 
 
-    field "storageType" do 
+    field "storage_type" do 
       alias_for "StorageType"
       type "string"
       location "query"
@@ -401,14 +402,14 @@ plugin "aws_rds" do
       # VALID VALUES: standard | gp2 | io1
     end 
 
-    field "tdeCredentialArn" do
+    field "tde_credential_arn" do
       alias_for "TdeCredentialArn"
       type "string"
       location "query"
       # DESCRIPTION: The ARN from the Key Store with which to associate the instance for TDE encryption.
     end 
 
-    field "tdeCredentialPassword" do
+    field "tde_credential_password" do
       alias_for "TdeCredentialPassword"
       type "string"
       location "query"
@@ -422,7 +423,7 @@ plugin "aws_rds" do
       # DESCRIPTION: The time zone of the DB instance. The time zone parameter is currently supported only by Microsoft SQL Server.
     end 
 
-    field "vpcSecurityGroup" do
+    field "vpc_security_group" do
       alias_for "VpcSecurityGroupIds.member.1"
       type "string"
       location "query"
@@ -526,7 +527,7 @@ plugin "aws_rds" do
 end
 
 resource_pool "rds" do
-  plugin $aws_rds
+  plugin $rs_aws_rds
 
   auth "key", type: "aws" do
     version     4
@@ -538,29 +539,30 @@ resource_pool "rds" do
 
 end
 
-define provision_sg(@declaration) return @sec_group do
-  sub on_error: handle_error() do
-    initiate_debug_report()
-    $object = to_object(@declaration)
-    $fields = $object["fields"]
-    @sec_group = aws_rds.security_groups.create($fields)
-    @sec_group = @sec_group.get()
-  end
+output "list_db_instances" do
+  label "list_action"
 end
 
-define list_security_groups() return $object do
-  @security_groups = aws_rds.security_groups.list()
-
-  $object = to_object(@security_groups)
-
-  $object = to_s($object)
+resource "my_rds", type: "rs_aws_rds.rds" do
+  allocated_storage "10"
+  zone "us-east-1a"
+  db_instance_type "db.t2.small"
+  db_instance_identifier join(["my-rds-", last(split(@@deployment.href, "/"))])
+  db_name join(["mydb", last(split(@@deployment.href, "/"))])
+  db_subnet_group "db-sub-grp-8172a6f8"
+  engine "mysql"
+  engine_version "5.7.11" 
+  master_username "my_user"
+  master_password "pa$$w0rd1"
+  storage_encrypted "false"
+  storage_type "standard"
 end
 
-define delete_sg(@sec_group) do
-  sub on_error: handle_error() do
-    initiate_debug_report()
-    @sec_group.destroy()
-  end
+operation "list_db_instances" do
+  definition "list_db_instances"
+  output_mappings do {
+    $list_db_instances => $object
+  } end
 end
 
 define provision_db_instance(@declaration) return @db_instance do
@@ -568,15 +570,15 @@ define provision_db_instance(@declaration) return @db_instance do
     initiate_debug_report()
     $object = to_object(@declaration)
     $fields = $object["fields"]
-    @db_instance = aws_rds.db_instances.create($fields)
+    @db_instance = rs_aws_rds.rds.create($fields)
     @db_instance = @db_instance.get()
   end
 end
 
 define list_db_instances() return $object do
-  @db_instances = aws_rds.db_instances.list()
+  @rds = rs_aws_rds.rds.list()
 
-  $object = to_object(@db_instances)
+  $object = to_object(first(@rds))
 
   $object = to_s($object)
 end
@@ -590,4 +592,30 @@ end
 
 define handle_error() do
   $error_info = complete_debug_report()
+end
+
+
+define provision_sg(@declaration) return @sec_group do
+  sub on_error: handle_error() do
+    initiate_debug_report()
+    $object = to_object(@declaration)
+    $fields = $object["fields"]
+    @sec_group = rs_aws_rds.security_groups.create($fields)
+    @sec_group = @sec_group.get()
+  end
+end
+
+define list_security_groups() return $object do
+  @security_groups = rs_aws_rds.security_groups.list()
+
+  $object = to_object(@security_groups)
+
+  $object = to_s($object)
+end
+
+define delete_sg(@sec_group) do
+  sub on_error: handle_error() do
+    initiate_debug_report()
+    @sec_group.destroy()
+  end
 end
