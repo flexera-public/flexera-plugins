@@ -1,4 +1,4 @@
-name 'AWS RDS Plugin Example'
+name 'aws_rds_plugin'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Amazon Web Services - Relational Database Service"
@@ -437,11 +437,11 @@ plugin "rs_aws_rds" do
     output "BackupRetentionPeriod","MultiAZ","DBInstanceStatus","DBInstanceIdentifier","PreferredBackupWindow","PreferredMaintenanceWindow","AvailabilityZone","LatestRestorableTime","Engine","LicenseModel","PubliclyAccessible","DBName","AutoMinorVersionUpgrade","InstanceCreateTime","AllocatedStorage","MasterUsername","DBInstanceClass"
 
     output "endpoint_address" do
-      body_path "Endpoint.Address"
+      body_path "Endpoint/Address"
     end
 
     output "endpoint_port" do 
-      body_path "Endpoint.Port"
+      body_path "Endpoint/Port"
     end
     
     action "create" do
@@ -452,10 +452,27 @@ plugin "rs_aws_rds" do
     action "destroy" do
       verb "POST"
       path "$href?Action=DeleteDBInstance"
+
+      field "skip_final_snapshot" do
+        alias_for "SkipFinalSnapshot"
+        location "query"
+        # DESCRIPTION: Determines whether a final DB snapshot is created before the DB instance is deleted. If true is specified, no DBSnapshot is created. If false is specified, a DB snapshot is created before the DB instance is deleted.
+        # DEFAULT VALUE: false
+        # NOTE: This parameter in AWS is actually boolean. The only valid values are "true" or "false".
+      end 
+
+      field "final_db_snapshot_identifier" do
+        alias_for "FinalDBSnapshotIdentifier"
+        location "query"
+        # DESCRIPTION: The DBSnapshotIdentifier of the new DBSnapshot created when SkipFinalSnapshot is set to false.
+        # NOTE: Specifying this parameter and also setting the SkipFinalShapshot parameter to true results in an error. Must be 1 to 255 alphanumeric characters. First character must be a letter. Cannot end with a hyphen or contain two consecutive hyphens. Cannot be specified when deleting a Read Replica.
+      end 
+
     end
  
     action "get" do
       verb "POST"
+      path "/?Action=DescribeDBInstances"
     end
  
     action "list" do
@@ -512,6 +529,7 @@ plugin "rs_aws_rds" do
  
     action "get" do
       verb "POST"
+      path "/?Action=DescribeDBSecurityGroups"
     end
  
     action "list" do
@@ -543,6 +561,16 @@ output "list_db_instances" do
   label "list_action"
 end
 
+output "db_endpoint" do
+  label "db_endpoint"
+  default_value @my_rds.endpoint_address
+end
+
+output "db_instance_name" do
+  label "db_instance_name"
+  default_value @my_rds.DBInstanceIdentifier
+end
+
 resource "my_rds", type: "rs_aws_rds.rds" do
   allocated_storage "10"
   zone "us-east-1a"
@@ -567,10 +595,12 @@ end
 
 define provision_db_instance(@declaration) return @db_instance do
   sub on_error: handle_error() do
-    initiate_debug_report()
     $object = to_object(@declaration)
     $fields = $object["fields"]
     @db_instance = rs_aws_rds.rds.create($fields)
+    sub on_error: skip do
+      sleep_until(@db_instance.DBInstanceStatus == "available")
+    end 
     @db_instance = @db_instance.get()
   end
 end
@@ -584,9 +614,14 @@ define list_db_instances() return $object do
 end
 
 define delete_db_instance(@db_instance) do
-  sub on_error: handle_error() do
-    initiate_debug_report()
-    @db_instance.destroy()
+  sub on_error: force_delete_db_instance(@db_instance) do
+    @db_instance.destroy({ "skip_final_snapshot": "true" })
+  end
+end
+
+define delete_db_instance_with_snap(@db_instance) do
+  sub on_error: force_delete_db_instance(@db_instance) do
+    @db_instance.destroy({ "final_db_snapshot_identifier": join([@db_instance.DBInstanceIdentifier, "-final-snapshot"])})
   end
 end
 
