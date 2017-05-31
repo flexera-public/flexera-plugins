@@ -2,7 +2,7 @@ name 'aws_elb_plugin'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Amazon Web Services - Elastic Load Balancer"
-
+package "plugin/rs_aws_elb"
 import "sys_log"
 
 plugin "rs_aws_elb" do
