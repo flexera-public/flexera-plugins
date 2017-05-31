@@ -56,14 +56,19 @@ end
 - The AWS ELB Plugin makes no attempt to support non-AWS resources. (i.e. Allow the passing the RightScale or other resources as arguments to an ELB resource.) 
  - The most common example might be to pass a RightScale instance to attach it to the ELB or similar. Support for this functionality will need to be implemented in the application CAT.
 
-## Supported Action
-**Full List Coming Soon**
+## Supported Actions
 
-| Action | Support Level |
+| Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
+| create | CreateLoadBalancer | Supported |
+| destroy | DeleteLoadBalancer | Supported |
+| list | DescribeLoadBalancers | Supported |
+| register_instance | RegisterInstancesWithLoadBalancer | Untested |
+| deregister_instance | DeregisterInstancesWithLoadBalancer | Untested |
 
+Full list of possible actions can be found on the [AWS ELB API Documentation](http://docs.aws.amazon.com/elasticloadbalancing/2012-06-01/APIReference/API_Operations.html)
 ## Examples
-**Coming Soon**
+Please review [elb_plugin.rb](./elb_plugin.rb) for a basic example implementation.
 	
 ## Known Issues / Limitations
 - Currently only supports CRUD and instance register/deregister functions.
@@ -73,4 +78,4 @@ Support for this plugin will be provided though GitHub Issues and the RightScale
 Visit http://chat.rightscale.com/ to join!
 
 ## License
-The GCE Plugin source code is subject to the MIT license, see the [LICENSE](../LICENSE) file.
+The AWS ELB Plugin source code is subject to the MIT license, see the [LICENSE](../LICENSE) file.
