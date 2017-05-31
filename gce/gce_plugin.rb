@@ -9,7 +9,7 @@ parameter "gce_project" do
   type "string"
   label "GCE Project"
   category "GCE Plugin"
-  allowed_pattern "^[0-9a-z:\.]+$"
+  allowed_pattern "^[0-9a-z:\.-]+$"
 end
 
 plugin "gce" do
