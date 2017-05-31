@@ -2,7 +2,7 @@ name 'aws_elb_plugin'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Amazon Web Services - Elastic Load Balancer"
-
+package "plugin/rs_aws_elb"
 import "sys_log"
 
 plugin "rs_aws_elb" do
@@ -28,8 +28,20 @@ plugin "rs_aws_elb" do
       required true
     end
 
-    field "az" do
+    field "az1" do
       alias_for "AvailabilityZones.member.1"
+      type      "string"
+      location  "query"
+    end
+
+    field "az2" do
+      alias_for "AvailabilityZones.member.2"
+      type      "string"
+      location  "query"
+    end
+
+    field "az3" do
+      alias_for "AvailabilityZones.member.3"
       type      "string"
       location  "query"
     end
@@ -58,18 +70,42 @@ plugin "rs_aws_elb" do
       location  "query"
     end
 
-    field "security_groups" do
+    field "security_group1" do
       alias_for "SecurityGroups.member.1"
       type "string"
       location "query"
     end
 
-    field "subnets" do
+    field "security_group2" do
+      alias_for "SecurityGroups.member.2"
+      type "string"
+      location "query"
+    end
+
+    field "security_group3" do
+      alias_for "SecurityGroups.member.3"
+      type "string"
+      location "query"
+    end
+
+    field "subnet1" do
       alias_for "Subnets.member.1"
       type "string"
       location "query"
     end
-    
+
+    field "subnet2" do
+      alias_for "Subnets.member.2"
+      type "string"
+      location "query"
+    end
+
+    field "subnet3" do
+      alias_for "Subnets.member.3"
+      type "string"
+      location "query"
+    end
+
     output 'LoadBalancerName' do
       body_path '//LoadBalancerDescriptions/member/LoadBalancerName'
       type "simple_element"
@@ -150,8 +186,10 @@ resource "my_elb", type: "rs_aws_elb.elb" do
   list_instport "80"
   list_proto "http"
   list_instproto "http"
-  subnets "subnet-7c295240"
-  security_groups "sg-a9b9e8d6"
+  #subnet1 "subnet-7c295240"
+  #security_group1 "sg-a9b9e8d6"
+  az1 "us-east-1a"
+  az2 "us-east-1d"
   description "a simple elb"
 end
 
@@ -167,30 +205,30 @@ define provision_elb(@declaration) return @elb do
     $object = to_object(@declaration)
     $fields = $object["fields"]
     $name = $fields['name']
-#    call sys_log.set_task_target(@@deployment)
-#    call sys_log.summary("ELB Object")
-#    call sys_log.detail($fields)
+    # call sys_log.set_task_target(@@deployment)
+    # call sys_log.summary("ELB Object")
+    # call sys_log.detail($fields)
     
-#    call sys_log.set_task_target(@@deployment)
-#    call sys_log.summary("Create ELB")
-#    call start_debugging()
+    # call sys_log.set_task_target(@@deployment)
+    # call sys_log.summary("Create ELB")
+    # call start_debugging()
     @elb = rs_aws_elb.elb.create($fields)
-#    call stop_debugging()
+   #  call stop_debugging()
 
-#    call sys_log.set_task_target(@@deployment)
-#    call sys_log.summary("ELB Object")
+   # call sys_log.set_task_target(@@deployment)
+   # call sys_log.summary("ELB Object")
     $elb = to_object(@elb)
-#    call sys_log.detail(join(["Original: ",to_object(@elb)]))
+   # call sys_log.detail(join(["Original: ",to_object(@elb)]))
     $elb["hrefs"][0] = join(["?Action=DescribeLoadBalancers&LoadBalancerNames.member.1=",$name])
     @elb = $elb
-#    call sys_log.detail(join(["Modified: ",to_object(@elb)]))
+   # call sys_log.detail(join(["Modified: ",to_object(@elb)]))
     
-#    call sys_log.set_task_target(@@deployment)
-#    call sys_log.summary("Get ELB")
-#    call start_debugging()
+   # call sys_log.set_task_target(@@deployment)
+   # call sys_log.summary("Get ELB")
+   # call start_debugging()
     @elb = @elb.get()
-#    call stop_debugging()
-#    call sys_log.detail(join(["After Get: ",to_object(@elb)]))
+   # call stop_debugging()
+   # call sys_log.detail(join(["After Get: ",to_object(@elb)]))
   end
 end
 
