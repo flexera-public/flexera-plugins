@@ -2,10 +2,10 @@ name 'aws_rds_plugin'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Amazon Web Services - Relational Database Service"
+package "plugins/rds"
 
 plugin "rs_aws_rds" do
   endpoint do
-    default_host "rds.us-east-1.amazonaws.com"
     default_scheme "https"
     path "/"
     query do {
@@ -13,7 +13,7 @@ plugin "rs_aws_rds" do
     } end
   end
 
-  type "rds" do
+  type "db_instance" do
     href_templates "/?Action=DescribeDBInstances&DBInstanceIdentifier={{//DBInstance/DBInstanceIdentifier}}"
 
     field "allocated_storage" do
@@ -84,9 +84,10 @@ plugin "rs_aws_rds" do
       alias_for "DBInstanceClass"
       type "string"
       location "query"
-      required true
+      # required true 
       # DESCRIPTION: The compute and memory capacity of the DB instance. Note that not all instance classes are available in all regions for all DB engines.
       # VALID VALUES: db.t1.micro | db.m1.small | db.m1.medium | db.m1.large | db.m1.xlarge | db.m2.xlarge |db.m2.2xlarge | db.m2.4xlarge | db.m3.medium | db.m3.large | db.m3.xlarge | db.m3.2xlarge | db.m4.large | db.m4.xlarge | db.m4.2xlarge | db.m4.4xlarge | db.m4.10xlarge | db.r3.large | db.r3.xlarge | db.r3.2xlarge | db.r3.4xlarge | db.r3.8xlarge | db.t2.micro | db.t2.small | db.t2.medium | db.t2.large
+      # NOTE: Required for new DB Instances.  Not required for restoring from snapshot
     end
 
     field "db_instance_identifier" do
@@ -164,10 +165,10 @@ plugin "rs_aws_rds" do
       alias_for "Engine"
       type "string"
       location "query"
-      required true
+      # required true
       # DESCRIPTION: The name of the database engine to be used for this instance.
       # VALID VALUES: mysql | mariadb | oracle-se1 | oracle-se2 | oracle-se | oracle-ee | sqlserver-ee | sqlserver-se | sqlserver-ex | sqlserver-web | postgres | aurora
-      # NOTE: Not every database engine is available for every AWS region.
+      # NOTE: Not every database engine is available for every AWS region.  Required for new DB Instances.  Not required for restoring from snapshot.
     end 
 
     field "engine_version" do
@@ -431,6 +432,13 @@ plugin "rs_aws_rds" do
       # DEFAULT: The default EC2 VPC security group for the DB subnet group's VPC.
     end 
 
+    field "db_snapshot_identifier" do
+      alias_for "DBSnapshotIdentifier"
+      type "string"
+      location "query"
+      required true
+    end 
+
 
     output_path "//DBInstance"
 
@@ -447,6 +455,118 @@ plugin "rs_aws_rds" do
     action "create" do
       verb "POST"
       path "/?Action=CreateDBInstance"
+    end
+
+    action "create_from_snapshot" do
+      verb "POST"
+      path "/?Action=RestoreDBInstanceFromDBSnapshot"
+
+      field "db_snapshot_identifier" do
+        alias_for "DBSnapshotIdentifier"
+        location "query"
+      end 
+
+      field "auto_minor_version_upgrade" do
+        alias_for "AutoMinorVersionUpgrade"
+        location "query"
+      end
+
+      field "zone" do
+        alias_for "AvailabilityZone"
+        location "query"
+      end
+
+      field "copy_tags_to_snapshot" do
+        alias_for "CopyTagsToSnapshot"
+        location "query"
+      end
+
+      field "db_instance_type" do
+        alias_for "DBInstanceClass"
+        location "query"
+      end
+
+      field "db_instance_identifier" do
+        alias_for "DBInstanceIdentifier"
+        location "query"
+      end
+
+      field "db_name" do
+        alias_for "DBName"
+        location "query"
+      end 
+
+      field "db_subnet_group" do
+        alias_for "DBSubnetGroupName"
+        location "query"
+      end 
+
+      field "domain" do
+        alias_for "Domain"
+        location "query"
+      end 
+
+      field "domain_IAM_role" do 
+        alias_for "DomainIAMRoleName"
+        location "query"
+      end 
+
+      field "enable_IAM_db_auth" do 
+        alias_for "EnableIAMDatabaseAuthentication"
+        location "query"
+      end 
+
+      field "engine" do
+        alias_for "Engine"
+        location "query"
+      end 
+
+      field "iops" do
+        alias_for "Iops"
+        location "query"
+      end 
+
+      field "license_model" do
+        alias_for "LicenseModel"
+        location "query"
+      end 
+
+      field "multi_az" do
+        alias_for "MultiAZ"
+        location "query"
+      end 
+
+      field "option_group" do
+        alias_for "OptionGroupName"
+        location "query"
+      end 
+
+      field "port" do
+        alias_for "Port"
+        location "query"
+      end
+
+      field "publicly_accessible" do
+        alias_for "PubliclyAccessible"
+        location "query"
+      end 
+
+      field "storage_type" do 
+        alias_for "StorageType"
+        location "query"
+      end 
+
+      field "tde_credential_arn" do
+        alias_for "TdeCredentialArn"
+        location "query"
+      end 
+
+      field "tde_credential_password" do
+        alias_for "TdeCredentialPassword"
+        location "query"
+      end 
+
+
     end
 
     action "destroy" do
@@ -484,6 +604,7 @@ plugin "rs_aws_rds" do
     
     delete    'delete_db_instance'
   end 
+
  
   type "security_groups" do
     href_templates "/?Action=DescribeDBSecurityGroups&DBSecurityGroupName={{//DBSecurityGroup/DBSecurityGroupName}}"
@@ -542,11 +663,12 @@ plugin "rs_aws_rds" do
     delete    "delete_sg"
 
   end
+
 end
 
 resource_pool "rds" do
   plugin $rs_aws_rds
-
+  host "rds.us-east-1.amazonaws.com"
   auth "key", type: "aws" do
     version     4
     service    'rds'
@@ -554,36 +676,10 @@ resource_pool "rds" do
     access_key cred('AWS_ACCESS_KEY_ID')
     secret_key cred('AWS_SECRET_ACCESS_KEY')
   end
-
 end
 
 output "list_db_instances" do
   label "list_action"
-end
-
-output "db_endpoint" do
-  label "db_endpoint"
-  default_value @my_rds.endpoint_address
-end
-
-output "db_instance_name" do
-  label "db_instance_name"
-  default_value @my_rds.DBInstanceIdentifier
-end
-
-resource "my_rds", type: "rs_aws_rds.rds" do
-  allocated_storage "10"
-  zone "us-east-1a"
-  db_instance_type "db.t2.small"
-  db_instance_identifier join(["my-rds-", last(split(@@deployment.href, "/"))])
-  db_name join(["mydb", last(split(@@deployment.href, "/"))])
-  db_subnet_group "db-sub-grp-8172a6f8"
-  engine "mysql"
-  engine_version "5.7.11" 
-  master_username "my_user"
-  master_password "pa$$w0rd1"
-  storage_encrypted "false"
-  storage_type "standard"
 end
 
 operation "list_db_instances" do
@@ -594,10 +690,14 @@ operation "list_db_instances" do
 end
 
 define provision_db_instance(@declaration) return @db_instance do
-  sub on_error: handle_error() do
+  sub on_error: stop_debugging() do
     $object = to_object(@declaration)
     $fields = $object["fields"]
-    @db_instance = rs_aws_rds.rds.create($fields)
+    if $fields["db_snapshot_identifier"] != null 
+      @db_instance = rs_aws_rds.db_instance.create_from_snapshot($fields)
+    else
+      @db_instance = rs_aws_rds.db_instance.create($fields)
+    end
     sub on_error: skip do
       sleep_until(@db_instance.DBInstanceStatus == "available")
     end 
@@ -606,7 +706,7 @@ define provision_db_instance(@declaration) return @db_instance do
 end
 
 define list_db_instances() return $object do
-  @rds = rs_aws_rds.rds.list()
+  @rds = rs_aws_rds.db_instance.list()
 
   $object = to_object(first(@rds))
 
@@ -616,7 +716,8 @@ end
 define delete_db_instance(@db_instance) do
   @db_instance.destroy({ "skip_final_snapshot": "true" })
   sub on_error: skip do
-    sleep_until(empty?(@db_instance.get()))
+    $rds = @db_instance.get()
+    sleep_until(empty?(@rds))
   end 
 end
 
@@ -627,13 +728,8 @@ define delete_db_instance_with_snap(@db_instance) do
   end
 end
 
-define handle_error() do
-  $error_info = complete_debug_report()
-end
-
-
 define provision_sg(@declaration) return @sec_group do
-  sub on_error: handle_error() do
+  sub on_error: stop_debugging() do
     initiate_debug_report()
     $object = to_object(@declaration)
     $fields = $object["fields"]
@@ -654,5 +750,20 @@ define delete_sg(@sec_group) do
   sub on_error: handle_error() do
     initiate_debug_report()
     @sec_group.destroy()
+  end
+end
+
+define start_debugging() do
+  if $$debugging == false || logic_and($$debugging != false, $$debugging != true)
+    initiate_debug_report()
+    $$debugging = true
+  end
+end
+
+define stop_debugging() do
+  if $$debugging == true
+    $debug_report = complete_debug_report()
+    call sys_log.detail($debug_report)
+    $$debugging = false
   end
 end
