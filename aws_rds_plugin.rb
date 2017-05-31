@@ -614,13 +614,15 @@ define list_db_instances() return $object do
 end
 
 define delete_db_instance(@db_instance) do
-  sub on_error: force_delete_db_instance(@db_instance) do
-    @db_instance.destroy({ "skip_final_snapshot": "true" })
-  end
+  @db_instance.destroy({ "skip_final_snapshot": "true" })
+  sub on_error: skip do
+    sleep_until(empty?(@db_instance.get()))
+  end 
 end
 
+#this definition is not currently in use:
 define delete_db_instance_with_snap(@db_instance) do
-  sub on_error: force_delete_db_instance(@db_instance) do
+  sub on_error: delete_db_instance(@db_instance) do
     @db_instance.destroy({ "final_db_snapshot_identifier": join([@db_instance.DBInstanceIdentifier, "-final-snapshot"])})
   end
 end
