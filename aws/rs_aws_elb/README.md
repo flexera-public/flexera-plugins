@@ -32,7 +32,7 @@ The AWS ELB Plugin integrates RightScale Self-Service with the basic functionali
 ## How to Use
 The GCE Plugin has been packaged as `plugin/rs_aws_elb`. In order to use this plugin you must import this plugin into a CAT.
 ```
-import "plugins/rs_aws_elb"
+import "plugin/rs_aws_elb"
 ```
 For more information on using packages, please refer to the RightScale online documenataion. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
