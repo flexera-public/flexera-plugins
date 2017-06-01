@@ -714,10 +714,6 @@ end
 
 define delete_db_instance(@db_instance) do
   @db_instance.destroy({ "skip_final_snapshot": "true" })
-  sub on_error: skip do
-    @rds = @db_instance.get()
-    sleep_until(empty?(@rds))
-  end 
 end
 
 #this definition is not currently in use:

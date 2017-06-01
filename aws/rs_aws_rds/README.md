@@ -54,6 +54,16 @@ resource "my_rds", type: "rs_aws_rds.db_instance" do
   storage_type "standard"
 end
 
+#Creates a new RDS DB Instance from a DB Snapshot
+resource "my_rds", type: "rs_aws_rds.db_instance" do
+  zone "us-east-1a"
+  db_instance_type "db.t2.small"
+  db_instance_identifier "my_rds_instance"
+  db_subnet_group "<rds-subnet-group-name>"
+  db_snapshot_identifier "<snapshot-identifier OR snapshot-arn>"
+  storage_type "standard"
+end
+
 ```
 
 ## Implementation Notes
