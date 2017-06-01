@@ -713,7 +713,9 @@ define list_db_instances() return $object do
 end
 
 define delete_db_instance(@db_instance) do
-  @db_instance.destroy({ "skip_final_snapshot": "true" })
+  if @db_instance.DBInstanceStatus != "deleting"
+    @db_instance.destroy({ "skip_final_snapshot": "true" })
+  end 
 end
 
 #this definition is not currently in use:
