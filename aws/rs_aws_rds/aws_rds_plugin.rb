@@ -2,7 +2,7 @@ name 'aws_rds_plugin'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Amazon Web Services - Relational Database Service"
-package "plugins/rds"
+package "plugins/rs_aws_rds"
 
 plugin "rs_aws_rds" do
   endpoint do
@@ -436,7 +436,6 @@ plugin "rs_aws_rds" do
       alias_for "DBSnapshotIdentifier"
       type "string"
       location "query"
-      required true
     end 
 
 
@@ -730,7 +729,6 @@ end
 
 define provision_sg(@declaration) return @sec_group do
   sub on_error: stop_debugging() do
-    initiate_debug_report()
     $object = to_object(@declaration)
     $fields = $object["fields"]
     @sec_group = rs_aws_rds.security_groups.create($fields)
@@ -747,8 +745,7 @@ define list_security_groups() return $object do
 end
 
 define delete_sg(@sec_group) do
-  sub on_error: handle_error() do
-    initiate_debug_report()
+  sub on_error: stop_debugging() do
     @sec_group.destroy()
   end
 end
