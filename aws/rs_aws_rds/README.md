@@ -114,14 +114,14 @@ The resulting resrouce can be manipulated just like the native RightScale resour
 ```
 #Creates a new RDS DB Instance
 resource "my_rds", type: "rs_aws_rds.db_instance" do
-  allocated_storage "10" # number in GB
-  zone "us-east-1a"  # availability zone (must match the region specified in the plugin)
-  db_instance_type "db.t2.small" # full list of supported DB Instance Classes listed in plugin
-  db_instance_identifier "my_rds_instance" # identifier/name of DB Instance
-  db_name "my_database" # database name
-  db_subnet_group "<rds-subnet-group-name>"
-  engine "mysql" # full list of supported engines listed in plugin
-  engine_version "5.7.11" # full list of supported engine versions listed in plugin
+  allocated_storage "10" 
+  zone "us-east-1a"  
+  db_instance_type "db.t2.small" 
+  db_instance_identifier "my_rds_instance" 
+  db_name "my_database" 
+  db_subnet_group "rds-subnet-grp-12345"
+  engine "mysql" 
+  engine_version "5.7.11" 
   master_username "my_user"
   master_password "pa$$w0rd1"
   storage_encrypted "false"
@@ -129,11 +129,11 @@ resource "my_rds", type: "rs_aws_rds.db_instance" do
 end
 
 #Creates a new RDS DB Instance from a DB Snapshot
-resource "my_rds", type: "rs_aws_rds.db_instance" do
+resource "my_restored_rds", type: "rs_aws_rds.db_instance" do
   zone "us-east-1a"
   db_instance_type "db.t2.small"
   db_instance_identifier "my_rds_instance"
-  db_subnet_group "<rds-subnet-group-name>"
+  db_subnet_group "rds-subnet-grp-12345"
   db_snapshot_identifier "<snapshot-identifier OR snapshot-arn>"
   storage_type "standard"
 end
@@ -142,7 +142,8 @@ end
 There are 2 options when destroying a `db_instance` resource:
 - Take a final snapshot and then delete the resource
 - Skip taking a final snapshot and then delete the resource
-The default behavior is to delete the RDS DB Instance while skipping a final snapshot. Therefore this is the behavior of the the built-in `auto-terminate` operation.  To change that behavior, you can terminate the resource in a custom `terminate` operation in your CAT, using the `final_db_snapshot_identifier` field.  For example:
+
+The default is to delete the RDS DB Instance while skipping a final snapshot. Therefore this is the behavior of the the built-in `auto-terminate` operation.  To change that behavior, you can terminate the resource in a custom `terminate` operation in your CAT, using the `final_db_snapshot_identifier` field.  For example:
 
 ```
 operation 'terminate' do
@@ -156,17 +157,14 @@ define terminate(@my_rds) do
 end
 ``` 
 
-## Implementation Notes
+#### Supported Actions
 
-
-## Supported Actions
-
-| Resource | Action | API Implementation | Support Level |
-|----------|--------------|:----:|:-------------:|
-| RDS DB Instance | create | [CreateDBInstance](http://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_CreateDBInstance.html) | Supported |
-| RDS DB Instance | destroy | [DeleteDBInstance](http://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_DeleteDBInstance.html) | Supported |
-| RDS DB Instance | list & get | [DescribeDBInstances](http://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_DescribeDBInstances.html) | Supported |
-| RDS DB Instance | create_from_snapshot | [RestoreDBInstanceFromDBSnapshot](http://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_RestoreDBInstanceFromDBSnapshot.html) | Supported |
+| Action | API Implementation | Support Level |
+|--------------|:----:|:-------------:|
+| create | [CreateDBInstance](http://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_CreateDBInstance.html) | Supported |
+| destroy | [DeleteDBInstance](http://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_DeleteDBInstance.html) | Supported |
+| list & get | [DescribeDBInstances](http://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_DescribeDBInstances.html) | Supported |
+| create_from_snapshot | [RestoreDBInstanceFromDBSnapshot](http://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_RestoreDBInstanceFromDBSnapshot.html) | Supported |
 
 Full list of possible actions can be found on the [AWS RDS API Documentation](http://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_Operations.html)
 ## Examples
@@ -189,6 +187,10 @@ resource_pool "rds" do
 end
 ```
 
+### TODO
+- Add high-valued remaining RDS resource types (ie DB Instance Cluster, Snapshots, etc)
+- Add high-valued remaining RDS actions (ie `RebootDBInstance`, `CreateDBSnapshot`, etc)
+
 ## Getting Help
 Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.
 Visit http://chat.rightscale.com/ to join!
@@ -196,8 +198,6 @@ Visit http://chat.rightscale.com/ to join!
 ## License
 The AWS RDS Plugin source code is subject to the MIT license, see the [LICENSE](../LICENSE) file.
 
-### TODO
-- Add high-valued remaining RDS resource types (ie DB Instance Cluster, Snapshots, etc)
-- Add high-valued remaining RDS actions (ie `RebootDBInstance`, `CreateDBSnapshot`, etc)
+
 
 
