@@ -755,6 +755,39 @@ plugin "rs_aws_rds" do
       path "/?Action=DescribeDBInstances"
     end
 
+    action "stop" do
+      verb "POST"
+      path "$href?Action=StopDBInstance"
+
+      field "db_snapshot_identifier" do
+        alias_for "DBSnapshotIdentifier"
+        type "string"
+        location "query"
+      end 
+    end 
+
+    action "start" do
+      verb "POST"
+      path "$href?Action=StartDBInstance"
+    end 
+
+    action "reboot" do 
+      verb "POST"
+      path "$href?Action=RebootDBInstance"
+    end 
+
+#    action "update" do
+#      verb "POST"
+#      path "$href?Action=ModifyDBInstance"
+#
+#      field "" do
+#      
+#      end
+#    end
+
+
+
+
     provision 'provision_db_instance'
     
     delete    'delete_db_instance'
@@ -870,9 +903,9 @@ end
 
 define delete_db_instance(@db_instance) do
   if @db_instance.DBInstanceStatus != "deleting"
-    @rds = @db_instance.destroy({ "skip_final_snapshot": "true" })
+    @db_instance.destroy({ "skip_final_snapshot": "true" })
     sub on_error: skip, timeout: 10m, on_timeout: skip do
-      sleep_until(empty?(to_object(@rds)['hrefs']))
+      sleep_until(empty?(to_object(@rds.get())['hrefs']))
     end 
   end 
 end
