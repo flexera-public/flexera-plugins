@@ -438,6 +438,90 @@ plugin "rs_aws_rds" do
       location "query"
     end 
 
+    field "tag_value_1" do
+      alias "Tags.member.1.Value"
+      type "string"
+      location "query"
+      # DESCRIPTION: AWS Tag Value
+    end 
+
+    field "tag_key_1" do
+      alias "Tags.member.1.Key"
+      type "string"
+      location "query"
+      # DESCRIPTION: AWS Tag Key
+    end 
+
+    field "tag_value_2" do
+      alias "Tags.member.2.Value"
+      type "string"
+      location "query"
+      # DESCRIPTION: AWS Tag Value
+    end 
+
+    field "tag_key_2" do
+      alias "Tags.member.2.Key"
+      type "string"
+      location "query"
+      # DESCRIPTION: AWS Tag Key
+    end 
+
+    field "tag_value_3" do
+      alias "Tags.member.3.Value"
+      type "string"
+      location "query"
+      # DESCRIPTION: AWS Tag Value
+    end 
+
+    field "tag_key_3" do
+      alias "Tags.member.3.Key"
+      type "string"
+      location "query"
+      # DESCRIPTION: AWS Tag Key
+    end 
+
+    field "tag_value_4" do
+      alias "Tags.member.4.Value"
+      type "string"
+      location "query"
+      # DESCRIPTION: AWS Tag Value
+    end 
+
+    field "tag_key_4" do
+      alias "Tags.member.4.Key"
+      type "string"
+      location "query"
+      # DESCRIPTION: AWS Tag Key
+    end 
+
+    field "tag_value_5" do
+      alias "Tags.member.5.Value"
+      type "string"
+      location "query"
+      # DESCRIPTION: AWS Tag Value
+    end 
+
+    field "tag_key_5" do
+      alias "Tags.member.5.Key"
+      type "string"
+      location "query"
+      # DESCRIPTION: AWS Tag Key
+    end 
+
+    field "tag_value_6" do
+      alias "Tags.member.6.Value"
+      type "string"
+      location "query"
+      # DESCRIPTION: AWS Tag Value
+    end 
+
+    field "tag_key_6" do
+      alias "Tags.member.6.Key"
+      type "string"
+      location "query"
+      # DESCRIPTION: AWS Tag Key
+    end 
+
 
     output_path "//DBInstance"
 
@@ -562,6 +646,78 @@ plugin "rs_aws_rds" do
 
       field "tde_credential_password" do
         alias_for "TdeCredentialPassword"
+        location "query"
+      end 
+
+      field "tag_value_1" do
+        alias "Tags.member.1.Value"
+        type "string"
+        location "query"
+      end 
+
+      field "tag_key_1" do
+        alias "Tags.member.1.Key"
+        type "string"
+        location "query"
+      end 
+
+      field "tag_value_2" do
+        alias "Tags.member.2.Value"
+        type "string"
+        location "query"
+      end 
+
+      field "tag_key_2" do
+        alias "Tags.member.2.Key"
+        type "string"
+        location "query"
+      end 
+
+      field "tag_value_3" do
+        alias "Tags.member.3.Value"
+        type "string"
+        location "query"
+      end 
+
+      field "tag_key_3" do
+        alias "Tags.member.3.Key"
+        type "string"
+        location "query"
+      end 
+
+      field "tag_value_4" do
+        alias "Tags.member.4.Value"
+        type "string"
+        location "query"
+      end 
+
+      field "tag_key_4" do
+        alias "Tags.member.4.Key"
+        type "string"
+        location "query"
+      end 
+
+      field "tag_value_5" do
+        alias "Tags.member.5.Value"
+        type "string"
+        location "query"
+      end 
+
+      field "tag_key_5" do
+        alias "Tags.member.5.Key"
+        type "string"
+        location "query"
+      end 
+
+      field "tag_value_6" do
+        alias "Tags.member.6.Value"
+        type "string"
+        location "query"
+      end 
+
+      field "tag_key_6" do
+        alias "Tags.member.6.Key"
+        type "string"
         location "query"
       end 
 
@@ -714,7 +870,10 @@ end
 
 define delete_db_instance(@db_instance) do
   if @db_instance.DBInstanceStatus != "deleting"
-    @db_instance.destroy({ "skip_final_snapshot": "true" })
+    @rds = @db_instance.destroy({ "skip_final_snapshot": "true" })
+    sub on_error: skip, timeout: 10m, on_timeout: skip do
+      sleep_until(empty?(to_object(@rds)['hrefs']))
+    end 
   end 
 end
 

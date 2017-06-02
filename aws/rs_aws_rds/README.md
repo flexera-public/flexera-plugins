@@ -82,6 +82,8 @@ For more information on using packages, please refer to the RightScale online do
 | tde_credential_password | no | The password for the given ARN from the Key Store in order to access the device. |
 | timezone | no | The time zone of the DB instance. The time zone parameter is currently supported only by Microsoft SQL Server. | 
 | vpc_security_group | no | EC2 VPC security group to associate with this DB instance |
+| tag_key_(1-6) | no | RDS Tag Key. To be used with tag_value_(1-6) fields.  Supports up to 6 tags (ie. tag_key_1, tag_key_2, etc) | 
+| tag_value_(1-6) | no | RDS Tag Value. To be used with tag_key_(1-6) fields.  Supports up to 6 tags (ie. tag_value_1, tag_value_2, etc) | 
 
 *Not required if restoring a DB Instance from a Snapshot (ie. if a db_snapshot_identifier is set in the db_instance resource)
 
