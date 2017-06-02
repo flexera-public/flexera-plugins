@@ -735,7 +735,7 @@ plugin "rs_aws_rds" do
  
     action "get" do
       verb "POST"
-      path "/?Action=DescribeDBInstances"
+      path "$href?Action=DescribeDBInstances"
     end
  
     action "list" do
@@ -891,9 +891,6 @@ end
 define delete_db_instance(@db_instance) do
   if @db_instance.DBInstanceStatus != "deleting"
     @db_instance.destroy({ "skip_final_snapshot": "true" })
-    sub on_error: skip, timeout: 10m, on_timeout: skip do
-      sleep_until(empty?(to_object(@db_instance.get())['hrefs']))
-    end 
   end 
 end
 

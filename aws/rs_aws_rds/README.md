@@ -164,9 +164,12 @@ end
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
 | create | [CreateDBInstance](http://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_CreateDBInstance.html) | Supported |
+| create_from_snapshot | [RestoreDBInstanceFromDBSnapshot](http://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_RestoreDBInstanceFromDBSnapshot.html) | Supported |
 | destroy | [DeleteDBInstance](http://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_DeleteDBInstance.html) | Supported |
 | list & get | [DescribeDBInstances](http://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_DescribeDBInstances.html) | Supported |
-| create_from_snapshot | [RestoreDBInstanceFromDBSnapshot](http://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_RestoreDBInstanceFromDBSnapshot.html) | Supported |
+| stop | [StopDBInstance](http://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_StopDBInstance.html) | Supported |
+| start | [StartDBInstance](http://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_StartDBInstance.html) | Supported |
+| reboot | [RebootDBInstance](http://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_RebootDBInstance.html) | Supported |
 
 Full list of possible actions can be found on the [AWS RDS API Documentation](http://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_Operations.html)
 ## Examples

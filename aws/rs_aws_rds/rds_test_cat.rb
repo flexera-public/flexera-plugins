@@ -14,6 +14,24 @@ output "rds_instance_name" do
   default_value @my_rds.DBInstanceIdentifier
 end
 
+output "list_db_instances" do
+  label "list_action"
+end
+
+output "db" do
+  label "db"
+end
+
+output "empty" do
+  label "empty?"
+end
+
+parameter "db_href" do
+  label "db_href"
+  type "string"
+  operations "get_db","check_if_empty"
+end
+
 #FROM Snapshot:
 #resource "my_rds", type: "rs_aws_rds.db_instance" do
 #  zone "us-east-1a"
@@ -38,5 +56,74 @@ resource "my_rds", type: "rs_aws_rds.db_instance" do
   master_password "pa$$w0rd1"
   storage_encrypted "false"
   storage_type "standard"
+end
+
+operation "list_db_instances" do
+  definition "list_db_instances"
+  output_mappings do {
+    $list_db_instances => $object
+  } end
+end
+
+define list_db_instances() return $object do
+  @rds = rs_aws_rds.db_instance.list()
+
+  $object = to_object(@rds)
+
+  $object = to_s($object)
+end
+
+operation "get_db" do
+  definition "get_db"
+  output_mappings do {
+    $db => $object
+  } end
+end
+
+define get_db($db_href) return $object do
+  @rds = rs_aws_rds.db_instance.get(href: $db_href)
+    $object = to_object(@rds)
+
+  $object = to_s($object)
+end
+
+operation "check_if_empty" do
+  definition "check_if_empty"
+  output_mappings do {
+    $empty => $value
+  } end
+end
+
+define check_if_empty($db_href) return $value do
+    @rds = rs_aws_rds.db_instance.get(href: $db_href)
+    if empty?(@rds)
+      $value = "EMPTY!"
+    else 
+      $value = "NOT EMPTY!"
+    end
+end
+  
+operation "start" do
+  definition "start_db"
+end
+
+define start_db(@my_rds) do
+  @my_rds.start()
+end
+
+operation "stop" do
+  definition "stop_db"
+end
+
+define stop_db(@my_rds) do
+  @my_rds.stop()
+end
+
+operation "reboot" do
+  definition "reboot_db"
+end
+
+define reboot_db(@my_rds) do
+  @my_rds.reboot()
 end
 
