@@ -3,6 +3,7 @@ type 'plugin'
 rs_ca_ver 20161221
 short_description "Amazon Web Services - Relational Database Service"
 package "plugins/rs_aws_rds"
+import "sys_log"
 
 plugin "rs_aws_rds" do
   endpoint do
@@ -772,9 +773,6 @@ plugin "rs_aws_rds" do
 #      end
 #    end
 
-
-
-
     provision 'provision_db_instance'
     
     delete    'delete_db_instance'
@@ -866,6 +864,7 @@ end
 
 define provision_db_instance(@declaration) return @db_instance do
   sub on_error: stop_debugging() do
+    call start_debugging()
     $object = to_object(@declaration)
     $fields = $object["fields"]
     if $fields["db_snapshot_identifier"] != null 
@@ -877,50 +876,50 @@ define provision_db_instance(@declaration) return @db_instance do
       sleep_until(@db_instance.DBInstanceStatus == "available")
     end 
     @db_instance = @db_instance.get()
+    call stop_debugging()
   end
 end
 
 define list_db_instances() return $object do
+  call start_debugging()
   @rds = rs_aws_rds.db_instance.list()
-
   $object = to_object(first(@rds))
-
   $object = to_s($object)
+  call stop_debugging()
 end
 
 define delete_db_instance(@db_instance) do
+  call start_debugging()
   if @db_instance.DBInstanceStatus != "deleting"
     @db_instance.destroy({ "skip_final_snapshot": "true" })
   end 
-end
-
-#this definition is not currently in use:
-define delete_db_instance_with_snap(@db_instance) do
-  sub on_error: delete_db_instance(@db_instance) do
-    @db_instance.destroy({ "final_db_snapshot_identifier": join([@db_instance.DBInstanceIdentifier, "-final-snapshot"])})
-  end
+  call stop_debugging()
 end
 
 define provision_sg(@declaration) return @sec_group do
   sub on_error: stop_debugging() do
+    call start_debugging()
     $object = to_object(@declaration)
     $fields = $object["fields"]
     @sec_group = rs_aws_rds.security_groups.create($fields)
     @sec_group = @sec_group.get()
+    call stop_debugging()
   end
 end
 
 define list_security_groups() return $object do
+  call start_debugging()
   @security_groups = rs_aws_rds.security_groups.list()
-
   $object = to_object(@security_groups)
-
   $object = to_s($object)
+  call stop_debugging()
 end
 
 define delete_sg(@sec_group) do
   sub on_error: stop_debugging() do
+    call start_debugging()
     @sec_group.destroy()
+    call stop_debugging()
   end
 end
 
