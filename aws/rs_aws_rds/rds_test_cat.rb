@@ -56,6 +56,14 @@ resource "my_rds", type: "rs_aws_rds.db_instance" do
   master_password "pa$$w0rd1"
   storage_encrypted "false"
   storage_type "standard"
+  tag_key_1 "foo"
+  tag_value_1 "bar"
+  tag_key_2 "Name"
+  tag_value_2 "my_app"
+  tag_key_3 "Project"
+  tag_value_3 "my_project"
+  tag_key_4 "Tenant"
+  tag_value_4 "my_tenant"
 end
 
 operation "list_db_instances" do
