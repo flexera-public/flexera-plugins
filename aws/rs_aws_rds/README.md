@@ -8,7 +8,7 @@ The AWS RDS Plugin integrates RightScale Self-Service with the basic functionali
 ## Requirements
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
-- The `ss_designer` & `ss_actor` roles, in a RightScale account with SelfService enabled
+- The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrived the RightScale Credential values identified below.
 - AWS Account credentials with the appropriate permissions to manage elastic load balancers
 - The following RightScale Credentials
   - `AWS_ACCESS_KEY_ID`
