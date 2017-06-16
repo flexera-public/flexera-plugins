@@ -1,3 +1,9 @@
+# TODO
+# - finish/fix "change" type
+# - finish "managedZone" link in "resourceRecordSet" type
+# - support paginated results?
+# - test
+
 name "Google Cloud DNS"
 rs_ca_ver 20161221
 short_description "Google Cloud DNS plugin"
@@ -13,15 +19,15 @@ end
 
 plugin "clouddns" do
     endpoint do
-        default_scheme "https"
-        default_host "www.googleapis.com"
-        path "/dns/v1"
+      default_scheme "https"
+      default_host "www.googleapis.com"
+      path "/dns/v1"
     end
 
     parameter "project" do
-        type "string"
-        label "Project"
-        description "The GCP Project to create/manage resources"
+      type "string"
+      label "Project"
+      description "The GCP Project to create/manage resources"
     end
 
     # https://cloud.google.com/dns/api/v1/changes
@@ -29,66 +35,22 @@ plugin "clouddns" do
         href_templates "{{id}}"
 
         field "managed_zone" do
-            location "path"
-            required true
-            type "string"
+          location "path"
+          required true
+          type "string"
         end
 
         field "address" do
-            type "string"
+          type "string"
         end
 
         field "description" do
-            type "string"
+          type "string"
         end
 
         field "name" do
-            required true
-            type "string"
-        end
-
-        output "address","creationTimestamp","description","id","kind","name","region","selfLink","status","users"
-
-        # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/addresses/aggregatedList.
-        action "create" do 
-            verb "POST"
-            path "/projects/$project/managedZones/$managed_zone"
-            type "address"
-            output_path "items.*.addresses[]"
-        end
-
-        # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/addresses/delete.
-        action "delete" do 
-            verb "DELETE"
-            path "$href"
-            type "operation"
-        end
-
-        # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/addresses/get.
-        action "get" do 
-            verb "GET"
-            path "$href"
-            type "address"
-        end
-
-        # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/addresses/insert.
-        action "insert" do 
-            verb "POST"
-            path "/projects/$project/regions/$region/addresses"
-            type "operation"
-        end
-
-        # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/addresses/list.
-        action "list" do 
-            verb "GET"
-            path "/projects/$project/regions/$region/addresses"
-            type "address"
-            output_path "items"
-        end
-
-        link "region" do
-            url "$region"
-            type "region"
+          required true
+          type "string"
         end
 
         provision "provision_resource"
@@ -99,73 +61,188 @@ plugin "clouddns" do
 
     # https://cloud.google.com/dns/api/v1/managedZones
     type "managedZone" do
-        href_templates "{{id}}"
+      href_templates "{{id}}"
+
+      field "name" do
+        required true
+        type "string"
+      end
+
+      field "description" do
+        type "string"
+      end
+
+      field "dns_name" do
+        alias_for "dnsName"
+        required true
+        type "string"
+      end
+
+      field "nameserver_set" do 
+        alias_for "nameServerSet"
+        type "string"
+      end
+
+      field "kind" do
+        type "string"
+      end
+
+      #Optional fields for non-create calls
+      field "max_results" do 
+        type "number"
+        location "query"
+        alias_for "maxResults"
+      end
+
+      output "creationTime","description","dnsName","id","kind","name","nameServerSet","nameServers"
+
+      output_path "items"
+
+      # https://cloud.google.com/dns/api/v1/managedZones/create
+      action "create" do 
+        verb "POST"
+        path "/projects/$project/managedZones"
+      end
+
+      # https://cloud.google.com/dns/api/v1/managedZones/delete
+      action "delete" do 
+        verb "DELETE"
+        path "/projects/$project/managedZones/$href"
+      end
+
+      # https://cloud.google.com/dns/api/v1/managedZones/get 
+      action "get" do 
+        verb "GET"
+        path "/projects/$project/managedZones/$href"
+      end
+
+      # https://cloud.google.com/dns/api/v1/managedZones/list
+      action "list" do 
+        verb "GET"
+        path "/projects/$project/managedZones"
+        output_path "managedZones[]"
+
+        field "max_results" do 
+          type "number"
+          location "query"
+          alias_for "maxResults"
+        end 
+      end 
+
+      provision "provision_resource"
+
+      delete "delete_resource"
+
+    end
+
+    # https://cloud.google.com/dns/api/v1/projects 
+    type "project" do
+      href_templates "{{id}}"
+
+      # https://cloud.google.com/dns/api/v1/projects/get
+      action "get" do 
+        verb "GET"
+        path "/projects/$project"
+      end 
+
+      output "kind","number","id"
+
+      output "managedZones_quota" do
+        both_path "quota.managedZones"
+      end 
+
+      output "resourceRecordsPerRrset_quota" do
+        body_path "quota.resourceRecordsPerRrset"
+      end 
+
+      output "rrsetAdditionsPerChange_quota" do
+        body_path "quota.rrsetAdditionsPerChange"
+      end 
+
+      output "rrsetDeletionsPerChange_quota" do
+        body_path "quota.rrsetDeletionsPerChange"
+      end 
+
+      output "rrsetsPerManagedZone_quota" do
+        body_path "quota.rrsetsPerManagedZone"
+      end 
+
+      output "totalRrdataSizePerChange_quota" do
+        body_path "quota.totalRrdataSizePerChange"
+      end 
+
+      provision "no_operation"
+
+      delete "no_operation"
+
+    end
+
+    type "resourceRecordSet" do
+      href_templates "{{name}}"
+
+      field "managed_zone" do
+        type "string"
+        location "path"
+        required true
+      end 
+
+      #Optional fields for non-create calls
+      field "max_results" do 
+        type "number"
+        location "query"
+        alias_for "maxResults"
+      end 
+
+      field "name" do
+        type "string"
+        location "query"
+        # Note: Required if "type" field is specified
+      end 
+
+      field "type" do
+        type "string"
+        location "query"
+      end
+
+      # https://cloud.google.com/dns/api/v1/resourceRecordSets/list
+      action "list" do
+        verb "GET"
+        path "/projects/$project/managedZones/$managed_zone/rrsets"
+
+        field "max_results" do 
+          type "number"
+          location "query"
+          alias_for "maxResults"
+        end 
 
         field "name" do
-            required true
-            type "string"
+          type "string"
+          location "query"
+          # Note: Required if "type" field is specified
+        end 
+
+        field "type" do
+          type "string"
+          location "query"
         end
+      end 
 
-        field "description" do
-            type "string"
-        end
+      output "kind","name","type","ttl","rrdatas"
 
-        field "dns_name" do
-            required true
-            type "string"
-        end
+      output_path "rrsets"
 
-        field "nameserver_set"
-            type "string"
-        end
+      link "managedZone" do
+        url 
+      end 
 
-        output "creationTime","description","dnsName","id","kind","name","nameServerSet","nameServers"
+      provision "no_operation"
 
-        output_path "items"
+      delete "no_operation"
+    
+    end  
 
-        # https://cloud.google.com/dns/api/v1/managedZones/create
-        action "create" do 
-            verb "POST"
-            path "/projects/$project/managedZones"
-        end
+end 
 
-        # https://cloud.google.com/dns/api/v1/managedZones/delete
-        action "delete" do 
-            verb "DELETE"
-            path "/projects/$project/managedZones/$href"
-        end
-
-        # https://cloud.google.com/dns/api/v1/managedZones/get 
-        action "get" do 
-            verb "GET"
-            path "/projects/$project/managedZones/$href"
-        end
-
-    # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/addresses/insert.
-    action "insert" do 
-      verb "POST"
-      path "/projects/$project/regions/$region/addresses"
-      type "operation"
-    end
-
-    # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/addresses/list.
-    action "list" do 
-      verb "GET"
-      path "/projects/$project/regions/$region/addresses"
-      type "address"
-      output_path "items"
-    end
-
-    link "region" do
-      url "$region"
-      type "region"
-    end
-
-    provision "provision_resource"
-
-    delete "delete_resource"
-
-  end
 define no_operation() do
 end
 
@@ -177,26 +254,33 @@ define provision_resource(@raw) return @resource on_error: stop_debugging() do
   call sys_log.set_task_target(@@deployment)
   call sys_log.summary(join(["Provision ",$type]))
   call sys_log.detail($raw)
-  @operation = gce.$type.insert($fields)
+  @operation = clouddns.$type.create($fields)
   call sys_log.detail(to_object(@operation))
-  sub timeout: 2m, on_timeout: skip do
-    sleep_until @operation.status == "DONE"
-  end
+  if $type == "change"
+    sub timeout: 2m, on_timeout: skip do
+      sleep_until @operation.status == "done"
+    end
+  end 
   call sys_log.detail(to_object(@resource))
-  @resource = @operation.targetLink()
+  @resource = @operation.get()
   call stop_debugging()
 end
 
 define delete_resource(@resource) on_error: stop_debugging() do
   call start_debugging()
+  $raw = to_object(@raw)
+  $fields = $raw["fields"]
+  $type = $raw["type"]
   if !empty?(@resource)
     call sys_log.set_task_target(@@deployment)
     call sys_log.summary(join(["Delete: ",@resource.name]))
     sub on_error: skip_not_found_error() do
       @operation = @resource.delete()
-      sub timeout: 2m, on_timeout: skip do
-        sleep_until(@operation.status == "DONE")
-      end
+      if $type == "change"
+        sub timeout: 2m, on_timeout: skip do
+          sleep_until(@operation.status == "done")
+        end
+      end 
       call sys_log.detail(to_object(@operation))
     end
   end
@@ -222,8 +306,8 @@ define stop_debugging() do
     $$debugging = false
   end
 end
-resource_pool "gce" do
-  plugin $gce
+resource_pool "clouddns" do
+  plugin $clouddns
   parameter_values do
     project $google_project
   end
