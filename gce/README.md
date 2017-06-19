@@ -3,7 +3,7 @@
 **Important: This plugin is currently in a Pre-Alpha state and should not be used in production**
 
 ## Overview
-The GCE Plugin consumes the Google Compute v1 API and exposes the supported resources to RightScale SelfService. This allows for easy extenstion of a SelfService Cloud Application to use non-native resources from Google Compute Engine.
+The GCE Plugin consumes the Google Compute v1 API and exposes the supported resources to RightScale SelfService. This allows for easy extension of a SelfService Cloud Application to use non-native resources from Google Compute Engine.
 
 ## Requirements
 - A general understanding CAT development and definitions
