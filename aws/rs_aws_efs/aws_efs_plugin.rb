@@ -257,16 +257,6 @@ define delete_efs(@declaration) do
   call start_debugging()
   $state = @declaration.LifeCycleState
   $id = @declaration.FileSystemId
-  @mounts = rs_aws_efs.mount_targets.list(file_system_id: $id)
-  if size(@mounts) > 1
-    foreach @mount in @mounts do
-      call delete_mount(@mount)
-    end
-  elsif size(@mounts) == 1
-    call delete_mount(@mounts)
-  else
-    #skip
-  end
   if $state != "deleting" || $state != "deleted"
       @declaration.destroy(file_system_id: $id)
   end 
@@ -275,18 +265,20 @@ end
 
 define delete_mount(@declaration) do
   call start_debugging()
-  $state = @declaration.LifeCycleState
-  $mount = @declaration.MountTargetId
-  if $state != "deleting" || $state != "deleted"
-    @declaration.destroy(mount_target_id: $mount)
-  end 
   sub on_error: skip do
-    @mount = rs_aws_efs.mount_targets.list(mount_target_id: $mount)
-    while !empty?(@mount) do
-      sleep(10)
+    $state = @declaration.LifeCycleState
+    $mount = @declaration.MountTargetId
+    if $state != "deleting" || $state != "deleted"
+      @declaration.destroy(mount_target_id: $mount)
+    end 
+    sub on_error: skip do
       @mount = rs_aws_efs.mount_targets.list(mount_target_id: $mount)
-    end
-  end 
+      while !empty?(@mount) do
+        sleep(10)
+        @mount = rs_aws_efs.mount_targets.list(mount_target_id: $mount)
+      end
+    end 
+  end
   call stop_debugging()
 end
 
