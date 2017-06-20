@@ -8,11 +8,11 @@ import "sys_log"
 plugin "rs_aws_efs" do
   endpoint do
     default_scheme "https"
-    path "/2015-02-01/file-systems"
+    path "/2015-02-01"
   end
  
   type "file_systems" do
-    href_templates "?FileSystemId={{FileSystems[*].FileSystemId}}","?FileSystemId={{FileSystemId}}"
+    href_templates "/file-systems?FileSystemId={{FileSystems[*].FileSystemId}}","/file-systems?FileSystemId={{FileSystemId}}"
 
     field "creation_token" do
       alias_for "CreationToken"
@@ -26,10 +26,20 @@ plugin "rs_aws_efs" do
       # Allowed Values: generalPurpose | maxIO
     end
 
+    field "tags" do
+      alias_for "Tags"
+      type "composite"
+    end 
+
     # Non-create fields
     field "file_system_id" do
       alias_for "FileSystemId"
       type "string"
+    end 
+
+    field "tag_keys" do
+      alias_for "TagKeys"
+      type "array"
     end 
  
     output "OwnerId","CreationToken","PerformanceMode","FileSystemId","CreationTime","LifeCycleState","NumberOfMountTargets"
@@ -44,30 +54,21 @@ plugin "rs_aws_efs" do
 
     action "create" do
       verb "POST"
-      path "/"
+      path "/file-systems"
     end
 
     action "destroy" do
       verb "DELETE"
-      path "/file-systems/$href"
+      path "/file-systems/$file_system_id"
+
+      field "file_system_id" do
+        location "path"
+      end 
+
     end
  
     action "get" do
       verb "GET"
-      #path "/file-systems?FileSystemId=$FileSystemId"
-
-      output_path "FileSystems[]"
-
-    end
-
-    action "show" do
-      verb "GET"
-      path "/"
-
-      field "file_system_id" do
-        alias_for "FileSystemId"
-        location "query"
-      end
 
       output_path "FileSystems[]"
 
@@ -75,7 +76,7 @@ plugin "rs_aws_efs" do
  
     action "list" do
       verb "GET"
-      path "/"
+      path "/file-systems"
 
       field "creation_token" do
         alias_for "CreationToken"
@@ -91,13 +92,48 @@ plugin "rs_aws_efs" do
 
     end
 
-    provision "provision_fs"
+    action "apply_tags" do
+      verb "POST"
+      path "/create-tags/$file_system_id"
 
-    delete    "delete_fs"
+      field "file_system_id" do
+        location "path"
+      end 
+
+      field "tags" do
+        alias_for "Tags"
+      end
+    end
+
+    action "delete_tags" do
+      verb "POST"
+      path "/delete-tags/$file_system_id" 
+
+      field "file_system_id" do
+        location "path"
+      end 
+
+      field "tag_keys" do
+        alias_for "TagKeys"
+      end
+    end
+
+    action "get_tags" do
+      verb "GET"
+      path "/tags/$file_system_id"
+
+      field "file_system_id" do
+        location "path"
+      end 
+    end 
+
+    provision "provision_efs"
+
+    delete    "delete_efs"
   end
 
   type "mount_targets" do
-    href_templates "{{MountTargetId}}"
+    href_templates "/mount-targets?MountTargetId={{MountTargets[*].MountTargetId}}","/mount-targets?MountTargetId={{MountTargetId}}"
 
     field "file_system_id" do
       alias_for "FileSystemId"
@@ -136,12 +172,16 @@ plugin "rs_aws_efs" do
 
     action "destroy" do
       verb "DELETE"
-      path "/mount-targets/$href"
+      path "/mount-targets/$mount_target_id"
+
+      field "mount_target_id" do
+        location "path"
+      end 
+
     end
 
     action "get" do
       verb "GET"
-      path "/mount-targets?MountTargetId=$href"
 
       output_path "MountTargets[]"
     end
@@ -164,27 +204,14 @@ plugin "rs_aws_efs" do
     end
 
     link "file_systems" do
-      path "{{FileSystemId}}"
+      path "/file-systems?FileSystemId={{FileSystemId}}"
       type "file_systems"
     end 
 
-  end
+    provision "provision_efs"
 
-  type "efs_tags" do
-    href_templates "{{}}"
+    delete    "delete_efs"
 
-    field "file_system_id" do
-      alias_for "FileSystemId"
-      type "string"
-      location "path"
-    end 
-
-    field "tags" do
-      alias_for "Tags"
-      type "composite"
-      required true
-    end 
-  
   end
     
 
@@ -202,62 +229,44 @@ resource_pool "efs" do
   end
 end
 
-resource "my_efs", type: "rs_aws_efs.file_systems" do
-  creation_token join(["dfefs-", last(split(@@deployment.href, "/"))])
-  performance_mode "generalPurpose"
-end
-
-output "list_efs" do
-  label "list_action"
-end
-
-output "fs_id" do
-  label "fs_id"
-  default_value @my_efs.FileSystemId
-end 
-
-operation "list_efs" do
-  definition "list_efs"
-  output_mappings do {
-    $list_efs => $object
-  } end
-end
-
-define provision_fs(@declaration) return @efs do
+define provision_efs(@declaration) return @resource do
   sub on_error: stop_debugging() do
     call start_debugging()
     $object = to_object(@declaration)
     $fields = $object["fields"]
-    @file_system = rs_aws_efs.file_systems.create($fields)
-    #$status = @file_system.LifeCycleState
-    #sub on_error: skip, timeout: 10m do
-    #  while $status != "available" do
-    #    $status = @file_system.LifeCycleState
-    #    sleep(10)
-    #  end
-    #end 
-    $file_system_obj = to_object(@file_system)
-    $file_system_id = $file_system_obj["FileSystemId"]
-    @efs = @file_system.get(file_system_id: $file_system_id)
+    $tags = $fields["tags"]
+    $type = $object["type"]
+    @operation = rs_aws_efs.$type.create($fields)
+    $status = @operation.LifeCycleState
+    sub on_error: skip, timeout: 10m do
+      while $status != "available" do
+        $status = @operation.LifeCycleState
+        sleep(10)
+      end
+    end 
+    @resource = @operation.get()
+    if $tags != null
+      $id = @resource.FileSystemId
+      @operation.apply_tags(file_system_id: $id, tags: [$tags])
+    end 
     call stop_debugging()
   end
 end
 
-define list_efs() return $object do
+define delete_efs(@declaration) do
   call start_debugging()
-  @efs = rs_aws_efs.file_systems.list()
-  $object = to_object(first(@efs))
-  $object = to_s($object)
-  call stop_debugging()
-end
-
-define delete_fs(@efs) do
-  call start_debugging()
-  $file_system_obj = to_object(@efs)
-  $state = $file_system_obj["fields"]["LifeCycleState"]
-  $id = $file_system_obj["fields"]["FileSystemId"]
+  $object = to_object(@declaration)
+  $state = @declaration.LifeCycleState
+  sub on_error: skip do
+    $mount = @declaration.MountTargetId
+  end 
+  $id = @declaration.FileSystemId
   if $state != "deleting" || $state != "deleted"
-    @efs.destroy()
+    if $mount != null   
+      @declaration.destroy(mount_target_id: $mount)
+    else 
+      @declaration.destroy(file_system_id: $id)
+    end 
   end 
   call stop_debugging()
 end
