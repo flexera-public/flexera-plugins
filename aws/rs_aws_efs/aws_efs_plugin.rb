@@ -210,7 +210,7 @@ plugin "rs_aws_efs" do
 
     provision "provision_efs"
 
-    delete    "delete_efs"
+    delete    "delete_mount"
 
   end
     
@@ -255,18 +255,37 @@ end
 
 define delete_efs(@declaration) do
   call start_debugging()
-  $object = to_object(@declaration)
   $state = @declaration.LifeCycleState
-  sub on_error: skip do
-    $mount = @declaration.MountTargetId
-  end 
   $id = @declaration.FileSystemId
+  @mounts = rs_aws_efs.mount_targets.list(file_system_id: $id)
+  if size(@mounts) > 1
+    foreach @mount in @mounts do
+      call delete_mount(@mount)
+    end
+  elsif size(@mounts) == 1
+    call delete_mount(@mounts)
+  else
+    #skip
+  end
   if $state != "deleting" || $state != "deleted"
-    if $mount != null   
-      @declaration.destroy(mount_target_id: $mount)
-    else 
       @declaration.destroy(file_system_id: $id)
-    end 
+  end 
+  call stop_debugging()
+end
+
+define delete_mount(@declaration) do
+  call start_debugging()
+  $state = @declaration.LifeCycleState
+  $mount = @declaration.MountTargetId
+  if $state != "deleting" || $state != "deleted"
+    @declaration.destroy(mount_target_id: $mount)
+  end 
+  sub on_error: skip do
+    @mount = rs_aws_efs.mount_targets.list(mount_target_id: $mount)
+    while !empty?(@mount) do
+      sleep(10)
+      @mount = rs_aws_efs.mount_targets.list(mount_target_id: $mount)
+    end
   end 
   call stop_debugging()
 end
