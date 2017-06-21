@@ -10,7 +10,8 @@ plugin "rs_aws_efs" do
     default_scheme "https"
     path "/2015-02-01"
   end
- 
+  
+  # http://docs.aws.amazon.com/efs/latest/ug/api-reference.html
   type "file_systems" do
     href_templates "/file-systems?FileSystemId={{FileSystems[*].FileSystemId}}","/file-systems?FileSystemId={{FileSystemId}}"
 
@@ -52,11 +53,13 @@ plugin "rs_aws_efs" do
       body_path "SizeInBytes.Timestamp"
     end 
 
+    # http://docs.aws.amazon.com/efs/latest/ug/API_CreateFileSystem.html
     action "create" do
       verb "POST"
       path "/file-systems"
     end
 
+    # http://docs.aws.amazon.com/efs/latest/ug/API_DeleteFileSystem.html
     action "destroy" do
       verb "DELETE"
       path "/file-systems/$file_system_id"
@@ -66,14 +69,16 @@ plugin "rs_aws_efs" do
       end 
 
     end
- 
+    
+    # http://docs.aws.amazon.com/efs/latest/ug/API_DescribeFileSystems.html
     action "get" do
       verb "GET"
 
       output_path "FileSystems[]"
 
     end
- 
+    
+    # http://docs.aws.amazon.com/efs/latest/ug/API_DescribeFileSystems.html
     action "list" do
       verb "GET"
       path "/file-systems"
@@ -92,6 +97,7 @@ plugin "rs_aws_efs" do
 
     end
 
+    # http://docs.aws.amazon.com/efs/latest/ug/API_CreateTags.html
     action "apply_tags" do
       verb "POST"
       path "/create-tags/$file_system_id"
@@ -105,6 +111,7 @@ plugin "rs_aws_efs" do
       end
     end
 
+    # http://docs.aws.amazon.com/efs/latest/ug/API_DeleteTags.html
     action "delete_tags" do
       verb "POST"
       path "/delete-tags/$file_system_id" 
@@ -118,6 +125,7 @@ plugin "rs_aws_efs" do
       end
     end
 
+    # http://docs.aws.amazon.com/efs/latest/ug/API_DescribeTags.html
     action "get_tags" do
       verb "GET"
       path "/tags/$file_system_id"
@@ -165,11 +173,13 @@ plugin "rs_aws_efs" do
 
     output "FileSystemId","IpAddress","LifeCycleState","MountTargetId","NetworkInterfaceId","OwnerId","SubnetId"
 
+    # http://docs.aws.amazon.com/efs/latest/ug/API_CreateMountTarget.html
     action "create" do
       verb "POST"
       path "/mount-targets"
     end 
 
+    # http://docs.aws.amazon.com/efs/latest/ug/API_DeleteMountTarget.html
     action "destroy" do
       verb "DELETE"
       path "/mount-targets/$mount_target_id"
@@ -180,12 +190,14 @@ plugin "rs_aws_efs" do
 
     end
 
+    # http://docs.aws.amazon.com/efs/latest/ug/API_DescribeMountTargets.html
     action "get" do
       verb "GET"
 
       output_path "MountTargets[]"
     end
 
+    # http://docs.aws.amazon.com/efs/latest/ug/API_DescribeMountTargets.html
     action "list" do
       verb "GET"
       path "/mount-targets"
