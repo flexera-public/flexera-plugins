@@ -123,7 +123,7 @@ define launch_handler(@my_recordset) return @my_recordset, $object, $rrdatas, $t
     $object = to_s(to_object(@my_recordset))
     $rrdatas = to_s(@my_recordset.rrdatas)
     $type = @my_recordset.type
-    $ttl = @my_recordset.ttl
+    $ttl = to_s(@my_recordset.ttl)
     $name = @my_recordset.name
 end 
 

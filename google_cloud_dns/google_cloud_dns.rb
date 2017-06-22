@@ -38,76 +38,6 @@ plugin "clouddns" do
     description "The DNS Zone Name (or DNS Zone ID) to create/manage"
   end 
 
-  # https://cloud.google.com/dns/api/v1/changes
-  type "change" do
-    href_templates "/changes/{{id}}","/changes/{{changes[*].id}}"
-
-    field "managed_zone" do
-      location "path"
-      required true
-      type "string"
-    end
-
-    field "kind" do
-      type "string"
-    end 
-
-    field "additions" do
-      type "object"
-    end
-
-    field "deletions" do
-      type "object"
-    end 
-
-    #Optional fields for non-create calls
-    field "id" do
-      alias_for "changeId"
-      type "string"
-      location "path"
-    end
-
-    output "kind","startTime","id","status"
-
-    # https://cloud.google.com/dns/api/v1/changes/create
-    action "create" do
-      verb "POST"
-      path "/projects/$project/managedZones/$managed_zone/changes"
-    end 
-
-    # https://cloud.google.com/dns/api/v1/changes/create
-    action "delete" do
-      verb "POST"
-      path "/projects/$project/managedZones/$managed_zone/changes"
-    end 
-
-    # https://cloud.google.com/dns/api/v1/changes/get
-    action "get" do
-      verb "GET"
-      path "/projects/$project/managedZones/$managed_zone/$href"
-
-      field "managed_zone" do
-        location "path"
-      end
-    
-    end
-
-    # https://cloud.google.com/dns/api/v1/changes/list
-    action "list" do
-      verb "GET"
-      path "/projects/$project/managedZones/$managed_zone/changes"
-      output_path "changes[]"
-
-      field "managed_zone" do
-        location "path"
-      end
-    end 
-
-    provision "provision_resource"
-
-    delete "delete_resource"
-
-  end
 
   # https://cloud.google.com/dns/api/v1/managedZones
   type "managedZone" do
@@ -230,7 +160,7 @@ plugin "clouddns" do
   end
 
 type "resourceRecordSet" do
-    href_templates "?name={{additions[*].name}}","?name={{deletions[*].name}}","?name={{rrsets[*].name}}"
+    href_templates "/projects/$project/managedZones/$managed_zone/rrsets?name={{additions[*].name}}","/projects/$project/managedZones/$managed_zone/rrsets?name={{deletions[*].name}}","/projects/$project/managedZones/$managed_zone/rrsets?name={{rrsets[*].name}}"
 
     field "record" do
       type "array"
@@ -298,11 +228,9 @@ type "resourceRecordSet" do
 
     end 
 
-    action "show" do
+    action "get" do 
       verb "GET"
-      path "/projects/$project/managedZones/$managed_zone/rrsets$href"
     end
-
 
     output "kind","name","type","ttl","rrdatas"
 
@@ -393,7 +321,7 @@ define provision_rrset(@raw) return @resource on_error: stop_debugging() do
   call sys_log.detail(join(["name: ", $name]))
   @operation = clouddns.resourceRecordSet.create($fields)
   call sys_log.detail(to_object(@operation))
-  @resource = @operation.show()
+  @resource = @operation.get()
   call sys_log.detail(to_object(@resource))
   call stop_debugging()
 end
@@ -401,14 +329,15 @@ end
 define delete_rrset(@resource) on_error: stop_debugging() do
   call start_debugging()
   $raw = to_object(@resource)
+  $type = $raw["type"]
   $fields = $raw["details"]
   call sys_log.set_task_target(@@deployment)
   call sys_log.summary(join(["Delete: ",$type]))
   call sys_log.detail(join(["fields: ", $fields]))
-  #sub on_error: stop_debugging() do
+  sub on_error: stop_debugging() do
     @operation = clouddns.resourceRecordSet.delete(record: $fields)
     call sys_log.detail(to_object(@operation))
-  #end
+  end
   call stop_debugging()
 end
 
