@@ -1,4 +1,3 @@
-
 name "Google Cloud DNS"
 rs_ca_ver 20161221
 short_description "Google Cloud DNS plugin"
@@ -164,8 +163,27 @@ type "resourceRecordSet" do
 
     field "record" do
       type "array"
+    end
+
+    field "name" do
+      type "string"
+      required true
+    end 
+
+    field "type" do
+      type "string"
       required true
     end
+
+    field "ttl" do
+      type "number"
+      required true
+    end
+
+    field "rrdatas" do
+      type "array"
+      required true
+    end 
 
     #Optional fields for non-create calls
     field "max_results" do 
@@ -173,17 +191,6 @@ type "resourceRecordSet" do
       location "query"
       alias_for "maxResults"
     end 
-
-    field "name" do
-      type "string"
-      location "query"
-      # Note: Required if "type" field is specified
-    end 
-
-    field "type" do
-      type "string"
-      location "query"
-    end
 
     # https://cloud.google.com/dns/api/v1/changes/create
     action "create" do
@@ -311,15 +318,11 @@ define provision_rrset(@raw) return @resource on_error: stop_debugging() do
   $raw = to_object(@raw)
   $fields = $raw["fields"]
   $type = $raw["type"]
-  $record = $fields["record"][0]
-  $name = $record["name"]
   call sys_log.set_task_target(@@deployment)
   call sys_log.summary(join(["Provision ",$type]))
   call sys_log.detail($raw)
   call sys_log.detail(join(["fields: ", $fields]))
-  call sys_log.detail(join(["record: ", $record]))
-  call sys_log.detail(join(["name: ", $name]))
-  @operation = clouddns.resourceRecordSet.create($fields)
+  @operation = clouddns.resourceRecordSet.create(record: [$fields])
   call sys_log.detail(to_object(@operation))
   @resource = @operation.get()
   call sys_log.detail(to_object(@resource))
