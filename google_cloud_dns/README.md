@@ -70,11 +70,51 @@ resource "my_recordset", type: clouddns.resourceRecordSet do
 - The Cloud DNS Plugin makes no attempt to support non-Cloud DNS resources. (i.e. Allow the passing the RightScale or other resources as arguments to a GCE resource.) 
 
 ## Supported Resources
-| ResourceName | Type | Support Level |
+### managedZone
+#### Supported Fields
+
+| Field Name | Required? | Description |
+|------------|-----------|-------------|
+| name | yes | Zone Name | 
+| description | no | Zone Description |
+| dns_name | yes | Zone DNS Name | 
+| nameserver_set | no | Nameservers to use for the newly created Zone. If left empty, nameservers will be auto-populated by GCP |
+
+#### Supported Outputs
+- creationTime
+- description
+- dnsName
+- id
+- kind
+- name
+- nameServerSet
+- nameServers
+
+
+#### Usage
+GCP Cloud DNS resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
+The resulting resrouce can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
+```
+#Creates a new EFS File System
+resource "my_zone", type: clouddns.managedZone do
+  name "zoneA"
+  description "DNS Zone A"
+  dns_name "example.com."
+```
+
+#### Supported Actions
+
+| Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
-| [managedZone]() | DNS Zone | Supported |
-| [resourceRecordSet]() | DNS Record | Supported | 
-| [project]() | Associated Project | Supported |
+| create | []() | Supported
+| delete | []() | Supported
+| get & list | []() | Supported
+
+#### Supported Links
+
+| Link | Resource Type | 
+|------|---------------|
+| project | project |
 
 
 ## Examples
