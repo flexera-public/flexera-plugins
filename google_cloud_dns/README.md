@@ -116,6 +116,29 @@ resource "my_zone", type: clouddns.managedZone do
 |------|---------------|
 | project | project |
 
+### resourceRecordSet
+#### Supported Fields
+
+#### Supported Outputs
+
+#### Usage
+
+#### Supported Actions
+
+#### Supported Links
+
+### project
+
+#### Supported Fields
+
+#### Supported Outputs
+
+#### Usage
+
+#### Supported Actions
+
+#### Supported Links
+
 
 ## Examples
 - [test_cat-record_only.rb](./test_cat-record_only.rb)
