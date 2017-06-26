@@ -110,6 +110,11 @@ plugin "clouddns" do
       type "project"
     end
 
+    link "resourceRecordSets" do
+      path "projects/$project/managedZones/{{id}}/rrsets"
+      type "resourceRecordSet"
+    end
+
     provision "provision_resource"
 
     delete "delete_resource"
@@ -242,6 +247,16 @@ type "resourceRecordSet" do
     output "kind","name","type","ttl","rrdatas"
 
     output_path "rrsets[]" 
+
+    link "project" do
+      path "/projects/$project"
+      type "project"
+    end
+
+    link "managedZone" do
+      path "/projects/$project/managedZones/$managed_zone"
+      type "managedZone"
+    end
 
     provision "provision_rrset"
 
