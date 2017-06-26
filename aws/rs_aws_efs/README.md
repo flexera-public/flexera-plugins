@@ -1,7 +1,5 @@
 # AWS EFS Plugin
 
-**Important: This plugin is currently in a Pre-Alpha state and should not be used in production**
-
 ## Overview
 The AWS EFS Plugin integrates RightScale Self-Service with the basic functionality of the AWS Elastic File System API. 
 
