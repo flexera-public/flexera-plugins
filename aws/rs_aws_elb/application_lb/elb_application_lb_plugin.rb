@@ -1093,7 +1093,9 @@ define delete_resource(@resource) do
     call sys_log.summary("Destroy Resource")
     call sys_log.detail(to_object(@resource))
     call start_debugging()
-    @resource.destroy()
+    sub on_error: skip do
+      @resource.destroy()
+    end
     call stop_debugging()
   end
 end
