@@ -106,6 +106,19 @@ plugin "rs_aws_elb" do
       location "query"
     end
 
+    #Non-Create Fields
+    field "load_balancer_port" do
+      alias_for "LoadBalancerPort"
+      location "query"
+      type "number"
+    end 
+
+    field "ssl_certificate_id" do
+      alias_for "SSLCertificateId"
+      location "query"
+      type "string"
+    end 
+
     output 'LoadBalancerName' do
       body_path '//LoadBalancerDescriptions/member/LoadBalancerName'
       type "simple_element"
@@ -155,6 +168,21 @@ plugin "rs_aws_elb" do
         location "query"
       end
     end
+
+    action "set_certificate" do
+      verb "POST"
+      path "/?Action=SetLoadBalancerListenerSSLCertificate&LoadBalancerName=$LoadBalancerName"
+
+      field "load_balancer_port" do
+        alias_for "LoadBalancerPort"
+        location "query"
+      end
+
+      field "ssl_certificate_id" do
+        alias_for "SSLCertificateId"
+        location "query"
+      end
+    end 
   end
 end
 

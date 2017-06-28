@@ -63,6 +63,7 @@ end
 | list | DescribeLoadBalancers | Supported |
 | register_instance | RegisterInstancesWithLoadBalancer | Untested |
 | deregister_instance | DeregisterInstancesWithLoadBalancer | Untested |
+| set_certificate | SetLoadBalancerListenerSSLCertificate | Untested |
 
 Full list of possible actions can be found on the [AWS ELB API Documentation](http://docs.aws.amazon.com/elasticloadbalancing/2012-06-01/APIReference/API_Operations.html)
 ## Examples
