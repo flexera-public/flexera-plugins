@@ -40,7 +40,7 @@ plugin "rs_aws_rds" do
       # NOTE: This parameter in AWS is actually boolean. The only valid values are "true" or "false".  
     end
 
-    field "zone" do
+    field "availability_zone" do
       alias_for "AvailabilityZone"
       type "string"
       location "query"
@@ -81,7 +81,7 @@ plugin "rs_aws_rds" do
       # DESCRIPTION: The identifier of the DB cluster that the instance will belong to.
     end
 
-    field "db_instance_type" do
+    field "db_instance_class" do
       alias_for "DBInstanceClass"
       type "string"
       location "query"
@@ -129,7 +129,7 @@ plugin "rs_aws_rds" do
       # DEFAULT VALUE: The default DB security group for the database engine.
     end 
 
-    field "db_subnet_group" do
+    field "db_subnet_group_name" do
       alias_for "DBSubnetGroupName"
       type "string"
       location "query"
@@ -144,7 +144,7 @@ plugin "rs_aws_rds" do
       # DESCRIPTION: Specify the Active Directory Domain to create the instance in.
     end 
 
-    field "domain_IAM_role" do 
+    field "domain_IAM_role_name" do 
       alias_for "DomainIAMRoleName"
       type "string"
       location "query"
@@ -273,7 +273,7 @@ plugin "rs_aws_rds" do
         # PostgreSQL - Must be 1 to 63 alphanumeric characters. First character must be a letter. Cannot be a reserved word for the chosen database engine. 
     end 
 
-    field "master_password" do
+    field "master_user_password" do
       alias_for "MasterUserPassword"
       type "string"
       location "query"
@@ -313,7 +313,7 @@ plugin "rs_aws_rds" do
       # NOTE: This parameter in AWS is actually boolean. The only valid values are "true" or "false". 
     end 
 
-    field "option_group" do
+    field "option_group_name" do
       alias_for "OptionGroupName"
       type "string"
       location "query"
@@ -347,7 +347,7 @@ plugin "rs_aws_rds" do
           # Valid Values: 1150-65535
     end
 
-    field "backup_window" do
+    field "preferred_backup_window" do
       alias_for "PreferredBackupWindow"
       type "string"
       location "query"
@@ -356,7 +356,7 @@ plugin "rs_aws_rds" do
       # NOTE: Must be in the format hh24:mi-hh24:mi. Times should be in Universal Coordinated Time (UTC). Must not conflict with the preferred maintenance window. Must be at least 30 minutes.
     end 
 
-    field "maintenance_window" do
+    field "preferred_maintenance_window" do
       alias_for "PreferredMaintenanceWindow"
       type "string"
       location "query"
@@ -555,7 +555,7 @@ plugin "rs_aws_rds" do
         location "query"
       end
 
-      field "zone" do
+      field "availability_zone" do
         alias_for "AvailabilityZone"
         location "query"
       end
@@ -565,7 +565,7 @@ plugin "rs_aws_rds" do
         location "query"
       end
 
-      field "db_instance_type" do
+      field "db_instance_class" do
         alias_for "DBInstanceClass"
         location "query"
       end
@@ -580,7 +580,7 @@ plugin "rs_aws_rds" do
         location "query"
       end 
 
-      field "db_subnet_group" do
+      field "db_subnet_group_name" do
         alias_for "DBSubnetGroupName"
         location "query"
       end 
@@ -590,7 +590,7 @@ plugin "rs_aws_rds" do
         location "query"
       end 
 
-      field "domain_IAM_role" do 
+      field "domain_IAM_role_name" do 
         alias_for "DomainIAMRoleName"
         location "query"
       end 
@@ -620,7 +620,7 @@ plugin "rs_aws_rds" do
         location "query"
       end 
 
-      field "option_group" do
+      field "option_group_name" do
         alias_for "OptionGroupName"
         location "query"
       end 

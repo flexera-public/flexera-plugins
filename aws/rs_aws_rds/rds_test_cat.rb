@@ -34,10 +34,10 @@ end
 
 #FROM Snapshot:
 #resource "my_rds", type: "rs_aws_rds.db_instance" do
-#  zone "us-east-1a"
-#  db_instance_type "db.t2.small"
+#  availability_zone "us-east-1a"
+#  db_instance_class "db.t2.small"
 #  db_instance_identifier join(["my-rds-", last(split(@@deployment.href, "/"))])
-#  db_subnet_group "db-sub-grp-8172a6f8"
+#  db_subnet_group_name "db-sub-grp-8172a6f8"
 #  db_snapshot_identifier "arn:aws:rds:us-east-1:041819229125:snapshot:my-rds-937549003-final-snapshot"
 #  storage_type "standard"
 #end
@@ -45,15 +45,15 @@ end
 #New Instance:
 resource "my_rds", type: "rs_aws_rds.db_instance" do
   allocated_storage "10"
-  zone "us-east-1a"
-  db_instance_type "db.t2.small"
+  availability_zone "us-east-1a"
+  db_instance_class "db.t2.small"
   db_instance_identifier join(["my-rds-", last(split(@@deployment.href, "/"))])
   db_name join(["mydb", last(split(@@deployment.href, "/"))])
-  db_subnet_group "db-sub-grp-8172a6f8"
+  db_subnet_group_name "db-sub-grp-8172a6f8"
   engine "mysql"
   engine_version "5.7.11" 
   master_username "my_user"
-  master_password "pa$$w0rd1"
+  master_user_password "pa$$w0rd1"
   storage_encrypted "false"
   storage_type "standard"
   tag_key_1 "foo"

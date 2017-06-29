@@ -43,20 +43,20 @@ For more information on using packages, please refer to the RightScale online do
 |------------|-----------|-------------|
 | allocated_storage | no |  The amount of storage (in gigabytes) to be initially allocated for the database instance. |
 | auto_minor_version_upgrade | no | Indicates that minor engine upgrades will be applied automatically to the DB instance during the maintenance window. |
-| zone | no | The EC2 Availability Zone that the database instance will be created in. |
+| availability_zone | no | The EC2 Availability Zone that the database instance will be created in. |
 | backup_retention_period | no | The number of days for which automated backups are retained. Setting this parameter to a positive number enables backups. Setting this parameter to 0 disables automated backups. |
 | character_set_name | no | For supported engines, indicates that the DB instance should be associated with the specified CharacterSet. | 
 | copy_tags_to_snapshot | no | `true` to copy all tags from the DB instance to snapshots of the DB instance; otherwise `false`. |
 | db_cluster_identifier | no | The identifier of the DB cluster that the instance will belong to. | 
-| db_instance_type | yes* | The compute and memory capacity of the DB instance. Note that not all instance classes are available in all regions for all DB engines. |
+| db_instance_class | yes* | The compute and memory capacity of the DB instance. Note that not all instance classes are available in all regions for all DB engines. |
 | db_instance_identifier | yes | The DB instance identifier. This parameter is stored as a lowercase string. | 
 | db_name | no | The meaning of this parameter differs according to the database engine you use.  See AWS documentation, or in-line documentation in Plugin | 
 | db_parameter_group_name | no | The name of the DB parameter group to associate with this DB instance. If this argument is omitted, the default DBParameterGroup for the specified engine will be used. |
 | db_security_group | no | The DB security group to associate with this DB instance. | 
 | db_snapshot_identifier | yes** | The identifier for the DB snapshot to restore from. |
-| db_subnet_group | no | A DB subnet group to associate with this DB instance. | 
+| db_subnet_group_name | no | A DB subnet group to associate with this DB instance. | 
 | domain | no | Specify the Active Directory Domain to create the instance in. | 
-| domain_IAM_role | no | Specify the name of the IAM role to be used when making API calls to the Directory Service. | 
+| domain_IAM_role_name | no | Specify the name of the IAM role to be used when making API calls to the Directory Service. | 
 | enable_IAM_db_auth | no | `true` to enable mapping of AWS Identity and Access Management (IAM) accounts to database accounts; otherwise `false`. |
 | engine | yes* | The name of the database engine to be used for this instance. Valid values: mysql, mariadb, oracle-se1, oracle-se2, oracle-se, oracle-ee |
 | engine_version | no | The version number of the database engine to use. |
@@ -64,14 +64,14 @@ For more information on using packages, please refer to the RightScale online do
 | kms_key_id | no | The KMS key identifier for an encrypted DB instance. |
 | license_model | no | License model information for this DB instance. |
 | master_username | no | The name for the master database user. | 
-| master_password | no | The password for the master database user. Can be any printable ASCII character except "/", """, or "@". |
+| master_user_password | no | The password for the master database user. Can be any printable ASCII character except "/", """, or "@". |
 | monitoring_interval | no | The interval, in seconds, between points when Enhanced Monitoring metrics are collected for the DB instance. To disable collecting Enhanced Monitoring metrics, specify 0. |
 | monitoring_role_arn | no | The ARN for the IAM role that permits RDS to send enhanced monitoring metrics to CloudWatch Logs. For example, arn:aws:iam:123456789012:role/emaccess. |
-| multi_az | no | Specifies if the DB instance is a Multi-AZ deployment. You cannot set the `zone` field if the `multi_az` field is set to true. | 
-| option_group | no | Indicates that the DB instance should be associated with the specified option group. |
+| multi_az | no | Specifies if the DB instance is a Multi-AZ deployment. You cannot set the `availability_zone` field if the `multi_az` field is set to true. | 
+| option_group_name | no | Indicates that the DB instance should be associated with the specified option group. |
 | port | no | The port number on which the database accepts connections. |
-| backup_window | no | The daily time range during which automated backups are created if automated backups are enabled, using the BackupRetentionPeriod parameter |
-| maintenance_window | no | The weekly time range during which system maintenance can occur, in Universal Coordinated Time (UTC). |
+| preferred_backup_window | no | The daily time range during which automated backups are created if automated backups are enabled, using the BackupRetentionPeriod parameter |
+| preferred_maintenance_window | no | The weekly time range during which system maintenance can occur, in Universal Coordinated Time (UTC). |
 | promotion_tier | no | A value that specifies the order in which an Aurora Replica is promoted to the primary instance after a failure of the existing primary instance. |
 | publicly_accessible | no | Specifies the accessibility options for the DB instance. A value of `true` specifies an Internet-facing instance with a publicly resolvable DNS name, which resolves to a public IP address. A value of `false` specifies an internal instance with a DNS name that resolves to a private IP address. |
 | storage_encrypted | no | Specifies whether the DB instance is encrypted. |
@@ -115,25 +115,25 @@ The resulting resrouce can be manipulated just like the native RightScale resour
 #Creates a new RDS DB Instance
 resource "my_rds", type: "rs_aws_rds.db_instance" do
   allocated_storage "10" 
-  zone "us-east-1a"  
-  db_instance_type "db.t2.small" 
+  availability_zone "us-east-1a"  
+  db_instance_class "db.t2.small" 
   db_instance_identifier "my_rds_instance" 
   db_name "my_database" 
-  db_subnet_group "rds-subnet-grp-12345"
+  db_subnet_group_name "rds-subnet-grp-12345"
   engine "mysql" 
   engine_version "5.7.11" 
   master_username "my_user"
-  master_password "pa$$w0rd1"
+  master_user_password "pa$$w0rd1"
   storage_encrypted "false"
   storage_type "standard"
 end
 
 #Creates a new RDS DB Instance from a DB Snapshot
 resource "my_restored_rds", type: "rs_aws_rds.db_instance" do
-  zone "us-east-1a"
-  db_instance_type "db.t2.small"
+  availability_zone "us-east-1a"
+  db_instance_class "db.t2.small"
   db_instance_identifier "my_rds_instance"
-  db_subnet_group "rds-subnet-grp-12345"
+  db_subnet_group_name "rds-subnet-grp-12345"
   db_snapshot_identifier "<snapshot-identifier OR snapshot-arn>"
   storage_type "standard"
 end
