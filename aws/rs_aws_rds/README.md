@@ -15,7 +15,7 @@ The AWS RDS Plugin integrates RightScale Self-Service with the basic functionali
   - [sys_log](sys_log.rb)
 
 ## Getting Started
-**Comming Soon**
+**Coming Soon**
 
 ## Installation
 1. Be sure your RightScale account has Self-Service enabled
@@ -34,8 +34,8 @@ import "plugin/rs_aws_rds"
 For more information on using packages, please refer to the RightScale online documenataion. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 ## Supported Resources
-### * db_instance
-### * db_subnet_group
+ -  db_instance
+ -  db_subnet_group
 
 ## Resource: `db_instance`
 
@@ -194,10 +194,10 @@ end
 ```
 #Creates a new RDS DB Instance
 resource "drupal_rds_subnet_group", type: "rs_aws_rds.db_subnet_groups" do
-  name join(["drupal-rds-sng-", last(split(@@deployment.href, "/"))])
+  name "rds_subnet_group"
   description "RDS Subnet Group"
-  subnet1 "subnet-1edffb7a"
-  subnet2 "subnet-287d365e"
+  subnet1 "subnet-123abcd"
+  subnet2 "subnet-456efgh"
 end
 ```
 
