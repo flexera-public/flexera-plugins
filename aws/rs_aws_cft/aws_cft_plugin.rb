@@ -1,0 +1,697 @@
+name 'rs_aws_cft'
+type 'plugin'
+rs_ca_ver 20161221
+short_description "Amazon Web Services - Cloud Formation"
+package "plugins/rs_aws_cft"
+import "sys_log"
+
+plugin "rs_aws_cft" do
+  endpoint do
+    default_scheme "https"
+    query do {
+      "Version" => "2010-05-15"
+    } end
+  end
+  
+  # http://docs.aws.amazon.com/efs/latest/ug/api-reference.html
+  type "stack" do
+    href_templates "/?Action=DescribeStacks&StackName={{//DescribeStacksResult/Stacks/member/StackName}}","/?Action=DescribeStacks&StackName={{//ListStacksResult/StackSummaries/member/StackName}}","{{//CreateStackResult/StackId}}"
+
+    field "capabilities" do
+      alias_for "Capabilities.member.1"
+      type "string"
+      location "query"
+      # ALLOWED VALUES: CAPABILITY_IAM or CAPABILITY_NAMED_IAM
+    end
+
+    field "client_request_token" do
+      alias_for "ClientRequestToken"
+      type "string"
+      location "query"
+    end
+
+    field "disable_rollback" do
+      alias_for "DisableRollback"
+      type "boolean"
+      location "query"
+    end 
+
+    field "notification_arn_1" do
+      alias_for "NotificationARNs.member.1"
+      type "string"
+      location "query"
+    end 
+
+    field "notification_arn_2" do
+      alias_for "NotificationARNs.member.2"
+      type "string"
+      location "query"
+    end 
+
+    field "notification_arn_3" do
+      alias_for "NotificationARNs.member.3"
+      type "string"
+      location "query"
+    end 
+
+    field "on_failure" do
+      alias_for "OnFailure"
+      type "string"
+      location "query"
+      # ALLOWED VALUES: DO_NOTHING | ROLLBACK | DELETE
+    end
+
+    field "parameter_1_name" do
+      alias_for "Parameters.member.1.ParameterKey"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_1_value" do
+      alias_for "Parameters.member.1.ParameterValue"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_2_name" do
+      alias_for "Parameters.member.2.ParameterKey"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_2_value" do
+      alias_for "Parameters.member.2.ParameterValue"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_3_name" do
+      alias_for "Parameters.member.3.ParameterKey"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_3_value" do
+      alias_for "Parameters.member.3.ParameterValue"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_4_name" do
+      alias_for "Parameters.member.4.ParameterKey"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_4_value" do
+      alias_for "Parameters.member.4.ParameterValue"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_5_name" do
+      alias_for "Parameters.member.5.ParameterKey"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_5_value" do
+      alias_for "Parameters.member.5.ParameterValue"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_6_name" do
+      alias_for "Parameters.member.6.ParameterKey"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_6_value" do
+      alias_for "Parameters.member.6.ParameterValue"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_7_name" do
+      alias_for "Parameters.member.7.ParameterKey"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_7_value" do
+      alias_for "Parameters.member.7.ParameterValue"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_8_name" do
+      alias_for "Parameters.member.8.ParameterKey"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_8_value" do
+      alias_for "Parameters.member.8.ParameterValue"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_9_name" do
+      alias_for "Parameters.member.9.ParameterKey"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_9_value" do
+      alias_for "Parameters.member.9.ParameterValue"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_10_name" do
+      alias_for "Parameters.member.10.ParameterKey"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_10_value" do
+      alias_for "Parameters.member.10.ParameterValue"
+      type "string"
+      location "query"
+    end 
+
+    field "resource_type_1" do
+      alias_for "ResourceTypes.member.1"
+      type "string"
+      location "query"
+    end 
+
+    field "resource_type_2" do
+      alias_for "ResourceTypes.member.2"
+      type "string"
+      location "query"
+    end 
+
+    field "resource_type_3" do
+      alias_for "ResourceTypes.member.3"
+      type "string"
+      location "query"
+    end 
+
+    field "role_arn" do
+      alias_for "RoleARN"
+      type "string"
+      location "query"
+    end 
+
+    field "stack_name" do
+      alias_for "StackName"
+      type "string"
+      location "query"
+      required true
+    end 
+
+    field "stack_policy_body" do
+      alias_for "StackPolicyBody"
+      type "string"
+      location "query"
+    end 
+
+    field "stack_policy_url" do
+      alias_for "StackPolicyURL"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_value_1" do
+      alias_for "Tags.member.1.Value"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_key_1" do
+      alias_for "Tags.member.1.Key"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_value_2" do
+      alias_for "Tags.member.2.Value"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_key_2" do
+      alias_for "Tags.member.2.Key"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_value_3" do
+      alias_for "Tags.member.3.Value"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_key_3" do
+      alias_for "Tags.member.3.Key"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_value_4" do
+      alias_for "Tags.member.4.Value"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_key_4" do
+      alias_for "Tags.member.4.Key"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_value_5" do
+      alias_for "Tags.member.5.Value"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_key_5" do
+      alias_for "Tags.member.5.Key"
+      type "string"
+      location "query"
+    end 
+
+    field "template_body" do
+      alias_for "TemplateBody"
+      type "string"
+      location "query"
+    end 
+
+    field "template_url" do
+      alias_for "TemplateURL"
+      type "string"
+      location "query"
+    end 
+
+    field "timeout_in_minutes" do
+      alias_for "TimeoutInMinutes"
+      type "number"
+      location "query"
+    end 
+
+    # Non-create fields
+
+    field "stack_status_filter" do
+      alias_for "StackStatusFilter.memeber.1"
+      type "string"
+      location "query"
+    end 
+
+    field "stack_policy_during_update_body" do
+      alias_for "StackPolicyDuringUpdateBody"
+      type "string"
+      location "query"
+    end 
+
+    field "stack_policy_during_update_url" do
+      alias_for "StackPolicyDuringUpdateURL"
+      type "string"
+      location "query"
+    end 
+
+    field "use_previous_template" do 
+      alias_for "UsePreviousTemplate"
+      type "boolean"
+      location "query"
+    end 
+
+    action "create" do
+      verb "POST"
+      path "/?Action=CreateStack"
+    end
+
+    action "destroy" do
+      verb "POST"
+      path "/?Action=DeleteStack&StackName=$StackName"
+
+    end
+
+    action "show" do
+      verb "POST"
+
+      output_path "//DescribeStacksResult/Stacks/member"
+    end 
+    
+    action "get" do
+      verb "POST"
+      path "/?Action=DescribeStacks"
+
+      field "stack_name" do
+        alias_for "StackName"
+        location "query"
+      end  
+
+      output_path "//DescribeStacksResult/Stacks/member"
+    end
+    
+    action "list" do
+      verb "POST"
+      path "/?Action=ListStacks"
+
+      field "stack_status_filter" do
+        alias_for "StackStatusFilter.memeber.1"
+        location "query"
+      end 
+
+      output_path "//ListStacksResult/StackSummaries/memeber"
+
+    end
+
+    action "update" do
+      verb "POST"
+      path "/?Action=UpdateStack&StackName=$StackName"
+
+      field "capabilities" do
+        alias_for "Capabilities.member.1"
+        location "query"
+      end
+
+      field "client_request_token" do
+        alias_for "ClientRequestToken"
+        location "query"
+      end
+
+      field "notification_arn_1" do
+        alias_for "NotificationARNs.member.1"
+        location "query"
+      end 
+
+      field "notification_arn_2" do
+        alias_for "NotificationARNs.member.2"
+        location "query"
+      end 
+
+      field "notification_arn_3" do
+        alias_for "NotificationARNs.member.3"
+        location "query"
+      end 
+
+      field "parameter_1_name" do
+        alias_for "Parameters.member.1.ParameterKey"
+        location "query"
+      end 
+
+      field "parameter_1_value" do
+        alias_for "Parameters.member.1.ParameterValue"
+        location "query"
+      end 
+
+      field "parameter_2_name" do
+        alias_for "Parameters.member.2.ParameterKey"
+        location "query"
+      end 
+
+      field "parameter_2_value" do
+        alias_for "Parameters.member.2.ParameterValue"
+        location "query"
+      end 
+
+      field "parameter_3_name" do
+        alias_for "Parameters.member.3.ParameterKey"
+        location "query"
+      end 
+
+      field "parameter_3_value" do
+        alias_for "Parameters.member.3.ParameterValue"
+        location "query"
+      end 
+
+      field "parameter_4_name" do
+        alias_for "Parameters.member.4.ParameterKey"
+        location "query"
+      end 
+
+      field "parameter_4_value" do
+        alias_for "Parameters.member.4.ParameterValue"
+        location "query"
+      end 
+
+      field "parameter_5_name" do
+        alias_for "Parameters.member.5.ParameterKey"
+        location "query"
+      end 
+
+      field "parameter_5_value" do
+        alias_for "Parameters.member.5.ParameterValue"
+        location "query"
+      end 
+
+      field "parameter_6_name" do
+        alias_for "Parameters.member.6.ParameterKey"
+        location "query"
+      end 
+
+      field "parameter_6_value" do
+        alias_for "Parameters.member.6.ParameterValue"
+        location "query"
+      end 
+
+      field "parameter_7_name" do
+        alias_for "Parameters.member.7.ParameterKey"
+        location "query"
+      end 
+
+      field "parameter_7_value" do
+        alias_for "Parameters.member.7.ParameterValue"
+        location "query"
+      end 
+
+      field "parameter_8_name" do
+        alias_for "Parameters.member.8.ParameterKey"
+        location "query"
+      end 
+
+      field "parameter_8_value" do
+        alias_for "Parameters.member.8.ParameterValue"
+        location "query"
+      end 
+
+      field "parameter_9_name" do
+        alias_for "Parameters.member.9.ParameterKey"
+        location "query"
+      end 
+
+      field "parameter_9_value" do
+        alias_for "Parameters.member.9.ParameterValue"
+        location "query"
+      end 
+
+      field "parameter_10_name" do
+        alias_for "Parameters.member.10.ParameterKey"
+        location "query"
+      end 
+
+      field "parameter_10_value" do
+        alias_for "Parameters.member.10.ParameterValue"
+        location "query"
+      end 
+
+      field "resource_type_1" do
+        alias_for "ResourceTypes.member.1"
+        location "query"
+      end 
+
+      field "resource_type_2" do
+        alias_for "ResourceTypes.member.2"
+        location "query"
+      end 
+
+      field "resource_type_3" do
+        alias_for "ResourceTypes.member.3"
+        location "query"
+      end 
+
+      field "role_arn" do
+        alias_for "RoleARN"
+        location "query"
+      end 
+
+      field "stack_name" do
+        alias_for "StackName"
+        location "query"
+      end 
+
+      field "stack_policy_body" do
+        alias_for "StackPolicyBody"
+        location "query"
+      end 
+
+      field "stack_policy_url" do
+        alias_for "StackPolicyURL"
+        location "query"
+      end 
+
+      field "tag_value_1" do
+        alias_for "Tags.member.1.Value"
+        location "query"
+      end 
+
+      field "tag_key_1" do
+        alias_for "Tags.member.1.Key"
+        location "query"
+      end 
+
+      field "tag_value_2" do
+        alias_for "Tags.member.2.Value"
+        location "query"
+      end 
+
+      field "tag_key_2" do
+        alias_for "Tags.member.2.Key"
+        location "query"
+      end 
+
+      field "tag_value_3" do
+        alias_for "Tags.member.3.Value"
+        location "query"
+      end 
+
+      field "tag_key_3" do
+        alias_for "Tags.member.3.Key"
+        location "query"
+      end 
+
+      field "tag_value_4" do
+        alias_for "Tags.member.4.Value"
+        location "query"
+      end 
+
+      field "tag_key_4" do
+        alias_for "Tags.member.4.Key"
+        location "query"
+      end 
+
+      field "tag_value_5" do
+        alias_for "Tags.member.5.Value"
+        location "query"
+      end 
+
+      field "tag_key_5" do
+        alias_for "Tags.member.5.Key"
+        location "query"
+      end 
+
+      field "template_body" do
+        alias_for "TemplateBody"
+        location "query"
+      end 
+
+      field "template_url" do
+        alias_for "TemplateURL"
+        location "query"
+      end 
+
+      field "stack_policy_during_update_body" do
+        alias_for "StackPolicyDuringUpdateBody"
+        location "query"
+      end 
+
+      field "stack_policy_during_update_url" do
+        alias_for "StackPolicyDuringUpdateURL"
+        location "query"
+      end 
+
+      field "use_previous_template" do 
+        alias_for "UsePreviousTemplate"
+        location "query"
+      end 
+
+    end 
+
+    action "get_resources" do
+      verb "POST"
+      path "/?Action=DescribeStackResources&StackName=$StackName"
+
+      output_path "\\DescribeStackResourcesResult\StackResources\member"
+    end
+
+    output "StackName","StackId","CreationTime","StackStatus","DisableRollback","LogicalResourceId","PhysicalResourceId","ResourceType","ResourceStatus"
+
+    output "OutputKey" do
+      body_path "//DescribeStacksResult/Stacks/member/Outputs/member/OutputKey"
+      type "simple_element"
+    end
+
+    output "OutputValue" do
+      body_path "//DescribeStacksResult/Stacks/member/Outputs/member/OutputValue"
+      type "simple_element"
+    end 
+
+    provision "create_stack"
+
+    delete    "delete_stack"
+  end
+    
+end
+
+resource_pool "rs_aws_cft" do
+  plugin $rs_aws_cft
+  host "cloudformation.us-east-1.amazonaws.com"
+  auth "key", type: "aws" do
+    version     4
+    service    'cloudformation'
+    region     'us-east-1'
+    access_key cred('AWS_ACCESS_KEY_ID')
+    secret_key cred('AWS_SECRET_ACCESS_KEY')
+  end
+end
+
+define create_stack(@declaration) return @resource do
+  sub on_error: stop_debugging() do
+    call start_debugging()
+    $object = to_object(@declaration)
+    $fields = $object["fields"]
+    $tags = $fields["tags"]
+    $type = $object["type"]
+    $stack_name = $fields["name"]
+    @operation = rs_aws_cft.stack.create($fields)
+    @operation = rs_aws_cft.stack.get(stack_name: $stack_name)
+    $status = @operation.StackStatus
+    sub on_error: skip, timeout: 10m do
+      while $status == "CREATE_IN_PROGRESS" do
+        $status = @operation.StackStatus
+        sleep(10)
+      end
+    end 
+    @resource = @operation.show()
+    call stop_debugging()
+  end
+end
+
+define delete_stack(@declaration) do
+  call start_debugging()
+  $state = @declaration.StackStatus
+  if $state != "DELETE_IN_PROGRESS" || $state != "DELETE_COMPLETE"
+      @declaration.destroy()
+  end 
+  call stop_debugging()
+end
+
+
+define start_debugging() do
+  if $$debugging == false || logic_and($$debugging != false, $$debugging != true)
+    initiate_debug_report()
+    $$debugging = true
+  end
+end
+
+define stop_debugging() do
+  if $$debugging == true
+    $debug_report = complete_debug_report()
+    call sys_log.detail($debug_report)
+    $$debugging = false
+  end
+end
