@@ -837,6 +837,75 @@ plugin "rs_aws_rds" do
 
   end
 
+  type "db_subnet_groups" do
+    href_templates "/?Action=DescribeDBSubnetGroups&DBSubnetGroupName={{//DBSubnetGroup/DBSubnetGroupName}}"
+
+    field "name" do
+      alias_for "DBSubnetGroupName"
+      type      "string"
+      location  "query"
+    end
+
+    field "description" do
+      alias_for "DBSubnetGroupDescription"
+      type      "string"
+      location  "query"
+    end
+    
+    field "subnet1" do
+      alias_for "SubnetIds.member.1"
+      type "string"
+      location "query"
+    end
+
+    field "subnet2" do
+      alias_for "SubnetIds.member.2"
+      type "string"
+      location "query"
+    end
+
+    output_path "//DBSubnetGroup"
+
+    output "DBSubnetGroupDescription" do
+      body_path "DBSubnetGroupDescription"
+      type "simple_element"
+    end
+
+    output "DBSubnetGroupName" do
+      body_path "DBSubnetGroupName"
+      type "simple_element"
+    end
+
+    output "name" do
+      body_path "DBSubnetGroupName"
+      type "simple_element"
+    end
+
+    action "create" do
+      verb "POST"
+      path "/?Action=CreateDBSubnetGroup"
+    end
+
+    action "destroy" do
+      verb "POST"
+      path "$href?Action=DeleteDBSubnetGroup"
+    end
+
+    action "get" do
+      verb "POST"
+      path "/?Action=DescribeDBSubnetGroups"
+    end
+
+    action "list" do
+      verb "POST"
+      path "/?Action=DescribeDBSubnetGroups"
+    end
+
+    provision "provision_db_subnet_group"
+
+    delete    "delete_db_subnet_group"
+
+  end
 end
 
 resource_pool "rds" do
@@ -920,6 +989,27 @@ define delete_sg(@sec_group) do
     call start_debugging()
     @sec_group.destroy()
     call stop_debugging()
+  end
+end
+
+define provision_db_subnet_group(@declaration) return @db_subnet_group do
+  sub on_error: stop_debugging() do
+    $object = to_object(@declaration)
+    $fields = $object["fields"]
+    @db_subnet_group = rs_aws_rds.db_subnet_groups.create($fields)
+    @db_subnet_group = @db_subnet_group.get()
+  end
+end
+
+define list_subnet_groups() return $object do
+  @db_subnet_groups = rs_aws_rds.db_subnet_groups.list()
+  $object = to_object(@db_subnet_groups)
+  $object = to_s($object)
+end
+
+define delete_db_subnet_group(@db_subnet_group) do
+  sub on_error: stop_debugging() do
+    @db_subnet_group.destroy()
   end
 end
 

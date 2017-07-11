@@ -35,6 +35,9 @@ For more information on using packages, please refer to the RightScale online do
 
 ## Supported Resources
 ### db_instance
+### db_subnet_group
+
+## Resource: `db_instance`
 
 #### Supported Fields
 **Note:** There are many possible configurations when defining a `db_instance` resource.  While some fields below are not listed as "Required", they may actually be required for your resource,  depending on the value(s) of other field(s). More detailed field documentation is available in-line within the RDS Plugin.
