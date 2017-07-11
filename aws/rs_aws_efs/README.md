@@ -15,7 +15,7 @@ The AWS EFS Plugin integrates RightScale Self-Service with the basic functionali
   - [sys_log](sys_log.rb)
 
 ## Getting Started
-**Comming Soon**
+**Coming Soon**
 
 ## Installation
 1. Be sure your RightScale account has Self-Service enabled
