@@ -1,11 +1,11 @@
-name 'aws_elb_plugin_new'
+name 'rs_aws_alb'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Amazon Web Services - Elastic Load Balancer"
-package "plugin/rs_aws_elb"
+package "plugin/rs_aws_alb"
 import "sys_log"
 
-plugin "rs_aws_elb" do
+plugin "rs_aws_alb" do
   endpoint do
     default_host "elasticloadbalancing.amazonaws.com"
     default_scheme "https"
@@ -15,7 +15,7 @@ plugin "rs_aws_elb" do
     } end
   end
   
-  type "elb_load_balancer" do
+  type "load_balancer" do
     href_templates "/?Action=DescribeLoadBalancers&LoadBalancerArns.member.1={{//CreateLoadBalancerResult/LoadBalancers/member/LoadBalancerArn}}","/?Action=DescribeLoadBalancers&LoadBalancerArns.member.1={{//DescribeLoadBalancersResult/LoadBalancers/member/LoadBalancerArn}}"
     provision "provision_resource"
     delete    "delete_resource"
@@ -203,7 +203,7 @@ plugin "rs_aws_elb" do
 
   end
 
-  type "elb_target_group" do
+  type "target_group" do
     href_templates "/?Action=DescribeTargetGroups&TargetGroupArns.member.1={{//CreateTargetGroupResult/TargetGroups/member/TargetGroupArn}}","/?Action=DescribeTargetGroups&TargetGroupArns.member.1={{//DescribeTargetGroupsResult/TargetGroups/member/TargetGroupArn}}","/?Action=DescribeTargetGroups&TargetGroupArns.member.1={{//ModifyTargetGroupsResult/TargetGroups/member/TargetGroupArn}}"
     provision "provision_resource"
     delete "delete_resource"
@@ -577,7 +577,7 @@ plugin "rs_aws_elb" do
 
   end 
 
-  type "elb_rule" do
+  type "rule" do
     href_templates "/?Action=DescribeRules&RuleArns.member.1={{//DescribeRulesResult/Rules/member/RuleArn}}","/?Action=DescribeRules&RuleArns.member.1={{//CreateRuleResult/Rules/member/RuleArn}}","/?Action=DescribeRules&RuleArns.member.1={{//ModifyRulesResult/Rules/member/RuleArn"
     provision "provision_resource"
     delete "delete_resource"
@@ -879,7 +879,7 @@ plugin "rs_aws_elb" do
 
   end
 
-  type "elb_listener" do 
+  type "listener" do 
     href_templates "/?Action=DescribeListeners&ListenerArns.member.1={{//DescribeListenersResult/Listeners/member/ListenerArn}}","/?Action=DescribeListeners&ListenerArns.member.1={{//CreateListenerResult/Listeners/member/ListenerArn}}","/?Action=DescribeListeners&ListenerArns.member.1={{//ModifyListenerResult/Listeners/member/ListenerArn}}"
     provision "provision_resource"
     delete "delete_resource"
@@ -1021,21 +1021,21 @@ plugin "rs_aws_elb" do
       type "simple_element"
     end 
 
-    link "elb" do
-      type "elb"
+    link "load_balander" do
+      type "load_balancer"
       path "/?Action=DescribeLoadBalancers&LoadBalancerArns.member.1=$LoadBalancerArn"
     end 
 
-    link "elb_rules" do
-      type "elb_rule"
+    link "rules" do
+      type "rule"
       path "/?Action=DescribeRules&ListenerArn=$ListenerArn"
     end 
   end
 
 end
 
-resource_pool "elb_pool" do
-  plugin $rs_aws_elb
+resource_pool "alb_pool" do
+  plugin $rs_aws_alb
   auth "key", type: "aws" do
     version     4
     service    'elasticloadbalancing'
@@ -1046,13 +1046,13 @@ resource_pool "elb_pool" do
 end
 
 parameter "lb_name" do
-  label "ELB Name"
-  description "ELB Name"
-  default "myelb-1"
+  label "ALB Name"
+  description "ALB Name"
+  default "myalb-1"
   type "string"
 end
 
-resource "my_elb", type: "rs_aws_elb.elb_load_balancer" do
+resource "my_alb", type: "rs_aws_alb.load_balancer" do
   name $lb_name
   scheme "internet-facing"
   ip_address_type "ipv4"
@@ -1063,22 +1063,22 @@ resource "my_elb", type: "rs_aws_elb.elb_load_balancer" do
   tag_value_1 "bar"
 end
 
-resource "my_tg", type: "rs_aws_elb.elb_target_group" do
+resource "my_tg", type: "rs_aws_alb.target_group" do
   name join(["TargetGroup-",$lb_name])
   port 80
   protocol "HTTP"
   vpc_id "vpc-8172a6f8"
 end
 
-resource "my_listener", type: "rs_aws_elb.elb_listener" do
+resource "my_listener", type: "rs_aws_alb.listener" do
   action1_target_group_arn @my_tg.TargetGroupArn
   action1_type "forward"
-  load_balancer_arn @my_elb.LoadBalancerArn
+  load_balancer_arn @my_alb.LoadBalancerArn
   port 80
   protocol "HTTP"
 end 
 
-resource "my_rule", type: "rs_aws_elb.elb_rule" do
+resource "my_rule", type: "rs_aws_alb.rule" do
   action1_target_group_arn @my_tg.TargetGroupArn
   action1_type "forward"
   condition1_field "path-pattern"
@@ -1109,7 +1109,7 @@ define provision_resource(@declaration) return @resource do
     call sys_log.set_task_target(@@deployment)
     call sys_log.summary(join(["Provision ", $type]))
     call sys_log.detail($object)
-    @operation = rs_aws_elb.$type.create($fields)
+    @operation = rs_aws_alb.$type.create($fields)
     call sys_log.detail(to_object(@operation))
     @resource = @operation.get()
     call sys_log.detail(to_object(@resource))
