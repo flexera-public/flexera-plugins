@@ -15,7 +15,7 @@ The AWS RDS Plugin integrates RightScale Self-Service with the basic functionali
   - [sys_log](sys_log.rb)
 
 ## Getting Started
-**Comming Soon**
+**Coming Soon**
 
 ## Installation
 1. Be sure your RightScale account has Self-Service enabled
@@ -34,7 +34,10 @@ import "plugin/rs_aws_rds"
 For more information on using packages, please refer to the RightScale online documenataion. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 ## Supported Resources
-### db_instance
+ -  db_instance
+ -  db_subnet_group
+
+## Resource: `db_instance`
 
 #### Supported Fields
 **Note:** There are many possible configurations when defining a `db_instance` resource.  While some fields below are not listed as "Required", they may actually be required for your resource,  depending on the value(s) of other field(s). More detailed field documentation is available in-line within the RDS Plugin.
@@ -169,7 +172,45 @@ end
 | start | [StartDBInstance](http://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_StartDBInstance.html) | Supported |
 | reboot | [RebootDBInstance](http://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_RebootDBInstance.html) | Supported |
 
+## Resource: `db_subnet_group`
+
+#### Supported Fields
+**Note:** There are many possible configurations when defining a `db_subnet_group` resource.  While some fields below are not listed as "Required", they may actually be required for your resource,  depending on the value(s) of other field(s). More detailed field documentation is available in-line within the RDS Plugin.
+
+| Field Name | Required? | Description |
+|------------|-----------|-------------|
+| name | yes |  The name for the DB subnet group. This value is stored as a lowercase string. |
+| description | yes | The description for the DB subnet group. |
+| subnet1 | yes | The EC2 Subnet IDs for the DB subnet group. |
+| subnet2 | no | The EC2 Subnet IDs for the DB subnet group. |
+
+#### Supported Outputs
+- DBSubnetGroupDescription
+- DBSubnetGroupName
+- name
+
+
+#### Usage
+```
+#Creates a new RDS DB Instance
+resource "drupal_rds_subnet_group", type: "rs_aws_rds.db_subnet_groups" do
+  name "rds_subnet_group"
+  description "RDS Subnet Group"
+  subnet1 "subnet-123abcd"
+  subnet2 "subnet-456efgh"
+end
+```
+
+#### Supported Actions
+
+| Action | API Implementation | Support Level |
+|--------------|:----:|:-------------:|
+| create | [CreateDBSubnetGroup](http://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_CreateDBSubnetGroup.html) | Supported |
+| destroy | [DeleteDBSubnetGroup](http://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_DeleteDBSubnetGroup.html) | Supported |
+| list & get | [DescribeDBSubnetGroups](http://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_DescribeDBSubnetGroups.html) | Supported |
+
 Full list of possible actions can be found on the [AWS RDS API Documentation](http://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_Operations.html)
+
 ## Examples
 Please review [rds_test_cat.rb](./rds_test_cat.rb) for a basic example implementation.
 	

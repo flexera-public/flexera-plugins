@@ -134,4 +134,3 @@ end
 define reboot_db(@my_rds) do
   @my_rds.reboot()
 end
-
