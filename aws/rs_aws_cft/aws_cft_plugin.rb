@@ -619,24 +619,11 @@ plugin "rs_aws_cft" do
     end 
 
     # http://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_DescribeStackResources.html
-    action "get_resources" do
-      verb "POST"
+    link "resources" do
       path "/?Action=DescribeStackResources&StackName=$StackName"
-
+      type "resources"
       output_path "//DescribeStackResourcesResult/StackResources/member"
     end
-
-    action "get_resource" do
-      verb "POST"
-      path "/?Action=DescribeStackResource&StackName=$StackName"
-
-      field "logical_resource_id" do
-        alias_for "LogicalResourceId"
-        location "query"
-      end 
-
-      output_path "//DescribeStackResourceResult/StackResourceDetail"
-    end 
 
     output "StackName","StackId","CreationTime","StackStatus","DisableRollback","LogicalResourceId","PhysicalResourceId","ResourceType","ResourceStatus"
 
@@ -653,6 +640,79 @@ plugin "rs_aws_cft" do
     provision "create_stack"
 
     delete    "delete_stack"
+  end
+
+  type "resources" do 
+    href_templates "/?Action=DescribeStackResources&StackName={{//DescribeStackResourcesResult/StackResources/member/StackName}}&LogicalResourceId={{//DescribeStackResourcesResult/StackResources/member/LogicalResourceId}}"
+
+    field "stack_name" do
+      alias_for "StackName"
+      type "string"
+      location "query"
+    end
+    
+    field "logical_resource_id" do
+      alias_for "LogicalResourceId"
+      type "string"
+      location "query"
+    end 
+
+    field "physical_resource_id" do
+      alias_for "PhysicalResourceId"
+      type "string"
+      location "query"
+    end 
+
+    action "get" do
+      verb "POST"
+      path "/?Action=DescribeStackResources&StackName=$StackName"
+
+      field "logical_resource_id" do
+        alias_for "LogicalResourceId"
+        location "query"
+      end 
+
+      field "physical_resource_id" do
+        alias_for "PhysicalResourceId"
+        location "query"
+      end 
+
+      output_path "//DescribeStackResourcesResult/StackResources/member"
+    end
+
+    action "show" do
+      verb "POST"
+      path "/?Action=DescribeStackResources"
+
+      field "stack_name" do
+        alias_for "StackName"
+        location "query"
+      end
+
+      field "logical_resource_id" do
+        alias_for "LogicalResourceId"
+        location "query"
+      end 
+
+      field "physical_resource_id" do
+        alias_for "PhysicalResourceId"
+        location "query"
+      end 
+
+      output_path "//DescribeStackResourcesResult/StackResources/member"
+    end 
+
+    link "stack" do
+      path "/?Action=DescribeStacks&StackName=$StackName"
+      type "stack"
+      output_path "//DescribeStacksResult/Stacks/member"
+    end 
+
+    output "StackName","StackId","Timestamp","LogicalResourceId","PhysicalResourceId","ResourceType","ResourceStatus"
+
+    provision "no_operation"
+
+    delete "no_operation"
   end
     
 end
@@ -706,6 +766,9 @@ define delete_stack(@declaration) do
   end 
   call stop_debugging()
 end
+
+define no_operation(@declaration) do
+end 
 
 
 define start_debugging() do

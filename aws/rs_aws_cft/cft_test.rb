@@ -5,15 +5,27 @@ long_description ""
 
 import "plugins/rs_aws_cft"
 
-resource "drupal_cft", type: "rs_aws_cft.stack" do
- stack_name join(["cft-cf-", last(split(@@deployment.href, "/"))])
- template_body ""
- description "cft for cft stack"
+output "stack" do
+  label "stack object"
+end 
+
+output "resources" do
+  label "stack resources"
+end 
+
+resource "stack", type: "rs_aws_cft.stack" do
+  stack_name join(["cft-", last(split(@@deployment.href, "/"))])
+  template_body ""
+  description "CFT Test"
 end
 
 operation "launch" do
- description "Launch the application"
- definition "launch_handler"
+  description "Launch the application"
+  definition "launch_handler"
+  output_mappings do {
+    $stack => $stack_object,
+    $resources => $resource_object
+  } end 
 end
 
 define generate_cloudformation_template() return $cft_template do
@@ -91,11 +103,14 @@ define generate_cloudformation_template() return $cft_template do
 }')
 end
 
-define launch_handler(@drupal_cft) return $cft_template,@drupal_cft do
+define launch_handler(@stack) return $cft_template,@stack,$stack_object,$resource_object do
   call generate_cloudformation_template() retrieve $cft_template
   task_label("provision CFT Stack")
-  $rds_cft = to_object(@drupal_cft)
-  $rds_cft["fields"]["template_body"] = $cft_template
-  @drupal_cft = $rds_cft
-  provision(@drupal_cft)
+  $stack = to_object(@stack)
+  $stack["fields"]["template_body"] = $cft_template
+  @stack = $stack
+  provision(@stack)
+  $stack_object = to_s(to_object(@stack))
+  @resources = @stack.resources()
+  $resource_object = to_s(to_object(@resources))
 end
