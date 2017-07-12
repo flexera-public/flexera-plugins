@@ -13,9 +13,9 @@ plugin "rs_aws_cft" do
     } end
   end
   
-  # http://docs.aws.amazon.com/efs/latest/ug/api-reference.html
+  # http://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/Welcome.html
   type "stack" do
-    href_templates "/?Action=DescribeStacks&StackName={{//DescribeStacksResult/Stacks/member/StackName}}","/?Action=DescribeStacks&StackName={{//ListStacksResult/StackSummaries/member/StackName}}","{{//CreateStackResult/StackId}}"
+    href_templates "/?Action=DescribeStacks&StackName={{//DescribeStacksResult/Stacks/member/StackName}}","{{//CreateStackResult/StackId}}"#,"/?Action=DescribeStacks&StackName={{//ListStacksResult/StackSummaries/member/StackName}}"
 
     field "capabilities" do
       alias_for "Capabilities.member.1"
@@ -328,23 +328,27 @@ plugin "rs_aws_cft" do
       location "query"
     end 
 
+    # http://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_CreateStack.html
     action "create" do
       verb "POST"
       path "/?Action=CreateStack"
     end
 
+    # http://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_DeleteStack.html
     action "destroy" do
       verb "POST"
       path "/?Action=DeleteStack&StackName=$StackName"
 
     end
 
+    # http://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_DescribeStacks.html
     action "show" do
       verb "POST"
 
       output_path "//DescribeStacksResult/Stacks/member"
     end 
     
+    # http://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_DescribeStacks.html
     action "get" do
       verb "POST"
       path "/?Action=DescribeStacks"
@@ -356,20 +360,22 @@ plugin "rs_aws_cft" do
 
       output_path "//DescribeStacksResult/Stacks/member"
     end
-    
-    action "list" do
-      verb "POST"
-      path "/?Action=ListStacks"
 
-      field "stack_status_filter" do
-        alias_for "StackStatusFilter.memeber.1"
-        location "query"
-      end 
+    # http://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_ListStacks.html
+    #action "index" do
+    #  verb "POST"
+    #  path "/?Action=ListStacks"
 
-      output_path "//ListStacksResult/StackSummaries/memeber"
+     # field "stack_status_filter" do
+     #   alias_for "StackStatusFilter.memeber.1"
+     #   location "query"
+     # end 
 
-    end
+      #output_path "//ListStacksResult/StackSummaries/memeber"
 
+    #end
+
+    # http://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_UpdateStack.html
     action "update" do
       verb "POST"
       path "/?Action=UpdateStack&StackName=$StackName"
@@ -611,12 +617,25 @@ plugin "rs_aws_cft" do
 
     end 
 
+    # http://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_DescribeStackResources.html
     action "get_resources" do
       verb "POST"
       path "/?Action=DescribeStackResources&StackName=$StackName"
 
-      output_path "\\DescribeStackResourcesResult\StackResources\member"
+      output_path "//DescribeStackResourcesResult/StackResources/member"
     end
+
+    action "get_resource" do
+      verb "POST"
+      path "/?Action=DescribeStackResource&StackName=$StackName"
+
+      field "logical_resource_id" do
+        alias_for "LogicalResourceId"
+        location "query"
+      end 
+
+      output_path "//DescribeStackResourceResult/StackResourceDetail"
+    end 
 
     output "StackName","StackId","CreationTime","StackStatus","DisableRollback","LogicalResourceId","PhysicalResourceId","ResourceType","ResourceStatus"
 
