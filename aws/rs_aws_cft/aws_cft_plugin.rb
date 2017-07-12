@@ -676,16 +676,23 @@ define create_stack(@declaration) return @resource do
     $tags = $fields["tags"]
     $type = $object["type"]
     $stack_name = $fields["name"]
+    call sys_log.set_task_target(@@deployment)
+    call sys_log.summary(join(["Provision ",$type]))
+    call sys_log.detail($object)
+    call sys_log.detail(join(["Stack Name: ", $stack_name]))
     @operation = rs_aws_cft.stack.create($fields)
     @operation = rs_aws_cft.stack.get(stack_name: $stack_name)
     $status = @operation.StackStatus
+    call sys_log.detail(join[("Status: ", $status)])
     sub on_error: skip, timeout: 10m do
       while $status == "CREATE_IN_PROGRESS" do
         $status = @operation.StackStatus
+        call sys_log.detail(join[("Status: ", $status)])
         sleep(10)
       end
     end 
     @resource = @operation.show()
+    call sys_log.detail(to_object(@resource))
     call stop_debugging()
   end
 end
