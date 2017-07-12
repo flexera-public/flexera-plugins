@@ -685,7 +685,7 @@ define create_stack(@declaration) return @resource do
     @operation = rs_aws_cft.stack.get_stack(stack_name: $stack_name)
     $status = @operation.StackStatus
     call sys_log.detail(join(["Status: ", $status]))
-    sub on_error: skip, timeout: 10m do
+    sub on_error: skip, timeout: 60m do
       while $status == "CREATE_IN_PROGRESS" do
         $status = @operation.StackStatus
         call sys_log.detail(join(["Status: ", $status]))
