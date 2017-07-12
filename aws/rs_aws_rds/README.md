@@ -182,7 +182,7 @@ end
 | name | yes |  The name for the DB subnet group. This value is stored as a lowercase string. |
 | description | yes | The description for the DB subnet group. |
 | subnet1 | yes | The EC2 Subnet IDs for the DB subnet group. |
-| subnet2 | no | The EC2 Subnet IDs for the DB subnet group. |
+| subnet2 | yes | The EC2 Subnet IDs for the DB subnet group. |
 
 #### Supported Outputs
 - DBSubnetGroupDescription
@@ -230,10 +230,6 @@ resource_pool "rds" do
   end
 end
 ```
-
-### TODO
-- Add high-valued remaining RDS resource types (ie DB Instance Cluster, Snapshots, etc)
-- Add high-valued remaining RDS actions (ie `RebootDBInstance`, `CreateDBSnapshot`, etc)
 
 ## Getting Help
 Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.
