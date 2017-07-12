@@ -693,7 +693,7 @@ define create_stack(@declaration) return @resource do
       end
     end 
     @resource = @operation.get()
-    call sys_log.detail(to_object(@res))
+    call sys_log.detail(to_object(@resource))
     call stop_debugging()
   end
 end
