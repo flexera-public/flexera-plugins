@@ -362,20 +362,6 @@ plugin "rs_aws_cft" do
       output_path "//DescribeStacksResult/Stacks/member"
     end
 
-    # http://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_ListStacks.html
-    #action "index" do
-    #  verb "POST"
-    #  path "/?Action=ListStacks"
-
-     # field "stack_status_filter" do
-     #   alias_for "StackStatusFilter.memeber.1"
-     #   location "query"
-     # end 
-
-      #output_path "//ListStacksResult/StackSummaries/memeber"
-
-    #end
-
     # http://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_UpdateStack.html
     action "update" do
       verb "POST"
@@ -625,7 +611,7 @@ plugin "rs_aws_cft" do
       output_path "//DescribeStackResourcesResult/StackResources/member"
     end
 
-    output "StackName","StackId","CreationTime","StackStatus","DisableRollback","LogicalResourceId","PhysicalResourceId","ResourceType","ResourceStatus"
+    output "StackName","StackId","CreationTime","StackStatus","DisableRollback"
 
     output "OutputKey" do
       body_path "//DescribeStacksResult/Stacks/member/Outputs/member/OutputKey"
