@@ -28,9 +28,9 @@ The AWS ALB Plugin integrates RightScale Self-Service with the basic functionali
    1. Upload the `application_lb_plugin.rb` file located in this repository
  
 ## How to Use
-The GCE Plugin has been packaged as `plugin/rs_aws_elb`. In order to use this plugin you must import this plugin into a CAT.
+The GCE Plugin has been packaged as `plugins/rs_aws_alb`. In order to use this plugin you must import this plugin into a CAT.
 ```
-import "plugin/rs_aws_alb"
+import "plugins/rs_aws_alb"
 ```
 For more information on using packages, please refer to the RightScale online documenataion. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
