@@ -1,6 +1,7 @@
 # GCE Plugin
 
-**Important: This plugin is currently in a Pre-Alpha state and should not be used in production**
+**Some of the resources in this plugin have not been tested. See the [Supported Resources](#supported-resources) section for details.**
+**Due to the nature and scope of this plugin, not all use cases may be supported as is. Please see the [Getting Help](#getting-help) section for details on requesting additional functionality.**
 
 ## Overview
 The GCE Plugin consumes the Google Compute v1 API and exposes the supported resources to RightScale SelfService. This allows for easy extension of a SelfService Cloud Application to use non-native resources from Google Compute Engine.
@@ -74,50 +75,50 @@ end
 ## Supported Resources
 | ResourceName | Type | Support Level |
 |--------------|:----:|:-------------:|
-| [Addresses](https://cloud.google.com/compute/docs/reference/latest/addresses) | gce.addresses | Untested |
+| [Addresses](https://cloud.google.com/compute/docs/reference/latest/addresses) | gce.addresses | Supported |
 | [Autoscalers](https://cloud.google.com/compute/docs/reference/latest/autoscalers) | gce.autoscalers | Untested |
 | [Backendbuckets](https://cloud.google.com/compute/docs/reference/latest/backendBuckets) | gce.backendBuckets | Untested |
-| [Backendservices](https://cloud.google.com/compute/docs/reference/latest/backendServices) | gce.backendServices | Untested |
+| [Backendservices](https://cloud.google.com/compute/docs/reference/latest/backendServices) | gce.backendServices | Supported |
 | [Disktypes](https://cloud.google.com/compute/docs/reference/latest/diskTypes) | gce.diskTypes | Untested |
 | [Disks](https://cloud.google.com/compute/docs/reference/latest/disks) | gce.disks | Untested |
 | [Firewalls](https://cloud.google.com/compute/docs/reference/latest/firewalls) | gce.firewalls | Untested |
-| [Forwardingrules](https://cloud.google.com/compute/docs/reference/latest/forwardingRules) | gce.forwardingRules | Untested |
-| [Globaladdresses](https://cloud.google.com/compute/docs/reference/latest/globalAddresses) | gce.globalAddresses | Untested |
-| [Globalforwardingrules](https://cloud.google.com/compute/docs/reference/latest/globalForwardingRules) | gce.globalForwardingRules | Untested |
-| [Globaloperations](https://cloud.google.com/compute/docs/reference/latest/globalOperations) | gce.globalOperations | Untested |
-| [Healthchecks](https://cloud.google.com/compute/docs/reference/latest/healthChecks) | gce.healthChecks | Untested |
-| [Httphealthchecks](https://cloud.google.com/compute/docs/reference/latest/httpHealthChecks) | gce.httpHealthChecks | Untested |
+| [Forwardingrules](https://cloud.google.com/compute/docs/reference/latest/forwardingRules) | gce.forwardingRules | Supported |
+| [Globaladdresses](https://cloud.google.com/compute/docs/reference/latest/globalAddresses) | gce.globalAddresses | Supported |
+| [Globalforwardingrules](https://cloud.google.com/compute/docs/reference/latest/globalForwardingRules) | gce.globalForwardingRules | Supported |
+| [Globaloperations](https://cloud.google.com/compute/docs/reference/latest/globalOperations) | gce.globalOperations | Supported |
+| [Healthchecks](https://cloud.google.com/compute/docs/reference/latest/healthChecks) | gce.healthChecks | Supported |
+| [Httphealthchecks](https://cloud.google.com/compute/docs/reference/latest/httpHealthChecks) | gce.httpHealthChecks | Supported |
 | [Httpshealthchecks](https://cloud.google.com/compute/docs/reference/latest/httpsHealthChecks) | gce.httpsHealthChecks | Untested |
 | [Images](https://cloud.google.com/compute/docs/reference/latest/images) | gce.images | Untested |
 | [Instancegroupmanagers](https://cloud.google.com/compute/docs/reference/latest/instanceGroupManagers) | gce.instanceGroupManagers | Untested |
 | [Instancegroups](https://cloud.google.com/compute/docs/reference/latest/instanceGroups) | gce.instanceGroups | Untested |
 | [Instancetemplates](https://cloud.google.com/compute/docs/reference/latest/instanceTemplates) | gce.instanceTemplates | Untested |
-| [Instances](https://cloud.google.com/compute/docs/reference/latest/instances) | gce.instances | Untested |
+| [Instances](https://cloud.google.com/compute/docs/reference/latest/instances) | gce.instances | Tested |
 | [Licenses](https://cloud.google.com/compute/docs/reference/latest/licenses) | gce.licenses | Untested |
 | [Machinetypes](https://cloud.google.com/compute/docs/reference/latest/machineTypes) | gce.machineTypes | Untested |
-| [Networks](https://cloud.google.com/compute/docs/reference/latest/networks) | gce.networks | Untested |
-| [Globaloperations](https://cloud.google.com/compute/docs/reference/latest/globalOperations) | gce.globalOperations | Untested |
+| [Networks](https://cloud.google.com/compute/docs/reference/latest/networks) | gce.networks | Supported |
+| [Globaloperations](https://cloud.google.com/compute/docs/reference/latest/globalOperations) | gce.globalOperations | Supported |
 | [Projects](https://cloud.google.com/compute/docs/reference/latest/projects) | gce.projects | Untested |
 | [Regionautoscalers](https://cloud.google.com/compute/docs/reference/latest/regionAutoscalers) | gce.regionAutoscalers | Untested |
-| [Regionbackendservices](https://cloud.google.com/compute/docs/reference/latest/regionBackendServices) | gce.regionBackendServices | Untested |
+| [Regionbackendservices](https://cloud.google.com/compute/docs/reference/latest/regionBackendServices) | gce.regionBackendServices | Supported |
 | [Regioninstancegroupmanagers](https://cloud.google.com/compute/docs/reference/latest/regionInstanceGroupManagers) | gce.regionInstanceGroupManagers | Untested |
-| [Regioninstancegroups](https://cloud.google.com/compute/docs/reference/latest/regionInstanceGroups) | gce.regionInstanceGroups | Untested |
-| [Regionoperations](https://cloud.google.com/compute/docs/reference/latest/regionOperations) | gce.regionOperations | Untested |
+| [Regioninstancegroups](https://cloud.google.com/compute/docs/reference/latest/regionInstanceGroups) | gce.regionInstanceGroups | Supported |
+| [Regionoperations](https://cloud.google.com/compute/docs/reference/latest/regionOperations) | gce.regionOperations | Supported |
 | [Regions](https://cloud.google.com/compute/docs/reference/latest/regions) | gce.regions | Untested |
 | [Routers](https://cloud.google.com/compute/docs/reference/latest/routers) | gce.routers | Untested |
 | [Routes](https://cloud.google.com/compute/docs/reference/latest/routes) | gce.routes | Untested |
 | [Snapshots](https://cloud.google.com/compute/docs/reference/latest/snapshots) | gce.snapshots | Untested |
 | [Sslcertificates](https://cloud.google.com/compute/docs/reference/latest/sslCertificates) | gce.sslCertificates | Untested |
-| [Subnetworks](https://cloud.google.com/compute/docs/reference/latest/subnetworks) | gce.subnetworks | Untested |
-| [Targethttpproxies](https://cloud.google.com/compute/docs/reference/latest/targetHttpProxies) | gce.targetHttpProxies | Untested |
+| [Subnetworks](https://cloud.google.com/compute/docs/reference/latest/subnetworks) | gce.subnetworks | Supported |
+| [Targethttpproxies](https://cloud.google.com/compute/docs/reference/latest/targetHttpProxies) | gce.targetHttpProxies | Supported |
 | [Targethttpsproxies](https://cloud.google.com/compute/docs/reference/latest/targetHttpsProxies) | gce.targetHttpsProxies | Untested |
 | [Targetinstances](https://cloud.google.com/compute/docs/reference/latest/targetInstances) | gce.targetInstances | Untested |
-| [Targetpools](https://cloud.google.com/compute/docs/reference/latest/targetPools) | gce.targetPools | Untested |
+| [Targetpools](https://cloud.google.com/compute/docs/reference/latest/targetPools) | gce.targetPools | Supported |
 | [Targetsslproxies](https://cloud.google.com/compute/docs/reference/latest/targetSslProxies) | gce.targetSslProxies | Untested |
 | [Targetvpngateways](https://cloud.google.com/compute/docs/reference/latest/targetVpnGateways) | gce.targetVpnGateways | Untested |
 | [Urlmaps](https://cloud.google.com/compute/docs/reference/latest/urlMaps) | gce.urlMaps | Untested |
 | [Vpntunnels](https://cloud.google.com/compute/docs/reference/latest/vpnTunnels) | gce.vpnTunnels | Untested |
-| [Zoneoperations](https://cloud.google.com/compute/docs/reference/latest/zoneOperations) | gce.zoneOperations | Untested |
+| [Zoneoperations](https://cloud.google.com/compute/docs/reference/latest/zoneOperations) | gce.zoneOperations | Supported |
 | [Zones](https://cloud.google.com/compute/docs/reference/latest/zones) | gce.zones | Untested |
 
 ## Examples
