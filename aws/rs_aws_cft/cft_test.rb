@@ -2,16 +2,8 @@ name "CFT Plugin Test"
 rs_ca_ver 20161221
 short_description  "CFT Test"
 long_description ""
-
 import "plugins/rs_aws_cft"
 
-output "stack" do
-  label "stack object"
-end 
-
-output "resources" do
-  label "stack resources"
-end 
 
 resource "stack", type: "rs_aws_cft.stack" do
   stack_name join(["cft-", last(split(@@deployment.href, "/"))])
@@ -22,10 +14,6 @@ end
 operation "launch" do
   description "Launch the application"
   definition "launch_handler"
-  output_mappings do {
-    $stack => $stack_object,
-    $resources => $resource_object
-  } end 
 end
 
 define generate_cloudformation_template() return $cft_template do
@@ -68,7 +56,7 @@ define generate_cloudformation_template() return $cft_template do
           },
           "Origins": [
             {
-              "DomainName": "myelb-1-1932158363.us-east-1.elb.amazonaws.com",
+              "DomainName": "myelb-1-123456789.us-east-1.elb.amazonaws.com",
               "Id": "myelb-1",
               "CustomOriginConfig": {
                 "HTTPPort": "80",
@@ -103,14 +91,12 @@ define generate_cloudformation_template() return $cft_template do
 }')
 end
 
-define launch_handler(@stack) return $cft_template,@stack,$stack_object,$resource_object do
+define launch_handler(@stack) return $cft_template,@stack,@resources do
   call generate_cloudformation_template() retrieve $cft_template
   task_label("provision CFT Stack")
   $stack = to_object(@stack)
   $stack["fields"]["template_body"] = $cft_template
   @stack = $stack
   provision(@stack)
-  $stack_object = to_s(to_object(@stack))
   @resources = @stack.resources()
-  $resource_object = to_s(to_object(@resources))
 end
