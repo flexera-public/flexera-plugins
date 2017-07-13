@@ -124,6 +124,19 @@ end
 | register_target | RegisterTargets | Untested |
 | deregister_target | DeregisterTargets | Untested |
 
+#### Supported Outputs
+- "LoadBalancerArn"
+- "Scheme"
+- "LoadBalancerName"
+- "VpcId"
+- "CanonicalHostedZoneId"
+- "CreatedTime"
+- "DNSName"
+- "State"
+- "AvailabilityZone"
+- "SubnetId"
+- "SecurityGroup"
+
 ## rule
 #### Supported Fields
 | Field Name | Required? | Description |
@@ -157,6 +170,13 @@ end
 | destroy | DeleteRule | Supported |
 | list | DescribeRules | Supported |
 
+#### Supported Outputs
+- "Priority"
+- "RuleArn"
+- "TargetGroupArn"
+- "ConditionField"
+- "ConditionValue"
+
 
 ## target_group
 #### Supported Fields
@@ -183,6 +203,21 @@ end
 | destroy | DeleteTargetGroup | Supported |
 | list | DescribeTargetGroups | Supported |
 
+#### Supported Outputs
+ - "TargetGroupArn"
+ - "HealthCheckTimeoutSeconds"
+ - "HealthCheckPort"
+ - "TargetGroupName"
+ - "HealthCheckProtocol"
+ - "HealthCheckPath"
+ - "Protocol"
+ - "Port"
+ - "VpcId"
+ - "HealthyThresholdCount"
+ - "HealthCheckIntervalSeconds"
+ - "UnhealthyThresholdCount"
+
+
 ## listener
 #### Supported Fields
 | Field Name | Required? | Description |
@@ -202,6 +237,13 @@ end
 | create | CreateListeners | Supported |
 | destroy | DeleteListeners | Supported |
 | list | DescribeListeners | Supported |
+
+#### Supported Outputs
+ - "LoadBalancerArn"
+ - "Protocol"
+ - "Port"
+ - "ListenerArn"
+ - "TargetGroupArn" 
 
 
 ## Implementation Notes
