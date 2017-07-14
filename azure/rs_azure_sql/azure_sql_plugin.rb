@@ -63,6 +63,28 @@ plugin "rs_azure_sql" do
       location "body"
     end
 
+    action "create" do
+      path
+      verb
+
+      output_path 
+    end
+
+    action "get" do
+      path
+      verb
+      
+      output_path
+    end
+
+    action "destroy" do
+      path
+      verb
+
+      output_path
+    end
+
+
     provision "provision_resource"
     delete "delete_resource"
   end
@@ -84,9 +106,12 @@ define provision_resource(@declaration) return @resource do
     call start_debugging()
     $object = to_object(@declaration)
     $fields = $object["fields"]
-    $tags = $fields["tags"]
+    $type = $fields["type"]
     call sys_log.set_task_target(@@deployment)
+    call sys_log.summary(join(["Provision ", $type]))
     call sys_log.detail($object)
+    @operation = rs_azure_sql.$type.create($fields)
+    call sys_log.detail(to_object(@operation))
     @resource = @operation.get()
     call sys_log.detail(to_object(@resource))
     call stop_debugging()
