@@ -5,17 +5,7 @@ short_description "Azure SQL Plugin"
 package "plugins/rs_azure_sql"
 import "sys_log"
 
-parameter "p_server_name" do
-  type  "string"
-  label "Server Name"
-end
-
-parameter "p_resource_group_name" do
-  type  "string"
-  label "Resource Group Name"
-end
-
-parameter "p_subscription_id" do
+parameter "subscription_id" do
   type  "string"
   label "Subscription ID"
 end
@@ -27,16 +17,6 @@ plugin "rs_azure_sql" do
     query do {
       "api-version" => "2014-04-01"
     } end
-  end
-
-  parameter "server_name" do
-    type  "string"
-    label "Server Name"
-  end
-
-  parameter "resource_group_name" do
-    type      "string"
-    label "Resource Group Name"
   end
 
   parameter "subscription_id" do
@@ -59,12 +39,23 @@ plugin "rs_azure_sql" do
       location "body"
     end
 
+    field "resource_group" do
+      type "string"
+      location "path"
+    end 
+
+    field "name" do
+      type "string"
+      location "path"
+    end
+
     action "create" do
-      path "/subscriptions/$subscription_id/resourceGroups/$resource_group_name/providers/Microsoft.Sql/servers/$server_name"
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$name"
       verb "PUT"
     end
 
     action "get" do
+      path "$href"
       verb "GET"
     end
 
@@ -111,9 +102,7 @@ end
 resource_pool "rs_azure_sql" do
     plugin $rs_azure_sql
     parameter_values do
-      server_name $p_server_name
-      resource_group_name $p_resource_group_name
-      subscription_id $p_subscription_id
+      subscription_id $subscription_id
     end
 
     auth "azure_auth", type: "oauth2" do
@@ -179,11 +168,13 @@ permission "read_creds" do
   resources "rs_cm.credentials"
 end
 
-resource "sql_server", type: "rs_azure_sql.server" do
+resource "sql_server", type: "rs_azure_sql.sql_server" do
+  name "my-sql-server"
+  resource_group "DF-Testing"
+  location "Central US"
   properties do {
       "version" => "12.0",
       "administratorLogin" =>"frankel",
       "administratorLoginPassword" => "RightScale2017"
   } end
-  location "Central US"
 end
