@@ -75,7 +75,7 @@ plugin "rs_azure_sql" do
 
     action "create" do
       path "/subscriptions/$subscription_id/resourceGroups/$resource_group_name/providers/Microsoft.Sql/servers/$server_name"
-      verb "POST"
+      verb "PUT"
     end
 
     action "get" do
@@ -109,6 +109,9 @@ resource_pool "rs_azure_sql" do
         client_id cred("AZURE_APPLICATION_ID")
         client_secret cred("AZURE_APPLICATION_KEY")
       end
+      additional_params do {
+        "resource" => "https://management.azure.com/"     
+      } end
     end
 end
 
@@ -156,9 +159,6 @@ permission "read_creds" do
 end
 
 resource "sql_server", type: "rs_azure_sql.server" do
-  server_name join(["rs-test-sql", last(split(@@deployment.href, "/"))])
-  resource_group_name "DF-Testing"
-  subscription_id "8beb7791-9302-4ae4-97b4-afd482aadc59"
   version "2.0"
   administrator_login "admin"
   administrator_login_password "admin"
