@@ -140,6 +140,14 @@ define provision_resource(@declaration) return @resource do
     @operation = rs_azure_sql.$type.create($fields)
     call sys_log.detail(to_object(@operation))
     @resource = @operation.get()
+    $status = @resource.state
+    sub on_error: skip, timeout: 60m do
+      while $status != "Ready" do
+        $status = @resource.state
+        call sys_log.detail(join(["Status: ", $status]))
+        sleep(10)
+      end
+    end 
     call sys_log.detail(to_object(@resource))
     call stop_debugging()
   end
