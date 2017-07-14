@@ -67,7 +67,6 @@ plugin "rs_azure_sql" do
     action "create" do
       path "/subscriptions/$subscription_id/resourceGroups/$resource_group_name/providers/Microsoft.Sql/servers/$server_name"
       verb "POST"
-      #output_path 
     end
 
     action "get" do
@@ -80,6 +79,7 @@ plugin "rs_azure_sql" do
       verb "DELETE"
     end
 
+    output_path "responses.*.body"
 
     provision "provision_resource"
     delete "delete_resource"
@@ -135,7 +135,12 @@ define stop_debugging() do
   end
 end
 
-resource "sql_server" type "rs_azure_sql.server" do
+permission "read_creds" do
+  actions   "rs_cm.show_sensitive","rs_cm.index_sensitive"
+  resources "rs_cm.credentials"
+end
+
+resource "sql_server", type: "rs_azure_sql.server" do
   server_name join(["rs-test-sql", last(split(@@deployment.href, "/"))])
   resource_group_name "DF-Testing"
   subscription_id "8beb7791-9302-4ae4-97b4-afd482aadc59"
