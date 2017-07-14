@@ -49,27 +49,9 @@ plugin "rs_azure_sql" do
     provision "provision_resource"
     delete    "delete_resource"
 
-    field "version" do
-      alias_for "parameters.parameters.properties.version"
-      type "string"
-      location "body"
-    end
-
-    field "administrator_login" do
-      alias_for "parameters.parameters.properties.administratorLogin"
-      type "string"
-      location "body"
-    end
-
-    field "administrator_login_password" do
-      alias_for "parameters.parameters.properties.administratorLoginPassword"
-      type "string"
-      location "body"
-    end
-
-    field "location" do
-      alias_for "parameters.parameters.location"
-      type "string"
+    field "parameters" do
+      alias_for "parameters"
+      type "composite"
       location "body"
     end
 
@@ -159,8 +141,12 @@ permission "read_creds" do
 end
 
 resource "sql_server", type: "rs_azure_sql.server" do
-  version "2.0"
-  administrator_login "admin"
-  administrator_login_password "admin"
-  location "Central US"
+  parameters do {
+    "properties" => {
+      "version" => "2.0",
+      "administrator_login" =>"admin",
+      "administrator_login_password" => "admin"
+      },
+    "location" => "Central US"
+  } end
 end
