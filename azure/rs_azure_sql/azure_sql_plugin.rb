@@ -7,6 +7,7 @@ import "sys_log"
 
 plugin "rs_azure_sql" do
   endpoint do
+    default_host "https://management.azure.com/"
     default_scheme "https"
     query do {
       "api-version" => "2014-04-01"
@@ -65,7 +66,7 @@ plugin "rs_azure_sql" do
 
     action "create" do
       path
-      verb
+      verb "POST"
 
       output_path 
     end
