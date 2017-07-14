@@ -45,13 +45,17 @@ plugin "rs_azure_sql" do
   end
 
   type "server" do
-    href_templates "/subscriptions/$subscription_id/resourceGroups/$resource_group_name/providers/Microsoft.Sql/servers/$server_name"
+    href_templates "{{id}}"
     provision "provision_resource"
     delete    "delete_resource"
 
-    field "parameters" do
-      alias_for "parameters"
+    field "properties" do
       type "composite"
+      location "body"
+    end
+
+    field "location" do
+      type "string"
       location "body"
     end
 
@@ -61,16 +65,43 @@ plugin "rs_azure_sql" do
     end
 
     action "get" do
-      path "/subscriptions/$subscription_id/resourceGroups/$resource_group_name/providers/Microsoft.Sql/servers/$server_name"
       verb "GET"
     end
 
     action "destroy" do
-      path "/subscriptions/$subscription_id/resourceGroups/$resource_group_name/providers/Microsoft.Sql/servers/$server_name"
+      path "$href"
       verb "DELETE"
     end
 
-    output_path "responses.*.body"
+    output "id","name","type","location","kind"
+
+    output "fullyQualifiedDomainName" do
+      body_path "properties.fullyQualifiedDomainName"
+    end
+
+    output "administratorLogin" do
+      body_path "properties.administratorLogin"
+    end
+
+    output "administratorLoginPassword" do
+      body_path "properties.administratorLoginPassword"
+    end
+
+    output "externalAdministratorLogin" do
+      body_path "properties.externalAdministratorLogin"
+    end
+
+    output "externalAdministratorSid" do
+      body_path "properties.externalAdministratorSid"
+    end
+
+    output "version" do
+      body_path "properties.version"
+    end
+
+    output "state" do
+      body_path "properties.state"
+    end
 
     provision "provision_resource"
     delete "delete_resource"
@@ -141,12 +172,10 @@ permission "read_creds" do
 end
 
 resource "sql_server", type: "rs_azure_sql.server" do
-  parameters do {
-    "properties" => {
-      "version" => "2.0",
-      "administrator_login" =>"admin",
-      "administrator_login_password" => "admin"
-      },
-    "location" => "Central US"
+  properties do {
+      "version" => "12.0",
+      "administratorLogin" =>"frankel",
+      "administratorLoginPassword" => "RightScale2017"
   } end
+  location "Central US"
 end
