@@ -15,7 +15,7 @@ plugin "rs_azure_sql" do
   end
 
   type "server" do
-    href_templates "/subscriptions/$subscription_id/resourceGroups/$resource_group_name/providers/Microsoft.Sql/servers/$server_name?api-version=2014-04-01"
+    href_templates "/subscriptions/$subscription_id/resourceGroups/$resource_group_name/providers/Microsoft.Sql/servers/$server_name"
     provision "provision_resource"
     delete    "delete_resource"
 
@@ -65,24 +65,19 @@ plugin "rs_azure_sql" do
     end
 
     action "create" do
-      path
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group_name/providers/Microsoft.Sql/servers/$server_name"
       verb "POST"
-
-      output_path 
+      #output_path 
     end
 
     action "get" do
-      path
-      verb
-      
-      output_path
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group_name/providers/Microsoft.Sql/servers/$server_name"
+      verb "GET"
     end
 
     action "destroy" do
-      path
-      verb
-
-      output_path
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group_name/providers/Microsoft.Sql/servers/$server_name"
+      verb "DELETE"
     end
 
 
