@@ -39,7 +39,7 @@ plugin "rs_azure_sql" do
       required true
     end
 
-    field "property_version" do
+    field "version" do
       alias_for "parameters.parameters.properties.version"
       type "string"
       location "body"
@@ -69,29 +69,14 @@ plugin "rs_azure_sql" do
 end
 
 resource_pool "rs_azure_sql" do
-  plugin $rs_azure_sql
-  host "management.core.windows.net"
-  auth "my_azure_auth", type: "oauth2" do
-    token_url "https://login.microsoftonline.com/" + TENANT_ID + "/oauth2/token"
-    grant type: "client_credentials" do
-      # for authorization by form data parameters.
-      client_id cred("CLIENT_ID")
-      client_secret cred("CLIENT_SECRET")
-      # alternative to id+secret for authorization services requiring Basic authentication.
-      # these are similar to our grant_type=refresh_token parameters.
-      client_user cred("CLIENT_USER")
-      client_password cred("CLIENT_PASSWORD")
-      # not required for Azure but perhaps for other authorization services.
-      additional_headers do {
-        "Extra" => "header value"
-      } end
-      # example of specifying "resource" as an additional parameter for Azure.
-      # allows passing additional form data parameters in the authorization request.
-      additional_params do {
-        "resource" => "https://management.azure.com/"
-      } end
-  end
-end
+    plugin $rs_azure_sql
+    auth "azure_auth", type: "oauth2" do
+      token_url "https://login.microsoftonline.com/" + cred("AZURE_TENANT_ID") + "/oauth2/token"
+      grant type: "client_credentials" do
+        client_id cred("AZURE_APPLICATION_ID")
+        client_secret cred("AZURE_APPLICATION_KEY")
+      end
+    end
 end
 
 define create_stack(@declaration) return @resource do
@@ -129,6 +114,12 @@ define stop_debugging() do
   end
 end
 
-
 resource "sql_server" type "rs_azure_sql.server" do
+  server_name join(["rs-test-sql", last(split(@@deployment.href, "/"))])
+  resource_group_name "DF-Testing"
+  subscription_id "8beb7791-9302-4ae4-97b4-afd482aadc59"
+  property_version "2.0"
+  administrator_login "admin"
+  administrator_login_password "admin"
+  location "Central US"
 end
