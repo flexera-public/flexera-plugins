@@ -79,7 +79,7 @@ resource_pool "rs_azure_sql" do
     end
 end
 
-define create_stack(@declaration) return @resource do
+define provision_resource(@declaration) return @resource do
   sub on_error: stop_debugging() do
     call start_debugging()
     $object = to_object(@declaration)
@@ -93,7 +93,7 @@ define create_stack(@declaration) return @resource do
   end
 end
 
-define delete_stack(@declaration) do
+define delete_resource(@declaration) do
   call start_debugging()
   @declaration.destroy()
   call stop_debugging()
