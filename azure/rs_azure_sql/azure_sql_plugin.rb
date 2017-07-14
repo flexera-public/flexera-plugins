@@ -108,10 +108,10 @@ resource_pool "rs_azure_sql" do
       grant type: "client_credentials" do
         client_id cred("AZURE_APPLICATION_ID")
         client_secret cred("AZURE_APPLICATION_KEY")
+        additional_params do {
+          "resource" => "https://management.azure.com/"     
+        } end
       end
-      additional_params do {
-        "resource" => "https://management.azure.com/"     
-      } end
     end
 end
 
