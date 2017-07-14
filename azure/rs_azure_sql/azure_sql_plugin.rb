@@ -5,6 +5,21 @@ short_description "Azure SQL Plugin"
 package "plugins/rs_azure_sql"
 import "sys_log"
 
+parameter "p_server_name" do
+  type  "string"
+  label "Server Name"
+end
+
+parameter "p_resource_group_name" do
+  type  "string"
+  label "Resource Group Name"
+end
+
+parameter "p_subscription_id" do
+  type  "string"
+  label "Subscription ID"
+end
+
 plugin "rs_azure_sql" do
   endpoint do
     default_host "https://management.azure.com/"
@@ -88,6 +103,12 @@ end
 
 resource_pool "rs_azure_sql" do
     plugin $rs_azure_sql
+    parameter_values do
+      server_name $p_server_name
+      resource_group_name $p_resource_group_name
+      subscription_id $p_subscription_id
+    end
+
     auth "azure_auth", type: "oauth2" do
       token_url "https://login.microsoftonline.com/09b8fec1-4b8d-48dd-8afa-5c1a775ea0f2/oauth2/token"
       grant type: "client_credentials" do
@@ -102,7 +123,7 @@ define provision_resource(@declaration) return @resource do
     call start_debugging()
     $object = to_object(@declaration)
     $fields = $object["fields"]
-    $type = $fields["type"]
+    $type = $object["type"]
     call sys_log.set_task_target(@@deployment)
     call sys_log.summary(join(["Provision ", $type]))
     call sys_log.detail($object)
