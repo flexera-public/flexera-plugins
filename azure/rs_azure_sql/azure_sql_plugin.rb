@@ -44,7 +44,7 @@ plugin "rs_azure_sql" do
     label "subscription_id"
   end
 
-  type "server" do
+  type "sql_server" do
     href_templates "{{id}}"
     provision "provision_resource"
     delete    "delete_resource"
