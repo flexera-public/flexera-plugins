@@ -29,31 +29,25 @@ plugin "rs_azure_sql" do
     } end
   end
 
+  parameter "server_name" do
+    type  "string"
+    label "Server Name"
+  end
+
+  parameter "resource_group_name" do
+    type      "string"
+    label "Resource Group Name"
+  end
+
+  parameter "subscription_id" do
+    type      "string"
+    label "subscription_id"
+  end
+
   type "server" do
     href_templates "/subscriptions/$subscription_id/resourceGroups/$resource_group_name/providers/Microsoft.Sql/servers/$server_name"
     provision "provision_resource"
     delete    "delete_resource"
-
-    field "server_name" do
-      alias_for "serverName"
-      type      "string"
-      location  "path"
-      required true
-    end
-
-    field "resource_group_name" do
-      alias_for "resourceGroupName"
-      type      "string"
-      location  "path"
-      required true
-    end
-
-    field "subscription_id" do
-      alias_for "subscriptionId"
-      type      "string"
-      location  "path"
-      required true
-    end
 
     field "version" do
       alias_for "parameters.parameters.properties.version"
