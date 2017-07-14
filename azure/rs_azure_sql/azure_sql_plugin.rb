@@ -89,7 +89,7 @@ end
 resource_pool "rs_azure_sql" do
     plugin $rs_azure_sql
     auth "azure_auth", type: "oauth2" do
-      token_url "https://login.microsoftonline.com/" + cred("AZURE_TENANT_ID") + "/oauth2/token"
+      token_url "https://login.microsoftonline.com/09b8fec1-4b8d-48dd-8afa-5c1a775ea0f2/oauth2/token"
       grant type: "client_credentials" do
         client_id cred("AZURE_APPLICATION_ID")
         client_secret cred("AZURE_APPLICATION_KEY")
@@ -144,7 +144,7 @@ resource "sql_server", type: "rs_azure_sql.server" do
   server_name join(["rs-test-sql", last(split(@@deployment.href, "/"))])
   resource_group_name "DF-Testing"
   subscription_id "8beb7791-9302-4ae4-97b4-afd482aadc59"
-  property_version "2.0"
+  version "2.0"
   administrator_login "admin"
   administrator_login_password "admin"
   location "Central US"
