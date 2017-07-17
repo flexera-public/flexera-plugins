@@ -94,8 +94,122 @@ plugin "rs_azure_sql" do
       body_path "properties.state"
     end
 
-    provision "provision_resource"
-    delete "delete_resource"
+    #link "databases" do
+    #  path "$href/databases"
+    #  type "databases"
+    #end
+  end
+
+  type "databases" do
+    href_templates "{{id}}"
+    provision "provision_database"
+    delete    "delete_resource"
+
+    field "properties" do
+      type "composite"
+      location "body"
+    end
+
+    field "location" do
+      type "string"
+      location "body"
+    end
+
+    field "resource_group" do
+      type "string"
+      location "path"
+    end 
+
+    field "name" do
+      type "string"
+      location "path"
+    end
+
+    field "server_name" do
+      type "string"
+      location "path"
+    end
+
+    action "create" do
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/databases/$name"
+      verb "PUT"
+    end
+
+    action "get" do
+      path "$href"
+      verb "GET"
+    end
+
+    action "destroy" do
+      path "$href"
+      verb "DELETE"
+    end
+
+    output "id","name","type","location","kind"
+
+    output "edition" do
+      body_path "properties.edition"
+    end
+
+    output "status" do
+      body_path "properties.status"
+    end
+
+    output "serviceLevelObjective" do
+      body_path "properties.serviceLevelObjective"
+    end
+
+    output "collation" do
+      body_path "properties.collation"
+    end
+
+    output "creationDate" do
+      body_path "properties.creationDate"
+    end
+
+    output "maxSizeBytes" do
+      body_path "properties.maxSizeBytes"
+    end
+
+    output "currentServiceObjectiveId" do
+      body_path "properties.currentServiceObjectiveId"
+    end
+
+    output "requestedServiceObjectiveId" do
+      body_path "properties.requestedServiceObjectiveId"
+    end
+
+    output "requestedServiceObjectiveName" do
+      body_path "properties.requestedServiceObjectiveName"
+    end
+
+    output "sampleName" do
+      body_path "properties.sampleName"
+    end
+
+    output "defaultSecondaryLocation" do
+      body_path "properties.defaultSecondaryLocation"
+    end
+
+    output "earliestRestoreDate" do
+      body_path "properties.earliestRestoreDate"
+    end
+
+    output "elasticPoolName" do
+      body_path "properties.elasticPoolName"
+    end
+
+    output "containmentState" do
+      body_path "properties.containmentState"
+    end
+
+    output "readScale" do
+      body_path "properties.readScale"
+    end
+
+    output "failoverGroupId" do
+      body_path "properties.failoverGroupId"
+    end
   end
 end
 
@@ -142,6 +256,31 @@ define provision_resource(@declaration) return @resource do
   end
 end
 
+define provision_database(@declaration) return @resource do
+  sub on_error: stop_debugging() do
+    call start_debugging()
+    $object = to_object(@declaration)
+    $fields = $object["fields"]
+    $type = $object["type"]
+    call sys_log.set_task_target(@@deployment)
+    call sys_log.summary(join(["Provision ", $type]))
+    call sys_log.detail($object)
+    @operation = rs_azure_sql.$type.create($fields)
+    call sys_log.detail(to_object(@operation))
+    @resource = @operation.get(databaseName: $fields["name"])
+    $status = @resource.status
+    sub on_error: skip, timeout: 60m do
+      while $status != "Online" do
+        $status = @resource.status
+        call sys_log.detail(join(["Status: ", $status]))
+        sleep(10)
+      end
+    end 
+    call sys_log.detail(to_object(@resource))
+    call stop_debugging()
+  end
+end
+
 define delete_resource(@declaration) do
   call start_debugging()
   @declaration.destroy()
@@ -169,7 +308,7 @@ permission "read_creds" do
 end
 
 resource "sql_server", type: "rs_azure_sql.sql_server" do
-  name "my-sql-server"
+  name join(["my-sql-server-", last(split(@@deployment.href, "/"))])
   resource_group "DF-Testing"
   location "Central US"
   properties do {
@@ -177,4 +316,11 @@ resource "sql_server", type: "rs_azure_sql.sql_server" do
       "administratorLogin" =>"frankel",
       "administratorLoginPassword" => "RightScale2017"
   } end
+end
+
+resource "databases", type: "rs_azure_sql.databases" do
+  name "sample-database"
+  resource_group "DF-Testing"
+  location "Central US"
+  server_name @sql_server.name
 end
