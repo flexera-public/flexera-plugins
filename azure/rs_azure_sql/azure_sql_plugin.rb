@@ -23,6 +23,10 @@ plugin "rs_azure_sql" do
     type      "string"
     label "subscription_id"
   end
+  
+  type "operation" do
+    href_templates "{{operation}}"
+  end
 
   type "sql_server" do
     href_templates "{{type=='Microsoft.Sql/servers' && id}}"
@@ -101,7 +105,8 @@ plugin "rs_azure_sql" do
   end
 
   type "databases" do
-    href_templates "{{type=='Microsoft.Sql/servers/databases') && id}}"
+    #href_templates "{{type=='Microsoft.Sql/servers/databases') && id}}"
+    href_templates "{{id}}"
     provision "provision_database"
     delete    "delete_resource"
 
@@ -233,13 +238,13 @@ end
 
 define provision_resource(@declaration) return @resource do
   sub on_error: stop_debugging() do
-    call start_debugging()
     $object = to_object(@declaration)
     $fields = $object["fields"]
     $type = $object["type"]
     call sys_log.set_task_target(@@deployment)
     call sys_log.summary(join(["Provision ", $type]))
     call sys_log.detail($object)
+    call start_debugging()
     @operation = rs_azure_sql.$type.create($fields)
     call sys_log.detail(to_object(@operation))
     @resource = @operation.get()
@@ -258,24 +263,26 @@ end
 
 define provision_database(@declaration) return @resource do
   sub on_error: stop_debugging() do
-    call start_debugging()
     $object = to_object(@declaration)
     $fields = $object["fields"]
     $type = $object["type"]
     call sys_log.set_task_target(@@deployment)
     call sys_log.summary(join(["Provision ", $type]))
     call sys_log.detail($object)
+    call start_debugging()
     @operation = rs_azure_sql.$type.create($fields)
+    call stop_debugging()
     call sys_log.detail(to_object(@operation))
-    @resource = @operation.get(databaseName: $fields["name"])
-    $status = @resource.status
+    $status = @operation.get().status
     sub on_error: skip, timeout: 60m do
       while $status != "Online" do
-        $status = @resource.status
+        $status = @operation.get().status
         call sys_log.detail(join(["Status: ", $status]))
         sleep(10)
       end
-    end 
+    end
+    call start_debugging()
+    @resource = @operation.get()
     call sys_log.detail(to_object(@resource))
     call stop_debugging()
   end
