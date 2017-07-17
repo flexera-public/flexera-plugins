@@ -20,12 +20,12 @@ plugin "rs_azure_sql" do
   end
 
   parameter "subscription_id" do
-    type      "string"
+    type  "string"
     label "subscription_id"
   end
   
-  type "operation" do
-    href_templates "{{operation}}"
+  type "az_operation" do
+    href_templates "{{operation=='CreateLogicalDatabase'}}"
   end
 
   type "sql_server" do
@@ -105,8 +105,8 @@ plugin "rs_azure_sql" do
   end
 
   type "databases" do
-    #href_templates "{{type=='Microsoft.Sql/servers/databases') && id}}"
-    href_templates "{{id}}"
+    href_templates "{{type=='Microsoft.Sql/servers/databases') && id}}"
+    #href_templates "{{id}}"
     provision "provision_database"
     delete    "delete_resource"
 
@@ -232,225 +232,158 @@ plugin "rs_azure_sql" do
     end
   end
 
-  type "transparentdataencryption" do
-    href_templates "{{id}}"
-    provision "provision_transparentdataencryption"
-    delete    "delete_resource"
+#  type "firewall_rule" do
+#    href_templates "{{type=='Microsoft.Sql/servers/firewallRules' && id}}"
+#    provision "provision_firewall_rule"
+#    delete    "delete_resource"
+#
+#    field "properties" do
+#      type "composite"
+#      location "body"
+#    end
+#
+#    field "location" do
+#      type "string"
+#      location "body"
+#    end
 
-    field "properties" do
-      type "composite"
-      location "body"
-    end
+#    field "resource_group" do
+#      type "string"
+#      location "path"
+#    end 
 
-    field "location" do
-      type "string"
-      location "body"
-    end
+#    field "name" do
+#      type "string"
+#      location "path"
+#    end
 
-    field "resource_group" do
-      type "string"
-      location "path"
-    end 
+#    field "server_name" do
+#      type "string"
+#      location "path"
+#    end
 
-    field "name" do
-      type "string"
-      location "path"
-    end
+#    action "create" do
+#      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/firewallRules/$name"
+#      verb "PUT"
+#    end
 
-    field "database_name" do
-      type "string"
-      location "path"
-    end
+#    action "get" do
+#      path "$href"
+#      verb "GET"
+#    end
 
-    field "server_name" do
-      type "string"
-      location "path"
-    end
-
-    action "create" do
-      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/databases/$database_name/transparentDataEncryption/$name"
-      verb "PUT"
-    end
-
-    action "get" do
-      path "$href"
-      verb "GET"
-    end
-
-    action "destroy" do
-      path "$href"
-      verb "DELETE"
-    end
+#    action "destroy" do
+#      path "$href"
+#      verb "DELETE"
+#    end
     
-    action "list_activity" do
-      path "$href/operationResults"
-      verb "GET"
-      output_path "properties.percentComplete"
-    end
+#    action "list" do
+#      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/firewallRules"
+#      verb "GET"
+#      output_path "properties.percentComplete"
+#    end
 
-    output "id","name"
+#    output "id","name","type","location","kind"
 
-    output "status" do
-      body_path "properties.status"
-    end
+#    output "startIpAddress" do
+#      body_path "properties.startIpAddress"
+#    end
     
-    output "percentComplete" do
-      body_path "properties.percentComplete"
-    end
-  end
+#    output "endIpAddres" do
+#      body_path "properties.endIpAddress"
+#    end
+#  end
 
-  type "firewall_rule" do
-    href_templates "{{id}}"
-    provision "provision_firewall_rule"
-    delete    "delete_resource"
+#  type "elastic_pool" do
+#    href_templates "{{type=='Microsoft.Sql/servers/elasticPools' && id}}"
+#    provision "provision_elastic_pool"
+#    delete    "delete_resource"
 
-    field "properties" do
-      type "composite"
-      location "body"
-    end
+#    field "properties" do
+#      type "composite"
+#      location "body"
+#    end
 
-    field "location" do
-      type "string"
-      location "body"
-    end
+#    field "location" do
+#      type "string"
+#      location "body"
+#    end
 
-    field "resource_group" do
-      type "string"
-      location "path"
-    end 
+#    field "resource_group" do
+#      type "string"
+#      location "path"
+#    end 
 
-    field "name" do
-      type "string"
-      location "path"
-    end
+#    field "name" do
+#      type "string"
+#      location "path"
+#    end
 
-    field "server_name" do
-      type "string"
-      location "path"
-    end
+#    field "server_name" do
+#      type "string"
+#      location "path"
+#    end
 
-    action "create" do
-      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/firewallRules/$name"
-      verb "PUT"
-    end
+#    action "create" do
+#      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/elasticPools/$name"
+#      verb "PUT"
+#    end
 
-    action "get" do
-      path "$href"
-      verb "GET"
-    end
+#    action "get" do
+#      path "$href"
+#      verb "GET"
+#    end
 
-    action "destroy" do
-      path "$href"
-      verb "DELETE"
-    end
-    
-    action "list" do
-      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/firewallRules"
-      verb "GET"
-      output_path "properties.percentComplete"
-    end
+#    action "destroy" do
+#      path "$href"
+#      verb "DELETE"
+#    end
 
-    output "id","name","type","location","kind"
+#    action "get_database" do
+#      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/elasticPools/$name/databases/$database_name"
+#      verb "GET"
+##      
+#      field "database_name" do
+#        type "string"
+#        location "path"
+#      end
+#   end
 
-    output "startIpAddress" do
-      body_path "properties.startIpAddress"
-    end
-    
-    output "endIpAddres" do
-      body_path "properties.endIpAddress"
-    end
-  end
+#    action "update" do
+#      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/elasticPools/$name"
+#      verb "PATCH"
+#    end
 
-  type "elastic_pool" do
-    href_templates "{{id}}"
-    provision "provision_elastic_pool"
-    delete    "delete_resource"
+#    output "id","name","type","location","kind"
 
-    field "properties" do
-      type "composite"
-      location "body"
-    end
+#    output "creationDate" do
+#      body_path "properties.creationDate"
+#    end
 
-    field "location" do
-      type "string"
-      location "body"
-    end
+#    output "edition" do
+#      body_path "properties.edition"
+#    end
 
-    field "resource_group" do
-      type "string"
-      location "path"
-    end 
+#    output "state" do
+#      body_path "properties.state"
+#    end
 
-    field "name" do
-      type "string"
-      location "path"
-    end
+#    output "dtu" do
+#      body_path "properties.dtu"
+#    end
 
-    field "server_name" do
-      type "string"
-      location "path"
-    end
+#    output "databaseDtuMin" do
+#      body_path "properties.databaseDtuMin"
+#    end
 
-    action "create" do
-      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/elasticPools/$name"
-      verb "PUT"
-    end
+#    output "databaseDtuMax" do
+#      body_path "properties.databaseDtuMax"
+#    end
 
-    action "get" do
-      path "$href"
-      verb "GET"
-    end
-
-    action "destroy" do
-      path "$href"
-      verb "DELETE"
-    end
-
-    action "get_database" do
-      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/elasticPools/$name/databases/$database_name"
-      verb "GET"
-      
-      field "database_name" do
-        type "string"
-        location "path"
-      end
-    end
-
-    action "update"
-      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/elasticPools/$name"
-      verb "PATCH"
-    end
-
-    output "id","name","type","location","kind"
-
-    output "creationDate" do
-      body_path "properties.creationDate"
-    end
-
-    output "edition" do
-      body_path "properties.edition"
-    end
-
-    output "state" do
-      body_path "properties.state"
-    end
-
-    output "dtu" do
-      body_path "properties.dtu"
-    end
-
-    output "databaseDtuMin" do
-      body_path "properties.databaseDtuMin"
-    end
-
-    output "databaseDtuMax" do
-      body_path "properties.databaseDtuMax"
-    end
-
-    output "storageMB" do
-      body_path "properties.storageMB"
-    end
-  end
+#    output "storageMB" do
+#      body_path "properties.storageMB"
+#    end
+#  end
 end
 
 resource_pool "rs_azure_sql" do
@@ -505,10 +438,11 @@ define provision_database(@declaration) return @resource do
     call sys_log.summary(join(["Provision ", $type]))
     call sys_log.detail($object)
     call start_debugging()
-    @operation = rs_azure_sql.$type.create($fields)
+    $operation = rs_azure_sql.$type.create($fields)
+    call sys_log.detail($operation)
     call stop_debugging()
     call sys_log.detail(to_object(@operation))
-    $status = @operation.get().status
+    $status = rs_azure_sql.$type.get($operation).status
     sub on_error: skip, timeout: 60m do
       while $status != "Online" do
         $status = @operation.get().status
@@ -634,15 +568,13 @@ resource "databases", type: "rs_azure_sql.databases" do
   server_name @sql_server.name
 end
 
-resource "firewall_rule", type: "rs_azure_sql.firewall_rule" do
-  name "api-example-dns-rule"
-  resource_group "DF-Testing"
-  location "Central US"
-  server_name @sql_server.name
-  properties do {
-    "startIpAddress" => "0.0.0.1",
-    "endIpAddress" => "0.0.0.1"
-  } end
-end
-
-
+#resource "firewall_rule", type: "rs_azure_sql.firewall_rule" do
+#  name "api-example-dns-rule"
+#  resource_group "DF-Testing"
+#  location "Central US"
+#  server_name @sql_server.name
+#  properties do {
+#    "startIpAddress" => "0.0.0.1",
+#    "endIpAddress" => "0.0.0.1"
+#  } end
+#end
