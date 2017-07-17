@@ -355,6 +355,97 @@ plugin "rs_azure_sql" do
       body_path "properties.endIpAddress"
     end
   end
+
+  type "elastic_pool" do
+    href_templates "{{id}}"
+    provision "provision_elastic_pool"
+    delete    "delete_resource"
+
+    field "properties" do
+      type "composite"
+      location "body"
+    end
+
+    field "location" do
+      type "string"
+      location "body"
+    end
+
+    field "resource_group" do
+      type "string"
+      location "path"
+    end 
+
+    field "name" do
+      type "string"
+      location "path"
+    end
+
+    field "server_name" do
+      type "string"
+      location "path"
+    end
+
+    action "create" do
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/elasticPools/$name"
+      verb "PUT"
+    end
+
+    action "get" do
+      path "$href"
+      verb "GET"
+    end
+
+    action "destroy" do
+      path "$href"
+      verb "DELETE"
+    end
+
+    action "get_database" do
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/elasticPools/$name/databases/$database_name"
+      verb "GET"
+      
+      field "database_name" do
+        type "string"
+        location "path"
+      end
+    end
+
+    action "update"
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/elasticPools/$name"
+      verb "PATCH"
+    end
+
+    output "id","name","type","location","kind"
+
+    output "creationDate" do
+      body_path "properties.creationDate"
+    end
+
+    output "edition" do
+      body_path "properties.edition"
+    end
+
+    output "state" do
+      body_path "properties.state"
+    end
+
+    output "dtu" do
+      body_path "properties.dtu"
+    end
+
+    output "databaseDtuMin" do
+      body_path "properties.databaseDtuMin"
+    end
+
+    output "databaseDtuMax" do
+      body_path "properties.databaseDtuMax"
+    end
+
+    output "storageMB" do
+      body_path "properties.storageMB"
+    end
+  end
 end
 
 resource_pool "rs_azure_sql" do
@@ -462,6 +553,31 @@ define provision_firewall_rule(@declaration) return @resource do
     @operation = rs_azure_sql.$type.create($fields)
     call sys_log.detail(to_object(@operation))
     @resource = @operation.get()
+    call sys_log.detail(to_object(@resource))
+    call stop_debugging()
+  end
+end
+
+define provision_elastic_pool(@declaration) return @resource do
+  sub on_error: stop_debugging() do
+    call start_debugging()
+    $object = to_object(@declaration)
+    $fields = $object["fields"]
+    $type = $object["type"]
+    call sys_log.set_task_target(@@deployment)
+    call sys_log.summary(join(["Provision ", $type]))
+    call sys_log.detail($object)
+    @operation = rs_azure_sql.$type.create($fields)
+    call sys_log.detail(to_object(@operation))
+    @resource = @operation.get()
+    $status = @resource.state
+    sub on_error: skip, timeout: 60m do
+      while $status != "Ready" do
+        $status = @resource.state
+        call sys_log.detail(join(["Status: ", $status]))
+        sleep(10)
+      end
+    end 
     call sys_log.detail(to_object(@resource))
     call stop_debugging()
   end
