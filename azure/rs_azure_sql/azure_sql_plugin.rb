@@ -25,7 +25,7 @@ plugin "rs_azure_sql" do
   end
 
   type "sql_server" do
-    href_templates "{{id}}"
+    href_templates "{{type=='Microsoft.Sql/servers' && id}}"
     provision "provision_resource"
     delete    "delete_resource"
 
@@ -101,7 +101,7 @@ plugin "rs_azure_sql" do
   end
 
   type "databases" do
-    href_templates "{{id}}"
+    href_templates "{{type=='Microsoft.Sql/servers/databases') && id}}"
     provision "provision_database"
     delete    "delete_resource"
 
