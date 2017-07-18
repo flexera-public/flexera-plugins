@@ -8,6 +8,7 @@ import "sys_log"
 parameter "subscription_id" do
   type  "string"
   label "Subscription ID"
+
 end
 
 plugin "rs_azure_sql" do
@@ -23,13 +24,10 @@ plugin "rs_azure_sql" do
     type  "string"
     label "subscription_id"
   end
-  
-  type "az_operation" do
-    href_templates "{{operation=='CreateLogicalDatabase'}}"
-  end
 
   type "sql_server" do
-    href_templates "{{type=='Microsoft.Sql/servers' && id}}"
+    #href_templates "{{id}}"
+    href_templates "{{type=='Microsoft.Sql/servers' && id || null}}"
     provision "provision_resource"
     delete    "delete_resource"
 
@@ -54,16 +52,25 @@ plugin "rs_azure_sql" do
     end
 
     action "create" do
+      type "sql_server"
       path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$name"
       verb "PUT"
     end
 
+    action "show" do
+      type "sql_server"
+      path "$href"
+      verb "GET"
+    end
+
     action "get" do
+      type "sql_server"
       path "$href"
       verb "GET"
     end
 
     action "destroy" do
+      type "sql_server"
       path "$href"
       verb "DELETE"
     end
@@ -105,8 +112,7 @@ plugin "rs_azure_sql" do
   end
 
   type "databases" do
-    href_templates "{{type=='Microsoft.Sql/servers/databases') && id}}"
-    #href_templates "{{id}}"
+    href_templates "{{type=='Microsoft.Sql/servers/databases' && id || null}}"
     provision "provision_database"
     delete    "delete_resource"
 
@@ -136,33 +142,57 @@ plugin "rs_azure_sql" do
     end
 
     action "create" do
+      type "databases"
       path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/databases/$name"
       verb "PUT"
     end
 
     action "get" do
+      type "databases"
       path "$href"
       verb "GET"
     end
 
     action "destroy" do
+      type "databases"
       path "$href"
       verb "DELETE"
     end
     
     action "pause" do
+      type "databases"
       path "$href/pause"
       verb "POST"
     end
 
     action "resume" do
+      type "databases"
       path "$href/resume"
       verb "POST"
     end
 
     action "update" do
+      type "databases"
       path "$href"
       verb "PATCH"
+    end
+
+    action "show" do
+      type "databases"
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/databases/$name"
+      verb "GET"
+
+      field "resource_group" do
+        location "path"
+      end 
+
+      field "name" do
+        location "path"
+      end
+
+      field "server_name" do
+        location "path"
+      end
     end
 
     output "id","name","type","location","kind"
@@ -404,6 +434,17 @@ resource_pool "rs_azure_sql" do
     end
 end
 
+define skip_known_error() do
+  # If all errors were concurrent resource group errors, skip
+  $_error_behavior = "skip"
+  foreach $e in $_errors do
+    call sys_log.detail($e)
+    if $e["error_details"]["summary"] !~ /Concurrent process is creating resource group/
+      $_error_behavior = "raise"
+    end
+  end
+end
+
 define provision_resource(@declaration) return @resource do
   sub on_error: stop_debugging() do
     $object = to_object(@declaration)
@@ -415,7 +456,7 @@ define provision_resource(@declaration) return @resource do
     call start_debugging()
     @operation = rs_azure_sql.$type.create($fields)
     call sys_log.detail(to_object(@operation))
-    @resource = @operation.get()
+    @resource = @operation.show()
     $status = @resource.state
     sub on_error: skip, timeout: 60m do
       while $status != "Ready" do
@@ -438,22 +479,47 @@ define provision_database(@declaration) return @resource do
     call sys_log.summary(join(["Provision ", $type]))
     call sys_log.detail($object)
     call start_debugging()
-    $operation = rs_azure_sql.$type.create($fields)
+    @operation = rs_azure_sql.$type.create($fields)
     call sys_log.detail($operation)
     call stop_debugging()
     call sys_log.detail(to_object(@operation))
-    $status = rs_azure_sql.$type.get($operation).status
+    $name = $fields["name"]
+    $server_name = $fields["server_name"]
+    $resource_group = $fields["resource_group"]
+    call sys_log.detail("entering sub, sleeping 60")
+    sleep(60)
+    call sys_log.detail("sleeping 60")
+    sleep(60)
+    call sys_log.detail("sleeping 60")
+    sleep(60)
+    call sys_log.detail("sleeping 60")
+    sleep(60)
+    call sys_log.detail("sleeping 60")
+    sleep(60)
+    sub on_error: skip_known_error(), timeout: 60m do
+      call sys_log.detail("getting first response")
+      call start_debugging()
+      $response = to_object(@operation.show(name: $name, server_name: $server_name, resource_group: $resource_group ))
+      sleep(10)
+      call sys_log.detail(join(["response: ", $response]))
+      call stop_debugging()
+    end
+    call sys_log.detail("leaving first sub")
+    @new_resource = @operation.show(name: $name, server_name: $server_name, resource_group: $resource_group )
+    $status = @new_resource.status
+    call sys_log.detail("entering 2 sub")
     sub on_error: skip, timeout: 60m do
       while $status != "Online" do
-        $status = @operation.get().status
+        $status = @operation.show(name: $name, server_name: $server_name, resource_group: $resource_group).status
+        call stop_debugging()
         call sys_log.detail(join(["Status: ", $status]))
+        call start_debugging()
         sleep(10)
       end
     end
-    call start_debugging()
-    @resource = @operation.get()
-    call sys_log.detail(to_object(@resource))
+    @resource = @new_resource
     call stop_debugging()
+    call sys_log.detail(to_object(@resource))
   end
 end
 
