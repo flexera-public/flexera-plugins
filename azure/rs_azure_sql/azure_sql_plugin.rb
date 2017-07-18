@@ -14,9 +14,6 @@ plugin "rs_azure_sql" do
   endpoint do
     default_host "https://management.azure.com/"
     default_scheme "https"
-#    query do {
-#      "api-version" => "2015-05-01-preview"
-#    } end
   end
 
   parameter "subscription_id" do
@@ -103,10 +100,10 @@ plugin "rs_azure_sql" do
       body_path "properties.state"
     end
 
-    #link "databases" do
-    #  path "$href/databases"
-    #  type "databases"
-    #end
+    link "databases" do
+      path "$href/databases"
+      type "databases"
+    end
   end
 
   type "databases" do
@@ -257,6 +254,68 @@ plugin "rs_azure_sql" do
 
     output "failoverGroupId" do
       body_path "properties.failoverGroupId"
+    end
+  end
+
+ type "transparentdataencryption" do
+    href_templates "{{contains(id, 'transparentDataEncryption') && join('?',[id,'api-version=2014-04-01']) || null}}"
+    provision "provision_transparentdataencryption"
+    delete    "delete_resource"
+
+    field "properties" do
+      type "composite"
+      location "body"
+    end
+
+    field "location" do
+      type "string"
+      location "body"
+    end
+
+    field "resource_group" do
+      type "string"
+      location "path"
+    end
+
+    field "database_name" do
+      type "string"
+      location "path"
+    end
+
+    field "server_name" do
+      type "string"
+      location "path"
+    end
+
+    action "create" do
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/databases/$database_name/transparentDataEncryption/current?api-version=2014-04-01"
+      verb "PUT"
+    end
+
+    action "get" do
+      path "$href"
+      verb "GET"
+    end
+
+    action "destroy" do
+      path "$href"
+      verb "DELETE"
+    end
+    
+    action "list_activity" do
+      path "$href/operationResults"
+      verb "GET"
+      output_path "properties.percentComplete"
+    end
+
+    output "id","name"
+
+    output "status" do
+      body_path "properties.status"
+    end
+    
+    output "percentComplete" do
+      body_path "properties.percentComplete"
     end
   end
 
@@ -464,6 +523,172 @@ plugin "rs_azure_sql" do
 
     output "id","name","type","location","kind"
   end
+
+  type "security_policy" do
+    href_templates "{{type=='Microsoft.Sql/servers/databases/securityAlertPolicies' && join('?',[id,'api-version=2014-04-01']) || null}}"
+    provision "provision_security_policy"
+    delete    "delete_resource"
+
+    field "properties" do
+      type "composite"
+      location "body"
+    end
+
+    field "location" do
+      type "string"
+      location "body"
+    end
+
+    field "resource_group" do
+      type "string"
+      location "path"
+    end 
+
+    field "name" do
+      type "string"
+      location "path"
+    end
+
+    field "server_name" do
+      type "string"
+      location "path"
+    end
+
+    field "database_name" do
+      type "string"
+      location "path"
+    end
+
+    action "create" do
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/databases/$database_name/securityAlertPolicies/$name?api-version=2014-04-01"
+      verb "PUT"
+    end
+
+    action "get" do
+      path "$href"
+      verb "GET"
+    end
+
+    action "destroy" do
+      path "$href"
+      verb "DELETE"
+    end
+
+    output "id","name","type","location","kind"
+
+    output "state" do
+      body_path "properties.state"
+    end
+
+    output "emailAccountAdmins" do
+      body_path "properties.emailAccountAdmins"
+    end
+
+    output "emailAddresses" do
+      body_path "properties.emailAddresses"
+    end
+
+    output "disabledAlerts" do
+      body_path "properties.disabledAlerts"
+    end
+
+    output "retentionDays" do
+      body_path "properties.retentionDays"
+    end
+
+    output "storageAccountAccessKey" do
+      body_path "properties.storageAccountAccessKey"
+    end
+
+    output "storageEndpoint" do
+      body_path "properties.storageEndpoint"
+    end
+
+    output "useServerDefault" do
+      body_path "properties.useServerDefault"
+    end
+  end
+
+  type "auditing_policy" do
+    href_templates "{{type=='Microsoft.Sql/servers/databases/auditingSettings' && join('?',[id,'api-version=2015-05-01-preview']) || null}}"
+    provision "provision_auditing_policy"
+    delete    "delete_resource"
+
+    field "properties" do
+      type "composite"
+      location "body"
+    end
+
+    field "location" do
+      type "string"
+      location "body"
+    end
+
+    field "resource_group" do
+      type "string"
+      location "path"
+    end 
+
+    field "name" do
+      type "string"
+      location "path"
+    end
+
+    field "server_name" do
+      type "string"
+      location "path"
+    end
+
+    field "database_name" do
+      type "string"
+      location "path"
+    end
+
+    action "create" do
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/databases/$database_name/auditingSettings/$name?api-version=2015-05-01-preview"
+      verb "PUT"
+    end
+
+    action "get" do
+      path "$href"
+      verb "GET"
+    end
+
+    action "destroy" do
+      path "$href"
+      verb "DELETE"
+    end
+
+    output "id","name","type","location","kind"
+
+    output "state" do
+      body_path "properties.state"
+    end
+
+    output "storageEndpoint" do
+      body_path "properties.storageEndpoint"
+    end
+
+    output "storageAccountAccessKey" do
+      body_path "properties.storageAccountAccessKey"
+    end
+
+    output "retentionDays" do
+      body_path "properties.retentionDays"
+    end
+
+    output "storageAccountSubscriptionId" do
+      body_path "properties.storageAccountSubscriptionId"
+    end
+
+    output "isStorageSecondaryKeyInUse" do
+      body_path "properties.isStorageSecondaryKeyInUse"
+    end
+
+    output "auditActionsAndGroups" do
+      body_path "properties.auditActionsAndGroups"
+    end
+  end
 end
 
 resource_pool "rs_azure_sql" do
@@ -562,6 +787,23 @@ define provision_database(@declaration) return @resource do
   end
 end
 
+define provision_transparentdataencryption(@declaration) return @resource do
+  sub on_error: stop_debugging() do
+    $object = to_object(@declaration)
+    $fields = $object["fields"]
+    $type = $object["type"]
+    call sys_log.set_task_target(@@deployment)
+    call sys_log.summary(join(["Provision ", $type]))
+    call sys_log.detail($object)
+    call start_debugging()
+    @operation = rs_azure_sql.$type.create($fields)
+    call sys_log.detail(to_object(@operation))
+    @resource = @operation.get()
+    call sys_log.detail(to_object(@resource))
+    call stop_debugging()
+  end
+end
+
 define provision_firewall_rule(@declaration) return @resource do
   sub on_error: stop_debugging() do
     $object = to_object(@declaration)
@@ -628,6 +870,69 @@ define provision_failover_group(@declaration) return @resource do
     call sys_log.detail(to_object(@resource))
   end
 end
+
+define provision_security_policy(@declaration) return @resource do
+  sub on_error: stop_debugging() do
+    $object = to_object(@declaration)
+    $fields = $object["fields"]
+    $type = $object["type"]
+    call sys_log.set_task_target(@@deployment)
+    call sys_log.summary(join(["Provision ", $type]))
+    call sys_log.detail($object)
+    call start_debugging()
+    @operation = rs_azure_sql.$type.create($fields)
+    call stop_debugging()
+    call sys_log.detail(to_object(@operation))
+    call start_debugging()
+    @resource = @operation.get()
+    $status = @resource.state
+    call sys_log.detail(join(["Status: ", $status]))
+    call stop_debugging()
+    sub on_error: skip, timeout: 2m do
+      while $status != "Enabled" do
+        call start_debugging()
+        $status = @resource.state
+        call stop_debugging()
+        call sys_log.detail(join(["Status: ", $status]))
+        sleep(10)
+      end
+    end 
+    call stop_debugging() 
+    call sys_log.detail(to_object(@resource))
+  end
+end
+
+define provision_auditing_policy(@declaration) return @resource do
+  sub on_error: stop_debugging() do
+    $object = to_object(@declaration)
+    $fields = $object["fields"]
+    $type = $object["type"]
+    call sys_log.set_task_target(@@deployment)
+    call sys_log.summary(join(["Provision ", $type]))
+    call sys_log.detail($object)
+    call start_debugging()
+    @operation = rs_azure_sql.$type.create($fields)
+    call stop_debugging()
+    call sys_log.detail(to_object(@operation))
+    call start_debugging()
+    @resource = @operation.get()
+    $status = @resource.state
+    call sys_log.detail(join(["Status: ", $status]))
+    call stop_debugging()
+    sub on_error: skip, timeout: 2m do
+      while $status != "Enabled" do
+        call start_debugging()
+        $status = @resource.state
+        call stop_debugging()
+        call sys_log.detail(join(["Status: ", $status]))
+        sleep(10)
+      end
+    end 
+    call stop_debugging() 
+    call sys_log.detail(to_object(@resource))
+  end
+end
+
 define delete_resource(@declaration) do
   call start_debugging()
   sub on_error: skip do
@@ -667,11 +972,21 @@ resource "sql_server", type: "rs_azure_sql.sql_server" do
   } end
 end
 
-resource "databases", type: "rs_azure_sql.databases" do
+resource "database", type: "rs_azure_sql.databases" do
   name "sample-database"
   resource_group "DF-Testing"
   location "Central US"
   server_name @sql_server.name
+end
+
+resource "transparentdataencryption", type: "rs_azure_sql.transparentdataencryption" do
+  resource_group "DF-Testing"
+  location "Central US"
+  server_name @sql_server.name
+  database_name @database.name
+  properties do {
+    "status" => "Disabled"
+  } end
 end
 
 resource "firewall_rule", type: "rs_azure_sql.firewall_rule" do
@@ -690,4 +1005,30 @@ resource "elastic_pool", type: "rs_azure_sql.elastic_pool" do
   resource_group "DF-Testing"
   location "Central US"
   server_name @sql_server.name
+end
+
+resource "auditing_policy", type: "rs_azure_sql.auditing_policy" do
+  name "sample-auditing-policy"
+  resource_group "DF-Testing"
+  location "Central US"
+  server_name @sql_server.name
+  database_name @database.name
+  properties do {
+    "state" => "Enabled",
+    "storageAccountAccessKey" => "X0Z/nzf9d5u0GVgLwNI3uOjO+dtETcH9AMOOQKZ8Ikmuw4i8eiiNsKd4QPK4QKDXENIyNKenXn3GE3WOhmVJPQ==",
+    "storageEndpoint" => "https://dftestingdiag134.blob.core.windows.net/"
+  } end
+end
+
+resource "security_policy", type: "rs_azure_sql.security_policy" do
+  name "sample-security-policy"
+  resource_group "DF-Testing"
+  location "Central US"
+  server_name @sql_server.name
+  database_name @database.name
+  properties do {
+    "state" => "Enabled",
+    "storageAccountAccessKey" => "X0Z/nzf9d5u0GVgLwNI3uOjO+dtETcH9AMOOQKZ8Ikmuw4i8eiiNsKd4QPK4QKDXENIyNKenXn3GE3WOhmVJPQ==",
+    "storageEndpoint" => "https://dftestingdiag134.blob.core.windows.net/"
+  } end
 end
