@@ -8,16 +8,15 @@ import "sys_log"
 parameter "subscription_id" do
   type  "string"
   label "Subscription ID"
-
 end
 
 plugin "rs_azure_sql" do
   endpoint do
     default_host "https://management.azure.com/"
     default_scheme "https"
-    query do {
-      "api-version" => "2014-04-01"
-    } end
+#    query do {
+#      "api-version" => "2015-05-01-preview"
+#    } end
   end
 
   parameter "subscription_id" do
@@ -26,8 +25,7 @@ plugin "rs_azure_sql" do
   end
 
   type "sql_server" do
-    #href_templates "{{id}}"
-    href_templates "{{type=='Microsoft.Sql/servers' && id || null}}"
+    href_templates "{{type=='Microsoft.Sql/servers' && join('?',[id,'api-version=2014-04-01']) || null}}"
     provision "provision_resource"
     delete    "delete_resource"
 
@@ -53,7 +51,7 @@ plugin "rs_azure_sql" do
 
     action "create" do
       type "sql_server"
-      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$name"
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$name?api-version=2014-04-01"
       verb "PUT"
     end
 
@@ -112,7 +110,7 @@ plugin "rs_azure_sql" do
   end
 
   type "databases" do
-    href_templates "{{type=='Microsoft.Sql/servers/databases' && id || null}}"
+    href_templates "{{type=='Microsoft.Sql/servers/databases' && join('?',[id,'api-version=2014-04-01']) || null}}"
     provision "provision_database"
     delete    "delete_resource"
 
@@ -143,7 +141,7 @@ plugin "rs_azure_sql" do
 
     action "create" do
       type "databases"
-      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/databases/$name"
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/databases/$name?api-version=2014-04-01"
       verb "PUT"
     end
 
@@ -179,7 +177,7 @@ plugin "rs_azure_sql" do
 
     action "show" do
       type "databases"
-      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/databases/$name"
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/databases/$name?api-version=2014-04-01"
       verb "GET"
 
       field "resource_group" do
@@ -262,158 +260,210 @@ plugin "rs_azure_sql" do
     end
   end
 
-#  type "firewall_rule" do
-#    href_templates "{{type=='Microsoft.Sql/servers/firewallRules' && id}}"
-#    provision "provision_firewall_rule"
-#    delete    "delete_resource"
-#
-#    field "properties" do
-#      type "composite"
-#      location "body"
-#    end
-#
-#    field "location" do
-#      type "string"
-#      location "body"
-#    end
+  type "firewall_rule" do
+    href_templates "{{type=='Microsoft.Sql/servers/firewallRules' && join('?',[id,'api-version=2014-04-01']) || null}}"
+    provision "provision_firewall_rule"
+    delete    "delete_resource"
 
-#    field "resource_group" do
-#      type "string"
-#      location "path"
-#    end 
+    field "properties" do
+      type "composite"
+      location "body"
+    end
 
-#    field "name" do
-#      type "string"
-#      location "path"
-#    end
+    field "location" do
+      type "string"
+      location "body"
+    end
 
-#    field "server_name" do
-#      type "string"
-#      location "path"
-#    end
+    field "resource_group" do
+      type "string"
+      location "path"
+    end 
 
-#    action "create" do
-#      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/firewallRules/$name"
-#      verb "PUT"
-#    end
+    field "name" do
+      type "string"
+      location "path"
+    end
 
-#    action "get" do
-#      path "$href"
-#      verb "GET"
-#    end
+    field "server_name" do
+      type "string"
+      location "path"
+    end
 
-#    action "destroy" do
-#      path "$href"
-#      verb "DELETE"
-#    end
+    action "create" do
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/firewallRules/$name?api-version=2014-04-01"
+      verb "PUT"
+    end
+
+    action "get" do
+      path "$href"
+      verb "GET"
+    end
+
+    action "show" do
+      path "$href"
+      verb "GET"
+    end
+
+    action "destroy" do
+      path "$href"
+      verb "DELETE"
+    end
     
-#    action "list" do
-#      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/firewallRules"
-#      verb "GET"
-#      output_path "properties.percentComplete"
-#    end
+    action "list" do
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/firewallRules?api-version=2014-04-01"
+      verb "GET"
+      output_path "properties.percentComplete"
+    end
 
-#    output "id","name","type","location","kind"
+    output "id","name","type","location","kind"
 
-#    output "startIpAddress" do
-#      body_path "properties.startIpAddress"
-#    end
+    output "startIpAddress" do
+      body_path "properties.startIpAddress"
+    end
     
-#    output "endIpAddres" do
-#      body_path "properties.endIpAddress"
-#    end
-#  end
+    output "endIpAddres" do
+      body_path "properties.endIpAddress"
+    end
+  end
 
-#  type "elastic_pool" do
-#    href_templates "{{type=='Microsoft.Sql/servers/elasticPools' && id}}"
-#    provision "provision_elastic_pool"
-#    delete    "delete_resource"
+  type "elastic_pool" do
+    href_templates "{{type=='Microsoft.Sql/servers/elasticPools' && join('?',[id,'api-version=2014-04-01']) || null}}"
+    provision "provision_elastic_pool"
+    delete    "delete_resource"
 
-#    field "properties" do
-#      type "composite"
-#      location "body"
-#    end
+    field "properties" do
+      type "composite"
+      location "body"
+    end
 
-#    field "location" do
-#      type "string"
-#      location "body"
-#    end
+    field "location" do
+      type "string"
+      location "body"
+    end
 
-#    field "resource_group" do
-#      type "string"
-#      location "path"
-#    end 
+    field "resource_group" do
+      type "string"
+      location "path"
+    end 
 
-#    field "name" do
-#      type "string"
-#      location "path"
-#    end
+    field "name" do
+      type "string"
+      location "path"
+    end
 
-#    field "server_name" do
-#      type "string"
-#      location "path"
-#    end
+    field "server_name" do
+      type "string"
+      location "path"
+    end
 
-#    action "create" do
-#      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/elasticPools/$name"
-#      verb "PUT"
-#    end
+    action "create" do
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/elasticPools/$name?api-version=2014-04-01"
+      verb "PUT"
+    end
 
-#    action "get" do
-#      path "$href"
-#      verb "GET"
-#    end
+    action "get" do
+      path "$href"
+      verb "GET"
+    end
 
-#    action "destroy" do
-#      path "$href"
-#      verb "DELETE"
-#    end
+    action "destroy" do
+      path "$href"
+      verb "DELETE"
+    end
 
-#    action "get_database" do
-#      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/elasticPools/$name/databases/$database_name"
-#      verb "GET"
-##      
-#      field "database_name" do
-#        type "string"
-#        location "path"
-#      end
-#   end
+    action "get_database" do
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/elasticPools/$name/databases/$database_name?api-version=2014-04-01"
+      verb "GET"
+      
+      field "database_name" do
+        location "path"
+      end
+   end
 
-#    action "update" do
-#      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/elasticPools/$name"
-#      verb "PATCH"
-#    end
+    action "update" do
+      path "$href"
+      verb "PATCH"
+    end
 
-#    output "id","name","type","location","kind"
+    output "id","name","type","location","kind"
 
-#    output "creationDate" do
-#      body_path "properties.creationDate"
-#    end
+    output "creationDate" do
+      body_path "properties.creationDate"
+    end
 
-#    output "edition" do
-#      body_path "properties.edition"
-#    end
+    output "edition" do
+      body_path "properties.edition"
+    end
 
-#    output "state" do
-#      body_path "properties.state"
-#    end
+    output "state" do
+      body_path "properties.state"
+    end
 
-#    output "dtu" do
-#      body_path "properties.dtu"
-#    end
+    output "dtu" do
+      body_path "properties.dtu"
+    end
 
-#    output "databaseDtuMin" do
-#      body_path "properties.databaseDtuMin"
-#    end
+    output "databaseDtuMin" do
+      body_path "properties.databaseDtuMin"
+    end
 
-#    output "databaseDtuMax" do
-#      body_path "properties.databaseDtuMax"
-#    end
+    output "databaseDtuMax" do
+      body_path "properties.databaseDtuMax"
+    end
 
-#    output "storageMB" do
-#      body_path "properties.storageMB"
-#    end
-#  end
+    output "storageMB" do
+      body_path "properties.storageMB"
+    end
+  end
+
+  type "failover_group" do
+    href_templates "{{type=='Microsoft.Sql/servers/failoverGroups' && join('?',[id,'api-version=2015-05-01-preview']) || null}}"
+    provision "provision_failover_group"
+    delete    "delete_resource"
+
+    field "properties" do
+      type "composite"
+      location "body"
+    end
+
+    field "location" do
+      type "string"
+      location "body"
+    end
+
+    field "resource_group" do
+      type "string"
+      location "path"
+    end 
+
+    field "name" do
+      type "string"
+      location "path"
+    end
+
+    field "server_name" do
+      type "string"
+      location "path"
+    end
+
+    action "create" do
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/failoverGroups/$name?api-version=2015-05-01-preview"
+      verb "PUT"
+    end
+
+    action "get" do
+      path "$href"
+      verb "GET"
+    end
+
+    action "destroy" do
+      path "$href"
+      verb "DELETE"
+    end
+
+    output "id","name","type","location","kind"
+  end
 end
 
 resource_pool "rs_azure_sql" do
@@ -486,26 +536,15 @@ define provision_database(@declaration) return @resource do
     $name = $fields["name"]
     $server_name = $fields["server_name"]
     $resource_group = $fields["resource_group"]
-    call sys_log.detail("entering sub, sleeping 60")
-    sleep(60)
-    call sys_log.detail("sleeping 60")
-    sleep(60)
-    call sys_log.detail("sleeping 60")
-    sleep(60)
-    call sys_log.detail("sleeping 60")
-    sleep(60)
-    call sys_log.detail("sleeping 60")
-    sleep(60)
-    sub on_error: skip_known_error(), timeout: 60m do
-      call sys_log.detail("getting first response")
-      call start_debugging()
-      $response = to_object(@operation.show(name: $name, server_name: $server_name, resource_group: $resource_group ))
-      sleep(10)
-      call sys_log.detail(join(["response: ", $response]))
-      call stop_debugging()
-    end
-    call sys_log.detail("leaving first sub")
+    call sys_log.detail("sleeping 120")
+    sleep(120)
+    call sys_log.detail("entering while(empty?()) loop")
     @new_resource = @operation.show(name: $name, server_name: $server_name, resource_group: $resource_group )
+    while empty?(@new_resource) do
+      call sys_log.detail("sleeping 10")
+      sleep(10)
+      @new_resource = @operation.show(name: $name, server_name: $server_name, resource_group: $resource_group )
+    end
     $status = @new_resource.status
     call sys_log.detail("entering 2 sub")
     sub on_error: skip, timeout: 60m do
@@ -523,76 +562,77 @@ define provision_database(@declaration) return @resource do
   end
 end
 
-define provision_transparentdataencryption(@declaration) return @resource do
-  sub on_error: stop_debugging() do
-    call start_debugging()
-    $object = to_object(@declaration)
-    $fields = $object["fields"]
-    $type = $object["type"]
-    call sys_log.set_task_target(@@deployment)
-    call sys_log.summary(join(["Provision ", $type]))
-    call sys_log.detail($object)
-    @operation = rs_azure_sql.$type.create($fields)
-    call sys_log.detail(to_object(@operation))
-    @resource = @operation.get()
-    $status = @resource.status
-    sub on_error: skip, timeout: 60m do
-      while $status != "Online" do
-        $status = @resource.status
-        call sys_log.detail(join(["Status: ", $status]))
-        sleep(10)
-      end
-    end 
-    call sys_log.detail(to_object(@resource))
-    call stop_debugging()
-  end
-end
-
 define provision_firewall_rule(@declaration) return @resource do
   sub on_error: stop_debugging() do
-    call start_debugging()
     $object = to_object(@declaration)
     $fields = $object["fields"]
     $type = $object["type"]
     call sys_log.set_task_target(@@deployment)
     call sys_log.summary(join(["Provision ", $type]))
     call sys_log.detail($object)
+    call start_debugging()
     @operation = rs_azure_sql.$type.create($fields)
-    call sys_log.detail(to_object(@operation))
-    @resource = @operation.get()
-    call sys_log.detail(to_object(@resource))
     call stop_debugging()
+    call sys_log.detail(to_object(@operation))
+    call start_debugging()
+    @resource = @operation.get()
+    call stop_debugging()
+    call sys_log.detail(to_object(@resource))
   end
 end
 
 define provision_elastic_pool(@declaration) return @resource do
   sub on_error: stop_debugging() do
-    call start_debugging()
     $object = to_object(@declaration)
     $fields = $object["fields"]
     $type = $object["type"]
     call sys_log.set_task_target(@@deployment)
     call sys_log.summary(join(["Provision ", $type]))
     call sys_log.detail($object)
+    call start_debugging()
     @operation = rs_azure_sql.$type.create($fields)
+    call stop_debugging()
     call sys_log.detail(to_object(@operation))
+    call start_debugging()
     @resource = @operation.get()
     $status = @resource.state
+    call stop_debugging()
     sub on_error: skip, timeout: 60m do
       while $status != "Ready" do
+        call start_debugging()
         $status = @resource.state
+        call stop_debugging()
         call sys_log.detail(join(["Status: ", $status]))
         sleep(10)
       end
     end 
     call sys_log.detail(to_object(@resource))
-    call stop_debugging()
   end
 end
 
+define provision_failover_group(@declaration) return @resource do
+  sub on_error: stop_debugging() do
+    $object = to_object(@declaration)
+    $fields = $object["fields"]
+    $type = $object["type"]
+    call sys_log.set_task_target(@@deployment)
+    call sys_log.summary(join(["Provision ", $type]))
+    call sys_log.detail($object)
+    call start_debugging()
+    @operation = rs_azure_sql.$type.create($fields)
+    call stop_debugging()
+    call sys_log.detail(to_object(@operation))
+    call start_debugging()
+    @resource = @operation.get()
+    call stop_debugging() 
+    call sys_log.detail(to_object(@resource))
+  end
+end
 define delete_resource(@declaration) do
   call start_debugging()
-  @declaration.destroy()
+  sub on_error: skip do
+    @declaration.destroy()
+  end
   call stop_debugging()
 end
 
@@ -634,13 +674,20 @@ resource "databases", type: "rs_azure_sql.databases" do
   server_name @sql_server.name
 end
 
-#resource "firewall_rule", type: "rs_azure_sql.firewall_rule" do
-#  name "api-example-dns-rule"
-#  resource_group "DF-Testing"
-#  location "Central US"
-#  server_name @sql_server.name
-#  properties do {
-#    "startIpAddress" => "0.0.0.1",
-#    "endIpAddress" => "0.0.0.1"
-#  } end
-#end
+resource "firewall_rule", type: "rs_azure_sql.firewall_rule" do
+  name "sample-firewall-rule"
+  resource_group "DF-Testing"
+  location "Central US"
+  server_name @sql_server.name
+  properties do {
+    "startIpAddress" => "0.0.0.1",
+    "endIpAddress" => "0.0.0.1"
+  } end
+end
+
+resource "elastic_pool", type: "rs_azure_sql.elastic_pool" do
+  name "sample-elastic-pool"
+  resource_group "DF-Testing"
+  location "Central US"
+  server_name @sql_server.name
+end
