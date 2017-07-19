@@ -9,6 +9,7 @@ This repo contains a library of open source RightScale plugins.
 - [AWS CloudFormation](./aws/rs_aws_cft/)
 - [GCP Google Compute Engine](./google/gce/)
 - [GCP Cloud DNS](./google/google_cloud_dns/)
+- [Azure ARM Templates](./azure/rs_azure_template)
 
 ## RightScale Plugin Documentation
 - [Guide](http://docs.rightscale.com/ss/guides/ss_plugins.html)
