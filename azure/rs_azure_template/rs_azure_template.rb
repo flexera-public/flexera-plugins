@@ -73,6 +73,7 @@ plugin "rs_azure_template" do
 
     action "validate_template" do
       path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Resources/deployments/$name/validate"
+      verb "POST"
 
       field "properties" do
         location "body"
@@ -85,6 +86,15 @@ plugin "rs_azure_template" do
       field "name" do
         location "path"
       end
+    end
+    
+    action "list" do
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Resources/deployments"
+      verb "GET"
+
+      field "resource_group" do
+        location "path"
+      end 
     end 
 
     output "id","name"
