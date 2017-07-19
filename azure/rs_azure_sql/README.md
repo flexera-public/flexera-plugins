@@ -140,7 +140,7 @@ end
 |name|Yes|The name of the sql server.|
 |resource_group|Yes|Name of resource group in which to launch the Deployment|
 |location|Yes|Datacenter to launch in|
-|properties|Yes|Hash of Deployment properties (https://docs.microsoft.com/en-us/rest/api/sql/servers)|
+|properties|Yes|Hash of SQL Server properties (https://docs.microsoft.com/en-us/rest/api/sql/servers)|
 
 #### Supported Actions
 
@@ -172,7 +172,7 @@ end
 |resource_group|Yes|Name of resource group in which to launch the Deployment|
 |location|Yes|Datacenter to launch in|
 |server_name|Yes|Server to create db on|
-|properties|Yes|Hash of Deployment properties (https://docs.microsoft.com/en-us/rest/api/sql/databases)|
+|properties|Yes|Hash of Database properties (https://docs.microsoft.com/en-us/rest/api/sql/databases)|
 
 #### Supported Actions
 
@@ -214,7 +214,7 @@ end
 |location|Yes|Datacenter to launch in|
 |server_name|Yes|Server the database is on|
 |database_name|Yes|database to configure encryption setting on|
-|properties|Yes|Hash of Deployment properties (https://docs.microsoft.com/en-us/rest/api/sql/databases#Databases_CreateOrUpdateTransparentDataEncryptionConfiguration)|
+|properties|Yes|Hash of Transparent Data Encryption properties (https://docs.microsoft.com/en-us/rest/api/sql/databases#Databases_CreateOrUpdateTransparentDataEncryptionConfiguration)|
 
 #### Supported Actions
 
@@ -237,7 +237,7 @@ end
 |resource_group|Yes|Name of resource group in which to launch the Deployment|
 |location|Yes|Datacenter to launch in|
 |server_name|Yes|Server to create the fw rule on|
-|properties|Yes|Hash of Deployment properties (https://docs.microsoft.com/en-us/rest/api/sql/firewallrules)|
+|properties|Yes|Hash of FirewallRule properties (https://docs.microsoft.com/en-us/rest/api/sql/firewallrules)|
 
 #### Supported Actions
 
@@ -264,7 +264,7 @@ end
 |resource_group|Yes|Name of resource group in which to launch the Deployment|
 |location|Yes|Datacenter to launch in|
 |server_name|Yes|Server to create the elastic pool  on|
-|properties|Yes|Hash of Deployment properties (https://docs.microsoft.com/en-us/rest/api/sql/elasticpools)|
+|properties|Yes|Hash of ElasticPools properties (https://docs.microsoft.com/en-us/rest/api/sql/elasticpools)|
 
 #### Supported Actions
 
@@ -297,7 +297,7 @@ end
 |location|Yes|Datacenter to launch in|
 |server_name|Yes|Server the database is on|
 |database_name|Yes|database to configure auditing-policy on|
-|properties|Yes|Hash of Deployment properties (https://docs.microsoft.com/en-us/rest/api/sql/blob%20auditing%20policies)|
+|properties|Yes|Hash of Auditing Policy properties (https://docs.microsoft.com/en-us/rest/api/sql/blob%20auditing%20policies)|
 
 #### Supported Actions
 
@@ -329,7 +329,7 @@ end
 |location|Yes|Datacenter to launch in|
 |server_name|Yes|Server the database is on|
 |database_name|Yes|database to security_policy on|
-|properties|Yes|Hash of Deployment properties (https://docs.microsoft.com/en-us/rest/api/sql/database%20security%20policies)|
+|properties|Yes|Hash of Security Policy properties (https://docs.microsoft.com/en-us/rest/api/sql/database%20security%20policies)|
 
 #### Supported Actions
 
@@ -362,7 +362,6 @@ Full list of possible actions can be found on the [Azure SQL Database API Docume
 Please review [sql_test_cat.rb](./sql_test_cat.rb) for a basic example implementation.
 	
 ## Known Issues / Limitations
-- Currently only supports CRUD and instance register/deregister functions.
 
 ## Getting Help
 Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.

@@ -105,25 +105,25 @@ plugin "rs_azure_sql" do
       body_path "properties.state"
     end
 
-    link "databases" do
-      path "$href/databases?api-version=2014-04-01"
-      type "databases"
-    end
+#    link "databases" do
+#      path "$href/databases?api-version=2014-04-01"
+#      type "databases"
+#    end
 
-    link "firewall_rule" do
-      path "$href/firewallRules?api-version=2014-04-01"
-      type "firewall_rule"
-    end
+#    link "firewall_rule" do
+#      path "$href/firewallRules?api-version=2014-04-01"
+#      type "firewall_rule"
+#    end
 
-    link "failover_group" do
-      path "$href/failoverGroups?api-version=2015-05-01-preview"
-      type "failover_group"
-    end
+#    link "failover_group" do
+#      path "$href/failoverGroups?api-version=2015-05-01-preview"
+#      type "failover_group"
+#    end
 
-    link "elastic_pool" do
-      path "$href/elasticPools?api-version=2014-04-01"
-      type "elastic_pool"
-    end
+#    link "elastic_pool" do
+#      path "$href/elasticPools?api-version=2014-04-01"
+#      type "elastic_pool"
+#    end
   end
 
   type "databases" do
