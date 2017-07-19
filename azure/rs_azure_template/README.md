@@ -99,7 +99,7 @@ end
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
 | create & update | [CreateOrUpdateDeployment](https://docs.microsoft.com/en-us/rest/api/resources/deployments#Deployments_CreateOrUpdate) | Supported |
-| destroy | [DeleteDeployment](https://docs.microsoft.com/en-us/rest/api/resources/deployments#Deployments_Delete) | Supported (**Note:** due to the way that Azure handles this API call, the underlying resources are not automatically deleted when a Deployment is deleted) |
+| destroy | [DeleteDeployment](https://docs.microsoft.com/en-us/rest/api/resources/deployments#Deployments_Delete) | Supported |
 | get | [GetDeployment](https://docs.microsoft.com/en-us/rest/api/resources/deployments#Deployments_Get) | Supported |
 | list | [ListDeploymentByResourceGroup](https://docs.microsoft.com/en-us/rest/api/resources/deployments#Deployments_ListByResourceGroup) | Supported |
 | validate_template | [ValidateTemplate](https://docs.microsoft.com/en-us/rest/api/resources/deployments#Deployments_Validate) | Supported |
@@ -111,6 +111,7 @@ Please review [ARM_template_test_CAT.rb](./ARM_template_test_CAT.rb) for a basic
 	
 ## Known Issues / Limitations
 - When attempting to pass the template in-line (ie. by using the "template" key in the "properties" hash, Azure refuses the "$schema" node due to request encoding.  It is recommended to host your ARM Templates in Blob Storage.  This limitation does not affect passing parameters in-line, as seen in the example CAT. 
+- Due to the way that Azure handles the Delete Deployment API call, the underlying resources are not automatically deleted when a `destory()` action is called on a rs_azure_template.deployment resource
 
 
 ## Getting Help
