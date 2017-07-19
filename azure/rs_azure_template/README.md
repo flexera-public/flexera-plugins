@@ -118,7 +118,7 @@ Support for this plugin will be provided though GitHub Issues and the RightScale
 Visit http://chat.rightscale.com/ to join!
 
 ## License
-The AWS EFS Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.
+The Azure ARM Template Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.
 
 
 
