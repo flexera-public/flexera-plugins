@@ -105,29 +105,29 @@ plugin "rs_azure_sql" do
       body_path "properties.state"
     end
 
-#    link "databases" do
-#      path "$href/databases?api-version=2014-04-01"
-#      type "databases"
-#    end
+    link "databases" do
+      path "$href/databases?api-version=2014-04-01"
+      type "databases"
+    end
 
-#    link "firewall_rule" do
-#      path "$href/firewallRules?api-version=2014-04-01"
-#      type "firewall_rule"
-#    end
+    link "firewall_rules" do
+      path "$href/firewallRules?api-version=2014-04-01"
+      type "firewall_rule"
+    end
 
-#    link "failover_group" do
-#      path "$href/failoverGroups?api-version=2015-05-01-preview"
-#      type "failover_group"
-#    end
+    link "failover_groups" do
+      path "$href/failoverGroups?api-version=2015-05-01-preview"
+      type "failover_group"
+    end
 
-#    link "elastic_pool" do
-#      path "$href/elasticPools?api-version=2014-04-01"
-#      type "elastic_pool"
-#    end
+    link "elastic_pools" do
+      path "$href/elasticPools?api-version=2014-04-01"
+      type "elastic_pool"
+    end
   end
 
   type "databases" do
-    href_templates "{{type=='Microsoft.Sql/servers/databases' && join('?',[id,'api-version=2014-04-01']) || null}}"
+    href_templates "{{type=='Microsoft.Sql/servers/databases' && join('?',[id,'api-version=2014-04-01']) || null}}","value[0].type=='Microsoft.Sql/servers/databases' && map(&join('?',[id,'api-version=2014-04-01']),value) || null"
     provision "provision_database"
     delete    "delete_resource"
 
@@ -341,7 +341,7 @@ plugin "rs_azure_sql" do
   end
 
   type "firewall_rule" do
-    href_templates "{{type=='Microsoft.Sql/servers/firewallRules' && join('?',[id,'api-version=2014-04-01']) || null}}"
+    href_templates "{{type=='Microsoft.Sql/servers/firewallRules' && join('?',[id,'api-version=2014-04-01']) || null}}","value[0].type=='Microsoft.Sql/servers/firewallRules' && map(&join('?',[id,'api-version=2014-04-01']),value) || null"
     provision "provision_firewall_rule"
     delete    "delete_resource"
 
@@ -408,7 +408,7 @@ plugin "rs_azure_sql" do
   end
 
   type "elastic_pool" do
-    href_templates "{{type=='Microsoft.Sql/servers/elasticPools' && join('?',[id,'api-version=2014-04-01']) || null}}"
+    href_templates "{{type=='Microsoft.Sql/servers/elasticPools' && join('?',[id,'api-version=2014-04-01']) || null}}","value[0].type=='Microsoft.Sql/servers/elasticPools' && map(&join('?',[id,'api-version=2014-04-01']),value) || null"
     provision "provision_elastic_pool"
     delete    "delete_resource"
 
@@ -498,7 +498,7 @@ plugin "rs_azure_sql" do
   end
 
   type "failover_group" do
-    href_templates "{{type=='Microsoft.Sql/servers/failoverGroups' && join('?',[id,'api-version=2015-05-01-preview']) || null}}"
+    href_templates "{{type=='Microsoft.Sql/servers/failoverGroups' && join('?',[id,'api-version=2015-05-01-preview']) || null}}","value[0].type=='Microsoft.Sql/servers/failoverGroups' && map(&join('?',[id,'api-version=2015-05-01-preview']),value) || null"
     provision "provision_failover_group"
     delete    "delete_resource"
 
@@ -719,7 +719,7 @@ resource_pool "rs_azure_sql" do
     end
 
     auth "azure_auth", type: "oauth2" do
-      token_url "https://login.microsoftonline.com/AZURE_TENANT_ID/oauth2/token"
+      token_url "https://login.microsoftonline.com/09b8fec1-4b8d-48dd-8afa-5c1a775ea0f2/oauth2/token"
       grant type: "client_credentials" do
         client_id cred("AZURE_APPLICATION_ID")
         client_secret cred("AZURE_APPLICATION_KEY")
