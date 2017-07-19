@@ -19,7 +19,7 @@ The GCP Cloud DNS Plugin consumes the Google Cloud DNS API and exposes the suppo
 ## Getting Started
 ### Creating a GCP Service Account
 This procedure will create a GCE Service account with the appropriate permissions to use this plugin.
-1. Review the [Using OAuth 2.0 for Server to Server Applications](https://developers.google.com/identity/protocols/OAuth2ServiceAccount) documenatation.
+1. Review the [Using OAuth 2.0 for Server to Server Applications](https://developers.google.com/identity/protocols/OAuth2ServiceAccount) documentation.
 1. Follow the section named _Creating a service account_
     - Roles needs to include:
       - `DNS Administrator`
@@ -194,4 +194,4 @@ Support for this plugin will be provided though GitHub Issues and the RightScale
 Visit http://chat.rightscale.com/ to join!
 
 ## License
-The GCE Plugin source code is subject to the MIT license, see the [LICENSE](../LICENSE) file.
+The GCE Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.
