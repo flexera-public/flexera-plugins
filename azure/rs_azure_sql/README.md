@@ -1,7 +1,7 @@
 # Azure SQL Database Plugin
 
 ## Overview
-The Azure SQL Database Plugin integrates RightScale Self-Service with the basic functionality of the AWS Application Load Balancer. 
+The Azure SQL Database Plugin integrates RightScale Self-Service with the basic functionality of the Azure SQL Database
 
 ## Requirements
 - A general understanding CAT development and definitions
@@ -26,94 +26,116 @@ The Azure SQL Database Plugin integrates RightScale Self-Service with the basic 
    - For more details on using the portal review the [SS User Interface Guide](http://docs.rightscale.com/ss/guides/ss_user_interface_guide.html)
 1. In the Design section, use the `Upload CAT` interface to complete the following:
    1. Upload each of packages listed in the Requirements Section
-   1. Upload the `application_lb_plugin.rb` file located in this repository
+   1. Upload the `azure_sql_plugin.rb` file located in this repository
  
 ## How to Use
-The AWS ALB Plugin has been packaged as `plugins/rs_aws_alb`. In order to use this plugin you must import this plugin into a CAT.
+The Azure SQL Database Plugin has been packaged as `plugins/rs_azure_sql`. In order to use this plugin you must import this plugin into a CAT.
 ```
-import "plugins/rs_aws_alb"
+import "plugins/rs_azure_sql"
 ```
 For more information on using packages, please refer to the RightScale online documenataion. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
-AWS ALB resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
+Azure SQL Database resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
 The resulting resrouce can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
 
 ## Supported Resources
- -  load_balancer
- -  target_group
- -  listener
- -  rule
+ - sql_server
+ - databases
+ - transparent_data_encryption
+ - firewall_rule
+ - elastic_pool
+ - auditing_policy
+ - security_policy
 
 ## Usage
 ```
-#Creates an ALB
-parameter "lb_name" do
-  label "ALB Name"
-  description "ALB Name"
-  default "myalb-1"
-  type "string"
+#Creates an SQL Server and DB
+
+parameter "subscription_id" do
+  like $rs_azure_sql.subscription_id
 end
 
-resource "my_alb", type: "rs_aws_alb.load_balancer" do
-  name $lb_name
-  scheme "internet-facing"
-  ip_address_type "ipv4"
-  subnet1 "subnet-843314b8"
-  security_group1 "sg-7dad9003"
-  subnet2 "subnet-b357c2fb"
-  tag_key_1 "foo"
-  tag_value_1 "bar"
+resource "sql_server", type: "rs_azure_sql.sql_server" do
+  name join(["my-sql-server-", last(split(@@deployment.href, "/"))])
+  resource_group "DF-Testing"
+  location "Central US"
+  properties do {
+      "version" => "12.0",
+      "administratorLogin" =>"rightscale",
+      "administratorLoginPassword" => "RightScale2017"
+  } end
 end
 
-resource "my_tg", type: "rs_aws_alb.target_group" do
-  name join(["TargetGroup-",$lb_name])
-  port 80
-  protocol "HTTP"
-  vpc_id "vpc-8172a6f8"
+resource "database", type: "rs_azure_sql.databases" do
+  name "sample-database"
+  resource_group "DF-Testing"
+  location "Central US"
+  server_name @sql_server.name
 end
 
-resource "my_listener", type: "rs_aws_alb.listener" do
-  action1_target_group_arn @my_tg.TargetGroupArn
-  action1_type "forward"
-  load_balancer_arn @my_alb.LoadBalancerArn
-  port 80
-  protocol "HTTP"
-end 
-
-resource "my_rule", type: "rs_aws_alb.rule" do
-  action1_target_group_arn @my_tg.TargetGroupArn
-  action1_type "forward"
-  condition1_field "path-pattern"
-  condition1_value1 "/foo/*"
-  listener_arn @my_listener.ListenerArn
-  priority 1
+resource "transparent_data_encryption", type: "rs_azure_sql.transparent_data_encryption" do
+  resource_group "DF-Testing"
+  location "Central US"
+  server_name @sql_server.name
+  database_name @database.name
+  properties do {
+    "status" => "Disabled"
+  } end
 end
 
+resource "firewall_rule", type: "rs_azure_sql.firewall_rule" do
+  name "sample-firewall-rule"
+  resource_group "DF-Testing"
+  location "Central US"
+  server_name @sql_server.name
+  properties do {
+    "startIpAddress" => "0.0.0.1",
+    "endIpAddress" => "0.0.0.1"
+  } end
+end
+
+resource "elastic_pool", type: "rs_azure_sql.elastic_pool" do
+  name "sample-elastic-pool"
+  resource_group "DF-Testing"
+  location "Central US"
+  server_name @sql_server.name
+end
+
+resource "auditing_policy", type: "rs_azure_sql.auditing_policy" do
+  name "sample-auditing-policy"
+  resource_group "DF-Testing"
+  location "Central US"
+  server_name @sql_server.name
+  database_name @database.name
+  properties do {
+    "state" => "Enabled",
+    "storageAccountAccessKey" => cred("storageAccountAccessKey"),
+    "storageEndpoint" => cred("storageEndpoint")
+  } end
+end
+
+resource "security_policy", type: "rs_azure_sql.security_policy" do
+  name "sample-security-policy"
+  resource_group "DF-Testing"
+  location "Central US"
+  server_name @sql_server.name
+  database_name @database.name
+  properties do {
+    "state" => "Enabled",
+    "storageAccountAccessKey" => cred("storageAccountAccessKey"),
+    "storageEndpoint" => cred("storageEndpoint")
+  } end
+end
 ```
 ## Resources
-## load_balancer
+## sql_server
 #### Supported Fields
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
-|name|Yes|The name of the load balancer.|
-|ip_address_type|No|The type of IP addresses used by the subnets for your load balancer. The possible values are ipv4 (for IPv4 addresses) and dualstack (for IPv4 and IPv6 addresses). Internal load balancers must use ipv4.|
-|scheme|Valid Values: `internet-facing` | `internal`|
-|security_group1|No|The IDs of the security groups to assign to the load balancer.|
-|security_group2|No|The IDs of the security groups to assign to the load balancer.|
-|security_group3|No|The IDs of the security groups to assign to the load balancer.|
-|subnet1|Yes|The IDs of the subnets to attach to the load balancer. You can specify only one subnet per Availability Zone. You must specify subnets from at least two Availability Zones.|
-|subnet2|Yes|The IDs of the subnets to attach to the load balancer. You can specify only one subnet per Availability Zone. You must specify subnets from at least two Availability Zones.|
-|subnet3|No|The IDs of the subnets to attach to the load balancer. You can specify only one subnet per Availability Zone. You must specify subnets from at least two Availability Zones.|
-|tag_value_1|No|The value of the tag|
-|tag_key_1|No|The key of the tag|
-|tag_value_2|No|The value of the tag|
-|tag_key_2|No|The key of the tag|
-|tag_value_3|No|The value of the tag|
-|tag_key_3|No|The key of the tag|
-|tag_value_4|No|The value of the tag|
-|tag_key_4|No|The key of the tag|
-|tag_value_5|No|The value of the tag|
-|tag_key_5|No|The key of the tag|
+|name|Yes|The name of the sql server.|
+|resource_group|Yes|Name of resource group in which to launch the Deployment|
+|location|Yes|Datacenter to launch in|
+|properties|Yes|Hash of Deployment properties (https://docs.microsoft.com/en-us/rest/api/sql/servers#Servers_CreateOrUpdate)|
 
 #### Supported Actions
 
@@ -248,10 +270,10 @@ end
 
 
 ## Implementation Notes
-- The AWS ALB Plugin makes no attempt to support non-AWS resources. (i.e. Allow the passing the RightScale or other resources as arguments to an ALB resource.) 
+- The Azure SQL Database Plugin makes no attempt to support non-AWS resources. (i.e. Allow the passing the RightScale or other resources as arguments to an ALB resource.) 
  - The most common example might be to pass a RightScale instance to attach it to the ALB or similar. Support for this functionality will need to be implemented in the application CAT.
  
-Full list of possible actions can be found on the [AWS ALB API Documentation](http://docs.aws.amazon.com/elasticloadbalancing/latest/APIReference/Welcome.html)
+Full list of possible actions can be found on the [Azure SQL Database API Documentation](http://docs.aws.amazon.com/elasticloadbalancing/latest/APIReference/Welcome.html)
 ## Examples
 Please review [plugin.rb](./plugin.rb) for a basic example implementation.
 	
@@ -263,4 +285,4 @@ Support for this plugin will be provided though GitHub Issues and the RightScale
 Visit http://chat.rightscale.com/ to join!
 
 ## License
-The AWS ALB Plugin source code is subject to the MIT license, see the [LICENSE](../LICENSE) file.
+The Azure SQL Database Plugin source code is subject to the MIT license, see the [LICENSE](../LICENSE) file.

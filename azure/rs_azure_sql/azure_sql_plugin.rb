@@ -714,7 +714,7 @@ resource_pool "rs_azure_sql" do
     end
 
     auth "azure_auth", type: "oauth2" do
-      token_url join(["https://login.microsoftonline.com/",cred("AZURE_TENANT_ID"),"/oauth2/token"])
+      token_url "https://login.microsoftonline.com/AZURE_TENANT_ID/oauth2/token"
       grant type: "client_credentials" do
         client_id cred("AZURE_APPLICATION_ID")
         client_secret cred("AZURE_APPLICATION_KEY")

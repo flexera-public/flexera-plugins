@@ -4,8 +4,7 @@ short_description "Azure SQL Database Service - Test CAT"
 import "plugins/rs_azure_sql"
 
 parameter "subscription_id" do
-  type  "string"
-  label "Subscription ID"
+  like $rs_azure_sql.subscription_id
 end
 
 permission "read_creds" do
@@ -19,7 +18,7 @@ resource "sql_server", type: "rs_azure_sql.sql_server" do
   location "Central US"
   properties do {
       "version" => "12.0",
-      "administratorLogin" =>"frankel",
+      "administratorLogin" =>"rightscale",
       "administratorLoginPassword" => "RightScale2017"
   } end
 end
@@ -83,13 +82,4 @@ resource "security_policy", type: "rs_azure_sql.security_policy" do
     "storageAccountAccessKey" => "X0Z/nzf9d5u0GVgLwNI3uOjO+dtETcH9AMOOQKZ8Ikmuw4i8eiiNsKd4QPK4QKDXENIyNKenXn3GE3WOhmVJPQ==",
     "storageEndpoint" => "https://dftestingdiag134.blob.core.windows.net/"
   } end
-end
-
-operation "launch" do
- description "Launch the application"
- definition "launch_handler"
-end
-
-define launch_handler($subscription_id) return $subscription_id do
-  $subscription_id=$subscription_id
 end
