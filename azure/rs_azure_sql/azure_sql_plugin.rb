@@ -10,6 +10,11 @@ parameter "subscription_id" do
   label "Subscription ID"
 end
 
+permission "read_creds" do
+  actions   "rs_cm.show_sensitive","rs_cm.index_sensitive"
+  resources "rs_cm.credentials"
+end
+
 plugin "rs_azure_sql" do
   endpoint do
     default_host "https://management.azure.com/"
@@ -970,9 +975,4 @@ define stop_debugging() do
     call sys_log.detail($debug_report)
     $$debugging = false
   end
-end
-
-permission "read_creds" do
-  actions   "rs_cm.show_sensitive","rs_cm.index_sensitive"
-  resources "rs_cm.credentials"
 end

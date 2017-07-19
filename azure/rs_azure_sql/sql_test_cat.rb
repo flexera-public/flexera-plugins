@@ -66,8 +66,8 @@ resource "auditing_policy", type: "rs_azure_sql.auditing_policy" do
   database_name @database.name
   properties do {
     "state" => "Enabled",
-    "storageAccountAccessKey" => "X0Z/nzf9d5u0GVgLwNI3uOjO+dtETcH9AMOOQKZ8Ikmuw4i8eiiNsKd4QPK4QKDXENIyNKenXn3GE3WOhmVJPQ==",
-    "storageEndpoint" => "https://dftestingdiag134.blob.core.windows.net/"
+    "storageAccountAccessKey" => cred("storageAccountAccessKey"),
+    "storageEndpoint" => cred("storageEndpoint")
   } end
 end
 
@@ -79,7 +79,7 @@ resource "security_policy", type: "rs_azure_sql.security_policy" do
   database_name @database.name
   properties do {
     "state" => "Enabled",
-    "storageAccountAccessKey" => "X0Z/nzf9d5u0GVgLwNI3uOjO+dtETcH9AMOOQKZ8Ikmuw4i8eiiNsKd4QPK4QKDXENIyNKenXn3GE3WOhmVJPQ==",
-    "storageEndpoint" => "https://dftestingdiag134.blob.core.windows.net/"
+    "storageAccountAccessKey" => cred("storageAccountAccessKey"),
+    "storageEndpoint" => cred("storageEndpoint")
   } end
 end

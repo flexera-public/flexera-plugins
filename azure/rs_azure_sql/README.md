@@ -156,6 +156,13 @@ end
 - "type"
 - "location"
 - "kind"
+- "fullyQualifiedDomainName"
+- "administratorLogin"
+- "administratorLoginPassword"
+- "externalAdministratorLogin"
+- "externalAdministratorSid"
+- "version"
+- "state"
 
 ## databases
 #### Supported Fields
@@ -181,6 +188,22 @@ end
 - "type"
 - "location"
 - "kind"
+- "edition"
+- "status"
+- "serviceLevelObjective"
+- "collation"
+- "creationDate"
+- "maxSizeBytes"
+- "currentServiceObjectiveId"
+- "requestedServiceObjectiveId"
+- "requestedServiceObjectiveName"
+- "sampleName"
+- "defaultSecondaryLocation"
+- "earliestRestoreDate"
+- "elasticPoolName"
+- "containmentState"
+- "readScale"
+- "failoverGroupId"
 
 ## transparent_data_encryption
 #### Supported Fields
@@ -204,6 +227,7 @@ end
 - "id"
 - "name"
 - "status"
+- "percentComplete"
 
 ## firewall_rule
 #### Supported Fields
@@ -229,6 +253,8 @@ end
 - "type"
 - "location"
 - "kind"
+- "startIpAddress"
+- "endIpAddress"
 
 ## elastic_pool
 #### Supported Fields
@@ -254,6 +280,13 @@ end
 - "type"
 - "location"
 - "kind"
+- "creationDate"
+- "edition" do
+- "state"
+- "dtu"
+- "databaseDtuMin"
+- "databaseDtuMax"
+- "storageMB"
 
 ## auditing_policy
 #### Supported Fields
@@ -279,6 +312,13 @@ end
 - "type"
 - "location"
 - "kind"
+- "state"
+- "storageEndpoint"
+- "storageAccountAccessKey"
+- "retentionDays"
+- "storageAccountSubscriptionId"
+- "isStorageSecondaryKeyInUse"
+- "auditActionsAndGroups"
 
 ## security_policy
 #### Supported Fields
@@ -304,10 +344,18 @@ end
 - "type"
 - "location"
 - "kind"
+- "state"
+- "emailAccountAdmins"
+- "emailAddresses"
+- "disabledAlerts"
+- "retentionDays"
+- "storageAccountAccessKey"
+- "storageEndpoint"
+- "useServerDefault"
 
 ## Implementation Notes
-- The Azure SQL Database Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to an ALB resource.) 
- - The most common example might be to pass a RightScale instance to attach it to the ALB or similar. Support for this functionality will need to be implemented in the application CAT.
+- The Azure SQL Database Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to an SQL resource.) 
+
  
 Full list of possible actions can be found on the [Azure SQL Database API Documentation](https://docs.microsoft.com/en-us/rest/api/sql/)
 ## Examples
