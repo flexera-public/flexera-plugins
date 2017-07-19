@@ -91,4 +91,5 @@ operation "launch" do
 end
 
 define launch_handler($subscription_id) return $subscription_id do
+  $subscription_id=$subscription_id
 end
