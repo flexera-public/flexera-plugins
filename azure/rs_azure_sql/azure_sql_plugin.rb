@@ -101,8 +101,23 @@ plugin "rs_azure_sql" do
     end
 
     link "databases" do
-      path "$href/databases"
+      path "$href/databases?api-version=2014-04-01"
       type "databases"
+    end
+
+    link "firewall_rule" do
+      path "$href/firewallRules?api-version=2014-04-01"
+      type "firewall_rule"
+    end
+
+    link "failover_group" do
+      path "$href/failoverGroups?api-version=2015-05-01-preview"
+      type "failover_group"
+    end
+
+    link "elastic_pool" do
+      path "$href/elasticPools?api-version=2014-04-01"
+      type "elastic_pool"
     end
   end
 
@@ -255,11 +270,12 @@ plugin "rs_azure_sql" do
     output "failoverGroupId" do
       body_path "properties.failoverGroupId"
     end
+
   end
 
- type "transparentdataencryption" do
+ type "transparent_data_encryption" do
     href_templates "{{contains(id, 'transparentDataEncryption') && join('?',[id,'api-version=2014-04-01']) || null}}"
-    provision "provision_transparentdataencryption"
+    provision "provision_transparent_data_encryption"
     delete    "delete_resource"
 
     field "properties" do
@@ -698,7 +714,7 @@ resource_pool "rs_azure_sql" do
     end
 
     auth "azure_auth", type: "oauth2" do
-      token_url "https://login.microsoftonline.com/09b8fec1-4b8d-48dd-8afa-5c1a775ea0f2/oauth2/token"
+      token_url join(["https://login.microsoftonline.com/",cred("AZURE_TENANT_ID"),"/oauth2/token"])
       grant type: "client_credentials" do
         client_id cred("AZURE_APPLICATION_ID")
         client_secret cred("AZURE_APPLICATION_KEY")
@@ -787,7 +803,7 @@ define provision_database(@declaration) return @resource do
   end
 end
 
-define provision_transparentdataencryption(@declaration) return @resource do
+define provision_transparent_data_encryption(@declaration) return @resource do
   sub on_error: stop_debugging() do
     $object = to_object(@declaration)
     $fields = $object["fields"]
@@ -959,76 +975,4 @@ end
 permission "read_creds" do
   actions   "rs_cm.show_sensitive","rs_cm.index_sensitive"
   resources "rs_cm.credentials"
-end
-
-resource "sql_server", type: "rs_azure_sql.sql_server" do
-  name join(["my-sql-server-", last(split(@@deployment.href, "/"))])
-  resource_group "DF-Testing"
-  location "Central US"
-  properties do {
-      "version" => "12.0",
-      "administratorLogin" =>"frankel",
-      "administratorLoginPassword" => "RightScale2017"
-  } end
-end
-
-resource "database", type: "rs_azure_sql.databases" do
-  name "sample-database"
-  resource_group "DF-Testing"
-  location "Central US"
-  server_name @sql_server.name
-end
-
-resource "transparentdataencryption", type: "rs_azure_sql.transparentdataencryption" do
-  resource_group "DF-Testing"
-  location "Central US"
-  server_name @sql_server.name
-  database_name @database.name
-  properties do {
-    "status" => "Disabled"
-  } end
-end
-
-resource "firewall_rule", type: "rs_azure_sql.firewall_rule" do
-  name "sample-firewall-rule"
-  resource_group "DF-Testing"
-  location "Central US"
-  server_name @sql_server.name
-  properties do {
-    "startIpAddress" => "0.0.0.1",
-    "endIpAddress" => "0.0.0.1"
-  } end
-end
-
-resource "elastic_pool", type: "rs_azure_sql.elastic_pool" do
-  name "sample-elastic-pool"
-  resource_group "DF-Testing"
-  location "Central US"
-  server_name @sql_server.name
-end
-
-resource "auditing_policy", type: "rs_azure_sql.auditing_policy" do
-  name "sample-auditing-policy"
-  resource_group "DF-Testing"
-  location "Central US"
-  server_name @sql_server.name
-  database_name @database.name
-  properties do {
-    "state" => "Enabled",
-    "storageAccountAccessKey" => "X0Z/nzf9d5u0GVgLwNI3uOjO+dtETcH9AMOOQKZ8Ikmuw4i8eiiNsKd4QPK4QKDXENIyNKenXn3GE3WOhmVJPQ==",
-    "storageEndpoint" => "https://dftestingdiag134.blob.core.windows.net/"
-  } end
-end
-
-resource "security_policy", type: "rs_azure_sql.security_policy" do
-  name "sample-security-policy"
-  resource_group "DF-Testing"
-  location "Central US"
-  server_name @sql_server.name
-  database_name @database.name
-  properties do {
-    "state" => "Enabled",
-    "storageAccountAccessKey" => "X0Z/nzf9d5u0GVgLwNI3uOjO+dtETcH9AMOOQKZ8Ikmuw4i8eiiNsKd4QPK4QKDXENIyNKenXn3GE3WOhmVJPQ==",
-    "storageEndpoint" => "https://dftestingdiag134.blob.core.windows.net/"
-  } end
 end
