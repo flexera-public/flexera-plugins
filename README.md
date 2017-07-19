@@ -8,6 +8,7 @@ This repo contains a library of open source RightScale plugins.
 - [AWS Relational Database Service](./aws/rs_aws_rds/)
 - [AWS CloudFormation](./aws/rs_aws_cft/)
 - [GCP Google Compute Engine](./google/gce/)
+- [Azure ARM Templates](./azure/rs_azure_template)
 
 ## RightScale Plugin Documentation
 - [Guide](http://docs.rightscale.com/ss/guides/ss_plugins.html)
