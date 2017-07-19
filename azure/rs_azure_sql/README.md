@@ -6,13 +6,11 @@ The Azure SQL Database Plugin integrates RightScale Self-Service with the basic 
 ## Requirements
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
-- Admin rights to a RightScale account with SelfService enabled
-  - Admin is needed to set/retrieve the RightScale Credentials for the Azure API.
-- Azure Account credentials with the appropriate permissions to manage SQL Resources
+- The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrived the RightScale Credential values identified below.
+- Azure Service Principal (AKA Azure Active Directory Application) with the appropriate permissions to manage resources in the target subscription
 - The following RightScale Credentials
   - `AZURE_APPLICATION_ID`
   - `AZURE_APPLICATION_KEY`
-  - `AZURE_TENANT_ID`
 - The following packages are also required (See the Installation section for details):
   - [sys_log](sys_log.rb)
 
@@ -20,13 +18,20 @@ The Azure SQL Database Plugin integrates RightScale Self-Service with the basic 
 **Coming Soon**
 
 ## Installation
-1. Be sure your RightScale account is SelfService enabled
-1. Follow the Getting Started section to create a Service Account and RightScale Credentials
-1. Navigate to the appropriate SelfService portal
+1. Be sure your RightScale account has Self-Service enabled
+1. Connect AzureRM Cloud credentials to your RightScale account (if not already completed)
+1. Follow steps to [Create an Azure Active Directory Application](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal#create-an-azure-active-directory-application)
+1. Grant the Azure AD Application access to the necessary subscription(s)
+1. [Retrieve the Application ID & Authentication Key](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal#get-application-id-and-authentication-key)
+1. Create RightScale Credentials with values that match the Application ID (Credential name: `AZURE_APPLICATION_ID`) & Authentication Key (Credential name: `AZURE_APPLICATION_KEY`)
+1. [Retrieve your Tenant ID](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal#get-tenant-id)
+1. Update `rs_azure_template.rb` Plugin with your Tenant ID. 
+   - Replace "TENANT_ID" in `token_url "https://login.microsoftonline.com/TENANT_ID/oauth2/token"` with your Tenant ID
+1. Navigate to the appropriate Self-Service portal
    - For more details on using the portal review the [SS User Interface Guide](http://docs.rightscale.com/ss/guides/ss_user_interface_guide.html)
 1. In the Design section, use the `Upload CAT` interface to complete the following:
    1. Upload each of packages listed in the Requirements Section
-   1. Upload the `azure_sql_plugin.rb` file located in this repository
+   1. Upload the `rs_azure_template.rb` file located in this repository
  
 ## How to Use
 The Azure SQL Database Plugin has been packaged as `plugins/rs_azure_sql`. In order to use this plugin you must import this plugin into a CAT.
@@ -135,147 +140,178 @@ end
 |name|Yes|The name of the sql server.|
 |resource_group|Yes|Name of resource group in which to launch the Deployment|
 |location|Yes|Datacenter to launch in|
-|properties|Yes|Hash of Deployment properties (https://docs.microsoft.com/en-us/rest/api/sql/servers#Servers_CreateOrUpdate)|
+|properties|Yes|Hash of Deployment properties (https://docs.microsoft.com/en-us/rest/api/sql/servers)|
 
 #### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
-| create | CreateLoadBalancer | Supported |
-| destroy | DeleteLoadBalancer | Supported |
-| list | DescribeLoadBalancers | Supported |
-| register_target | RegisterTargets | Untested |
-| deregister_target | DeregisterTargets | Untested |
+| create&update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/sql/servers#Servers_CreateOrUpdate) | Supported |
+| destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/sql/servers#Servers_Delete) | Supported |
+| get | [Get](https://docs.microsoft.com/en-us/rest/api/sql/servers#Servers_Get)| Supported |
 
 #### Supported Outputs
-- "LoadBalancerArn"
-- "Scheme"
-- "LoadBalancerName"
-- "VpcId"
-- "CanonicalHostedZoneId"
-- "CreatedTime"
-- "DNSName"
-- "State"
-- "AvailabilityZone"
-- "SubnetId"
-- "SecurityGroup"
+- "id"
+- "name"
+- "type"
+- "location"
+- "kind"
 
-## rule
+## databases
 #### Supported Fields
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
-|priority|Yes|The priority for the rule. A listener can't have multiple rules with the same priority.|
-|listener_arn|Yes|The Amazon Resource Name (ARN) of the listener.|
-|action1_target_group_arn|Yes|The Amazon Resource Name (ARN) of the target group.|
-|action1_type|Yes|An action. Each action has the type forward and specifies a target group.|
-|action2_target_group_arn|No|The Amazon Resource Name (ARN) of the target group.|
-|action2_type|No|An action. Each action has the type forward and specifies a target group.|
-|action3_target_group_arn|No|The Amazon Resource Name (ARN) of the target group.|
-|action3_type|No|An action. Each action has the type forward and specifies a target group.|
-|condition1_field|Yes|The name of the field. The possible values are `host-header` and `path-pattern`.|
-|condition1_value1|Yes|the condition of value: http://docs.aws.amazon.com/elasticloadbalancing/latest/APIReference/API_RuleCondition.html|
-|condition1_value2|No|the condition of value|
-|condition1_value3|No|the condition of value|
-|condition2_field|No|The name of the field. The possible values are `host-header` and `path-pattern`.|
-|condition2_value1|No|the condition of value|
-|condition2_value2|No|the condition of value|
-|condition2_value3|No|the condition of value|
-|condition3_field|No|The name of the field. The possible values are `host-header` and `path-pattern`.|
-|condition3_value1|No|the condition of value|
-|condition3_value2|No|the condition of value|
-|condition3_value3|No|the condition of value|
+|name|Yes|The name of the sql server.|
+|resource_group|Yes|Name of resource group in which to launch the Deployment|
+|location|Yes|Datacenter to launch in|
+|server_name|Yes|Server to create db on|
+|properties|Yes|Hash of Deployment properties (https://docs.microsoft.com/en-us/rest/api/sql/databases)|
 
 #### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
-| create | CreateRule | Supported |
-| destroy | DeleteRule | Supported |
-| list | DescribeRules | Supported |
+| create&update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/sql/databases#Database_CreateOrUpdate) | Supported |
+| destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/sql/databases#Database_Delete) | Supported |
+| get | [Get](https://docs.microsoft.com/en-us/rest/api/sql/databases#Database_Get)| Supported |
 
 #### Supported Outputs
-- "Priority"
-- "RuleArn"
-- "TargetGroupArn"
-- "ConditionField"
-- "ConditionValue"
+- "id"
+- "name"
+- "type"
+- "location"
+- "kind"
 
-
-## target_group
+## transparent_data_encryption
 #### Supported Fields
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
-|health_check_interval_seconds|No|The approximate amount of time, in seconds, between health checks of an individual target. |
-|health_check_path|No|The ping path that is the destination on the targets for health checks. The default is /.|
-|health_check_port|No|The port the load balancer uses when performing health checks on targets. The default is traffic-port, which indicates the port on which each target receives traffic from the load balancer.|
-|health_check_protocol|No|The protocol the load balancer uses when performing health checks on targets. The default is the HTTP protocol.|
-|health_check_timeout_seconds|No|The amount of time, in seconds, during which no response from a target means a failed health check. The default is 5 seconds.|
-|healthy_threshold_count|No|The number of consecutive health checks successes required before considering an unhealthy target healthy. The default is 5.|
-|matcher|No|The HTTP codes to use when checking for a successful response from a target. The default is 200.|
-|name|Yes|The name of the target group.|
-|port|Yes|The port on which the targets receive traffic. This port is used unless you specify a port override when registering the target.|
-|protocol|Yes|The protocol to use for routing traffic to the targets.|
-|unhealthy_threshold_count|No|The number of consecutive health check failures required before considering a target unhealthy. The default is 2.|
-|vpc_id|Yes|The identifier of the virtual private cloud (VPC).|
+|name|Yes|The name of the sql server.|
+|resource_group|Yes|Name of resource group in which to launch the Deployment|
+|location|Yes|Datacenter to launch in|
+|server_name|Yes|Server the database is on|
+|database_name|Yes|database to configure encryption setting on|
+|properties|Yes|Hash of Deployment properties (https://docs.microsoft.com/en-us/rest/api/sql/databases#Databases_CreateOrUpdateTransparentDataEncryptionConfiguration)|
 
 #### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
-| create | CreateTargetGroup | Supported |
-| destroy | DeleteTargetGroup | Supported |
-| list | DescribeTargetGroups | Supported |
+| create&update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/sql/databases#Databases_CreateOrUpdateTransparentDataEncryptionConfiguration) | Supported |
+| get | [Get](https://docs.microsoft.com/en-us/rest/api/sql/databases#Databases_GetTransparentDataEncryptionConfiguration)| Supported |
 
 #### Supported Outputs
- - "TargetGroupArn"
- - "HealthCheckTimeoutSeconds"
- - "HealthCheckPort"
- - "TargetGroupName"
- - "HealthCheckProtocol"
- - "HealthCheckPath"
- - "Protocol"
- - "Port"
- - "VpcId"
- - "HealthyThresholdCount"
- - "HealthCheckIntervalSeconds"
- - "UnhealthyThresholdCount"
+- "id"
+- "name"
+- "status"
 
-
-## listener
+## firewall_rule
 #### Supported Fields
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
-|certificate_arn|No|The Amazon Resource Name (ARN) of the certificate.|
-|action1_target_group_arn|Yes|The Amazon Resource Name (ARN) of the target group.|
-|action1_type|Yes|The type of action:forward|
-|load_balancer_arn|Yes|The Amazon Resource Name (ARN) of the load balancer.|
-|port|Yes|The port on which the load balancer is listening.|
-|protocol|Yes|The protocol for connections from clients to the load balancer.(Valid Values: HTTP | HTTPS)|
-|ssl_policy|No|The security policy that defines which ciphers and protocols are supported. The default is the current predefined security policy.|
+|name|Yes|The name of the sql server.|
+|resource_group|Yes|Name of resource group in which to launch the Deployment|
+|location|Yes|Datacenter to launch in|
+|server_name|Yes|Server to create the fw rule on|
+|properties|Yes|Hash of Deployment properties (https://docs.microsoft.com/en-us/rest/api/sql/firewallrules)|
 
 #### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
-| create | CreateListeners | Supported |
-| destroy | DeleteListeners | Supported |
-| list | DescribeListeners | Supported |
+| create&update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/sql/firewallrules#FirewallRules_CreateOrUpdate) | Supported |
+| destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/sql/firewallrules#FirewallRules_Delete) | Supported |
+| get | [Get](https://docs.microsoft.com/en-us/rest/api/sql/firewallrules#FirewallRules_Get)| Supported |
 
 #### Supported Outputs
- - "LoadBalancerArn"
- - "Protocol"
- - "Port"
- - "ListenerArn"
- - "TargetGroupArn" 
+- "id"
+- "name"
+- "type"
+- "location"
+- "kind"
 
+## elastic_pool
+#### Supported Fields
+| Field Name | Required? | Description |
+|------------|-----------|-------------|
+|name|Yes|The name of the sql server.|
+|resource_group|Yes|Name of resource group in which to launch the Deployment|
+|location|Yes|Datacenter to launch in|
+|server_name|Yes|Server to create the elastic pool  on|
+|properties|Yes|Hash of Deployment properties (https://docs.microsoft.com/en-us/rest/api/sql/elasticpools)|
+
+#### Supported Actions
+
+| Action | API Implementation | Support Level |
+|--------------|:----:|:-------------:|
+| create&update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/sql/elasticpools#ElasticPools_CreateOrUpdate) | Supported |
+| destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/sql/elasticpools#ElasticPools_Delete) | Supported |
+| get | [Get](https://docs.microsoft.com/en-us/rest/api/sql/elasticpools#ElasticPools_Get)| Supported |
+
+#### Supported Outputs
+- "id"
+- "name"
+- "type"
+- "location"
+- "kind"
+
+## auditing_policy
+#### Supported Fields
+| Field Name | Required? | Description |
+|------------|-----------|-------------|
+|name|Yes|The name of the sql server.|
+|resource_group|Yes|Name of resource group in which to launch the Deployment|
+|location|Yes|Datacenter to launch in|
+|server_name|Yes|Server the database is on|
+|database_name|Yes|database to configure auditing-policy on|
+|properties|Yes|Hash of Deployment properties (https://docs.microsoft.com/en-us/rest/api/sql/blob%20auditing%20policies)|
+
+#### Supported Actions
+
+| Action | API Implementation | Support Level |
+|--------------|:----:|:-------------:|
+| create&update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/sql/blob%20auditing%20policies#Databases_CreateOrUpdateBlobAuditingPolicy) | Supported |
+| get | [Get](https://docs.microsoft.com/en-us/rest/api/sql/blob%20auditing%20policies#Databases_GetBlobAuditingPolicy)| Supported |
+
+#### Supported Outputs
+- "id"
+- "name"
+- "type"
+- "location"
+- "kind"
+
+## security_policy
+#### Supported Fields
+| Field Name | Required? | Description |
+|------------|-----------|-------------|
+|name|Yes|The name of the sql server.|
+|resource_group|Yes|Name of resource group in which to launch the Deployment|
+|location|Yes|Datacenter to launch in|
+|server_name|Yes|Server the database is on|
+|database_name|Yes|database to security_policy on|
+|properties|Yes|Hash of Deployment properties (https://docs.microsoft.com/en-us/rest/api/sql/database%20security%20policies)|
+
+#### Supported Actions
+
+| Action | API Implementation | Support Level |
+|--------------|:----:|:-------------:|
+| create&update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/sql/database%20security%20policies#Databases_CreateOrUpdateThreatDetectionPolicy) | Supported |
+| get | [Get](https://docs.microsoft.com/en-us/rest/api/sql/database%20security%20policies#Databases_GetThreatDetectionPolicy)| Supported |
+
+#### Supported Outputs
+- "id"
+- "name"
+- "type"
+- "location"
+- "kind"
 
 ## Implementation Notes
-- The Azure SQL Database Plugin makes no attempt to support non-AWS resources. (i.e. Allow the passing the RightScale or other resources as arguments to an ALB resource.) 
+- The Azure SQL Database Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to an ALB resource.) 
  - The most common example might be to pass a RightScale instance to attach it to the ALB or similar. Support for this functionality will need to be implemented in the application CAT.
  
-Full list of possible actions can be found on the [Azure SQL Database API Documentation](http://docs.aws.amazon.com/elasticloadbalancing/latest/APIReference/Welcome.html)
+Full list of possible actions can be found on the [Azure SQL Database API Documentation](https://docs.microsoft.com/en-us/rest/api/sql/)
 ## Examples
-Please review [plugin.rb](./plugin.rb) for a basic example implementation.
+Please review [sql_test_cat.rb](./sql_test_cat.rb) for a basic example implementation.
 	
 ## Known Issues / Limitations
 - Currently only supports CRUD and instance register/deregister functions.
