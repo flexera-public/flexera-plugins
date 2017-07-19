@@ -32,16 +32,19 @@ plugin "rs_azure_template" do
     field "properties" do
       type "composite"
       location "body"
+      required true
     end
 
     field "resource_group" do
       type "string"
       location "path"
+      required true
     end 
 
     field "name" do
       type "string"
       location "path"
+      required true
     end
 
     action "create" do
@@ -142,7 +145,7 @@ resource_pool "rs_azure_template" do
     end
 
     auth "azure_auth", type: "oauth2" do
-      token_url "https://login.microsoftonline.com/09b8fec1-4b8d-48dd-8afa-5c1a775ea0f2/oauth2/token"
+      token_url "https://login.microsoftonline.com/TENANT_ID/oauth2/token"
       grant type: "client_credentials" do
         client_id cred("AZURE_APPLICATION_ID")
         client_secret cred("AZURE_APPLICATION_KEY")
