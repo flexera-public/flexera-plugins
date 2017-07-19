@@ -2,15 +2,20 @@
 This repo contains a library of open source RightScale plugins.
 
 ## Released Plugins
+### Amazon Web Services
 - [AWS Elastic Load Balancer (Classic LB)](./aws/rs_aws_elb/)
 - [AWS Elastic Load Balancer (Application LB)](./aws/rs_aws_alb/)
 - [AWS Elastic File System](./aws/rs_aws_efs/)
 - [AWS Relational Database Service](./aws/rs_aws_rds/)
 - [AWS CloudFormation](./aws/rs_aws_cft/)
+
+### Azure
 - [Azure SQL Database](./azure/rs_azure_sql/)
+- [Azure ARM Templates](./azure/rs_azure_template)
+
+### Google Cloud Platform
 - [GCP Google Compute Engine](./google/gce/)
 - [GCP Cloud DNS](./google/google_cloud_dns/)
-- [Azure ARM Templates](./azure/rs_azure_template)
 
 ## RightScale Plugin Documentation
 - [Guide](http://docs.rightscale.com/ss/guides/ss_plugins.html)
