@@ -14,9 +14,6 @@ The Azure SQL Database Plugin integrates RightScale Self-Service with the basic 
 - The following packages are also required (See the Installation section for details):
   - [sys_log](sys_log.rb)
 
-## Getting Started
-**Coming Soon**
-
 ## Installation
 1. Be sure your RightScale account has Self-Service enabled
 1. Connect AzureRM Cloud credentials to your RightScale account (if not already completed)
@@ -38,10 +35,10 @@ The Azure SQL Database Plugin has been packaged as `plugins/rs_azure_sql`. In or
 ```
 import "plugins/rs_azure_sql"
 ```
-For more information on using packages, please refer to the RightScale online documenataion. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
+For more information on using packages, please refer to the RightScale online documentation. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 Azure SQL Database resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
-The resulting resrouce can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
+The resulting resource can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
 
 ## Supported Resources
  - sql_server
