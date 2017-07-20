@@ -2,6 +2,7 @@ name 'rs_azure_sql'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Azure SQL Plugin"
+long_description "Version: 1.1"
 package "plugins/rs_azure_sql"
 import "sys_log"
 
@@ -106,28 +107,32 @@ plugin "rs_azure_sql" do
     end
 
     link "databases" do
-      path "$href/databases?api-version=2014-04-01"
+      path "$id/databases?api-version=2014-04-01"
       type "databases"
+      output_path "value[*]"
     end
 
     link "firewall_rules" do
-      path "$href/firewallRules?api-version=2014-04-01"
+      path "$id/firewallRules?api-version=2014-04-01"
       type "firewall_rule"
+      output_path "value[*]"
     end
 
     link "failover_groups" do
-      path "$href/failoverGroups?api-version=2015-05-01-preview"
+      path "$id/failoverGroups?api-version=2015-05-01-preview"
       type "failover_group"
+      output_path "value[*]"
     end
 
     link "elastic_pools" do
-      path "$href/elasticPools?api-version=2014-04-01"
+      path "$id/elasticPools?api-version=2014-04-01"
       type "elastic_pool"
+      output_path "value[*]"
     end
   end
 
   type "databases" do
-    href_templates "{{type=='Microsoft.Sql/servers/databases' && join('?',[id,'api-version=2014-04-01']) || null}}","value[0].type=='Microsoft.Sql/servers/databases' && map(&join('?',[id,'api-version=2014-04-01']),value) || null"
+    href_templates "{{type=='Microsoft.Sql/servers/databases' && join('?',[id,'api-version=2014-04-01']) || null}}","{{value[0].type=='Microsoft.Sql/servers/databases' && map(&join('?',[id,'api-version=2014-04-01']),value) || null}}"
     provision "provision_database"
     delete    "delete_resource"
 
@@ -341,7 +346,7 @@ plugin "rs_azure_sql" do
   end
 
   type "firewall_rule" do
-    href_templates "{{type=='Microsoft.Sql/servers/firewallRules' && join('?',[id,'api-version=2014-04-01']) || null}}","value[0].type=='Microsoft.Sql/servers/firewallRules' && map(&join('?',[id,'api-version=2014-04-01']),value) || null"
+    href_templates "{{type=='Microsoft.Sql/servers/firewallRules' && join('?',[id,'api-version=2014-04-01']) || null}}","{{value[0].type=='Microsoft.Sql/servers/firewallRules' && map(&join('?',[id,'api-version=2014-04-01']),value) || null}}"
     provision "provision_firewall_rule"
     delete    "delete_resource"
 
@@ -408,7 +413,7 @@ plugin "rs_azure_sql" do
   end
 
   type "elastic_pool" do
-    href_templates "{{type=='Microsoft.Sql/servers/elasticPools' && join('?',[id,'api-version=2014-04-01']) || null}}","value[0].type=='Microsoft.Sql/servers/elasticPools' && map(&join('?',[id,'api-version=2014-04-01']),value) || null"
+    href_templates "{{type=='Microsoft.Sql/servers/elasticPools' && join('?',[id,'api-version=2014-04-01']) || null}}","{{value[0].type=='Microsoft.Sql/servers/elasticPools' && map(&join('?',[id,'api-version=2014-04-01']),value) || null}}"
     provision "provision_elastic_pool"
     delete    "delete_resource"
 
@@ -466,6 +471,24 @@ plugin "rs_azure_sql" do
       verb "PATCH"
     end
 
+    action "show" do
+      type "elastic_pool"
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/elasticPools/$name?api-version=2014-04-01"
+      verb "GET"
+
+      field "resource_group" do
+        location "path"
+      end 
+
+      field "name" do
+        location "path"
+      end
+
+      field "server_name" do
+        location "path"
+      end
+    end
+
     output "id","name","type","location","kind"
 
     output "creationDate" do
@@ -498,7 +521,7 @@ plugin "rs_azure_sql" do
   end
 
   type "failover_group" do
-    href_templates "{{type=='Microsoft.Sql/servers/failoverGroups' && join('?',[id,'api-version=2015-05-01-preview']) || null}}","value[0].type=='Microsoft.Sql/servers/failoverGroups' && map(&join('?',[id,'api-version=2015-05-01-preview']),value) || null"
+    href_templates "{{type=='Microsoft.Sql/servers/failoverGroups' && join('?',[id,'api-version=2015-05-01-preview']) || null}}","{{value[0].type=='Microsoft.Sql/servers/failoverGroups' && map(&join('?',[id,'api-version=2015-05-01-preview']),value) || null}}"
     provision "provision_failover_group"
     delete    "delete_resource"
 
@@ -719,7 +742,7 @@ resource_pool "rs_azure_sql" do
     end
 
     auth "azure_auth", type: "oauth2" do
-      token_url "https://login.microsoftonline.com/09b8fec1-4b8d-48dd-8afa-5c1a775ea0f2/oauth2/token"
+      token_url "https://login.microsoftonline.com/AZURE_TENANT_ID/oauth2/token"
       grant type: "client_credentials" do
         client_id cred("AZURE_APPLICATION_ID")
         client_secret cred("AZURE_APPLICATION_KEY")
@@ -782,17 +805,15 @@ define provision_database(@declaration) return @resource do
     $name = $fields["name"]
     $server_name = $fields["server_name"]
     $resource_group = $fields["resource_group"]
-    call sys_log.detail("sleeping 120")
-    sleep(120)
-    call sys_log.detail("entering while(empty?()) loop")
-    @new_resource = @operation.show(name: $name, server_name: $server_name, resource_group: $resource_group )
-    while empty?(@new_resource) do
+    call sys_log.detail("entering check for database created")
+    sub on_error: retry, timeout: 60m do
       call sys_log.detail("sleeping 10")
       sleep(10)
       @new_resource = @operation.show(name: $name, server_name: $server_name, resource_group: $resource_group )
     end
+    @new_resource = @operation.show(name: $name, server_name: $server_name, resource_group: $resource_group )
     $status = @new_resource.status
-    call sys_log.detail("entering 2 sub")
+    call sys_log.detail("Checking that database state is online")
     sub on_error: skip, timeout: 60m do
       while $status != "Online" do
         $status = @operation.show(name: $name, server_name: $server_name, resource_group: $resource_group).status
@@ -856,19 +877,29 @@ define provision_elastic_pool(@declaration) return @resource do
     @operation = rs_azure_sql.$type.create($fields)
     call stop_debugging()
     call sys_log.detail(to_object(@operation))
-    call start_debugging()
-    @resource = @operation.get()
-    $status = @resource.state
-    call stop_debugging()
+    $name = $fields["name"]
+    $server_name = $fields["server_name"]
+    $resource_group = $fields["resource_group"]
+    call sys_log.detail("entering check for elastic pool created")
+    sub on_error: retry, timeout: 60m do
+      call sys_log.detail("sleeping 10")
+      sleep(10)
+      @new_resource = @operation.show(name: $name, server_name: $server_name, resource_group: $resource_group )
+    end
+    @new_resource = @operation.show(name: $name, server_name: $server_name, resource_group: $resource_group )
+    $status = @new_resource.state
+    call sys_log.detail("Checking that database state is online")
     sub on_error: skip, timeout: 60m do
       while $status != "Ready" do
-        call start_debugging()
-        $status = @resource.state
+        $status = @operation.show(name: $name, server_name: $server_name, resource_group: $resource_group).state
         call stop_debugging()
         call sys_log.detail(join(["Status: ", $status]))
+        call start_debugging()
         sleep(10)
       end
-    end 
+    end
+    @resource = @new_resource
+    call stop_debugging()
     call sys_log.detail(to_object(@resource))
   end
 end

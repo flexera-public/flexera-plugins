@@ -15,6 +15,27 @@ output "databases" do
   description "Databases"
 end
 
+output "firewall_rules" do
+  label "firewall_rules"
+  category "Databases"
+  default_value $firewall_rules_link_output
+  description "firewall_rules"
+end
+
+output "failover_groups" do
+  label "failover_groups"
+  category "Databases"
+  default_value $failover_groups_link_output
+  description "failover_groups"
+end
+
+output "elastic_pools" do
+  label "elastic_pools"
+  category "Databases"
+  default_value $elastic_pools_link_output
+  description "elastic_pools"
+end
+
 permission "read_creds" do
   actions   "rs_cm.show_sensitive","rs_cm.index_sensitive"
   resources "rs_cm.credentials"
@@ -95,9 +116,15 @@ end
 operation "launch" do
  description "Launch the application"
  definition "launch_handler"
+ output_mappings do {
+  $databases => $db_link_output,
+  $firewall_rules => $firewall_rules_link_output,
+  $failover_groups => $failover_groups_link_output,
+  $elastic_pools => $elastic_pools_link_output
+ } end
 end
 
-define launch_handler(@sql_server,@database,@transparent_data_encryption,@firewall_rule,@elastic_pool,@auditing_policy,@security_policy) return @databases,$db_link_output do
+define launch_handler(@sql_server,@database,@transparent_data_encryption,@firewall_rule,@elastic_pool,@auditing_policy,@security_policy) return @databases,$db_link_output,$firewall_rules_link_output,$failover_groups_link_output, $elastic_pools_link_output do
   provision(@sql_server)
   provision(@database)
   provision(@transparent_data_encryption)
@@ -106,9 +133,21 @@ define launch_handler(@sql_server,@database,@transparent_data_encryption,@firewa
   provision(@auditing_policy)
   provision(@security_policy)
   call start_debugging()
-  @databases = @sql_server.databases()
+  sub on_error: skip, timeout: 2m do
+    call sys_log.detail("getting database link")
+    @databases = @sql_server.databases()
+    $db_link_output = to_s(to_object(@databases))
+    call sys_log.detail("getting firewall link")
+    @firewall_rules = @sql_server.firewall_rules() 
+    $firewall_rules_link_output  = to_s(to_object(@firewall_rules))
+    call sys_log.detail("getting failover link")
+    @failover_groups = @sql_server.failover_groups()
+    $failover_groups_link_output = to_s(to_object(@failover_groups))
+    call sys_log.detail("getting elastic pool link")
+    @elastic_pools = @sql_server.elastic_pools()
+    $elastic_pools_link_output = to_s(to_object(@elastic_pools))
+  end
   call stop_debugging()
-  $db_link_output = to_s(to_object(@databases))
 end
 
 define start_debugging() do
