@@ -80,7 +80,12 @@ plugin "rs_azure_lb" do
       location "body"
     end
 
-     field "inboundNatPools" do
+    field "inboundNatPools" do
+      type "composite"
+      location "body"
+    end
+
+    field "inboundNatRules" do
       type "composite"
       location "body"
     end
@@ -178,16 +183,21 @@ define provision_resource(@declaration) return @resource do
   sub on_error: stop_debugging() do
     $object = to_object(@declaration)
     $fields = $object["fields"]
-    $create_fields = {}
-    $create_fields["resource_group"] = $fields["resource_group"]
-    $create_fields["name"] = $fields["name"]
-    $create_fields["location"] = $fields["location"]
-    $create_fields["tags"] = $fields["tags"]
-    $create_fields["properties"] = {}
-    $create_fields["properties"]["frontendIPConfigurations"] = $fields["frontendIPConfigurations"]
-    $create_fields["properties"]["backendAddressPools"] = $fields["backendAddressPools"]
-    $create_fields["properties"]["probes"] = $fields["probes"]
-    $create_fields["properties"]["inboundNatRules"] = $fields["inboundNatRules"]
+    if $fields["properties"] == null
+      $create_fields = {}
+      $create_fields["resource_group"] = $fields["resource_group"]
+      $create_fields["name"] = $fields["name"]
+      $create_fields["location"] = $fields["location"]
+      $create_fields["tags"] = $fields["tags"]
+      $create_fields["properties"] = {}
+      $create_fields["properties"]["frontendIPConfigurations"] = $fields["frontendIPConfigurations"]
+      $create_fields["properties"]["backendAddressPools"] = $fields["backendAddressPools"]
+      $create_fields["properties"]["probes"] = $fields["probes"]
+      $create_fields["properties"]["inboundNatPools"] = $fields["inboundNatPools"]
+      $create_fields["properties"]["inboundNatRules"] = $fields["inboundNatRules"]
+    else
+      $create_fields = $fields
+    end
     call sys_log.detail(join(["fields", $create_fields]))
     $type = $object["type"]
     call sys_log.set_task_target(@@deployment)
@@ -231,81 +241,4 @@ define stop_debugging() do
     call sys_log.detail($debug_report)
     $$debugging = false
   end
-end
-
-resource "rs_azure_lb", type: "rs_azure_lb.load_balancer" do
-  name join(["my-load-balance-", last(split(@@deployment.href, "/"))])
-  resource_group "DF-Testing"
-  location "Central US"
-  frontendIPConfigurations do [
-    {
-     "name" => "ip1",
-     "properties" => {
-        "subnet" => {
-           "id" => "/subscriptions/8beb7791-9302-4ae4-97b4-afd482aadc59/resourceGroups/DF-Testing/providers/Microsoft.Network/virtualNetworks/ARM-CentralUS/subnets/default"
-        },
-        "privateIPAddress" => "10.0.0.10",
-        "privateIPAllocationMethod" => "Static",
-        "publicIPAddress" => {
-           "id" => "/subscriptions/8beb7791-9302-4ae4-97b4-afd482aadc59/resourceGroups/DF-Testing/providers/Microsoft.Network/publicIPAddresses/Shade"
-        }
-      }
-    }
-  ] end
-
-  backendAddressPools do [
-    {
-      "name" => "pool1" 
-    }
-  ] end
-
-  loadBalancingRules do [
-    {
-      "name"=> "HTTP Traffic",
-      "properties" => {
-         "frontendIPConfiguration" => {
-            "id" => join(["/subscriptions/8beb7791-9302-4ae4-97b4-afd482aadc59/resourceGroups/DF-Testing/providers/Microsoft.Network/loadBalancers/",join(["my-load-balance-", last(split(@@deployment.href, "/"))]),"/frontendIPConfigurations/ip1"])
-         },  
-         "backendAddressPool" => {
-            "id" => join(["/subscriptions/8beb7791-9302-4ae4-97b4-afd482aadc59/resourceGroups/DF-Testing/providers/Microsoft.Network/loadBalancers/",join(["my-load-balance-", last(split(@@deployment.href, "/"))]),"/backendAddressPool/pool1"])
-         },  
-         "protocol" => "Tcp",
-         "frontendPort" => 80,
-         "backendPort" => 8080,
-         "probe" => {
-            "id" => join(["/subscriptions/8beb7791-9302-4ae4-97b4-afd482aadc59/resourceGroups/DF-Testing/providers/Microsoft.Network/loadBalancers/",join(["my-load-balance-", last(split(@@deployment.href, "/"))]),"/probes/probe1"])
-         },
-         "enableFloatingIP" => true,
-         "idleTimeoutInMinutes" => 4,
-         "loadDistribution" => "Default"
-      }
-    }  
-  ] end
-
-  probes do [
-    {
-      "name" =>  "probe1",
-      "properties" => {
-        "protocol" =>  "Tcp",
-        "port" =>  8080,
-        "requestPath" =>  "/",
-        "intervalInSeconds" =>  5,
-        "numberOfProbes" =>  16
-      }
-    }
-  ] end
-
-  inboundNatPools do [
-    {   
-      "name" =>  "RDP Traffic",
-      "properties" =>  {
-        "frontendIPConfiguration" =>  {
-        "id" =>  join(["/subscriptions/8beb7791-9302-4ae4-97b4-afd482aadc59/resourceGroups/DF-Testing/providersMicrosoft.Network/loadBalancers/",join(["my-load-balance-", last(split(@@deployment.href, "/"))]),"/frontendIPConfigurations/ip1"])
-      },
-      "protocol" =>  "Tcp",
-      "frontendPort" =>  3389,
-      "backendPort" =>  3389
-      }
-    }
-  ] end
 end
