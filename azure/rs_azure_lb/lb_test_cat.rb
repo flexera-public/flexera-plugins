@@ -8,6 +8,11 @@ parameter "subscription_id" do
   like $rs_azure_lb.subscription_id
 end
 
+parameter "resource_group" do
+  type  "string"
+  label "Resource Group"
+end
+
 output "publiclb_id" do
   label "PublicLB-ID"
   category "LoadBalancer"
@@ -19,6 +24,7 @@ output "privatelb_id" do
   category "LoadBalancer"
   default_value @my_priv_lb.id
 end
+
 permission "read_creds" do
   actions   "rs_cm.show_sensitive","rs_cm.index_sensitive"
   resources "rs_cm.credentials"
@@ -33,7 +39,7 @@ resource "my_pub_lb", type: "rs_azure_lb.load_balancer" do
      "name" => "ip1",
      "properties" => {
         "publicIPAddress" => {
-           "id" => "/subscriptions/8beb7791-9302-4ae4-97b4-afd482aadc59/resourceGroups/DF-Testing/providers/Microsoft.Network/publicIPAddresses/Shade"
+           "id" => "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DF-Testing/providers/Microsoft.Network/publicIPAddresses/Shade"
         }
       }
     }
@@ -50,16 +56,16 @@ resource "my_pub_lb", type: "rs_azure_lb.load_balancer" do
       "name"=> "HTTP Traffic",
       "properties" => {
          "frontendIPConfiguration" => {
-            "id" => join(["/subscriptions/8beb7791-9302-4ae4-97b4-afd482aadc59/resourceGroups/rs-default-centralus/providers/Microsoft.Network/loadBalancers/",join(["my-pub-lb-", last(split(@@deployment.href, "/"))]),"/frontendIPConfigurations/ip1"])
+            "id" => join(["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rs-default-centralus/providers/Microsoft.Network/loadBalancers/",join(["my-pub-lb-", last(split(@@deployment.href, "/"))]),"/frontendIPConfigurations/ip1"])
          },  
          "backendAddressPool" => {
-            "id" => join(["/subscriptions/8beb7791-9302-4ae4-97b4-afd482aadc59/resourceGroups/rs-default-centralus/providers/Microsoft.Network/loadBalancers/",join(["my-pub-lb-", last(split(@@deployment.href, "/"))]),"/backendAddressPool/pool1"])
+            "id" => join(["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rs-default-centralus/providers/Microsoft.Network/loadBalancers/",join(["my-pub-lb-", last(split(@@deployment.href, "/"))]),"/backendAddressPool/pool1"])
          },  
          "protocol" => "Http",
          "frontendPort" => 80,
          "backendPort" => 8080,
          "probe" => {
-            "id" => join(["/subscriptions/8beb7791-9302-4ae4-97b4-afd482aadc59/resourceGroups/rs-default-centralus/providers/Microsoft.Network/loadBalancers/",join(["my-pub-lb-", last(split(@@deployment.href, "/"))]),"/probes/probe1"])
+            "id" => join(["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rs-default-centralus/providers/Microsoft.Network/loadBalancers/",join(["my-pub-lb-", last(split(@@deployment.href, "/"))]),"/probes/probe1"])
          },
          "enableFloatingIP" => true,
          "idleTimeoutInMinutes" => 4,
@@ -91,7 +97,7 @@ resource "my_priv_lb", type: "rs_azure_lb.load_balancer" do
      "name" => "ip1",
      "properties" => {
         "subnet" => {
-           "id" => "/subscriptions/8beb7791-9302-4ae4-97b4-afd482aadc59/resourceGroups/rs-default-centralus/providers/Microsoft.Network/virtualNetworks/ARM-CentralUS/subnets/default"
+           "id" => "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rs-default-centralus/providers/Microsoft.Network/virtualNetworks/ARM-CentralUS/subnets/default"
         },
         "privateIPAllocationMethod" => "Dynamic"
       }
@@ -109,16 +115,16 @@ resource "my_priv_lb", type: "rs_azure_lb.load_balancer" do
       "name"=> "HTTP Traffic",
       "properties" => {
          "frontendIPConfiguration" => {
-            "id" => join(["/subscriptions/8beb7791-9302-4ae4-97b4-afd482aadc59/resourceGroups/rs-default-centralus/providers/Microsoft.Network/loadBalancers/",join(["my-priv-lb-", last(split(@@deployment.href, "/"))]),"/frontendIPConfigurations/ip1"])
+            "id" => join(["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rs-default-centralus/providers/Microsoft.Network/loadBalancers/",join(["my-priv-lb-", last(split(@@deployment.href, "/"))]),"/frontendIPConfigurations/ip1"])
          },  
          "backendAddressPool" => {
-            "id" => join(["/subscriptions/8beb7791-9302-4ae4-97b4-afd482aadc59/resourceGroups/rs-default-centralus/providers/Microsoft.Network/loadBalancers/",join(["my-priv-lb-", last(split(@@deployment.href, "/"))]),"/backendAddressPool/pool1"])
+            "id" => join(["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rs-default-centralus/providers/Microsoft.Network/loadBalancers/",join(["my-priv-lb-", last(split(@@deployment.href, "/"))]),"/backendAddressPool/pool1"])
          },  
          "protocol" => "Http",
          "frontendPort" => 80,
          "backendPort" => 8080,
          "probe" => {
-            "id" => join(["/subscriptions/8beb7791-9302-4ae4-97b4-afd482aadc59/resourceGroups/rs-default-centralus/providers/Microsoft.Network/loadBalancers/",join(["my-priv-lb-", last(split(@@deployment.href, "/"))]),"/probes/probe1"])
+            "id" => join(["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rs-default-centralus/providers/Microsoft.Network/loadBalancers/",join(["my-priv-lb-", last(split(@@deployment.href, "/"))]),"/probes/probe1"])
          },
          "enableFloatingIP" => true,
          "idleTimeoutInMinutes" => 4,

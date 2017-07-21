@@ -1,7 +1,7 @@
-# Azure SQL Database Plugin
+# Azure Load Balancer Plugin
 
 ## Overview
-The Azure SQL Database Plugin integrates RightScale Self-Service with the basic functionality of the Azure SQL Database
+The Azure Load Balancer Plugin integrates RightScale Self-Service with the basic functionality of the Azure Load Balancer
 
 ## Requirements
 - A general understanding CAT development and definitions
@@ -31,121 +31,116 @@ The Azure SQL Database Plugin integrates RightScale Self-Service with the basic 
    1. Upload the `rs_azure_template.rb` file located in this repository
  
 ## How to Use
-The Azure SQL Database Plugin has been packaged as `plugins/rs_azure_sql`. In order to use this plugin you must import this plugin into a CAT.
+The Azure Load Balancer Plugin has been packaged as `plugins/rs_azure_lb`. In order to use this plugin you must import this plugin into a CAT.
 ```
-import "plugins/rs_azure_sql"
+import "plugins/rs_azure_lb"
 ```
 For more information on using packages, please refer to the RightScale online documentation. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
-Azure SQL Database resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
+Azure Load Balancer resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
 The resulting resource can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
 
 ## Supported Resources
- - sql_server
- - databases
- - transparent_data_encryption
- - firewall_rule
- - elastic_pool
- - auditing_policy
- - security_policy
+ - load_balancer
 
 ## Usage
 ```
-#Creates an SQL Server and DB
+#Creates an load_balancer
 
 parameter "subscription_id" do
-  like $rs_azure_sql.subscription_id
+  like $rs_azure_lb.subscription_id
 end
 
-resource "sql_server", type: "rs_azure_sql.sql_server" do
-  name join(["my-sql-server-", last(split(@@deployment.href, "/"))])
-  resource_group "DF-Testing"
-  location "Central US"
-  properties do {
-      "version" => "12.0",
-      "administratorLogin" =>"rightscale",
-      "administratorLoginPassword" => "RightScale2017"
-  } end
+parameter "resource_group" do
+  type  "string"
+  label "Resource Group"
 end
 
-resource "database", type: "rs_azure_sql.databases" do
-  name "sample-database"
-  resource_group "DF-Testing"
-  location "Central US"
-  server_name @sql_server.name
+permission "read_creds" do
+  actions   "rs_cm.show_sensitive","rs_cm.index_sensitive"
+  resources "rs_cm.credentials"
 end
 
-resource "transparent_data_encryption", type: "rs_azure_sql.transparent_data_encryption" do
-  resource_group "DF-Testing"
+resource "my_pub_lb", type: "rs_azure_lb.load_balancer" do
+  name join(["my-pub-lb-", last(split(@@deployment.href, "/"))])
+  resource_group "azure-example"
   location "Central US"
-  server_name @sql_server.name
-  database_name @database.name
-  properties do {
-    "status" => "Disabled"
-  } end
-end
+  frontendIPConfigurations do [
+    {
+     "name" => "ip1",
+     "properties" => {
+        "publicIPAddress" => {
+           "id" => join(["/subscriptions/",$subscription_id,"/resourceGroups/",$resource_group,"/providers/Microsoft.Network/publicIPAddresses/example"])
+        }
+      }
+    }
+  ] end
 
-resource "firewall_rule", type: "rs_azure_sql.firewall_rule" do
-  name "sample-firewall-rule"
-  resource_group "DF-Testing"
-  location "Central US"
-  server_name @sql_server.name
-  properties do {
-    "startIpAddress" => "0.0.0.1",
-    "endIpAddress" => "0.0.0.1"
-  } end
-end
+  backendAddressPools do [
+    {
+      "name" => "pool1" 
+    }
+  ] end
 
-resource "elastic_pool", type: "rs_azure_sql.elastic_pool" do
-  name "sample-elastic-pool"
-  resource_group "DF-Testing"
-  location "Central US"
-  server_name @sql_server.name
-end
+  loadBalancingRules do [
+    {
+      "name"=> "HTTP Traffic",
+      "properties" => {
+         "frontendIPConfiguration" => {
+            "id" => join(["/subscriptions/",$subscription_id,"/resourceGroups/",$resource_group,"/providers/Microsoft.Network/loadBalancers/",join(["my-pub-lb-", last(split(@@deployment.href, "/"))]),"/frontendIPConfigurations/ip1"])
+         },  
+         "backendAddressPool" => {
+            "id" => join(["/subscriptions/",$subscription_id,"/resourceGroups/",$resource_group,"/providers/Microsoft.Network/loadBalancers/",join(["my-pub-lb-", last(split(@@deployment.href, "/"))]),"/backendAddressPool/pool1"])
+         },  
+         "protocol" => "Http",
+         "frontendPort" => 80,
+         "backendPort" => 8080,
+         "probe" => {
+            "id" => join(["/subscriptions/",$subscription_id,"/resourceGroups/",$resource_group,"/providers/Microsoft.Network/loadBalancers/",join(["my-pub-lb-", last(split(@@deployment.href, "/"))]),"/probes/probe1"])
+         },
+         "enableFloatingIP" => true,
+         "idleTimeoutInMinutes" => 4,
+         "loadDistribution" => "Default"
+      }
+    }  
+  ] end
 
-resource "auditing_policy", type: "rs_azure_sql.auditing_policy" do
-  name "sample-auditing-policy"
-  resource_group "DF-Testing"
-  location "Central US"
-  server_name @sql_server.name
-  database_name @database.name
-  properties do {
-    "state" => "Enabled",
-    "storageAccountAccessKey" => cred("storageAccountAccessKey"),
-    "storageEndpoint" => cred("storageEndpoint")
-  } end
-end
-
-resource "security_policy", type: "rs_azure_sql.security_policy" do
-  name "sample-security-policy"
-  resource_group "DF-Testing"
-  location "Central US"
-  server_name @sql_server.name
-  database_name @database.name
-  properties do {
-    "state" => "Enabled",
-    "storageAccountAccessKey" => cred("storageAccountAccessKey"),
-    "storageEndpoint" => cred("storageEndpoint")
-  } end
+  probes do [
+    {
+      "name" =>  "probe1",
+      "properties" => {
+        "protocol" =>  "Http",
+        "port" =>  8080,
+        "requestPath" =>  "/",
+        "intervalInSeconds" =>  5,
+        "numberOfProbes" =>  16
+      }
+    }
+  ] end
 end
 ```
 ## Resources
-## sql_server
+## load_balancer
 #### Supported Fields
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
-|name|Yes|The name of the sql server.|
+|name|Yes|The name of the load_balancer.|
 |resource_group|Yes|Name of resource group in which to launch the Deployment|
 |location|Yes|Datacenter to launch in|
-|properties|Yes|Hash of SQL Server properties (https://docs.microsoft.com/en-us/rest/api/sql/servers)|
+|frontendIPConfigurations|No|Object representing the Frontend IPs to be used for the Load Balancer|
+|backendAddressPools|No|Collection of Backend Address Pools used by this Load Balancer|
+|loadBalancingRules|No|Object collection representing the Load Balancing Rules for this Load Balancer|
+|probes|No|Collection of Probe objects used in the Load Balancer|
+|inboundNatPools|No|Defines an external port range for Inbound Nat to a single backend port on NICs associated with this Load Balancer. Inbound Nat Rules are created automatically for each NIC associated with the Load Balancer using an external port from this range. Defining an Inbound Nat Pool on your Load Balancer is mutually exclusive with defining Inbound Nat Rules. Inbound Nat Pools are referenced from Virtual Machine Scale Sets. NICs that are associated with individual Virtual Machines cannot reference an Inbound Nat Pool. They have to reference individual Inbound Nat Rules.|
+|inboundNatRules|No|Collection of Inbound Nat Rules used by this Load Balancer. Defining Inbound Nat Rules on your Load Balancer is mutually exclusive with defining an Inbound Nat Pool. Inbound Nat Pools are referenced from Virtual Machine Scale Sets. NICs that are associated with individual Virtual Machines cannot reference an Inbound Nat Pool. They have to reference individual Inbound Nat Rules.|
 
 #### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
-| create&update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/sql/servers#Servers_CreateOrUpdate) | Supported |
-| destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/sql/servers#Servers_Delete) | Supported |
-| get | [Get](https://docs.microsoft.com/en-us/rest/api/sql/servers#Servers_Get)| Supported |
+| create&update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/network/loadbalancer/create-or-update-a-load-balancer#request) | Supported |
+| destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/network/loadbalancer/delete-a-load-balancer) | Supported |
+| get | [Get](https://docs.microsoft.com/en-us/rest/api/network/loadbalancer/get-information-about-a-load-balancer)| Supported |
 
 #### Supported Outputs
 - "id"
@@ -153,210 +148,14 @@ end
 - "type"
 - "location"
 - "kind"
-- "fullyQualifiedDomainName"
-- "administratorLogin"
-- "administratorLoginPassword"
-- "externalAdministratorLogin"
-- "externalAdministratorSid"
-- "version"
-- "state"
-
-## databases
-#### Supported Fields
-| Field Name | Required? | Description |
-|------------|-----------|-------------|
-|name|Yes|The name of the sql server.|
-|resource_group|Yes|Name of resource group in which to launch the Deployment|
-|location|Yes|Datacenter to launch in|
-|server_name|Yes|Server to create db on|
-|properties|Yes|Hash of Database properties (https://docs.microsoft.com/en-us/rest/api/sql/databases)|
-
-#### Supported Actions
-
-| Action | API Implementation | Support Level |
-|--------------|:----:|:-------------:|
-| create&update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/sql/databases#Database_CreateOrUpdate) | Supported |
-| destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/sql/databases#Database_Delete) | Supported |
-| get | [Get](https://docs.microsoft.com/en-us/rest/api/sql/databases#Database_Get)| Supported |
-
-#### Supported Outputs
-- "id"
-- "name"
-- "type"
-- "location"
-- "kind"
-- "edition"
-- "status"
-- "serviceLevelObjective"
-- "collation"
-- "creationDate"
-- "maxSizeBytes"
-- "currentServiceObjectiveId"
-- "requestedServiceObjectiveId"
-- "requestedServiceObjectiveName"
-- "sampleName"
-- "defaultSecondaryLocation"
-- "earliestRestoreDate"
-- "elasticPoolName"
-- "containmentState"
-- "readScale"
-- "failoverGroupId"
-
-## transparent_data_encryption
-#### Supported Fields
-| Field Name | Required? | Description |
-|------------|-----------|-------------|
-|name|Yes|The name of the sql server.|
-|resource_group|Yes|Name of resource group in which to launch the Deployment|
-|location|Yes|Datacenter to launch in|
-|server_name|Yes|Server the database is on|
-|database_name|Yes|database to configure encryption setting on|
-|properties|Yes|Hash of Transparent Data Encryption properties (https://docs.microsoft.com/en-us/rest/api/sql/databases#Databases_CreateOrUpdateTransparentDataEncryptionConfiguration)|
-
-#### Supported Actions
-
-| Action | API Implementation | Support Level |
-|--------------|:----:|:-------------:|
-| create&update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/sql/databases#Databases_CreateOrUpdateTransparentDataEncryptionConfiguration) | Supported |
-| get | [Get](https://docs.microsoft.com/en-us/rest/api/sql/databases#Databases_GetTransparentDataEncryptionConfiguration)| Supported |
-
-#### Supported Outputs
-- "id"
-- "name"
-- "status"
-- "percentComplete"
-
-## firewall_rule
-#### Supported Fields
-| Field Name | Required? | Description |
-|------------|-----------|-------------|
-|name|Yes|The name of the sql server.|
-|resource_group|Yes|Name of resource group in which to launch the Deployment|
-|location|Yes|Datacenter to launch in|
-|server_name|Yes|Server to create the fw rule on|
-|properties|Yes|Hash of FirewallRule properties (https://docs.microsoft.com/en-us/rest/api/sql/firewallrules)|
-
-#### Supported Actions
-
-| Action | API Implementation | Support Level |
-|--------------|:----:|:-------------:|
-| create&update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/sql/firewallrules#FirewallRules_CreateOrUpdate) | Supported |
-| destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/sql/firewallrules#FirewallRules_Delete) | Supported |
-| get | [Get](https://docs.microsoft.com/en-us/rest/api/sql/firewallrules#FirewallRules_Get)| Supported |
-
-#### Supported Outputs
-- "id"
-- "name"
-- "type"
-- "location"
-- "kind"
-- "startIpAddress"
-- "endIpAddress"
-
-## elastic_pool
-#### Supported Fields
-| Field Name | Required? | Description |
-|------------|-----------|-------------|
-|name|Yes|The name of the sql server.|
-|resource_group|Yes|Name of resource group in which to launch the Deployment|
-|location|Yes|Datacenter to launch in|
-|server_name|Yes|Server to create the elastic pool  on|
-|properties|Yes|Hash of ElasticPools properties (https://docs.microsoft.com/en-us/rest/api/sql/elasticpools)|
-
-#### Supported Actions
-
-| Action | API Implementation | Support Level |
-|--------------|:----:|:-------------:|
-| create&update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/sql/elasticpools#ElasticPools_CreateOrUpdate) | Supported |
-| destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/sql/elasticpools#ElasticPools_Delete) | Supported |
-| get | [Get](https://docs.microsoft.com/en-us/rest/api/sql/elasticpools#ElasticPools_Get)| Supported |
-
-#### Supported Outputs
-- "id"
-- "name"
-- "type"
-- "location"
-- "kind"
-- "creationDate"
-- "edition" do
-- "state"
-- "dtu"
-- "databaseDtuMin"
-- "databaseDtuMax"
-- "storageMB"
-
-## auditing_policy
-#### Supported Fields
-| Field Name | Required? | Description |
-|------------|-----------|-------------|
-|name|Yes|The name of the sql server.|
-|resource_group|Yes|Name of resource group in which to launch the Deployment|
-|location|Yes|Datacenter to launch in|
-|server_name|Yes|Server the database is on|
-|database_name|Yes|database to configure auditing-policy on|
-|properties|Yes|Hash of Auditing Policy properties (https://docs.microsoft.com/en-us/rest/api/sql/blob%20auditing%20policies)|
-
-#### Supported Actions
-
-| Action | API Implementation | Support Level |
-|--------------|:----:|:-------------:|
-| create&update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/sql/blob%20auditing%20policies#Databases_CreateOrUpdateBlobAuditingPolicy) | Supported |
-| get | [Get](https://docs.microsoft.com/en-us/rest/api/sql/blob%20auditing%20policies#Databases_GetBlobAuditingPolicy)| Supported |
-
-#### Supported Outputs
-- "id"
-- "name"
-- "type"
-- "location"
-- "kind"
-- "state"
-- "storageEndpoint"
-- "storageAccountAccessKey"
-- "retentionDays"
-- "storageAccountSubscriptionId"
-- "isStorageSecondaryKeyInUse"
-- "auditActionsAndGroups"
-
-## security_policy
-#### Supported Fields
-| Field Name | Required? | Description |
-|------------|-----------|-------------|
-|name|Yes|The name of the sql server.|
-|resource_group|Yes|Name of resource group in which to launch the Deployment|
-|location|Yes|Datacenter to launch in|
-|server_name|Yes|Server the database is on|
-|database_name|Yes|database to security_policy on|
-|properties|Yes|Hash of Security Policy properties (https://docs.microsoft.com/en-us/rest/api/sql/database%20security%20policies)|
-
-#### Supported Actions
-
-| Action | API Implementation | Support Level |
-|--------------|:----:|:-------------:|
-| create&update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/sql/database%20security%20policies#Databases_CreateOrUpdateThreatDetectionPolicy) | Supported |
-| get | [Get](https://docs.microsoft.com/en-us/rest/api/sql/database%20security%20policies#Databases_GetThreatDetectionPolicy)| Supported |
-
-#### Supported Outputs
-- "id"
-- "name"
-- "type"
-- "location"
-- "kind"
-- "state"
-- "emailAccountAdmins"
-- "emailAddresses"
-- "disabledAlerts"
-- "retentionDays"
-- "storageAccountAccessKey"
-- "storageEndpoint"
-- "useServerDefault"
 
 ## Implementation Notes
-- The Azure SQL Database Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to an SQL resource.) 
+- The Azure Load Balancer Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to an SQL resource.) 
 
  
-Full list of possible actions can be found on the [Azure SQL Database API Documentation](https://docs.microsoft.com/en-us/rest/api/sql/)
+Full list of possible actions can be found on the [Azure Load Balancer API Documentation](https://docs.microsoft.com/en-us/rest/api/sql/)
 ## Examples
-Please review [sql_test_cat.rb](./sql_test_cat.rb) for a basic example implementation.
+Please review [lb_test_cat.rb](./lb_test_cat.rb) for a basic example implementation.
 	
 ## Known Issues / Limitations
 
@@ -365,4 +164,4 @@ Support for this plugin will be provided though GitHub Issues and the RightScale
 Visit http://chat.rightscale.com/ to join!
 
 ## License
-The Azure SQL Database Plugin source code is subject to the MIT license, see the [LICENSE](../LICENSE) file.
+The Azure Load Balancer Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.
