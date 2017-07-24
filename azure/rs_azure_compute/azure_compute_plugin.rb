@@ -77,6 +77,12 @@ plugin "rs_azure_compute" do
       verb "GET"
     end
 
+    action "show_ro" do
+      type "availability_set"
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Compute/availabilitySets/$name"
+      verb "GET"
+    end
+
     action "get" do
       type "availability_set"
       path "$href"
@@ -88,8 +94,47 @@ plugin "rs_azure_compute" do
       path "$href"
       verb "DELETE"
     end
+    
+    output "virtualmachines" do
+      body_path "properties.virtualmachines"
+    end
 
     output "id","name","location","tags","sku","properties"
+  end
+
+  type "virtualmachine" do
+    href_templates "{{contains(id, 'virtualMachines') && id || null}}"
+    provision "provision_resource"
+    delete    "delete_resource"
+
+    field "properties" do
+      type "composite"
+      location "body"
+    end
+
+    field "location" do
+      type "string"
+      location "body"
+    end
+
+    field "resource_group" do
+      type "string"
+      location "path"
+    end
+
+    action "show" do
+      type "availability_set"
+      path "$href"
+      verb "GET"
+    end
+
+    action "get" do
+      type "availability_set"
+      path "$href"
+      verb "GET"
+    end
+
+    output "id","name","location","tags","properties"
   end
 end
 
@@ -132,17 +177,9 @@ define provision_resource(@declaration) return @resource do
     call sys_log.summary(join(["Provision ", $type]))
     call sys_log.detail($object)
     call start_debugging()
-    @operation = rs_azure_lb.$type.create($fields)
+    @operation = rs_azure_compute.$type.create($fields)
     call sys_log.detail(to_object(@operation))
     @resource = @operation.show()
-    $status = @resource.state
-    sub on_error: skip, timeout: 60m do
-      while $status != "Succeeded" do
-        $status = @resource.state
-        call sys_log.detail(join(["Status: ", $status]))
-        sleep(10)
-      end
-    end 
     call sys_log.detail(to_object(@resource))
     call stop_debugging()
   end
