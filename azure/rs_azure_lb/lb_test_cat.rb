@@ -6,6 +6,7 @@ import "plugins/rs_azure_lb"
 
 parameter "subscription_id" do
   like $rs_azure_lb.subscription_id
+  default "8beb7791-9302-4ae4-97b4-afd482aadc59"
 end
 
 parameter "resource_group" do
@@ -39,7 +40,7 @@ resource "my_pub_lb", type: "rs_azure_lb.load_balancer" do
      "name" => "ip1",
      "properties" => {
         "publicIPAddress" => {
-           "id" => "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/DF-Testing/providers/Microsoft.Network/publicIPAddresses/Shade"
+           "id" => join(["/subscriptions/",$subscription_id,"/resourceGroups/DF-Testing/providers/Microsoft.Network/publicIPAddresses/Shade"])
         }
       }
     }
@@ -53,19 +54,19 @@ resource "my_pub_lb", type: "rs_azure_lb.load_balancer" do
 
   loadBalancingRules do [
     {
-      "name"=> "HTTP Traffic",
+      "name"=> "HTTP-Traffic",
       "properties" => {
          "frontendIPConfiguration" => {
-            "id" => join(["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rs-default-centralus/providers/Microsoft.Network/loadBalancers/",join(["my-pub-lb-", last(split(@@deployment.href, "/"))]),"/frontendIPConfigurations/ip1"])
+            "id" => join(["/subscriptions/",$subscription_id,"/resourceGroups/rs-default-centralus/providers/Microsoft.Network/loadBalancers/",join(["my-pub-lb-", last(split(@@deployment.href, "/"))]),"/frontendIPConfigurations/ip1"])
          },  
          "backendAddressPool" => {
-            "id" => join(["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rs-default-centralus/providers/Microsoft.Network/loadBalancers/",join(["my-pub-lb-", last(split(@@deployment.href, "/"))]),"/backendAddressPool/pool1"])
+            "id" => join(["/subscriptions/",$subscription_id,"/resourceGroups/rs-default-centralus/providers/Microsoft.Network/loadBalancers/",join(["my-pub-lb-", last(split(@@deployment.href, "/"))]),"/backendAddressPools/pool1"])
          },  
-         "protocol" => "Http",
+         "protocol" => "Tcp",
          "frontendPort" => 80,
          "backendPort" => 8080,
          "probe" => {
-            "id" => join(["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rs-default-centralus/providers/Microsoft.Network/loadBalancers/",join(["my-pub-lb-", last(split(@@deployment.href, "/"))]),"/probes/probe1"])
+            "id" => join(["/subscriptions/",$subscription_id,"/resourceGroups/rs-default-centralus/providers/Microsoft.Network/loadBalancers/",join(["my-pub-lb-", last(split(@@deployment.href, "/"))]),"/probes/probe1"])
          },
          "enableFloatingIP" => true,
          "idleTimeoutInMinutes" => 4,
@@ -97,7 +98,7 @@ resource "my_priv_lb", type: "rs_azure_lb.load_balancer" do
      "name" => "ip1",
      "properties" => {
         "subnet" => {
-           "id" => "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rs-default-centralus/providers/Microsoft.Network/virtualNetworks/ARM-CentralUS/subnets/default"
+           "id" => join(["/subscriptions/",$subscription_id,"/resourceGroups/rs-default-centralus/providers/Microsoft.Network/virtualNetworks/ARM-CentralUS/subnets/default"])
         },
         "privateIPAllocationMethod" => "Dynamic"
       }
@@ -112,19 +113,19 @@ resource "my_priv_lb", type: "rs_azure_lb.load_balancer" do
 
   loadBalancingRules do [
     {
-      "name"=> "HTTP Traffic",
+      "name"=> "HTTP-Traffic",
       "properties" => {
          "frontendIPConfiguration" => {
-            "id" => join(["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rs-default-centralus/providers/Microsoft.Network/loadBalancers/",join(["my-priv-lb-", last(split(@@deployment.href, "/"))]),"/frontendIPConfigurations/ip1"])
+            "id" => join(["/subscriptions/",$subscription_id,"/resourceGroups/rs-default-centralus/providers/Microsoft.Network/loadBalancers/",join(["my-priv-lb-", last(split(@@deployment.href, "/"))]),"/frontendIPConfigurations/ip1"])
          },  
          "backendAddressPool" => {
-            "id" => join(["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rs-default-centralus/providers/Microsoft.Network/loadBalancers/",join(["my-priv-lb-", last(split(@@deployment.href, "/"))]),"/backendAddressPool/pool1"])
+            "id" => join(["/subscriptions/",$subscription_id,"/resourceGroups/rs-default-centralus/providers/Microsoft.Network/loadBalancers/",join(["my-priv-lb-", last(split(@@deployment.href, "/"))]),"/backendAddressPools/pool1"])
          },  
-         "protocol" => "Http",
+         "protocol" => "Tcp",
          "frontendPort" => 80,
          "backendPort" => 8080,
          "probe" => {
-            "id" => join(["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rs-default-centralus/providers/Microsoft.Network/loadBalancers/",join(["my-priv-lb-", last(split(@@deployment.href, "/"))]),"/probes/probe1"])
+            "id" => join(["/subscriptions/",$subscription_id,"/resourceGroups/rs-default-centralus/providers/Microsoft.Network/loadBalancers/",join(["my-priv-lb-", last(split(@@deployment.href, "/"))]),"/probes/probe1"])
          },
          "enableFloatingIP" => true,
          "idleTimeoutInMinutes" => 4,
