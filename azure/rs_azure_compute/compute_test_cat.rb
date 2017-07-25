@@ -38,12 +38,15 @@ operation "launch" do
  definition "launch_handler"
 end
 
-define launch_handler(@rs_testing) return @rs_testing,$vms do
+define launch_handler(@rs_testing) return @rs_testing,@vms do
   $object = to_object(@rs_testing)
   $fields = $object["fields"]
   call start_debugging()
   @rs_testing = rs_azure_compute.availability_set.show_ro($fields)
-  $vms = @rs_testing.virtualmachines
+  @vms = rs_azure_compute.virtualmachine.empty()
+  foreach $vm in @rs_testing.virtualmachines do
+    @vms = @vms + rs_azure_compute.virtualmachine($vm)
+  end
   call stop_debugging()
 end
 
