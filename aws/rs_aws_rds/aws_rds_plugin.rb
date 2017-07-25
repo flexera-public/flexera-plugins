@@ -16,7 +16,7 @@ plugin "rs_aws_rds" do
   end
 
   type "db_instance" do
-    href_templates "/?Action=DescribeDBInstances&DBInstanceIdentifier={{//DBInstance/DBInstanceIdentifier}}"
+    href_templates "/?Action=DescribeDBInstances&DBInstanceIdentifier={{//CreateDBInstanceResult/DBInstance/DBInstanceIdentifier}}","/?Action=DescribeDBInstances&DBInstanceIdentifier={{//RestoreDBInstanceFromDBSnapshotResult/DBInstance/DBInstanceIdentifier}}","/?Action=DescribeDBInstances&DBInstanceIdentifier={{//DescribeDBInstancesResult/DBInstances/DBInstance/DBInstanceIdentifier}}"
 
     field "allocated_storage" do
       alias_for "AllocatedStorage"
@@ -781,7 +781,7 @@ plugin "rs_aws_rds" do
 
  
   type "security_groups" do
-    href_templates "/?Action=DescribeDBSecurityGroups&DBSecurityGroupName={{//DBSecurityGroup/DBSecurityGroupName}}"
+    href_templates "/?Action=DescribeDBSecurityGroups&DBSecurityGroupName={{//DescribeDBSecurityGroupsResult/DBSecurityGroups/DBSecurityGroup/DBSecurityGroupName}}","/?Action=DescribeDBSecurityGroups&DBSecurityGroupName={{//CreateDBSecurityGroupResult/DBSecurityGroup/DBSecurityGroupName}}"
 
     field "name" do
       alias_for "DBSecurityGroupName"
@@ -839,7 +839,7 @@ plugin "rs_aws_rds" do
   end
 
   type "db_subnet_groups" do
-    href_templates "/?Action=DescribeDBSubnetGroups&DBSubnetGroupName={{//DBSubnetGroup/DBSubnetGroupName}}"
+    href_templates "/?Action=DescribeDBSubnetGroups&DBSubnetGroupName={{//CreateDBSubnetGroupResult/DBSubnetGroup/DBSubnetGroupName}}","/?Action=DescribeDBSubnetGroups&DBSubnetGroupName={{//DescribeDBSubnetGroupsResult/DBSubnetGroups/DBSubnetGroup/DBSubnetGroupName}}"
 
     field "name" do
       alias_for "DBSubnetGroupName"
