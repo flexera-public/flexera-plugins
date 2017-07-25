@@ -101,25 +101,28 @@ plugin "rs_azure_compute" do
     provision "no_operation"
     delete    "no_operation"
 
-    field "properties" do
-      type "composite"
-      location "body"
-    end
-
-    field "location" do
-      type "string"
-      location "body"
-    end
-
     field "resource_group" do
       type "string"
       location "path"
     end
 
+    field "vm_name" do
+      type "string"
+      location "path"
+    end 
+
     action "show" do
       type "virtualmachine"
-      path "$href"
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Compute/virtualMachines/$vm_name"
       verb "GET"
+
+      field "resource_group" do
+        location "path"
+      end
+
+      field "vm_name" do
+        location "path"
+      end 
     end
 
     action "get" do
