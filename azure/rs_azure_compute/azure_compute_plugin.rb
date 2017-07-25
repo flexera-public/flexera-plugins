@@ -77,12 +77,6 @@ plugin "rs_azure_compute" do
       verb "GET"
     end
 
-    action "show_ro" do
-      type "availability_set"
-      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Compute/availabilitySets/$name"
-      verb "GET"
-    end
-
     action "get" do
       type "availability_set"
       path "$href"
