@@ -13,6 +13,10 @@ permission "read_creds" do
   resources "rs_cm.credentials"
 end
 
+output "vm_ids" do
+  label "VM ids"
+end
+
 resource "my_availability_group", type: "rs_azure_compute.availability_set" do
   name @@deployment.name
   resource_group "rs-default-centralus"
@@ -26,28 +30,19 @@ resource "my_availability_group", type: "rs_azure_compute.availability_set" do
   } end
 end
 
-resource "rs_testing", type: "rs_azure_compute.availability_set" do
-  name "rs-testing"
-  resource_group "rs-default-centralus"
-  location "Central US"
-end
-
 operation "launch" do
  description "Launch the application"
  definition "launch_handler"
+ output_mappings do {
+    $vm_ids => $vms
+  } end
 end
 
-define launch_handler(@rs_testing,$subscription_id) return @rs_testing,@vms,$vms do
-  $object = to_object(@rs_testing)
-  $fields = $object["fields"]
+define launch_handler(@my_availability_group) return @my_availability_group,$vms do
   call start_debugging()
-  @rs_testing = rs_azure_compute.availability_set.get("href": "/subscriptions/"+$subscription_id+"/resourceGroups/"+$fields["resource_group"]+"/providers/Microsoft.Compute/availabilitySets/"+$fields["name"]+"?api-version=2016-04-30-preview")
-  @vms = rs_azure_compute.virtualmachine.empty()
-  $vms = @rs_testing.virtualmachines
+  provision(@my_availability_group)
+  $vms = to_s(@my_availability_group.virtualmachines)
   call sys_log.detail("vms:" + to_s($vms))
-  foreach $vm in $vms do
-    @vms = @vms + rs_azure_compute.virtualmachine.get("href": $vm["id"])
-  end
   call stop_debugging()
 end
 

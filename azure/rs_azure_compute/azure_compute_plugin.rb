@@ -90,7 +90,7 @@ plugin "rs_azure_compute" do
     end
     
     output "virtualmachines" do
-      body_path "properties.virtualMachines"
+      body_path "properties.virtualMachines[*].id"
     end
 
     output "id","name","location","tags","sku","properties"
@@ -117,13 +117,13 @@ plugin "rs_azure_compute" do
     end
 
     action "show" do
-      type "availability_set"
+      type "virtualmachine"
       path "$href"
       verb "GET"
     end
 
     action "get" do
-      type "availability_set"
+      type "virtualmachine"
       path "$href"
       verb "GET"
     end
@@ -139,7 +139,7 @@ resource_pool "rs_azure_compute" do
     end
 
     auth "azure_auth", type: "oauth2" do
-      token_url "https://login.microsoftonline.com/TENANT_ID/oauth2/token"
+      token_url "https://login.microsoftonline.com/09b8fec1-4b8d-48dd-8afa-5c1a775ea0f2/oauth2/token"
       grant type: "client_credentials" do
         client_id cred("AZURE_APPLICATION_ID")
         client_secret cred("AZURE_APPLICATION_KEY")
