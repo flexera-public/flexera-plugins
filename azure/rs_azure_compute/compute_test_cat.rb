@@ -6,7 +6,6 @@ import "plugins/rs_azure_compute"
 
 parameter "subscription_id" do
   like $rs_azure_compute.subscription_id
-  default "8beb7791-9302-4ae4-97b4-afd482aadc59"
 end
 
 permission "read_creds" do
@@ -38,14 +37,16 @@ operation "launch" do
  definition "launch_handler"
 end
 
-define launch_handler(@rs_testing) return @rs_testing,@vms do
+define launch_handler(@rs_testing,$subscription_id) return @rs_testing,@vms,$vms do
   $object = to_object(@rs_testing)
   $fields = $object["fields"]
   call start_debugging()
-  @rs_testing = rs_azure_compute.availability_set.show_ro($fields)
+  @rs_testing = rs_azure_compute.availability_set.get("href": "/subscriptions/"+$subscription_id+"/resourceGroups/"+$fields["resource_group"]+"/providers/Microsoft.Compute/availabilitySets/"+$fields["name"]+"?api-version=2016-04-30-preview")
   @vms = rs_azure_compute.virtualmachine.empty()
-  foreach $vm in @rs_testing.virtualmachines do
-    @vms = @vms + rs_azure_compute.virtualmachine($vm)
+  $vms = @rs_testing.virtualmachines
+  call sys_log.detail("vms:" + to_s($vms))
+  foreach $vm in $vms do
+    @vms = @vms + rs_azure_compute.virtualmachine.get("href": $vm["id"])
   end
   call stop_debugging()
 end

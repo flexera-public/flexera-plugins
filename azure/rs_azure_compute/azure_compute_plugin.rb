@@ -96,7 +96,7 @@ plugin "rs_azure_compute" do
     end
     
     output "virtualmachines" do
-      body_path "properties.virtualmachines"
+      body_path "properties.virtualMachines"
     end
 
     output "id","name","location","tags","sku","properties"
@@ -104,8 +104,8 @@ plugin "rs_azure_compute" do
 
   type "virtualmachine" do
     href_templates "{{contains(id, 'virtualMachines') && id || null}}"
-    provision "provision_resource"
-    delete    "delete_resource"
+    provision "no_operation"
+    delete    "no_operation"
 
     field "properties" do
       type "composite"
@@ -145,7 +145,7 @@ resource_pool "rs_azure_compute" do
     end
 
     auth "azure_auth", type: "oauth2" do
-      token_url "https://login.microsoftonline.com/09b8fec1-4b8d-48dd-8afa-5c1a775ea0f2/oauth2/token"
+      token_url "https://login.microsoftonline.com/TENANT_ID/oauth2/token"
       grant type: "client_credentials" do
         client_id cred("AZURE_APPLICATION_ID")
         client_secret cred("AZURE_APPLICATION_KEY")
@@ -191,6 +191,11 @@ define delete_resource(@declaration) do
     @declaration.destroy()
   end
   call stop_debugging()
+end
+
+define no_operation(@declaration) do
+  $object = to_object(@declaration)
+  call sys_log.detail("declaration:" + to_s($object))
 end
 
 define start_debugging() do
