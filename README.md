@@ -12,6 +12,7 @@ This repo contains a library of open source RightScale plugins.
 ### Azure
 - [Azure SQL Database](./azure/rs_azure_sql/)
 - [Azure ARM Templates](./azure/rs_azure_template)
+- [Azure Compute](./azure/rs_azure_compute)
 
 ### Google Cloud Platform
 - [GCP Google Compute Engine](./google/gce/)

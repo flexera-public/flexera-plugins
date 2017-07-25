@@ -88,8 +88,50 @@ plugin "rs_azure_compute" do
       path "$href"
       verb "DELETE"
     end
+    
+    output "virtualmachines" do
+      body_path "properties.virtualMachines[*].id"
+    end
 
     output "id","name","location","tags","sku","properties"
+  end
+
+  type "virtualmachine" do
+    href_templates "{{contains(id, 'virtualMachines') && id || null}}"
+    provision "no_operation"
+    delete    "no_operation"
+
+    field "resource_group" do
+      type "string"
+      location "path"
+    end
+
+    field "vm_name" do
+      type "string"
+      location "path"
+    end 
+
+    action "show" do
+      type "virtualmachine"
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Compute/virtualMachines/$vm_name"
+      verb "GET"
+
+      field "resource_group" do
+        location "path"
+      end
+
+      field "vm_name" do
+        location "path"
+      end 
+    end
+
+    action "get" do
+      type "virtualmachine"
+      path "$href"
+      verb "GET"
+    end
+
+    output "id","name","location","tags","properties"
   end
 end
 
@@ -100,7 +142,7 @@ resource_pool "rs_azure_compute" do
     end
 
     auth "azure_auth", type: "oauth2" do
-      token_url "https://login.microsoftonline.com/09b8fec1-4b8d-48dd-8afa-5c1a775ea0f2/oauth2/token"
+      token_url "https://login.microsoftonline.com/TENANT_ID/oauth2/token"
       grant type: "client_credentials" do
         client_id cred("AZURE_APPLICATION_ID")
         client_secret cred("AZURE_APPLICATION_KEY")
@@ -132,17 +174,9 @@ define provision_resource(@declaration) return @resource do
     call sys_log.summary(join(["Provision ", $type]))
     call sys_log.detail($object)
     call start_debugging()
-    @operation = rs_azure_lb.$type.create($fields)
+    @operation = rs_azure_compute.$type.create($fields)
     call sys_log.detail(to_object(@operation))
     @resource = @operation.show()
-    $status = @resource.state
-    sub on_error: skip, timeout: 60m do
-      while $status != "Succeeded" do
-        $status = @resource.state
-        call sys_log.detail(join(["Status: ", $status]))
-        sleep(10)
-      end
-    end 
     call sys_log.detail(to_object(@resource))
     call stop_debugging()
   end
@@ -154,6 +188,11 @@ define delete_resource(@declaration) do
     @declaration.destroy()
   end
   call stop_debugging()
+end
+
+define no_operation(@declaration) do
+  $object = to_object(@declaration)
+  call sys_log.detail("declaration:" + to_s($object))
 end
 
 define start_debugging() do

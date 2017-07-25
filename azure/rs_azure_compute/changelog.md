@@ -1,4 +1,4 @@
-LB Plugin changelog
+Compute Plugin changelog
 
 v1.0
 -----
