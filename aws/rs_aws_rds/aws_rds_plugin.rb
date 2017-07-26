@@ -2,7 +2,7 @@ name 'aws_rds_plugin'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Amazon Web Services - Relational Database Service"
-long_description "Version: 1.1"
+long_description "Version: 1.2"
 package "plugins/rs_aws_rds"
 import "sys_log"
 
@@ -921,17 +921,6 @@ resource_pool "rds" do
   end
 end
 
-output "list_db_instances" do
-  label "list_action"
-end
-
-operation "list_db_instances" do
-  definition "list_db_instances"
-  output_mappings do {
-    $list_db_instances => $object
-  } end
-end
-
 define provision_db_instance(@declaration) return @db_instance do
   sub on_error: stop_debugging() do
     call start_debugging()
@@ -950,20 +939,14 @@ define provision_db_instance(@declaration) return @db_instance do
   end
 end
 
-define list_db_instances() return $object do
-  call start_debugging()
-  @rds = rs_aws_rds.db_instance.list()
-  $object = to_object(first(@rds))
-  $object = to_s($object)
-  call stop_debugging()
-end
-
 define delete_db_instance(@db_instance) do
-  call start_debugging()
-  if @db_instance.DBInstanceStatus != "deleting"
-    @db_instance.destroy({ "skip_final_snapshot": "true" })
+  $delete_count = 0
+  sub on_error: handle_retries($delete_count) do 
+    $delete_count = $delete_count + 1
+    if @db_instance.DBInstanceStatus != "deleting"
+      @db_instance.destroy({ "skip_final_snapshot": "true" })
+    end 
   end 
-  call stop_debugging()
 end
 
 define provision_sg(@declaration) return @sec_group do
@@ -977,39 +960,25 @@ define provision_sg(@declaration) return @sec_group do
   end
 end
 
-define list_security_groups() return $object do
-  call start_debugging()
-  @security_groups = rs_aws_rds.security_groups.list()
-  $object = to_object(@security_groups)
-  $object = to_s($object)
-  call stop_debugging()
-end
-
 define delete_sg(@sec_group) do
-  sub on_error: stop_debugging() do
-    call start_debugging()
+  $delete_count = 0
+  sub on_error: handle_retries($delete_count) do
+    $delete_count = $delete_count + 1
     @sec_group.destroy()
-    call stop_debugging()
   end
 end
 
 define provision_db_subnet_group(@declaration) return @db_subnet_group do
-  sub on_error: stop_debugging() do
-    $object = to_object(@declaration)
-    $fields = $object["fields"]
-    @db_subnet_group = rs_aws_rds.db_subnet_groups.create($fields)
-    @db_subnet_group = @db_subnet_group.get()
-  end
-end
-
-define list_subnet_groups() return $object do
-  @db_subnet_groups = rs_aws_rds.db_subnet_groups.list()
-  $object = to_object(@db_subnet_groups)
-  $object = to_s($object)
+  $object = to_object(@declaration)
+  $fields = $object["fields"]
+  @db_subnet_group = rs_aws_rds.db_subnet_groups.create($fields)
+  @db_subnet_group = @db_subnet_group.get()
 end
 
 define delete_db_subnet_group(@db_subnet_group) do
-  sub on_error: stop_debugging() do
+  $delete_count = 0
+  sub on_error: handle_retries($delete_count) do
+    $delete_count = $delete_count + 1
     @db_subnet_group.destroy()
   end
 end
