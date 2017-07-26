@@ -26,7 +26,7 @@ output "storage_account_endpoints" do
   label "storage_account_endpoints"
 end
 
-output "df_storage_keys" do
+output "pg_storage_keys" do
   label "get Storage Keys"
 end
 
@@ -59,13 +59,13 @@ operation "launch" do
  definition "launch_handler"
  output_mappings do {
     $storage_keys => $s_keys,
-    $df_storage_keys => $s_dfstkeys,
+    $pg_storage_keys => $s_pgstkeys,
     $storage_account_key_1 => $stak1,
     $storage_account_endpoints => $sae
   } end
 end
 
-define launch_handler(@my_storage_account,@my_placement_group) return @my_storage_account,$s_keys,$stak1,$sae,$s_dfstkeys do
+define launch_handler(@my_storage_account,@my_placement_group) return @my_storage_account,$s_keys,$stak1,$sae,$s_pgstkeys do
   sub on_error: stop_debugging() do
     call start_debugging()
     provision(@my_storage_account)
@@ -77,10 +77,10 @@ define launch_handler(@my_storage_account,@my_placement_group) return @my_storag
     $sae = to_s(@my_storage_account.primaryEndpoints)
     call stop_debugging()
     call start_debugging()
-    @df_st_acct = rs_azure_storage.storage_account.show(name: @my_placement_group.name, resource_group: @@deployment.name )
-    $dfstkeys = @df_st_acct.list_keys()
-    $s_dfstkeys = to_s($dfstkeys)
-    call sys_log.detail("dfst:" + $s_dfstkeys)
+    @pg_st_acct = rs_azure_storage.storage_account.show(name: @my_placement_group.name, resource_group: @@deployment.name )
+    $pgstkeys = @pg_st_acct.list_keys()
+    $s_pgstkeys = to_s($pgstkeys)
+    call sys_log.detail("pgst:" + $s_pgstkeys)
     call stop_debugging()
   end
 end

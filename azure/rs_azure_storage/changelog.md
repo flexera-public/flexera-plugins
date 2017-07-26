@@ -1,4 +1,4 @@
-Compute Plugin changelog
+Storage Account Plugin changelog
 
 v1.0
 -----

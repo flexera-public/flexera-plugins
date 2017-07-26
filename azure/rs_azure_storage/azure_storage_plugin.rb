@@ -112,8 +112,56 @@ plugin "rs_azure_storage" do
       body_path "properties.provisioningState"
     end
 
+    output "provisioningState" do
+      body_path "properties.provisioningState"
+    end
+
     output "primaryEndpoints" do
       body_path "properties.primaryEndpoints"
+    end
+
+    output "primaryLocation" do
+      body_path "properties.primaryLocation"
+    end
+
+    output "statusOfPrimary" do
+      body_path "properties.statusOfPrimary"
+    end
+
+    output "lastGeoFailoverTime" do
+      body_path "properties.lastGeoFailoverTime"
+    end
+
+    output "secondaryLocation" do
+      body_path "properties.secondaryLocation"
+    end
+
+    output "statusOfSecondary" do
+      body_path "properties.statusOfSecondary"
+    end
+
+    output "creationTime" do
+      body_path "properties.creationTime"
+    end
+
+    output "customDomain" do
+      body_path "properties.customDomain"
+    end
+
+    output "secondaryEndpoints" do
+      body_path "properties.secondaryEndpoints"
+    end
+
+    output "encryption" do
+      body_path "properties.encryption"
+    end
+
+    output "accessTier" do
+      body_path "properties.accessTier"
+    end
+
+    output "supportsHttpsTrafficOnly" do
+      body_path "properties.supportsHttpsTrafficOnly"
     end
   end
 end
@@ -125,7 +173,7 @@ resource_pool "rs_azure_storage" do
     end
 
     auth "azure_auth", type: "oauth2" do
-      token_url "https://login.microsoftonline.com/09b8fec1-4b8d-48dd-8afa-5c1a775ea0f2/oauth2/token"
+      token_url "https://login.microsoftonline.com/TENANT_ID/oauth2/token"
       grant type: "client_credentials" do
         client_id cred("AZURE_APPLICATION_ID")
         client_secret cred("AZURE_APPLICATION_KEY")

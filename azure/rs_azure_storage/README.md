@@ -1,7 +1,7 @@
-# Azure Compute Plugin
+# Azure Storage Account Plugin
 
 ## Overview
-The Azure Compute Plugin integrates RightScale Self-Service with the basic functionality of the Azure Compute
+The Azure Storage Account Plugin integrates RightScale Self-Service with the basic functionality of the Azure Storage Account
 
 ## Requirements
 - A general understanding CAT development and definitions
@@ -31,62 +31,71 @@ The Azure Compute Plugin integrates RightScale Self-Service with the basic funct
    1. Upload the `azure_lb_plugin.rb` file located in this repository
  
 ## How to Use
-The Azure Compute Plugin has been packaged as `plugins/rs_azure_compute`. In order to use this plugin you must import this plugin into a CAT.
+The Azure Storage Account Plugin has been packaged as `plugins/rs_azure_storage`. In order to use this plugin you must import this plugin into a CAT.
 ```
-import "plugins/rs_azure_compute"
+import "plugins/rs_azure_storage"
 ```
 For more information on using packages, please refer to the RightScale online documentation. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
-Azure Compute resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
+Azure Storage Account resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
 The resulting resource can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
 
 ## Supported Resources
- - availability_set
- - virtualmachine
+ - storage_account
 
 ## Usage
 ```
 
-parameter "subscription_id" do
-  like $rs_azure_compute.subscription_id
+parameter "subscription_id
+  like $rs_azure_storage.subscription_id
+  default "8beb7791-9302-4ae4-97b4-afd482aadc59"
 end
 
-permission "read_creds" do
+permission "read_creds
   actions   "rs_cm.show_sensitive","rs_cm.index_sensitive"
   resources "rs_cm.credentials"
 end
 
-resource "my_availability_set", type: "rs_azure_compute.availability_set" do
-  name @@deployment.name
-  resource_group "rs-default-centralus"
-  location "Central US"
-  sku do {
-    "name" => "Aligned"
+resource "my_placement_group", type: "placement_group
+  name join(["mypg", last(split(@@deployment.href, "/"))])
+  description "test placement group"
+  cloud "AzureRM Central US"
+  cloud_specific_attributes do {
+    "account_type" => "Standard_LRS"
   } end
-  properties do {
-      "platformUpdateDomainCount" => 5,
-      "platformFaultDomainCount" => 3
-  } end
+end
+
+operation "launch
+ description "Launch the application"
+ definition "launch_handler"
+end
+
+define launch_handler(@my_placement_group) return @my_placement_group do
+  provision(@my_placement_group)
+  @pg_st_acct = rs_azure_storage.storage_account.show(name: @my_placement_group.name, resource_group: @@deployment.name )
+  $pgstkeys = @pg_st_acct.list_keys()
+  $s_pgstkeys = to_s($pgstkeys)
+  call sys_log.detail("pgst:" + $s_pgstkeys)
 end
 ```
 ## Resources
-## availability_set
+## storage_account
 #### Supported Fields
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
-|name|Yes|The name of the availability_set|
-|resource_group|Yes|Name of resource group in which to launch the Deployment|
+|name|Yes|The name of the storage_account The name of the storage account within the specified resource group. Storage account names must be between 3 and 24 characters in length and use numbers and lower-case letters only.|
+|resource_group|Yes|Name of resource group in which to create the storage_account|
 |location|Yes|Datacenter to launch in|
-|sku.name|Yes|Specifies whether the availability set is managed or not. Posible values are: Aligned or Classic. An Aligned availability set is managed, Classic is not.|
-|properties|No| Hash of availability_set properties(https://docs.microsoft.com/en-us/rest/api/compute/availabilitysets/availabilitysets-create)|
+|sku|Yes|Required. Gets or sets the sku name
+|properties|Yes| Hash of storage_account properties(https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts#StorageAccounts_Create)|
 
 #### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
-| create&update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/compute/availabilitysets/availabilitysets-create) | Supported |
-| destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/compute/availabilitysets/availabilitysets-delete) | Supported |
-| get | [Get](https://docs.microsoft.com/en-us/rest/api/compute/availabilitysets/availabilitysets-get)| Supported |
+| create&update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts#StorageAccounts_Create) | Supported |
+| destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts#StorageAccounts_Delete) | Supported |
+| get | [Get](https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts#StorageAccounts_GetProperties)| Supported |
 
 #### Supported Outputs
 - id
@@ -95,37 +104,29 @@ end
 - location
 - sku
 - properties
-
-## virtualmachine
-#### Supported Fields
-| Field Name | Required? | Description |
-|------------|-----------|-------------|
-|name|Yes|Specifies name of vm|
-|resource_group|Yes|Name of resource group in which to launch the Deployment|
-|location|Yes|Datacenter to launch in|
-
-#### Supported Actions
-
-| Action | API Implementation | Support Level |
-|--------------|:----:|:-------------:|
-| get | [Get](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachines/virtualmachines-get)| Supported |
-
-#### Supported Outputs
-- id
-- name
-- type
-- location
-- properties
-- tags
+- state
+- provisioningState
+- primaryEndpoints
+- primaryLocation
+- statusOfPrimary
+- lastGeoFailoverTime
+- secondaryLocation
+- statusOfSecondary
+- creationTime
+- customDomain
+- secondaryEndpoints
+- encryption
+- accessTier
+- supportsHttpsTrafficOnly
 
 
 ## Implementation Notes
-- The Azure Compute Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to an LB resource.) 
+- The Azure Storage Account Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to an SA resource.) 
 
  
-Full list of possible actions can be found on the [Azure Compute API Documentation](https://docs.microsoft.com/en-us/rest/api/network/loadbalancer/)
+Full list of possible actions can be found on the [Azure Storage Account API Documentation](https://docs.microsoft.com/en-us/rest/api/network/loadbalancer/)
 ## Examples
-Please review [compute_test_cat.rb](./compute_test_cat.rb) for a basic example implementation.
+Please review [storage_test_cat.rb](./storage_test_cat.rb) for a basic example implementation.
 	
 ## Known Issues / Limitations
 
@@ -134,4 +135,4 @@ Support for this plugin will be provided though GitHub Issues and the RightScale
 Visit http://chat.rightscale.com/ to join!
 
 ## License
-The Azure Compute Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.
+The Azure Storage Account Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.
