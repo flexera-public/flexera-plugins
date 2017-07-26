@@ -18,8 +18,25 @@ output "storage_keys" do
   label "created Storage Keys"
 end
 
+output "storage_account_key_1" do
+  label "Storage Account Key 1"
+end
+
+output "storage_account_endpoints" do
+  label "storage_account_endpoints"
+end
+
 output "df_storage_keys" do
   label "get Storage Keys"
+end
+
+resource "my_placement_group", type: "placement_group" do
+  name join(["mypg", last(split(@@deployment.href, "/"))])
+  description "test placement group"
+  cloud "AzureRM Central US"
+  cloud_specific_attributes do {
+    "account_type" => "Standard_LRS"
+  } end
 end
 
 resource "my_storage_account", type: "rs_azure_storage.storage_account" do
@@ -42,20 +59,25 @@ operation "launch" do
  definition "launch_handler"
  output_mappings do {
     $storage_keys => $s_keys,
-    $df_storage_keys => $s_dfstkeys
+    $df_storage_keys => $s_dfstkeys,
+    $storage_account_key_1 => $stak1,
+    $storage_account_endpoints => $sae
   } end
 end
 
-define launch_handler(@my_storage_account) return @my_storage_account,$s_keys,$s_dfstkeys do
-  sub on_error: stop_debugging_and_raise() do
+define launch_handler(@my_storage_account,@my_placement_group) return @my_storage_account,$s_keys,$stak1,$sae,$s_dfstkeys do
+  sub on_error: stop_debugging() do
     call start_debugging()
     provision(@my_storage_account)
+    provision(@my_placement_group)
     $keys = @my_storage_account.list_keys()
     $s_keys = to_s($keys)
     call sys_log.detail("keys:" + $s_keys)
+    $stak1 = $keys[0]["keys"][0]["value"]
+    $sae = to_s(@my_storage_account.primaryEndpoints)
     call stop_debugging()
     call start_debugging()
-    @df_st_acct = rs_azure_storage.storage_account.show(name: "dftestingdiag134", resource_group: "DF-Testing" )
+    @df_st_acct = rs_azure_storage.storage_account.show(name: @my_placement_group.name, resource_group: @@deployment.name )
     $dfstkeys = @df_st_acct.list_keys()
     $s_dfstkeys = to_s($dfstkeys)
     call sys_log.detail("dfst:" + $s_dfstkeys)
@@ -68,11 +90,6 @@ define start_debugging() do
     initiate_debug_report()
     $$debugging = true
   end
-end
-
-define stop_debugging_and_raise() do
-  call stop_debugging()
-  raise $_errors
 end
 
 define stop_debugging() do

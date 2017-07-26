@@ -79,7 +79,6 @@ plugin "rs_azure_storage" do
     action "list_keys" do
       path "$id/listKeys"
       verb "POST"
-      output_path "keys"
     end
 
     action "show" do
@@ -107,9 +106,14 @@ plugin "rs_azure_storage" do
       verb "DELETE"
     end
 
-    output "id","name","location","tags","properties","keys"
+    output "id","name","location","tags","properties"
+
     output "state" do
       body_path "properties.provisioningState"
+    end
+
+    output "primaryEndpoints" do
+      body_path "properties.primaryEndpoints"
     end
   end
 end
@@ -171,7 +175,7 @@ define provision_resource(@declaration) return @resource do
     $status = @new_resource.state
     sub on_error: skip, timeout: 60m do
       while $status != "Succeeded" do
-        $status = @operation.show(name: $name, server_name: $server_name, resource_group: $resource_group).state
+        $status = @operation.show(name: $name, resource_group: $resource_group).state
         call stop_debugging()
         call sys_log.detail(join(["Status: ", $status]))
         call start_debugging()
