@@ -93,10 +93,11 @@ end
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
-| create&update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts#StorageAccounts_Create) | Supported |
+| create| [Create Or Update](https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts#StorageAccounts_Create) | Supported |
 | destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts#StorageAccounts_Delete) | Supported |
 | get | [Get](https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts#StorageAccounts_GetProperties)| Supported |
-
+| show| [Get](https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts#StorageAccounts_GetProperties)| Supported |
+| list_keys| [Post] (https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts#StorageAccounts_ListKeys)| Supported |
 #### Supported Outputs
 - id
 - name
