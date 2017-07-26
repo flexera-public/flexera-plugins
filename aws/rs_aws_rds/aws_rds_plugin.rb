@@ -2,6 +2,7 @@ name 'aws_rds_plugin'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Amazon Web Services - Relational Database Service"
+long_description "Version: 1.2"
 package "plugins/rs_aws_rds"
 import "sys_log"
 
@@ -15,11 +16,11 @@ plugin "rs_aws_rds" do
   end
 
   type "db_instance" do
-    href_templates "/?Action=DescribeDBInstances&DBInstanceIdentifier={{//DBInstance/DBInstanceIdentifier}}"
+    href_templates "/?Action=DescribeDBInstances&DBInstanceIdentifier={{//CreateDBInstanceResult/DBInstance/DBInstanceIdentifier}}","/?Action=DescribeDBInstances&DBInstanceIdentifier={{//RestoreDBInstanceFromDBSnapshotResult/DBInstance/DBInstanceIdentifier}}","/?Action=DescribeDBInstances&DBInstanceIdentifier={{//DescribeDBInstancesResult/DBInstances/DBInstance/DBInstanceIdentifier}}"
 
     field "allocated_storage" do
       alias_for "AllocatedStorage"
-      type "number"
+      type "string"
       location "query"
       # DESCRIPTION: The amount of storage (in gigabytes) to be initially allocated for the database instance.
       # NOTE: Valid values differ based on the specific DB engine specified.
@@ -51,7 +52,7 @@ plugin "rs_aws_rds" do
 
     field "backup_retention_period" do
       alias_for "BackupRetentionPeriod"
-      type "number"
+      type "string"
       location "query"
       # DESCRIPTION: The number of days for which automated backups are retained. Setting this parameter to a positive number enables backups. Setting this parameter to 0 disables automated backups.
       # DEFAULT VALUE: 1
@@ -237,7 +238,7 @@ plugin "rs_aws_rds" do
 
     field "iops" do
       alias_for "Iops"
-      type "number"
+      type "string"
       location "query"
       # DESCRIPTION: The amount of Provisioned IOPS (input/output operations per second) to be initially allocated for the DB instance.
       # NOTE: Must be a multiple between 3 and 10 of the storage amount for the DB instance. Must also be an integer multiple of 1000. For example, if the size of your DB instance is 500 GB, then your Iops value can be 2000, 3000, 4000, or 5000.
@@ -289,7 +290,7 @@ plugin "rs_aws_rds" do
 
     field "monitoring_interval" do
       alias_for "MonitoringInterval"
-      type "number"
+      type "string"
       location "query"
       # DESCRIPTION: The interval, in seconds, between points when Enhanced Monitoring metrics are collected for the DB instance. To disable collecting Enhanced Monitoring metrics, specify 0.
       # DEFAULT VALUE: 0
@@ -323,7 +324,7 @@ plugin "rs_aws_rds" do
 
     field "port" do
       alias_for "Port"
-      type "number"
+      type "string"
       location "query"
       # DESCRIPTION: The port number on which the database accepts connections.
       # NOTE: 
@@ -370,7 +371,7 @@ plugin "rs_aws_rds" do
 
     field "promotion_tier" do
       alias_for "PromotionTier"
-      type "number"
+      type "string"
       location "query"
       # DESCRIPTION: A value that specifies the order in which an Aurora Replica is promoted to the primary instance after a failure of the existing primary instance.
       # DEFAULT VALUE: 1
@@ -780,7 +781,7 @@ plugin "rs_aws_rds" do
 
  
   type "security_groups" do
-    href_templates "/?Action=DescribeDBSecurityGroups&DBSecurityGroupName={{//DBSecurityGroup/DBSecurityGroupName}}"
+    href_templates "/?Action=DescribeDBSecurityGroups&DBSecurityGroupName={{//DescribeDBSecurityGroupsResult/DBSecurityGroups/DBSecurityGroup/DBSecurityGroupName}}","/?Action=DescribeDBSecurityGroups&DBSecurityGroupName={{//CreateDBSecurityGroupResult/DBSecurityGroup/DBSecurityGroupName}}"
 
     field "name" do
       alias_for "DBSecurityGroupName"
@@ -838,7 +839,7 @@ plugin "rs_aws_rds" do
   end
 
   type "db_subnet_groups" do
-    href_templates "/?Action=DescribeDBSubnetGroups&DBSubnetGroupName={{//DBSubnetGroup/DBSubnetGroupName}}"
+    href_templates "/?Action=DescribeDBSubnetGroups&DBSubnetGroupName={{//CreateDBSubnetGroupResult/DBSubnetGroup/DBSubnetGroupName}}","/?Action=DescribeDBSubnetGroups&DBSubnetGroupName={{//DescribeDBSubnetGroupsResult/DBSubnetGroups/DBSubnetGroup/DBSubnetGroupName}}"
 
     field "name" do
       alias_for "DBSubnetGroupName"
@@ -940,7 +941,7 @@ end
 
 define delete_db_instance(@db_instance) do
   $delete_count = 0
-  sub on_error: handle_retries($delete_count)
+  sub on_error: handle_retries($delete_count) do 
     $delete_count = $delete_count + 1
     if @db_instance.DBInstanceStatus != "deleting"
       @db_instance.destroy({ "skip_final_snapshot": "true" })
@@ -978,38 +979,6 @@ define delete_db_subnet_group(@db_subnet_group) do
   $delete_count = 0
   sub on_error: handle_retries($delete_count) do
     $delete_count = $delete_count + 1
-    @db_subnet_group.destroy()
-  end
-end
-
-define start_debugging() do
-  if $$debugging == false || logic_and($$debugging != false, $$debugging != true)
-    initiate_debug_report()
-    $$debugging = true
-  end
-end
-
-define stop_debugging() do
-  if $$debugging == true
-    $debug_report = complete_debug_report()
-    call sys_log.detail($debug_report)
-    $$debugging = false
-  end
-end
-
-define handle_retries($attempts) do
-  if $attempts < 3
-    $_error_behavior = "retry"
-    sleep(60)
-  else
-    $_error_behavior = "skip"
-  end
-endobject = to_object(@db_subnet_groups)
-  $object = to_s($object)
-end
-
-define delete_db_subnet_group(@db_subnet_group) do
-  sub on_error: stop_debugging() do
     @db_subnet_group.destroy()
   end
 end
