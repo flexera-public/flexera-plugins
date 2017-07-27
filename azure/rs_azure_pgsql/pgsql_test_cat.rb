@@ -1,11 +1,12 @@
-name 'SQL Test CAT'
+name 'PGSQL Test CAT'
 rs_ca_ver 20161221
-short_description "Azure SQL Database Service - Test CAT"
+short_description "Azure PostgresSQL Database Service - Test CAT"
 import "sys_log"
-import "plugins/rs_azure_sql"
+import "plugins/rs_azure_pgsql"
 
 parameter "subscription_id" do
-  like $rs_azure_sql.subscription_id
+  like $rs_azure_pgsql.subscription_id
+  default "8beb7791-9302-4ae4-97b4-afd482aadc59"
 end
 
 output "databases" do
@@ -22,94 +23,51 @@ output "firewall_rules" do
   description "firewall_rules"
 end
 
-output "failover_groups" do
-  label "failover_groups"
-  category "Databases"
-  default_value $failover_groups_link_output
-  description "failover_groups"
-end
-
-output "elastic_pools" do
-  label "elastic_pools"
-  category "Databases"
-  default_value $elastic_pools_link_output
-  description "elastic_pools"
-end
-
 permission "read_creds" do
   actions   "rs_cm.show_sensitive","rs_cm.index_sensitive"
   resources "rs_cm.credentials"
 end
 
-resource "sql_server", type: "rs_azure_sql.sql_server" do
+resource "sql_server", type: "rs_azure_pgsql.pgsql_server" do
   name join(["my-sql-server-", last(split(@@deployment.href, "/"))])
-  resource_group "DF-Testing"
-  location "Central US"
+  resource_group "CCtestresourcegroup"
+  location "northcentralus"
   properties do {
-      "version" => "12.0",
-      "administratorLogin" =>"superdbadmin",
-      "administratorLoginPassword" => "RightScale2017!"
+    "administratorLogin" => "cloudsa",
+    "administratorLoginPassword" => "RightScale2017",
+    "storageMB" => 51200,
+    "sslEnforcement" => "Enabled",
+    "createMode" => "Default"
+  } end
+  sku do {
+    "name" => "PGSQLB100",
+    "tier" => "Basic",
+    "capacity" => 100
+  } end
+  tags do {
+    "ElasticServer" => "1"
   } end
 end
 
-resource "database", type: "rs_azure_sql.databases" do
+resource "database", type: "rs_azure_pgsql.databases" do
   name "sample-database"
-  resource_group "DF-Testing"
-  location "Central US"
+  resource_group "CCtestresourcegroup"
+  location "northcentralus"
   server_name @sql_server.name
-end
-
-resource "transparent_data_encryption", type: "rs_azure_sql.transparent_data_encryption" do
-  resource_group "DF-Testing"
-  location "Central US"
-  server_name @sql_server.name
-  database_name @database.name
   properties do {
-    "status" => "Disabled"
+    "charset" => "UTF8",
+    "collation" => "English_United States.1252"
   } end
 end
 
-resource "firewall_rule", type: "rs_azure_sql.firewall_rule" do
+resource "firewall_rule", type: "rs_azure_pgsql.firewall_rule" do
   name "sample-firewall-rule"
-  resource_group "DF-Testing"
-  location "Central US"
+  resource_group "CCtestresourcegroup"
+  location "northcentralus"
   server_name @sql_server.name
   properties do {
     "startIpAddress" => "0.0.0.1",
     "endIpAddress" => "0.0.0.1"
-  } end
-end
-
-resource "elastic_pool", type: "rs_azure_sql.elastic_pool" do
-  name "sample-elastic-pool"
-  resource_group "DF-Testing"
-  location "Central US"
-  server_name @sql_server.name
-end
-
-resource "auditing_policy", type: "rs_azure_sql.auditing_policy" do
-  name "sample-auditing-policy"
-  resource_group "DF-Testing"
-  location "Central US"
-  server_name @sql_server.name
-  database_name @database.name
-  properties do {
-    "state" => "Enabled",
-    "storageAccountAccessKey" => cred("storageAccountAccessKey"),
-    "storageEndpoint" => cred("storageEndpoint")
-  } end
-end
-
-resource "security_policy", type: "rs_azure_sql.security_policy" do
-  name "sample-security-policy"
-  resource_group "DF-Testing"
-  location "Central US"
-  server_name @sql_server.name
-  database_name @database.name
-  properties do {
-    "state" => "Enabled",
-    "storageAccountAccessKey" => cred("storageAccountAccessKey"),
-    "storageEndpoint" => cred("storageEndpoint")
   } end
 end
 
@@ -118,20 +76,14 @@ operation "launch" do
  definition "launch_handler"
  output_mappings do {
   $databases => $db_link_output,
-  $firewall_rules => $firewall_rules_link_output,
-  $failover_groups => $failover_groups_link_output,
-  $elastic_pools => $elastic_pools_link_output
+  $firewall_rules => $firewall_rules_link_output
  } end
 end
 
-define launch_handler(@sql_server,@database,@transparent_data_encryption,@firewall_rule,@elastic_pool,@auditing_policy,@security_policy) return @databases,$db_link_output,$firewall_rules_link_output,$failover_groups_link_output, $elastic_pools_link_output do
+define launch_handler(@sql_server,@database,@firewall_rule) return @databases,$db_link_output,$firewall_rules_link_output do
   provision(@sql_server)
   provision(@database)
-  provision(@transparent_data_encryption)
   provision(@firewall_rule)
-  provision(@elastic_pool)
-  provision(@auditing_policy)
-  provision(@security_policy)
   call start_debugging()
   sub on_error: skip, timeout: 2m do
     call sys_log.detail("getting database link")
@@ -140,12 +92,6 @@ define launch_handler(@sql_server,@database,@transparent_data_encryption,@firewa
     call sys_log.detail("getting firewall link")
     @firewall_rules = @sql_server.firewall_rules() 
     $firewall_rules_link_output  = to_s(to_object(@firewall_rules))
-    call sys_log.detail("getting failover link")
-    @failover_groups = @sql_server.failover_groups()
-    $failover_groups_link_output = to_s(to_object(@failover_groups))
-    call sys_log.detail("getting elastic pool link")
-    @elastic_pools = @sql_server.elastic_pools()
-    $elastic_pools_link_output = to_s(to_object(@elastic_pools))
   end
   call stop_debugging()
 end
