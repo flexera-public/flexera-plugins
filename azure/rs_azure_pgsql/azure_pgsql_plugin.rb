@@ -83,10 +83,6 @@ plugin "rs_azure_pgsql" do
       field "name" do
         location "path"
       end
-
-      field "server_name" do
-        location "path"
-      end
     end
 
     action "get" do
