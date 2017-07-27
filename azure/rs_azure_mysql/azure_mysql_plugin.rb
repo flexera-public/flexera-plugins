@@ -40,6 +40,16 @@ plugin "rs_azure_mysql" do
       location "body"
     end
 
+    field "sku" do
+      type "composite"
+     location "body"
+    end
+
+    field "tags" do
+      type "composite"
+      location "body"
+    end
+
     field "location" do
       type "string"
       location "body"
