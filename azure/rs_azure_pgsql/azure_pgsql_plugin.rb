@@ -350,12 +350,12 @@ define provision_resource(@declaration) return @resource do
 end
 
 define provision_server(@declaration) return @resource do
+  $object = to_object(@declaration)
+  $fields = $object["fields"]
+  $type = $object["type"]
+  $name = $fields["name"]
+  $resource_group = $fields["resource_group"]
   sub on_error: stop_debugging() do
-    $object = to_object(@declaration)
-    $fields = $object["fields"]
-    $type = $object["type"]
-    $name = $fields["name"]
-    $resource_group = $fields["resource_group"]
     call sys_log.set_task_target(@@deployment)
     call sys_log.summary(join(["Provision ", $type]))
     call sys_log.detail($object)
