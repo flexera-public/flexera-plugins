@@ -354,6 +354,8 @@ define provision_server(@declaration) return @resource do
     $object = to_object(@declaration)
     $fields = $object["fields"]
     $type = $object["type"]
+    $name = $fields["name"]
+    $resource_group = $fields["resource_group"]
     call sys_log.set_task_target(@@deployment)
     call sys_log.summary(join(["Provision ", $type]))
     call sys_log.detail($object)
@@ -366,23 +368,23 @@ define provision_server(@declaration) return @resource do
       call sys_log.detail("sleeping 10, db not created")
       sleep(10)
       call start_debugging()
-      @new_resource = @operation.show(name: $name, server_name: $server_name, resource_group: $resource_group )
+      @new_resource = @operation.show(name: $name, resource_group: $resource_group )
       call stop_debugging()
     end
     call start_debugging()
-    @new_resource = @operation.show(name: $name, server_name: $server_name, resource_group: $resource_group )
+    @new_resource = @operation.show(name: $name, resource_group: $resource_group)
     $status = @new_resource.state
     call sys_log.detail("Checking that database state is online")
     sub on_error: skip, timeout: 60m do
       while $status != "Ready" do
-        $status = @operation.show(name: $name, server_name: $server_name, resource_group: $resource_group).state
+        $status = @operation.show(name: $name, resource_group: $resource_group).state
         call stop_debugging()
         call sys_log.detail(join(["Status: ", $status]))
         call start_debugging()
         sleep(10)
       end
     end
-    @new_resource = @operation.show(name: $name, server_name: $server_name, resource_group: $resource_group )
+    @new_resource = @operation.show(name: $name, resource_group: $resource_group )
     @resource = @new_resource
     call sys_log.detail(to_object(@resource))
     call stop_debugging()
