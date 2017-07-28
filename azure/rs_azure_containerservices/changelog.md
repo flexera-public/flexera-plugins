@@ -1,4 +1,4 @@
-Storage Account Plugin changelog
+Container Services Plugin changelog
 
 v1.0
 -----

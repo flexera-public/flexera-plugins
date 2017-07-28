@@ -1,7 +1,8 @@
-# Azure Storage Account Plugin
+# Azure Container Services Plugin
 
 ## Overview
-The Azure Storage Account Plugin integrates RightScale Self-Service with the basic functionality of the Azure Storage Account
+The Azure Container Services Plugin integrates RightScale Self-Service with the basic functionality of the Azure Storage Account
+**WARNING: Do not use the enclosed ssh key for production **
 
 ## Requirements
 - A general understanding CAT development and definitions
@@ -22,82 +23,115 @@ The Azure Storage Account Plugin integrates RightScale Self-Service with the bas
 1. [Retrieve the Application ID & Authentication Key](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal#get-application-id-and-authentication-key)
 1. Create RightScale Credentials with values that match the Application ID (Credential name: `AZURE_APPLICATION_ID`) & Authentication Key (Credential name: `AZURE_APPLICATION_KEY`)
 1. [Retrieve your Tenant ID](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal#get-tenant-id)
-1. Update `azure_lb_plugin.rb` Plugin with your Tenant ID. 
+1. Update `azure_containerservices_plugin.rb` Plugin with your Tenant ID. 
    - Replace "TENANT_ID" in `token_url "https://login.microsoftonline.com/TENANT_ID/oauth2/token"` with your Tenant ID
 1. Navigate to the appropriate Self-Service portal
    - For more details on using the portal review the [SS User Interface Guide](http://docs.rightscale.com/ss/guides/ss_user_interface_guide.html)
 1. In the Design section, use the `Upload CAT` interface to complete the following:
    1. Upload each of packages listed in the Requirements Section
-   1. Upload the `azure_lb_plugin.rb` file located in this repository
+   1. Upload the `azure_containerservices_plugin.rb` file located in this repository
  
 ## How to Use
-The Azure Storage Account Plugin has been packaged as `plugins/rs_azure_storage`. In order to use this plugin you must import this plugin into a CAT.
+The Azure Container Services Plugin has been packaged as `plugins/rs_azure_containerservices`. In order to use this plugin you must import this plugin into a CAT.
 ```
-import "plugins/rs_azure_storage"
+import "plugins/rs_azure_containerservices"
 ```
 For more information on using packages, please refer to the RightScale online documentation. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
-Azure Storage Account resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
+Azure Container Servicesresources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
 The resulting resource can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
 
 ## Supported Resources
- - storage_account
+ - containerservice
 
 ## Usage
 ```
 
-parameter "subscription_id
-  like $rs_azure_storage.subscription_id
-  default "8beb7791-9302-4ae4-97b4-afd482aadc59"
+parameter "subscription_id" do
+  like $rs_azure_containerservices.subscription_id
 end
 
-permission "read_creds
+permission "read_creds" do
   actions   "rs_cm.show_sensitive","rs_cm.index_sensitive"
   resources "rs_cm.credentials"
 end
 
-resource "my_placement_group", type: "placement_group
-  name join(["mypg", last(split(@@deployment.href, "/"))])
-  description "test placement group"
-  cloud "AzureRM Central US"
-  cloud_specific_attributes do {
-    "account_type" => "Standard_LRS"
+resource "my_resource_group", type: "rs_cm.resource_group" do
+  cloud_href "/api/clouds/3526"
+  name @@deployment.name
+  description join(["container resource group for ", @@deployment.name])
+end
+
+# https://github.com/Azure/azure-quickstart-templates/tree/master/101-acs-dcos
+# https://github.com/Azure/azure-quickstart-templates/blob/master/101-acs-dcos/azuredeploy.parameters.json
+resource "my_container", type: "rs_azure_containerservices.containerservice" do
+  name join(["myc", last(split(@@deployment.href, "/"))])
+  resource_group @my_resource_group.name
+  location "Central US"
+  properties do {
+   "orchestratorProfile" => {
+      "orchestratorType" =>  "DCOS"
+    },
+    "masterProfile" => {
+      "count" =>  "1",
+      "dnsPrefix" =>  join([@@deployment.name, "-master"])
+    },
+    "agentPoolProfiles" =>  [
+      {
+        "name" =>  "agentpools",
+        "count" =>  "2",
+        "vmSize" =>  "Standard_DS2",
+        "dnsPrefix" =>  join([@@deployment.name, "-agent"])
+      }
+    ],
+    "diagnosticsProfile" => {
+      "vmDiagnostics" => {
+          "enabled" =>  "false"
+      }
+    },
+    "linuxProfile" => {
+      "adminUsername" =>  "azureuser",
+      "ssh" => {
+        "publicKeys" =>  [
+          {
+            "keyData" =>  "CHANGEME"
+          }
+        ]
+      }
+    }
   } end
 end
 
-operation "launch
+operation "launch" do
  description "Launch the application"
  definition "launch_handler"
 end
 
-define launch_handler(@my_placement_group) return @my_placement_group do
-  provision(@my_placement_group)
-  @pg_st_acct = rs_azure_storage.storage_account.show(name: @my_placement_group.name, resource_group: @@deployment.name )
-  $pgstkeys = @pg_st_acct.list_keys()
-  $s_pgstkeys = to_s($pgstkeys)
-  call sys_log.detail("pgst:" + $s_pgstkeys)
+define launch_handler(@my_resource_group,@my_container) return @my_resource_group,@my_container do
+  call start_debugging()
+  provision(@my_resource_group)
+  provision(@my_container)
+  call stop_debugging()
 end
 ```
 ## Resources
-## storage_account
+## containerservice
 #### Supported Fields
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
-|name|Yes|The name of the storage_account The name of the storage account within the specified resource group. Storage account names must be between 3 and 24 characters in length and use numbers and lower-case letters only.|
-|resource_group|Yes|Name of resource group in which to create the storage_account|
+|name|Yes|The name of the container service in the specified subscription and resource group.|
+|resource_group|Yes|The name of the resource group.|
 |location|Yes|Datacenter to launch in|
-|sku|Yes|Required. Gets or sets the sku name
-|properties|Yes| Hash of storage_account properties(https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts#StorageAccounts_Create)|
+|properties|Yes| Properties of the container service.(https://docs.microsoft.com/en-us/rest/api/compute/containerservices#ContainerServices_CreateOrUpdate)|
 
 #### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
-| create| [Create Or Update](https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts#StorageAccounts_Create) | Supported |
-| destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts#StorageAccounts_Delete) | Supported |
-| get | [Get](https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts#StorageAccounts_GetProperties)| Supported |
-| show| [Get](https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts#StorageAccounts_GetProperties)| Supported |
-| list_keys| [Post] (https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts#StorageAccounts_ListKeys)| Supported |
+| create| [Create Or Update](https://docs.microsoft.com/en-us/rest/api/compute/containerservices#ContainerServices_CreateOrUpdate) | Supported |
+| destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/compute/containerservices#ContainerServices_Delete) | Supported |
+| get | [Get](https://docs.microsoft.com/en-us/rest/api/compute/containerservices#ContainerServices_Get)| Supported |
+
 #### Supported Outputs
 - id
 - name
@@ -107,27 +141,14 @@ end
 - properties
 - state
 - provisioningState
-- primaryEndpoints
-- primaryLocation
-- statusOfPrimary
-- lastGeoFailoverTime
-- secondaryLocation
-- statusOfSecondary
-- creationTime
-- customDomain
-- secondaryEndpoints
-- encryption
-- accessTier
-- supportsHttpsTrafficOnly
-
 
 ## Implementation Notes
-- The Azure Storage Account Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to an SA resource.) 
+- The Azure Container Services Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to an Container Services resource.) 
 
  
-Full list of possible actions can be found on the [Azure Storage Account API Documentation](https://docs.microsoft.com/en-us/rest/api/network/loadbalancer/)
+Full list of possible actions can be found on the [Azure Container Services API Documentation](https://docs.microsoft.com/en-us/rest/api/compute/containerservices)
 ## Examples
-Please review [storage_test_cat.rb](./storage_test_cat.rb) for a basic example implementation.
+Please review [containerservices_test_cat.rb](./containerservices_test_cat.rb) for a basic example implementation.
 	
 ## Known Issues / Limitations
 
@@ -136,4 +157,4 @@ Support for this plugin will be provided though GitHub Issues and the RightScale
 Visit http://chat.rightscale.com/ to join!
 
 ## License
-The Azure Storage Account Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.
+The Azure Container Services Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.
