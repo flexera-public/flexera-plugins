@@ -142,7 +142,7 @@ plugin "rs_azure_pgsql" do
 
   type "databases" do
     href_templates "{{type=='Microsoft.DBforPostgreSQL/servers/databases' && id || null}}","{{value[0].type=='Microsoft.DBforPostgreSQL/servers/databases' && id|| null}}"
-    provision "provision_resource"
+    provision "provision_database"
     delete    "delete_resource"
 
     field "properties" do
@@ -208,8 +208,8 @@ plugin "rs_azure_pgsql" do
 
     action "show" do
       type "databases"
-      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.DBforPostgreSQL/servers/$server_name/databases/$name"
       verb "GET"
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.DBforPostgreSQL/servers/$server_name/databases/$name"
 
       field "resource_group" do
         location "path"
@@ -350,12 +350,12 @@ define provision_resource(@declaration) return @resource do
 end
 
 define provision_server(@declaration) return @resource do
-  $object = to_object(@declaration)
-  $fields = $object["fields"]
-  $type = $object["type"]
-  $name = $fields["name"]
-  $resource_group = $fields["resource_group"]
   sub on_error: stop_debugging() do
+    $object = to_object(@declaration)
+    $fields = $object["fields"]
+    $type = $object["type"]
+    $name = $fields["name"]
+    $resource_group = $fields["resource_group"]
     call sys_log.set_task_target(@@deployment)
     call sys_log.summary(join(["Provision ", $type]))
     call sys_log.detail($object)
@@ -365,7 +365,7 @@ define provision_server(@declaration) return @resource do
     call stop_debugging()
     call sys_log.detail("entering check for database created")
     sub on_error: retry, timeout: 60m do
-      call sys_log.detail("sleeping 10, db not created")
+      call sys_log.detail("sleeping 10, db server not created")
       sleep(10)
       call start_debugging()
       @new_resource = @operation.show(name: $name, resource_group: $resource_group )
@@ -377,14 +377,56 @@ define provision_server(@declaration) return @resource do
     call sys_log.detail("Checking that database state is online")
     sub on_error: skip, timeout: 60m do
       while $status != "Ready" do
-        $status = @operation.show(name: $name, resource_group: $resource_group).state
+        $status = @new_resource.state
         call stop_debugging()
         call sys_log.detail(join(["Status: ", $status]))
         call start_debugging()
         sleep(10)
       end
     end
-    @new_resource = @operation.show(name: $name, resource_group: $resource_group )
+    @resource = @new_resource
+    call sys_log.detail(to_object(@resource))
+    call stop_debugging()
+  end
+end
+
+define handle_retries($attempts) do
+  if $attempts <= 36
+    call sys_log.detail("error:"+$_error["type"] + ": " + $_error["message"])
+    log_error($_error["type"] + ": " + $_error["message"])
+    $_error_behavior = "retry"
+  else
+    raise $_errors
+  end
+end
+
+define provision_database(@declaration) return @resource do
+  sub on_error: stop_debugging() do
+    $object = to_object(@declaration)
+    $fields = $object["fields"]
+    $type = $object["type"]
+    $name = $fields["name"]
+    $server_name = $fields["server_name"]
+    $resource_group = $fields["resource_group"]
+    call sys_log.set_task_target(@@deployment)
+    call sys_log.summary(join(["Provision ", $type]))
+    call sys_log.detail($object)
+    call start_debugging()
+    @operation = rs_azure_pgsql.$type.create($fields)
+    call sys_log.detail(to_object(@operation))
+    call stop_debugging()
+    call sys_log.detail("entering check for database created")
+    $attempts = 0
+    sub on_error: handle_retries($attempts), timeout: 5m do
+      $attempts = $attempts + 1
+      call sys_log.detail("sleeping 10, db not created")
+      sleep(10)
+      call start_debugging()
+      @new_resource = @operation.show(name: $name, server_name: $server_name, resource_group: $resource_group )
+      call stop_debugging()
+    end
+    call start_debugging()
+    @new_resource = @operation.show(name: $name, server_name: $server_name, resource_group: $resource_group )
     @resource = @new_resource
     call sys_log.detail(to_object(@resource))
     call stop_debugging()

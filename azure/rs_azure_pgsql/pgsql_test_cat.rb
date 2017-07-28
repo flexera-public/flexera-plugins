@@ -81,10 +81,10 @@ operation "launch" do
 end
 
 define launch_handler(@sql_server,@database,@firewall_rule) return @databases,$db_link_output,$firewall_rules_link_output do
+  call start_debugging()
   provision(@sql_server)
   provision(@database)
   provision(@firewall_rule)
-  call start_debugging()
   sub on_error: skip, timeout: 2m do
     call sys_log.detail("getting database link")
     @databases = @sql_server.databases()
