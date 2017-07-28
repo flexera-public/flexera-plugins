@@ -61,7 +61,7 @@ plugin "rs_azure_containerservices" do
     end
 
     action "create" do
-      type "containerservices_account"
+      type "containerservice"
       path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.ContainerService/containerServices/$name"
       verb "PUT"
     end
@@ -85,13 +85,13 @@ plugin "rs_azure_containerservices" do
     end
 
     action "get" do
-      type "containerservices_account"
+      type "containerservice"
       path "$href"
       verb "GET"
     end
 
     action "destroy" do
-      type "containerservices_account"
+      type "containerservice"
       path "$href"
       verb "DELETE"
     end
@@ -151,7 +151,7 @@ define provision_resource(@declaration) return @resource do
     call stop_debugging()
     $name = $fields["name"]
     $resource_group = $fields["resource_group"]
-    call sys_log.detail("entering check for containerservices_account created")
+    call sys_log.detail("entering check for containerservices created")
     sub on_error: retry, timeout: 60m do
       call sys_log.detail("sleeping 10")
       sleep(10)
@@ -159,7 +159,7 @@ define provision_resource(@declaration) return @resource do
       @new_resource = @operation.show(name: $name, resource_group: $resource_group )
       call stop_debugging()
     end
-    call sys_log.detail("Checking that containerservices_account state is online")
+    call sys_log.detail("Checking that containerservices state is online")
     call start_debugging()
     @new_resource = @operation.show(name: $name, resource_group: $resource_group )
     $status = @new_resource.state
