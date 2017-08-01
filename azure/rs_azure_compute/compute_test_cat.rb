@@ -60,7 +60,7 @@ resource "server1", type: "server" do
 end
 
 resource "my_vm_extension", type: "rs_azure_compute.extensions" do
-  name join(["dokku-", last(split(@@deployment.href, "/"))])
+  name join(["easy-", last(split(@@deployment.href, "/"))])
   resource_group @@deployment.name
   location "Central US"
   virtualMachineName @server1.name
@@ -70,8 +70,8 @@ resource "my_vm_extension", type: "rs_azure_compute.extensions" do
     "typeHandlerVersion" => "1.5",
     "autoUpgradeMinorVersion" => true,
     "settings" => {
-       "fileUris" => [ "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/dokku-vm/deploy_dokku.sh"],
-       "commandToExecute" => "sh deploy_dokku.sh 0.5.8"
+       "fileUris" => [ "https://s3.amazonaws.com/rightscale-services/scripts/easy.sh" ],
+       "commandToExecute" => "sh easy.sh"
     }
   } end
 end
