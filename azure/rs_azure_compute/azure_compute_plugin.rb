@@ -268,7 +268,7 @@ define provision_resource(@declaration) return @resource do
 end
 
 define provision_extension(@declaration) return @resource do
-  sub on_error: stop_debugging_and_raise() do
+  sub on_error: stop_debugging() do
     $object = to_object(@declaration)
     $fields = $object["fields"]
     $type = $object["type"]
@@ -286,18 +286,16 @@ define provision_extension(@declaration) return @resource do
     call start_debugging()
     @new_resource = @operation.show(resource_group: $resource_group, virtualMachineName: $vm_name, name: $name)
     $status = @new_resource.state
-    sub on_error: skip, timeout: 60m do
-      while $status != "Succeeded" do
-        $status = @new_resource.state
-        if $status == "Failed"
-          call stop_debugging()
-          raise $status
-        end
+    while $status != "Succeeded" do
+      $status = @new_resource.state
+      if $status == "Failed"
         call stop_debugging()
-        call sys_log.detail(join(["Status: ", $status]))
-        call start_debugging()
-        sleep(10)
+        raise "Execution Name: "+ $name + ",Status" + $status + "On virtual machine: " + $vm_name
       end
+      call stop_debugging()
+      call sys_log.detail(join(["Status: ", $status]))
+      call start_debugging()
+      sleep(10)
     end
     @resource = @new_resource
     call sys_log.detail(to_object(@resource))
