@@ -2,7 +2,7 @@ name 'rs_azure_compute'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Azure Compute Plugin"
-long_description "Version: 1.0"
+long_description "Version: 1.1"
 package "plugins/rs_azure_compute"
 import "sys_log"
 
@@ -54,7 +54,7 @@ plugin "rs_azure_compute" do
       type "string"
       location "path"
     end
-    
+
     field "tags" do
       type "composite"
       location "body"
@@ -73,8 +73,16 @@ plugin "rs_azure_compute" do
 
     action "show" do
       type "availability_set"
-      path "$href"
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Compute/availabilitySets/$name"
       verb "GET"
+
+      field "resource_group" do
+        location "path"
+      end
+
+      field "name" do
+        location "path"
+      end
     end
 
     action "get" do
@@ -106,21 +114,21 @@ plugin "rs_azure_compute" do
       location "path"
     end
 
-    field "vm_name" do
+    field "virtualMachineName" do
       type "string"
       location "path"
     end 
 
     action "show" do
       type "virtualmachine"
-      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Compute/virtualMachines/$vm_name"
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Compute/virtualMachines/$virtualMachineName"
       verb "GET"
 
       field "resource_group" do
         location "path"
       end
 
-      field "vm_name" do
+      field "virtualMachineName" do
         location "path"
       end 
     end
@@ -132,6 +140,81 @@ plugin "rs_azure_compute" do
     end
 
     output "id","name","location","tags","properties"
+  end
+
+  type "extensions" do
+    href_templates "{{type=='Microsoft.Compute/virtualMachines/extensions' && id || null}}"
+    provision "provision_extension"
+    delete    "delete_resource"
+
+    field "resource_group" do
+      type "string"
+      location "path"
+    end
+
+    field "virtualMachineName" do
+      type "string"
+      location "path"
+    end
+
+    field "name" do
+      type "string"
+      location "path"
+    end
+
+    field "properties" do
+      type "composite"
+      location "body"
+    end
+
+    field "location" do
+      type "string"
+      location "body"
+    end
+
+    field "protectedSettings" do
+      type "composite"
+      location "body"
+    end
+
+    action "create" do
+      type "extensions"
+      verb "PUT"
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Compute/virtualMachines/$virtualMachineName/extensions/$name"
+    end
+
+    action "show" do
+      type "extensions"
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Compute/virtualMachines/$virtualMachineName/extensions/$name"
+      verb "GET"
+
+      field "resource_group" do
+        location "path"
+      end
+
+      field "virtualMachineName" do
+        location "path"
+      end
+
+      field "name" do
+        location "path"
+      end
+    end
+
+    action "get" do
+      type "extensions"
+      path "$href"
+      verb "GET"
+    end
+
+    output "id","name","location","tags","properties"
+    output "provisioningState" do
+      body_path "properties.provisioningState"
+    end
+
+    output "state" do
+      body_path "properties.provisioningState"
+    end
   end
 end
 
@@ -170,13 +253,53 @@ define provision_resource(@declaration) return @resource do
     $fields = $object["fields"]
     call sys_log.detail(join(["fields", $fields]))
     $type = $object["type"]
+    $name = $fields["name"]
+    $resource_group = $fields["resource_group"]
     call sys_log.set_task_target(@@deployment)
     call sys_log.summary(join(["Provision ", $type]))
     call sys_log.detail($object)
     call start_debugging()
     @operation = rs_azure_compute.$type.create($fields)
     call sys_log.detail(to_object(@operation))
-    @resource = @operation.show()
+    @resource = @operation.show(resource_group: $resource_group, name: $name)
+    call sys_log.detail(to_object(@resource))
+    call stop_debugging()
+  end
+end
+
+define provision_extension(@declaration) return @resource do
+  sub on_error: stop_debugging_and_raise() do
+    $object = to_object(@declaration)
+    $fields = $object["fields"]
+    $type = $object["type"]
+    $name = $fields["name"]
+    $resource_group = $fields["resource_group"]
+    $vm_name = $fields["virtualMachineName"]
+    call sys_log.detail(join(["fields", $fields]))
+    call sys_log.set_task_target(@@deployment)
+    call sys_log.summary(join(["Provision ", $type]))
+    call sys_log.detail($object)
+    call start_debugging()
+    @operation = rs_azure_compute.$type.create($fields)
+    call stop_debugging()
+    call sys_log.detail(to_object(@operation))
+    call start_debugging()
+    @new_resource = @operation.show(resource_group: $resource_group, virtualMachineName: $vm_name, name: $name)
+    $status = @new_resource.state
+    sub on_error: skip, timeout: 60m do
+      while $status != "Succeeded" do
+        $status = @new_resource.state
+        if $status == "Failed"
+          call stop_debugging()
+          raise $status
+        end
+        call stop_debugging()
+        call sys_log.detail(join(["Status: ", $status]))
+        call start_debugging()
+        sleep(10)
+      end
+    end
+    @resource = @new_resource
     call sys_log.detail(to_object(@resource))
     call stop_debugging()
   end
@@ -188,6 +311,11 @@ define delete_resource(@declaration) do
     @declaration.destroy()
   end
   call stop_debugging()
+end
+
+define stop_debugging_and_raise() do
+  call stop_debugging()
+  raise $_errors
 end
 
 define no_operation(@declaration) do
