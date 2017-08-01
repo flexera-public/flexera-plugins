@@ -315,7 +315,7 @@ resource_pool "rs_azure_pgsql" do
         client_id cred("AZURE_APPLICATION_ID")
         client_secret cred("AZURE_APPLICATION_KEY")
         additional_params do {
-          "resource" => "https://management.azure.com/"     
+          "resource" => "https://management.azure.com/"
         } end
       end
     end
