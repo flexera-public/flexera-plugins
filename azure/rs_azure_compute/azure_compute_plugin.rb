@@ -290,7 +290,7 @@ define provision_extension(@declaration) return @resource do
       $status = @new_resource.state
       if $status == "Failed"
         call stop_debugging()
-        raise "Execution Name: "+ $name + ",Status" + $status + "On virtual machine: " + $vm_name
+        raise "Execution Name: "+ $name + ", Status: " + $status + ", VirtualMachine: " + $vm_name
       end
       call stop_debugging()
       call sys_log.detail(join(["Status: ", $status]))
