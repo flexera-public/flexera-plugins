@@ -1,9 +1,9 @@
-name "rs_riverbed_steelhead_mgmt_newsfeeds"
+name "rs_riverbed_steelhead_mgmt_til_networking"
 type "plugin"
 rs_ca_ver 20161221
 short_description "Riverbed Steelhead Plugin"
 long_description "Version: 1.0"
-package "plugins/rs_riverbed_steelhead_mgmt_newsfeeds"
+package "plugins/rs_riverbed_steelhead_mgmt_til_networking"
 import "sys_log"
 
 parameter "subscription_id" do
@@ -11,7 +11,7 @@ parameter "subscription_id" do
   label "Subscription ID"
 end
 
-plugin "rs_riverbed_steelhead_mgmt_newsfeeds" do
+plugin "rs_riverbed_steelhead_mgmt_til_networking" do
   endpoint do
     default_host cred("STEELHEAD_HOST")
     default_scheme "https"
@@ -20,39 +20,21 @@ plugin "rs_riverbed_steelhead_mgmt_newsfeeds" do
     } end
   end
 
-  type "feeds" do
-    href_templates "/api/mgmt.newsfeeds/1.0/feeds"
+  type "interfaces" do
+    href_templates "/api/mgmt.til.networking/1.0/interfaces"
     provision "no_operation"
     delete "no_operation"
 
     action "show" do
-      type "availability_set"
-      path "/api/mgmt.newsfeeds/1.0/feeds"
+      type "interfaces"
+      path "/api/mgmt.til.networking/1.0/interfaces"
       verb "GET"
     end
     outputs "items"
   end
   
-  type "feed" do
-    href_templates "/api/mgmt.newsfeeds/1.0/feeds/items/{name}"
-    provision "no_operation"
-    delete "no_operation"
-    
-    field "name" do
-      type "string"
-      location "path"
-    end
-
-    action "show" do
-      type "mgmt_newsfeeds_feed"
-      verb "GET"
-      path "$href"
-    end
-    outputs "name", "categories"
-  end
-
-  type "summary" do
-    href_templates "/api/mgmt.newsfeeds/1.0/feeds/items/{name}/items/{id}"
+  type "interface" do
+    href_templates "/api/mgmt.til.networking/1.0/interfaces/items/{name}"
     provision "no_operation"
     delete "no_operation"
 
@@ -61,194 +43,177 @@ plugin "rs_riverbed_steelhead_mgmt_newsfeeds" do
       location "path"
     end
 
-    field "id" do
-      type "string"
-      location "path"
-    end
-
-    action "show" do
-      type "mgmt_newsfeeds_summary"
+    action "get" do
+      type "interface"
       verb "GET"
       path "$href"
-    end
-
-    outputs "id","summary"
-  end
-
-  type "news" do
-    href_templates "/api/mgmt.newsfeeds/1.0/news"
-    provision "no_operation"
-    delete "no_operation"
-    
-    field "remote_user" do
-      type "string"
-      location "query"
-    end
-
-    field "severity" do
-      type "string"
-      location "query"
-    end
-
-    field "audit_id" do
-      type "string"
-      location "query"
-    end
-
-    field "feed_category" do
-      type "string"
-      location "query"
-    end
-
-    field "feed_name" do
-      type "string"
-      location "query"
-    end
-
-    field "source" do
-      type "string"
-      location "query"
-    end
-
-    field "feed_id" do
-      type "string"
-      location "query"
-    end
-
-    field "limit"  do
-      type "string"
-      location "query"
-    end
-
-    field "user" do
-      type "string"
-      location "query"
-    end
-
-    field "offset" do
-      type "string"
-      location "query"
-    end
-
-    field "start_time" do
-      type "string"
-      location "query"
-    end
-
-    field "end_time" do
-      type "string"
-      location "query"
-    end
-
-    action "show" do
-      type "mgmt_newsfeeds_news"
-      verb "GET"
-      path "$href"
-    end
-
-    action "create" do
-      type "mgmt_newsfeeds_news_item"
-      verb "POST"
-      path "/api/mgmt.newsfeeds/1.0/news"
     end
 
     action "set" do
-      type "mgmt_newsfeeds_news"
-      verb "PUT"
-      path "/api/mgmt.newsfeeds/1.0/news"
-    end
-
-    outputs "items"
-  end
-
-  type "news_item" do
-    href_templates "/api/mgmt.newsfeeds/1.0/news/items/{id}"
-    provision "provision_resource"
-    delete "no_operation"
-
-    field "remote_user" do
-      type "string"
-      location "query"
-    end
-
-    field "severity" do
-      type "string"
-      location "query"
-    end
-
-    field "audit_id" do
-      type "string"
-      location "query"
-    end
-
-    field "feed_category" do
-      type "string"
-      location "query"
-    end
-
-    field "feed_name" do
-      type "string"
-      location "query"
-    end
-
-    field "source" do
-      type "string"
-      location "query"
-    end
-
-    field "feed_id" do
-      type "string"
-      location "query"
-    end
-
-    field "limit"  do
-      type "string"
-      location "query"
-    end
-
-    field "user" do
-      type "string"
-      location "query"
-    end
-
-    field "offset" do
-      type "string"
-      location "query"
-    end
-
-    field "start_time" do
-      type "string"
-      location "query"
-    end
-
-    field "end_time" do
-      type "string"
-      location "query"
-    end
-
-    action "show" do
-      type "mgmt_newsfeeds_news_item"
+      type "interface"
       verb "GET"
-      path "/api/mgmt.newsfeeds/1.0/news/items/$id"
-
-      field "id" do
-        type "string"
-        location "path"
-      end
+      path "/api/mgmt.til.networking/1.0/interfaces/items/$name"
     end
 
     action "create" do
-      type "mgmt_newsfeeds_news_item"
-      verb "POST"
-      path "/api/mgmt.newsfeeds/1.0/news"
+      type "interface"
+      verb "GET"
+      path "/api/mgmt.til.networking/1.0/interfaces/items/$name"
     end
 
-    outputs "id","timestamp","feed_name","feed_category","feed_id","user","remote_user","audit_id","source","severity","details","resources"
+    outputs "name", "configuration","state"
+  end
+
+  type "ipv4_routes" do
+    href_templates "/api/mgmt.til.networking/1.0/routes/ipv4"
+    provision "no_operation"
+    delete "no_operation"
+
+    action "show" do
+      type "ipv4_routes"
+      verb "GET"
+      path "$href"
+    end
+
+    outputs "all","static"
+  end
+
+  type "ipv4_route" do
+    href_templates "/api/mgmt.til.networking/1.0/routes/ipv4/{id}"
+    provision "no_operation"
+    delete "no_operation"
+
+    field "network_prefix" do
+      type "string"
+      location "body"
+    end
+
+    field "gateway_address" do
+      type "string"
+      location "body"
+    end
+
+    field "interface" do
+      type "string"
+      location "body"
+    end
+
+    action "show" do
+      type "ipv4_route"
+      verb "GET"
+      path "$href"
+    end
+
+    action "create" do
+      type "ipv4_route"
+      verb "POST"
+      path "/api/mgmt.til.networking/1.0/routes/ipv4"
+    end
+
+    action "destroy" do
+      type "ipv4_route"
+      path "$href"
+      verb "DELETE"
+    end
+
+    outputs "id", "network_prefix","gateway_address", "interface"
+  end
+
+  type "ipv6_routes" do
+    href_templates "/api/mgmt.til.networking/1.0/routes/ipv6"
+    provision "no_operation"
+    delete "no_operation"
+
+    action "show" do
+      type "ipv6_routes_routes"
+      verb "GET"
+      path "$href"
+    end
+
+    outputs "all","static"
+  end
+
+  type "ipv6_route" do
+    href_templates "/api/mgmt.til.networking/1.0/routes/ipv6/{id}"
+    provision "no_operation"
+    delete "no_operation"
+
+    field "network_prefix" do
+      type "string"
+      location "body"
+    end
+
+    field "gateway_address" do
+      type "string"
+      location "body"
+    end
+
+    field "interface" do
+      type "string"
+      location "body"
+    end
+
+    action "show" do
+      type "ipv6_route"
+      verb "GET"
+      path "$href"
+    end
+
+    action "create" do
+      type "ipv6_route"
+      verb "POST"
+      path "/api/mgmt.til.networking/1.0/routes/ipv6"
+    end
+
+    action "destroy" do
+      type "ipv4_route"
+      path "$href"
+      verb "DELETE"
+    end
+
+    outputs "id", "network_prefix","gateway_address", "interface"
+  end
+
+  type "route_settings" do
+    href_templates "/api/mgmt.til.networking/1.0/settings/route"
+    provision "no_operation"
+    delete "no_operation"
+
+    field "default_gateway" do
+      type "composite"
+      location "body"
+    end
+
+    action "get" do
+      type "interface"
+      verb "GET"
+      path "$href"
+    end
+
+    action "set" do
+      type "interface"
+      verb "GET"
+      path "/api/mgmt.til.networking/1.0/settings/route"
+    end
+
+    action "create" do
+      type "interface"
+      verb "GET"
+      path "/api/mgmt.til.networking/1.0/settings/route"
+    end
+
+    outputs "default_gateway"
+    output "default_gateway_ipv4" do
+      body_path "default_gateway.ipv4"
+    end
+    output "default_gateway_ipv6" do
+      body_path "default_gateway.ipv6"
+    end
   end
 end
 
 resource_pool "rs_riverbed_steelhead" do
-  plugin $rs_riverbed_steelhead_mgmt_newsfeeds
+  plugin $rs_riverbed_steelhead_mgmt_til_networking
   auth "basic_auth", type: "basic" do
     username "admin"
     password "admin"

@@ -26,7 +26,7 @@ plugin "rs_riverbed_steelhead_mgmt_newsfeeds" do
     delete "no_operation"
 
     action "show" do
-      type "availability_set"
+      type "feeds"
       path "/api/mgmt.newsfeeds/1.0/feeds"
       verb "GET"
     end
@@ -44,7 +44,7 @@ plugin "rs_riverbed_steelhead_mgmt_newsfeeds" do
     end
 
     action "show" do
-      type "mgmt_newsfeeds_feed"
+      type "feed"
       verb "GET"
       path "$href"
     end
@@ -67,7 +67,7 @@ plugin "rs_riverbed_steelhead_mgmt_newsfeeds" do
     end
 
     action "show" do
-      type "mgmt_newsfeeds_summary"
+      type "summary"
       verb "GET"
       path "$href"
     end
@@ -227,7 +227,7 @@ plugin "rs_riverbed_steelhead_mgmt_newsfeeds" do
     end
 
     action "show" do
-      type "mgmt_newsfeeds_news_item"
+      type "news_item"
       verb "GET"
       path "/api/mgmt.newsfeeds/1.0/news/items/$id"
 
@@ -238,7 +238,7 @@ plugin "rs_riverbed_steelhead_mgmt_newsfeeds" do
     end
 
     action "create" do
-      type "mgmt_newsfeeds_news_item"
+      type "news_item"
       verb "POST"
       path "/api/mgmt.newsfeeds/1.0/news"
     end
