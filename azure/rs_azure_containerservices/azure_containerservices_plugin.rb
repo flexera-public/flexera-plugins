@@ -61,7 +61,7 @@ plugin "rs_azure_containerservices" do
     end
 
     action "create" do
-      type "containerservices_account"
+      type "containerservice"
       path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.ContainerService/containerServices/$name"
       verb "PUT"
     end
@@ -85,13 +85,19 @@ plugin "rs_azure_containerservices" do
     end
 
     action "get" do
-      type "containerservices_account"
+      type "containerservice"
       path "$href"
       verb "GET"
     end
 
+    action "list" do
+      type "containerservice"
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.ContainerService/containerServices"
+      verb "GET"
+    end
+
     action "destroy" do
-      type "containerservices_account"
+      type "containerservice"
       path "$href"
       verb "DELETE"
     end
@@ -115,12 +121,12 @@ resource_pool "rs_azure_containerservices" do
     end
 
     auth "azure_auth", type: "oauth2" do
-      token_url "https://login.microsoftonline.com/09b8fec1-4b8d-48dd-8afa-5c1a775ea0f2/oauth2/token"
+      token_url "https://login.microsoftonline.com/TENANT_ID/oauth2/token"
       grant type: "client_credentials" do
         client_id cred("AZURE_APPLICATION_ID")
         client_secret cred("AZURE_APPLICATION_KEY")
         additional_params do {
-          "resource" => "https://management.azure.com/"     
+          "resource" => "https://management.azure.com/"
         } end
       end
     end
@@ -151,20 +157,20 @@ define provision_resource(@declaration) return @resource do
     call stop_debugging()
     $name = $fields["name"]
     $resource_group = $fields["resource_group"]
-    call sys_log.detail("entering check for containerservices_account created")
-    sub on_error: retry, timeout: 60m do
+    call sys_log.detail("entering check for containerservices created")
+    sub on_error: retry, timeout: 10m do
       call sys_log.detail("sleeping 10")
       sleep(10)
       call start_debugging()
       @new_resource = @operation.show(name: $name, resource_group: $resource_group )
       call stop_debugging()
     end
-    call sys_log.detail("Checking that containerservices_account state is online")
+    call sys_log.detail("Checking that containerservices state is online")
     call start_debugging()
     @new_resource = @operation.show(name: $name, resource_group: $resource_group )
     $status = @new_resource.state
     call sys_log.detail(join(["Status: ", $status]))
-    sub on_error: skip, timeout: 60m do
+    sub on_error: skip, timeout: 10m do
       while $status != "Succeeded" do
         $status = @operation.show(name: $name, resource_group: $resource_group).state
         call stop_debugging()
