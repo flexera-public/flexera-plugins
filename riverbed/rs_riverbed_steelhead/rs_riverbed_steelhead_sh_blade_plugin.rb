@@ -1,9 +1,9 @@
-name "rs_riverbed_steelhead_mgmt_newsfeeds"
+name "rs_riverbed_steelhead_sh_blade"
 type "plugin"
 rs_ca_ver 20161221
 short_description "Riverbed Steelhead Plugin"
 long_description "Version: 1.0"
-package "plugins/rs_riverbed_steelhead_mgmt_newsfeeds"
+package "plugins/rs_riverbed_steelhead_sh_blade"
 import "sys_log"
 
 parameter "subscription_id" do
@@ -11,7 +11,7 @@ parameter "subscription_id" do
   label "Subscription ID"
 end
 
-plugin "rs_riverbed_steelhead_mgmt_newsfeeds" do
+plugin "rs_riverbed_steelhead_sh_blade" do
   endpoint do
     default_host cred("STEELHEAD_HOST")
     default_scheme "https"
@@ -20,235 +20,93 @@ plugin "rs_riverbed_steelhead_mgmt_newsfeeds" do
     } end
   end
 
-  type "feeds" do
-    href_templates "/api/mgmt.newsfeeds/1.0/feeds"
+  type "lan_default_settings" do
+    href_templates "/api/sh.blade/1.0/lan_default_settings"
     provision "no_operation"
     delete "no_operation"
 
-    action "show" do
-      type "availability_set"
-      path "/api/mgmt.newsfeeds/1.0/feeds"
-      verb "GET"
-    end
-    outputs "items"
-  end
-  
-  type "feed" do
-    href_templates "/api/mgmt.newsfeeds/1.0/feeds/items/{name}"
-    provision "no_operation"
-    delete "no_operation"
-    
-    field "name" do
+    field "socket_send_buf_size" do
       type "string"
-      location "path"
+      location "body"
+    end
+
+    field "socket_recv_buf_size" do
+      type "string"
+      location "body"
     end
 
     action "show" do
-      type "mgmt_newsfeeds_feed"
+      type "lan_default_settings"
+      path "/api/sh.blade/1.0/lan_default_settings"
       verb "GET"
-      path "$href"
-    end
-    outputs "name", "categories"
-  end
-
-  type "summary" do
-    href_templates "/api/mgmt.newsfeeds/1.0/feeds/items/{name}/items/{id}"
-    provision "no_operation"
-    delete "no_operation"
-
-    field "name" do
-      type "string"
-      location "path"
-    end
-
-    field "id" do
-      type "string"
-      location "path"
-    end
-
-    action "show" do
-      type "mgmt_newsfeeds_summary"
-      verb "GET"
-      path "$href"
-    end
-
-    outputs "id","summary"
-  end
-
-  type "news" do
-    href_templates "/api/mgmt.newsfeeds/1.0/news"
-    provision "no_operation"
-    delete "no_operation"
-    
-    field "remote_user" do
-      type "string"
-      location "query"
-    end
-
-    field "severity" do
-      type "string"
-      location "query"
-    end
-
-    field "audit_id" do
-      type "string"
-      location "query"
-    end
-
-    field "feed_category" do
-      type "string"
-      location "query"
-    end
-
-    field "feed_name" do
-      type "string"
-      location "query"
-    end
-
-    field "source" do
-      type "string"
-      location "query"
-    end
-
-    field "feed_id" do
-      type "string"
-      location "query"
-    end
-
-    field "limit"  do
-      type "string"
-      location "query"
-    end
-
-    field "user" do
-      type "string"
-      location "query"
-    end
-
-    field "offset" do
-      type "string"
-      location "query"
-    end
-
-    field "start_time" do
-      type "string"
-      location "query"
-    end
-
-    field "end_time" do
-      type "string"
-      location "query"
-    end
-
-    action "show" do
-      type "mgmt_newsfeeds_news"
-      verb "GET"
-      path "$href"
     end
 
     action "create" do
-      type "mgmt_newsfeeds_news_item"
-      verb "POST"
-      path "/api/mgmt.newsfeeds/1.0/news"
+      type "lan_default_settings"
+      path "/api/sh.blade/1.0/lan_default_settings"
+      verb "PUT"
+    end
+
+    action "get" do
+      type "lan_default_settings"
+      path "/api/sh.blade/1.0/lan_default_settings"
+      verb "GET"
     end
 
     action "set" do
-      type "mgmt_newsfeeds_news"
+      type "lan_default_settings"
+      path "/api/sh.blade/1.0/lan_default_settings"
       verb "PUT"
-      path "/api/mgmt.newsfeeds/1.0/news"
     end
 
-    outputs "items"
+    outputs "socket_send_buf_size", "socket_recv_buf_size"
   end
 
-  type "news_item" do
-    href_templates "/api/mgmt.newsfeeds/1.0/news/items/{id}"
-    provision "provision_resource"
+  type "wan_default_settings" do
+    href_templates "/api/sh.blade/1.0/wan_default_settings"
+    provision "no_operation"
     delete "no_operation"
 
-    field "remote_user" do
+    field "socket_send_buf_size" do
       type "string"
-      location "query"
+      location "body"
     end
 
-    field "severity" do
+    field "socket_recv_buf_size" do
       type "string"
-      location "query"
-    end
-
-    field "audit_id" do
-      type "string"
-      location "query"
-    end
-
-    field "feed_category" do
-      type "string"
-      location "query"
-    end
-
-    field "feed_name" do
-      type "string"
-      location "query"
-    end
-
-    field "source" do
-      type "string"
-      location "query"
-    end
-
-    field "feed_id" do
-      type "string"
-      location "query"
-    end
-
-    field "limit"  do
-      type "string"
-      location "query"
-    end
-
-    field "user" do
-      type "string"
-      location "query"
-    end
-
-    field "offset" do
-      type "string"
-      location "query"
-    end
-
-    field "start_time" do
-      type "string"
-      location "query"
-    end
-
-    field "end_time" do
-      type "string"
-      location "query"
+      location "body"
     end
 
     action "show" do
-      type "mgmt_newsfeeds_news_item"
+      type "wan_default_settings"
+      path "/api/sh.blade/1.0/wan_default_settings"
       verb "GET"
-      path "/api/mgmt.newsfeeds/1.0/news/items/$id"
-
-      field "id" do
-        type "string"
-        location "path"
-      end
     end
 
     action "create" do
-      type "mgmt_newsfeeds_news_item"
-      verb "POST"
-      path "/api/mgmt.newsfeeds/1.0/news"
+      type "wan_default_settings"
+      path "/api/sh.blade/1.0/wan_default_settings"
+      verb "PUT"
     end
 
-    outputs "id","timestamp","feed_name","feed_category","feed_id","user","remote_user","audit_id","source","severity","details","resources"
+    action "get" do
+      type "wan_default_settings"
+      path "/api/sh.blade/1.0/wan_default_settings"
+      verb "GET"
+    end
+
+    action "set" do
+      type "wan_default_settings"
+      path "/api/sh.blade/1.0/wan_default_settings"
+      verb "PUT"
+    end
+
+    outputs "socket_send_buf_size", "socket_recv_buf_size"
   end
 end
 
 resource_pool "rs_riverbed_steelhead" do
-  plugin $rs_riverbed_steelhead_mgmt_newsfeeds
+  plugin $rs_riverbed_steelhead_sh_blade
   auth "basic_auth", type: "basic" do
     username "admin"
     password "admin"

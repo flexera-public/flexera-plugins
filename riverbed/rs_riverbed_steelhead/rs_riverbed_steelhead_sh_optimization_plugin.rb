@@ -1,17 +1,12 @@
-name "rs_riverbed_steelhead_mgmt_newsfeeds"
+name "rs_riverbed_steelhead_sh_optimization"
 type "plugin"
 rs_ca_ver 20161221
 short_description "Riverbed Steelhead Plugin"
 long_description "Version: 1.0"
-package "plugins/rs_riverbed_steelhead_mgmt_newsfeeds"
+package "plugins/rs_riverbed_steelhead_sh_optimization"
 import "sys_log"
 
-parameter "subscription_id" do
-  type  "string"
-  label "Subscription ID"
-end
-
-plugin "rs_riverbed_steelhead_mgmt_newsfeeds" do
+plugin "rs_riverbed_steelhead_sh_optimization" do
   endpoint do
     default_host cred("STEELHEAD_HOST")
     default_scheme "https"
@@ -19,236 +14,40 @@ plugin "rs_riverbed_steelhead_mgmt_newsfeeds" do
       "Content-Type": "application/json"
     } end
   end
-
-  type "feeds" do
-    href_templates "/api/mgmt.newsfeeds/1.0/feeds"
-    provision "no_operation"
-    delete "no_operation"
-
-    action "show" do
-      type "availability_set"
-      path "/api/mgmt.newsfeeds/1.0/feeds"
-      verb "GET"
-    end
-    outputs "items"
-  end
   
-  type "feed" do
-    href_templates "/api/mgmt.newsfeeds/1.0/feeds/items/{name}"
-    provision "no_operation"
-    delete "no_operation"
-    
-    field "name" do
-      type "string"
-      location "path"
-    end
-
-    action "show" do
-      type "mgmt_newsfeeds_feed"
-      verb "GET"
-      path "$href"
-    end
-    outputs "name", "categories"
-  end
-
-  type "summary" do
-    href_templates "/api/mgmt.newsfeeds/1.0/feeds/items/{name}/items/{id}"
+  type "optimization" do
+    href_templates "/api/sh.optimization/1.0/optimization"
     provision "no_operation"
     delete "no_operation"
 
-    field "name" do
-      type "string"
-      location "path"
-    end
-
-    field "id" do
-      type "string"
-      location "path"
-    end
-
     action "show" do
-      type "mgmt_newsfeeds_summary"
+      type "sh_optimization_feed"
       verb "GET"
       path "$href"
     end
 
-    outputs "id","summary"
-  end
-
-  type "news" do
-    href_templates "/api/mgmt.newsfeeds/1.0/news"
-    provision "no_operation"
-    delete "no_operation"
-    
-    field "remote_user" do
-      type "string"
-      location "query"
-    end
-
-    field "severity" do
-      type "string"
-      location "query"
-    end
-
-    field "audit_id" do
-      type "string"
-      location "query"
-    end
-
-    field "feed_category" do
-      type "string"
-      location "query"
-    end
-
-    field "feed_name" do
-      type "string"
-      location "query"
-    end
-
-    field "source" do
-      type "string"
-      location "query"
-    end
-
-    field "feed_id" do
-      type "string"
-      location "query"
-    end
-
-    field "limit"  do
-      type "string"
-      location "query"
-    end
-
-    field "user" do
-      type "string"
-      location "query"
-    end
-
-    field "offset" do
-      type "string"
-      location "query"
-    end
-
-    field "start_time" do
-      type "string"
-      location "query"
-    end
-
-    field "end_time" do
-      type "string"
-      location "query"
-    end
-
-    action "show" do
-      type "mgmt_newsfeeds_news"
-      verb "GET"
-      path "$href"
-    end
-
-    action "create" do
-      type "mgmt_newsfeeds_news_item"
+    action "stop" do
+      type "sh_optimization_feed"
       verb "POST"
-      path "/api/mgmt.newsfeeds/1.0/news"
+      path "/api/sh.optimization/1.0/optimization/stop"
     end
 
-    action "set" do
-      type "mgmt_newsfeeds_news"
-      verb "PUT"
-      path "/api/mgmt.newsfeeds/1.0/news"
-    end
-
-    outputs "items"
-  end
-
-  type "news_item" do
-    href_templates "/api/mgmt.newsfeeds/1.0/news/items/{id}"
-    provision "provision_resource"
-    delete "no_operation"
-
-    field "remote_user" do
-      type "string"
-      location "query"
-    end
-
-    field "severity" do
-      type "string"
-      location "query"
-    end
-
-    field "audit_id" do
-      type "string"
-      location "query"
-    end
-
-    field "feed_category" do
-      type "string"
-      location "query"
-    end
-
-    field "feed_name" do
-      type "string"
-      location "query"
-    end
-
-    field "source" do
-      type "string"
-      location "query"
-    end
-
-    field "feed_id" do
-      type "string"
-      location "query"
-    end
-
-    field "limit"  do
-      type "string"
-      location "query"
-    end
-
-    field "user" do
-      type "string"
-      location "query"
-    end
-
-    field "offset" do
-      type "string"
-      location "query"
-    end
-
-    field "start_time" do
-      type "string"
-      location "query"
-    end
-
-    field "end_time" do
-      type "string"
-      location "query"
-    end
-
-    action "show" do
-      type "mgmt_newsfeeds_news_item"
-      verb "GET"
-      path "/api/mgmt.newsfeeds/1.0/news/items/$id"
-
-      field "id" do
-        type "string"
-        location "path"
+    action "restart" do
+      type "sh_optimization_feed"
+      verb "POST"
+      path "/api/sh.optimization/1.0/optimization/restart"
+      field "clear_cache" do
+        type "boolena"
+        location "body"
       end
     end
 
-    action "create" do
-      type "mgmt_newsfeeds_news_item"
-      verb "POST"
-      path "/api/mgmt.newsfeeds/1.0/news"
-    end
-
-    outputs "id","timestamp","feed_name","feed_category","feed_id","user","remote_user","audit_id","source","severity","details","resources"
+    outputs "service_state", "restart_needed"
   end
 end
 
 resource_pool "rs_riverbed_steelhead" do
-  plugin $rs_riverbed_steelhead_mgmt_newsfeeds
+  plugin $rs_riverbed_steelhead_sh_optimization
   auth "basic_auth", type: "basic" do
     username "admin"
     password "admin"
