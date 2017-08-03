@@ -180,12 +180,16 @@ define provision_resource(@declaration) return @resource do
     @resource = @operation.get()
     $status = @resource.provisioningState
     sub on_error: skip, timeout: 60m do
-      while $status != "Succeeded" do
+      while $status == "Running" do
         $status = @resource.provisioningState
         call sys_log.detail(join(["Status: ", $status]))
         sleep(10)
       end
-    end 
+    end
+    $status = @resource.provisioningState
+    if $status != "Succeeded"
+      raise "Azure Deployment was not successfully provisioned.  See audit entry and/or Azure Activity Log for more information"
+    end  
     call sys_log.detail(to_object(@resource))
     call stop_debugging()
   end
