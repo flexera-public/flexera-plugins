@@ -1,7 +1,6 @@
 # Change Log
 
-## [Unreleased](https://github.com/rightscale/rightscale-plugins/tree/HEAD)
-
+## [v1.0.0](https://github.com/rightscale/rightscale-plugins/tree/v1.0.0) (2017-08-02)
 **Implemented enhancements:**
 
 - add VM Extension support to Azure Compute plugin [\#31](https://github.com/rightscale/rightscale-plugins/issues/31)
