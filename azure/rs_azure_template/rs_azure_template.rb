@@ -181,7 +181,7 @@ define provision_resource(@declaration) return @resource do
     @resource = @operation.get()
     $status = @resource.provisioningState
     sub on_error: skip, timeout: 60m do
-      while $status == "Running" do
+      while $status == "Running" || $status == "Accepted" do
         $status = @resource.provisioningState
         call sys_log.detail(join(["Status: ", $status]))
         sleep(10)
