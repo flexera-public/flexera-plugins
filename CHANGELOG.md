@@ -1,5 +1,17 @@
 # Change Log
 
+## [Unreleased](https://github.com/rightscale/rightscale-plugins/tree/HEAD)
+
+[Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/v1.0.0...HEAD)
+
+**Implemented enhancements:**
+
+- ARM Template - Improve Error Handling [\#47](https://github.com/rightscale/rightscale-plugins/issues/47)
+
+**Merged pull requests:**
+
+- Improve Error Handling on ARM Template Plugin [\#48](https://github.com/rightscale/rightscale-plugins/pull/48) ([dfrankel33](https://github.com/dfrankel33))
+
 ## [v1.0.0](https://github.com/rightscale/rightscale-plugins/tree/v1.0.0) (2017-08-02)
 **Implemented enhancements:**
 
