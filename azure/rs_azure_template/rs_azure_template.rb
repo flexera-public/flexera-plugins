@@ -2,6 +2,7 @@ name 'rs_azure_template'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Azure - ARM Template"
+long_description "Version: 1.1"
 package "plugins/rs_azure_template"
 import "sys_log"
 
