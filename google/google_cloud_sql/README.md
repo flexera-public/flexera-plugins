@@ -1,18 +1,18 @@
-# GCP Cloud DNS Plugin
+# GCP Cloud SQL Plugin
 
 ## Overview
-The GCP Cloud DNS Plugin consumes the Google Cloud DNS API and exposes the supported resources to RightScale Self-Service. This allows for easy extension of a Self-Service Cloud Application to create, delete, and manage Cloud DNS resource.
+The GCP Cloud SQL Plugin consumes the Google Cloud SQL API and exposes the supported resources to RightScale Self-Service. This allows for easy extension of a Self-Service Cloud Application to create, delete, and manage Cloud SQL resources.
 
 ## Requirements
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
 - `admin`, `ss_enduser`, & `ss_designer` roles on a RightScale account with Self-Service enabled
-  - the `admin` role is needed to set/retrieve the RightScale Credentials for the GCP Cloud DNS API.
+  - the `admin` role is needed to set/retrieve the RightScale Credentials for the GCP Cloud SQL API.
 - GCP Service Account credentials
   - Refer to the Getting Started section for details on creating this account.
 - The following RightScale Credentials must exist with the appropriate values
-  - `GOOGLE_DNS_PLUGIN_ACCOUNT`
-  - `GOOGLE_DNS_PLUGIN_PRIVATE_KEY`
+  - `GOOGLE_SQL_PLUGIN_ACCOUNT`
+  - `GOOGLE_SQL_PLUGIN_PRIVATE_KEY`
 - The following packages are also required (See the Installation section for details):
   - [sys_log](sys_log.rb)
 
@@ -22,7 +22,7 @@ This procedure will create a GCE Service account with the appropriate permission
 1. Review the [Using OAuth 2.0 for Server to Server Applications](https://developers.google.com/identity/protocols/OAuth2ServiceAccount) documentation.
 1. Follow the section named _Creating a service account_
     - Roles needs to include:
-      - `DNS Administrator`
+      - `Cloud SQL Admin`
     - Permissions can be restricted but may effect the permissions required to interact with certain resources with this plugin. Doing so is unsupported
    - Enabling G Suite Domain-wide Delegation is not required
    - Furnish a new private key selecting the JSON option
@@ -30,11 +30,11 @@ This procedure will create a GCE Service account with the appropriate permission
 ### Creating the RightScale Credentials
 This procedure will setup the Credentials required for the GCE Plugin to interact with the GCE API
 1. Review the [Credentials](http://docs.rightscale.com/cm/dashboard/design/credentials/index.html) documentation.
-1. Create a credential in the desired RightScale Account with the name of `GOOGLE_DNS_PLUGIN_ACCOUNT`
+1. Create a credential in the desired RightScale Account with the name of `GOOGLE_SQL_PLUGIN_ACCOUNT`
 1. Paste the Service Account Id into the value of this credential and save
 1. Extract/Copy the private_key from the JSON downloaded when you created the GCE Service Account
    - You will need to replace "\n" in the private_key with actual line returns to paste into the credential 
-1. Create a credential in the desired RightScale Account with the name of `GOOGLE_DNS_PLUGIN_PRIVATE_KEY`
+1. Create a credential in the desired RightScale Account with the name of `GOOGLE_SQL_PLUGIN_PRIVATE_KEY`
 1. Paste the private_key into the value of the credential making sure to replace "\n" with actual line returns and save
 
 ## Installation
@@ -44,25 +44,28 @@ This procedure will setup the Credentials required for the GCE Plugin to interac
    - For more details on using the portal review the [SS User Interface Guide](http://docs.rightscale.com/ss/guides/ss_user_interface_guide.html)
 1. In the Design section, use the `Upload CAT` interface to complete the following:
    1. Upload each of packages listed in the Requirements Section
-   1. Upload the `google_cloud_dns.rb` file located in this repository
+   1. Upload the `google_cloud_sql.rb` file located in this repository
  
 ## How to Use
-The Cloud DNS Plugin has been packaged as `plugins/googledns`. In order to use this plugin you must import this plugin into a CAT.
+The Cloud SQL Plugin has been packaged as `plugins/google_sql`. In order to use this plugin you must import this plugin into a CAT.
 ```
-import "plugins/googledns"
+import "plugins/google_sql"
 ```
 For more information on using packages, please refer to the RightScale online documenataion. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 ## Implementation Notes
-- The Cloud DNS Plugin makes no attempt to support non-Cloud DNS resources. (i.e. Allow the passing the RightScale or other resources as arguments to a GCE resource.) 
+- The Cloud SQL Plugin makes no attempt to support non-Cloud SQL resources. (i.e. Allow the passing the RightScale or other resources as arguments to a GCE resource.) 
 
 ## Supported Resources
-### managedZone
+### instances
 #### Supported Fields
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
-| name | yes | Zone Name | 
+| name | yes | Instance Name | 
+
+# EDIT FROM HERE
+
 | description | no | Zone Description |
 | dns_name | yes | Zone DNS Name | 
 | nameserver_set | no | Nameservers to use for the newly created Zone. If left empty, nameservers will be auto-populated by GCP |

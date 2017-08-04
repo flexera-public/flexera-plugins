@@ -1,8 +1,9 @@
-name "Google Cloud DNS"
+name "Google Cloud SQL Plugin"
 rs_ca_ver 20161221
-short_description "Google Cloud DNS plugin"
+short_description "Google Cloud SQL"
+long_description "Version: 1.0"
 type 'plugin'
-package "plugins/googledns"
+package "plugins/google_sql"
 import "sys_log"
 
 parameter "google_project" do
@@ -11,18 +12,11 @@ parameter "google_project" do
   allowed_pattern "^[0-9a-z:\.-]+$"
 end
 
-parameter "dns_zone" do
-  type "string"
-  label "Zone Name/ID"
-  description "The DNS Zone Name (or DNS Zone ID) to create/manage"
-  # Needed to manage DNS Records (type = resourceRecordSet)
-end 
-
-plugin "clouddns" do
+plugin "cloud_sql" do
   endpoint do
     default_scheme "https"
     default_host "www.googleapis.com"
-    path "/dns/v1"
+    path "/sql/v1beta4"
   end
 
   parameter "project" do
@@ -31,88 +25,129 @@ plugin "clouddns" do
     description "The GCP Project to create/manage resources"
   end
 
-  parameter "managed_zone" do
-    type "string"
-    label "Zone Name/ID"
-    description "The DNS Zone Name (or DNS Zone ID) to create/manage"
-  end 
-
-
-  # https://cloud.google.com/dns/api/v1/managedZones
-  type "managedZone" do
-    href_templates "/projects/$project/managedZones/{{id}}"
+  type "instances" do
+    href_templates "/projects/$project/instances/{{name}}","/projects/$project/instances/{{items[*].name}}"
 
     field "name" do
       required true
       type "string"
     end
 
-    field "description" do
-      type "string"
-    end
-
-    field "dns_name" do
-      alias_for "dnsName"
+    field "settings" do
       required true
+      type "composite"
+    end
+
+    field "database_version" do
+      alias_for "databaseVersion"
       type "string"
     end
 
-    field "nameserver_set" do 
-      alias_for "nameServerSet"
+    field "failover_replica" do 
+      alias_for "failoverReplica"
+      type "object"
+    end
+    
+    field "master_instance_name" do
+      alias_for "masterInstanceName"
       type "string"
     end
 
-    field "kind" do
-      type "string"
+    field "on_premises_configuration" do
+      alias_for "onPremisesConfiguration"
+      type "composite"
     end
+
+    field "region" do
+      type "string"
+    end 
+
+    field "replica_configuration" do
+      alias_for "replicaConfiguration"
+      type "composite"
+    end     
 
     #Optional fields for non-create calls
+
     field "max_results" do 
-      type "number"
       location "query"
       alias_for "maxResults"
-    end
+      type "number"
+    end 
+  
+    field "filter" do 
+      location "query"
+      alias_for "maxResults"
+      type "string"
+    end 
 
-    output "creationTime","description","dnsName","id","kind","name","nameServerSet","nameServers"
+    output "kind","selfLink","targetProject","targetId","targetLink","name","operationType","status","user","insertTime","startTime","endTime","error","importContext","exportContext","connectionName","etag","project","state","backendType","databaseVersion","region","currentDiskSize","maxDiskSize","settings","suspensionReason"
 
-    # https://cloud.google.com/dns/api/v1/managedZones/create
+    # https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/insert
     action "create" do 
       verb "POST"
-      path "/projects/$project/managedZones"
+      path "/projects/$project/instances"
+      type "operation"
     end
 
-    # https://cloud.google.com/dns/api/v1/managedZones/delete
+    # https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/delete
     action "delete" do 
       verb "DELETE"
       path "$href"
+      type "operation"
     end
 
-    # https://cloud.google.com/dns/api/v1/managedZones/get 
+    # https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/get
     action "get" do 
       verb "GET"
       path "$href"
+      type "instances"
     end
 
-    # https://cloud.google.com/dns/api/v1/managedZones/list
+    # https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/list
     action "list" do 
       verb "GET"
-      path "/projects/$project/managedZones"
-      output_path "managedZones[]"
+      path "/projects/$project/instances"
+      type "instances"
+      output_path "items[]"
 
       field "max_results" do 
         location "query"
         alias_for "maxResults"
       end 
+
+      field "filter" do 
+        location "query"
+        alias_for "maxResults"
+      end 
     end 
 
-    link "project" do
-      path "/projects/$project"
-      type "project"
+    # https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/update 
+    action "update" do
+      verb "PUT"
+      path "$href"
+      type "instances"
+
+      field "settings" do
+        location "body"
+      end
+    end 
+
+    # https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/restart
+    action "restart" do
+      verb "POST"
+      path "$href/restart"
+      type "operation"
+    end 
+
+    link "databases" do
+      path "$href/databases"
+      type "databases"
     end
 
-    link "resourceRecordSets" do
-      path "projects/$project/managedZones/{{id}}/rrsets"
-      type "resourceRecordSet"
+    link "users" do
+      path "$href/users"
+      type "users"
     end
 
     provision "provision_resource"
@@ -121,166 +156,198 @@ plugin "clouddns" do
 
   end
 
-  # https://cloud.google.com/dns/api/v1/projects 
-  type "project" do
-    href_templates "/projects/{{id}}"
-
-    # https://cloud.google.com/dns/api/v1/projects/get
-    action "get" do 
-      verb "GET"
-      path "/projects/$project"
+  type "databases" do
+    href_templates "/projects/$project/instances/{{instance}}/databases/{{name}}","/projects/$project/instances/{{items[*].instance}}/databases/{{items[*].name}}"
+    
+    field "instance_name" do
+      location "path"
+      type "string"
+      required true
     end 
 
-    output "kind","number","id"
-
-    output "managedZones_quota" do
-      body_path "quota.managedZones"
+    field "charset" do
+      type "string"
     end 
-
-    output "resourceRecordsPerRrset_quota" do
-      body_path "quota.resourceRecordsPerRrset"
-    end 
-
-    output "rrsetAdditionsPerChange_quota" do
-      body_path "quota.rrsetAdditionsPerChange"
-    end 
-
-    output "rrsetDeletionsPerChange_quota" do
-      body_path "quota.rrsetDeletionsPerChange"
-    end 
-
-    output "rrsetsPerManagedZone_quota" do
-      body_path "quota.rrsetsPerManagedZone"
-    end 
-
-    output "totalRrdataSizePerChange_quota" do
-      body_path "quota.totalRrdataSizePerChange"
-    end 
-
-    provision "no_operation"
-
-    delete "no_operation"
-
-  end
-
-type "resourceRecordSet" do
-    href_templates "/projects/$project/managedZones/$managed_zone/rrsets?name={{additions[*].name}}","/projects/$project/managedZones/$managed_zone/rrsets?name={{deletions[*].name}}","/projects/$project/managedZones/$managed_zone/rrsets?name={{rrsets[*].name}}"
-
-    field "record" do
-      type "array"
-    end
 
     field "name" do
       type "string"
       required true
     end 
 
-    field "type" do
+    field "collation" do
       type "string"
-      required true
-    end
-
-    field "ttl" do
-      type "number"
-      required true
-    end
-
-    field "rrdatas" do
-      type "array"
-      required true
     end 
 
-    #Optional fields for non-create calls
-    field "max_results" do 
-      type "number"
-      location "query"
-      alias_for "maxResults"
-    end 
-
-    # https://cloud.google.com/dns/api/v1/changes/create
     action "create" do
       verb "POST"
-      path "/projects/$project/managedZones/$managed_zone/changes"
-      output_path "additions[]"
+      path "/projects/$project/instances/$instance_name/databases"
+      type "operation"
+    end 
 
-      field "record" do
-        alias_for "additions"
-      end
-    end
+    action "get" do
+      verb "GET"
+      path "$href"
+      type "databases"
+    end 
 
-    # https://cloud.google.com/dns/api/v1/changes/create
     action "delete" do
-      verb "POST"
-      path "/projects/$project/managedZones/$managed_zone/changes"
+      verb "DELETE"
+      path "$href"
+      type "operation"
+    end 
 
-      field "record" do
-        alias_for "deletions"
-      end 
-
-    end
-
-    # https://cloud.google.com/dns/api/v1/resourceRecordSets/list
     action "list" do
       verb "GET"
-      path "/projects/$project/managedZones/$managed_zone/rrsets"
+      path "/projects/$project/instances/$instance_name/databases"
+      type "databases"
+      output_path "items[]"
+    end 
 
-      field "max_results" do 
+    action "update" do
+      verb "PUT"
+      path "$href"
+      type "operation"
+
+      field "charset" do 
+        location "body"
+      end 
+
+      field "collation" do
+        location "body"
+      end 
+
+    end 
+
+    output "charset","collation","etag","instance","kind","name","project","selfLink"
+
+    provision "provision_resource"
+    
+    delete "delete_resource"
+
+
+  end
+
+  type "users" do
+    href_templates "/projects/$project/instances/{{instance}}/users","/projects/$project/instances/{{items[*].instance}}/users"
+    
+    field "instance_name" do
+      location "path"
+      type "string"
+      required true
+    end 
+
+    field "name" do
+      type "string"
+      required true
+    end 
+
+    field "host" do
+      type "string"
+    end 
+
+    field "password" do
+      type "string"
+    end 
+
+    action "create" do
+      verb "POST"
+      path "/projects/$project/instances/$instance_name/users"
+      type "operation"
+    end 
+
+    action "delete" do
+      verb "DELETE"
+      path "/projects/$project/instances/$instance_name/users"
+      type "operation"
+
+      field "name" do
         location "query"
-        alias_for "maxResults"
+      end
+
+      field "host" do
+        location "query"
+      end 
+
+      field "instance_name" do
+        location "path"
+      end 
+    end 
+
+    action "list" do
+      verb "GET"
+      path "/projects/$project/instances/$instance_name/users"
+      type "users"
+      output_path "items[]"
+      
+      field "instance_name" do
+        location "path"
+      end 
+    end 
+
+    action "update" do
+      verb "PUT"
+      path "$href"
+      type "operation"
+
+      field "host" do 
+        location "query"
       end 
 
       field "name" do
         location "query"
-        # Note: Required if "type" field is specified
       end 
 
-      field "type" do
-        location "query"
+      field "password" do
+        location "body"
       end
-
     end 
+
+    output "etag","host","instance","kind","name","project","password"
+
+    provision "provision_resource"
+    
+    delete "no_operation"
+
+
+  end
+
+
+  type "operation" do
+    href_templates "{{selfLink}}"
+
+    output "kind","selfLink","targetProject","targetId","targetLink","name","operationType","status","user","insertTime","startTime","endTime"
 
     action "get" do 
       verb "GET"
+      path "$href"
+      type "operation"
     end
 
-    output "kind","name","type","ttl","rrdatas"
-
-    output_path "rrsets[]" 
-
-    link "project" do
-      path "/projects/$project"
-      type "project"
+    link "targetLink" do
+      url "$targetLink"
     end
 
-    link "managedZone" do
-      path "/projects/$project/managedZones/$managed_zone"
-      type "managedZone"
-    end
+    provision "no_operation"
 
-    provision "provision_rrset"
+    delete "no_operation"
 
-    delete "delete_rrset"
-  
-  end  
-
+  end
 end 
 
-resource_pool "clouddns" do
-  plugin $clouddns
+resource_pool "cloud_sql" do
+  plugin $cloud_sql
   parameter_values do
     project $google_project
-    managed_zone $dns_zone
   end
   auth "my_google_auth", type: "oauth2" do
     token_url "https://www.googleapis.com/oauth2/v4/token"
     grant type: "jwt_bearer" do
-      iss cred("GOOGLE_DNS_PLUGIN_ACCOUNT")
+      iss cred("GOOGLE_SQL_PLUGIN_ACCOUNT")
       aud "https://www.googleapis.com/oauth2/v4/token"
       additional_claims do {
-        "scope" => "https://www.googleapis.com/auth/ndev.clouddns.readwrite"
+        "scope" => "https://www.googleapis.com/auth/sqlservice.admin"
       } end
-      signing_key cred("GOOGLE_DNS_PLUGIN_PRIVATE_KEY")
+      signing_key cred("GOOGLE_SQL_PLUGIN_PRIVATE_KEY")
     end
   end
 end
@@ -296,75 +363,36 @@ define provision_resource(@raw) return @resource on_error: stop_debugging() do
   call sys_log.set_task_target(@@deployment)
   call sys_log.summary(join(["Provision ",$type]))
   call sys_log.detail($raw)
-  @operation = clouddns.$type.create($fields)
+  @operation = cloud_sql.$type.create($fields)
   call sys_log.detail(to_object(@operation))
-  if $type == "change"
-    sub timeout: 2m, on_timeout: skip do
-      sleep_until @operation.status == "done"
-    end
+  sub timeout: 5m, on_timeout: skip do
+    sleep_until @operation.status == "DONE"
   end 
-  @resource = @operation.get()
+  if $type == "users"
+    $instance_name = $fields["instance_name"]
+    @resource = cloud_sql.users.empty()
+  else 
+    @resource = @operation.targetLink()
+  end 
   call sys_log.detail(to_object(@resource))
   call stop_debugging()
 end
 
-define delete_resource(@resource) on_error: stop_debugging() do
+define delete_resource(@resource) on_error: skip do
   call start_debugging()
   $raw = to_object(@resource)
   $type = $raw["type"]
   if !empty?(@resource)
     call sys_log.set_task_target(@@deployment)
     call sys_log.summary(join(["Delete: ",@resource.name]))
-    sub on_error: skip_not_found_error() do
-      @operation = @resource.delete()
-      if $type == "change"
-        sub timeout: 2m, on_timeout: skip do
-          sleep_until(@operation.status == "done")
-        end
-      end 
-      call sys_log.detail(to_object(@operation))
+    @operation = @resource.delete()
+    sub timeout: 2m, on_timeout: skip do
+      sleep_until(@operation.status == "DONE")
     end
   end
   call stop_debugging()
 end
 
-define provision_rrset(@raw) return @resource on_error: stop_debugging() do
-  call start_debugging()
-  $raw = to_object(@raw)
-  $fields = $raw["fields"]
-  $type = $raw["type"]
-  call sys_log.set_task_target(@@deployment)
-  call sys_log.summary(join(["Provision ",$type]))
-  call sys_log.detail($raw)
-  call sys_log.detail(join(["fields: ", $fields]))
-  @operation = clouddns.resourceRecordSet.create(record: [$fields])
-  call sys_log.detail(to_object(@operation))
-  @resource = @operation.get()
-  call sys_log.detail(to_object(@resource))
-  call stop_debugging()
-end
-
-define delete_rrset(@resource) on_error: stop_debugging() do
-  call start_debugging()
-  $raw = to_object(@resource)
-  $type = $raw["type"]
-  $fields = $raw["details"]
-  call sys_log.set_task_target(@@deployment)
-  call sys_log.summary(join(["Delete: ",$type]))
-  call sys_log.detail(join(["fields: ", $fields]))
-  sub on_error: stop_debugging() do
-    @operation = clouddns.resourceRecordSet.delete(record: $fields)
-    call sys_log.detail(to_object(@operation))
-  end
-  call stop_debugging()
-end
-
-define skip_not_found_error() do
-  if $_error["message"] =~ "/not found/i"
-    log_info($_error["type"] + ": " + $_error["message"])
-    $_error_behavior = "skip"
-  end
-end
 
 define start_debugging() do
   if $$debugging == false || logic_and($$debugging != false, $$debugging != true)
