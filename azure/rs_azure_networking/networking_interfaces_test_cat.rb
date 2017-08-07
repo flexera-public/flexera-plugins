@@ -14,15 +14,53 @@ permission "read_creds" do
   resources "rs_cm.credentials"
 end
 
+resource "server1", type: "server" do
+  name join(["server1-", last(split(@@deployment.href, "/"))])
+  cloud "AzureRM Central US"
+  server_template "RightLink 10.6.0 Linux Base"
+  multi_cloud_image_href "/api/multi_cloud_images/423486003"
+  network "ARM-CentralUS"
+  subnets "default"
+  instance_type "Standard_F1"
+  security_groups "Default"
+  associate_public_ip_address true
+end
+
 operation "launch" do
  description "Launch the application"
  definition "launch_handler"
 end
 
-define launch_handler() return @my_nic do
+operation "add_to_lb" do
+  description "adds to lb"
+  definition "add_to_lb"
+end
+
+define launch_handler(@server1) return @server1 do
+  provision(@server1)
+end
+
+define add_to_lb(@server1) return @server1,$nics,$a_nic do
   sub on_error: stop_debugging() do
     call start_debugging()
-    @my_nic = rs_azure_networking_interfaces.interface.show(resource_group: 'rs-default-centralus', name: 'azure-default-cc3cbb6c7')
+    @nics = rs_azure_networking_interfaces.interface.list(resource_group: @@deployment.name)
+    call stop_debugging()
+    call sys_log.detail(to_s(@nics))
+    $a_nic = []
+    foreach @nic in @nics do
+      call sys_log.detail("nic:" + to_s(@nic))
+      if @nic.name =~ @server1.name +"-default"
+        $a_nic << @nic.name
+      end
+    end
+    call update_network($a_nic[0])
+  end
+end
+
+define update_network($nic_name) return @my_nic do
+  sub on_error: stop_debugging() do
+    call start_debugging()
+    @my_nic = rs_azure_networking_interfaces.interface.show(resource_group: @@deployment.name, name: $nic_name)
     call stop_debugging()
     $object = to_object(@my_nic)
     call sys_log.detail("object:" + to_s($object)+"\n")
