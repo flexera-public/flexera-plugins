@@ -3,6 +3,10 @@ rs_ca_ver 20161221
 short_description "ARM Template Test CAT"
 import "plugins/rs_azure_template"
 
+parameter "subscription_id" do
+  like $rs_azure_template.subscription_id
+end
+
 resource "my_template", type: "rs_azure_template.deployment" do
   name join(["SS-test", last(split(@@deployment.href, "/"))])
   resource_group "DF-Testing"
@@ -30,9 +34,6 @@ define get_arm_template_params() return $params do
   $params = {
     "administratorLogin": {
         "value": "foobar"
-    },
-    "administratorLoginPassword": {
-        "value": "RightScale2017"
     },
     "location": {
         "value": "centralus"

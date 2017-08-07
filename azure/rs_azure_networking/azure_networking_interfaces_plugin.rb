@@ -1,9 +1,9 @@
-name 'rs_azure_compute'
+name 'rs_azure_networking_interfaces'
 type 'plugin'
 rs_ca_ver 20161221
-short_description "Azure Compute Plugin"
+short_description "Azure Networking Interfaces Plugin"
 long_description "Version: 1.2"
-package "plugins/rs_azure_compute"
+package "plugins/rs_azure_networking_interfaces"
 import "sys_log"
 
 parameter "subscription_id" do
@@ -16,12 +16,12 @@ permission "read_creds" do
   resources "rs_cm.credentials"
 end
 
-plugin "rs_azure_compute" do
+plugin "rs_azure_networking_interfaces" do
   endpoint do
     default_host "https://management.azure.com/"
     default_scheme "https"
     query do {
-      'api-version' =>  '2016-04-30-preview'
+      'api-version' =>  '2016-09-01'
     } end
   end
 
@@ -30,8 +30,8 @@ plugin "rs_azure_compute" do
     label "subscription_id"
   end
 
-  type "availability_set" do
-    href_templates "{{id}}"
+  type "interface" do
+    href_templates "{{id}}","{{value[*].id}}"
     provision "provision_resource"
     delete    "delete_resource"
 
@@ -60,20 +60,21 @@ plugin "rs_azure_compute" do
       location "body"
     end
 
-    field "sku" do
-      type "composite"
-      location "body"
+    action "create" do
+      type "interface"
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Network/networkInterfaces/$name"
+      verb "PUT"
     end
 
-    action "create" do
-      type "availability_set"
-      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Compute/availabilitySets/$name"
+    action "update" do
+      type "interface"
+      path "$href"
       verb "PUT"
     end
 
     action "show" do
-      type "availability_set"
-      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Compute/availabilitySets/$name"
+      type "interface"
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Network/networkInterfaces/$name"
       verb "GET"
 
       field "resource_group" do
@@ -85,152 +86,46 @@ plugin "rs_azure_compute" do
       end
     end
 
+    action "list" do
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Network/networkInterfaces"
+      verb "GET"
+
+      field "resource_group" do
+        location "path"
+      end
+
+      output_path "value[*]"
+    end
+
     action "get" do
-      type "availability_set"
+      type "interface"
       path "$href"
       verb "GET"
     end
 
     action "destroy" do
-      type "availability_set"
+      type "interface"
       path "$href"
       verb "DELETE"
     end
-    
-    output "virtualmachines" do
-      body_path "properties.virtualMachines[*].id"
-    end
-
-    output "id","name","location","tags","sku","properties"
-  end
-
-  type "virtualmachine" do
-    href_templates "{{contains(id, 'virtualMachines') && id || null}}"
-    provision "no_operation"
-    delete    "no_operation"
-
-    field "resource_group" do
-      type "string"
-      location "path"
-    end
-
-    field "virtualMachineName" do
-      type "string"
-      location "path"
-    end 
-
-    action "show" do
-      type "virtualmachine"
-      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Compute/virtualMachines/$virtualMachineName"
-      verb "GET"
-
-      field "resource_group" do
-        location "path"
-      end
-
-      field "virtualMachineName" do
-        location "path"
-      end 
-    end
-
-    action "get" do
-      type "virtualmachine"
-      path "$href"
-      verb "GET"
-    end
 
     output "id","name","location","tags","properties"
-  end
-
-  type "extensions" do
-    href_templates "{{type=='Microsoft.Compute/virtualMachines/extensions' && id || null}}"
-    provision "provision_extension"
-    delete    "delete_resource"
-
-    field "resource_group" do
-      type "string"
-      location "path"
-    end
-
-    field "virtualMachineName" do
-      type "string"
-      location "path"
-    end
-
-    field "name" do
-      type "string"
-      location "path"
-    end
-
-    field "properties" do
-      type "composite"
-      location "body"
-    end
-
-    field "location" do
-      type "string"
-      location "body"
-    end
-
-    field "protectedSettings" do
-      type "composite"
-      location "body"
-    end
-
-    action "create" do
-      type "extensions"
-      verb "PUT"
-      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Compute/virtualMachines/$virtualMachineName/extensions/$name"
-    end
-
-    action "show" do
-      type "extensions"
-      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Compute/virtualMachines/$virtualMachineName/extensions/$name"
-      verb "GET"
-
-      field "resource_group" do
-        location "path"
-      end
-
-      field "virtualMachineName" do
-        location "path"
-      end
-
-      field "name" do
-        location "path"
-      end
-    end
-
-    action "get" do
-      type "extensions"
-      path "$href"
-      verb "GET"
-    end
-
-    output "id","name","location","tags","properties"
-    output "provisioningState" do
-      body_path "properties.provisioningState"
-    end
-
-    output "state" do
-      body_path "properties.provisioningState"
-    end
   end
 end
 
-resource_pool "rs_azure_compute" do
-    plugin $rs_azure_compute
+resource_pool "rs_azure_networking_interfaces" do
+    plugin $rs_azure_networking_interfaces
     parameter_values do
       subscription_id $subscription_id
     end
 
     auth "azure_auth", type: "oauth2" do
-      token_url "https://login.microsoftonline.com/TENANT_ID/oauth2/token"
+      token_url "https://login.microsoftonline.com/09b8fec1-4b8d-48dd-8afa-5c1a775ea0f2/oauth2/token"
       grant type: "client_credentials" do
         client_id cred("AZURE_APPLICATION_ID")
         client_secret cred("AZURE_APPLICATION_KEY")
         additional_params do {
-          "resource" => "https://management.azure.com/"     
+          "resource" => "https://management.azure.com/"
         } end
       end
     end
@@ -259,7 +154,7 @@ define provision_resource(@declaration) return @resource do
     call sys_log.summary(join(["Provision ", $type]))
     call sys_log.detail($object)
     call start_debugging()
-    @operation = rs_azure_compute.$type.create($fields)
+    @operation = rs_azure_networking_interfaces.$type.create($fields)
     call sys_log.detail(to_object(@operation))
     @resource = @operation.show(resource_group: $resource_group, name: $name)
     call sys_log.detail(to_object(@resource))
@@ -280,7 +175,7 @@ define provision_extension(@declaration) return @resource do
     call sys_log.summary(join(["Provision ", $type]))
     call sys_log.detail($object)
     call start_debugging()
-    @operation = rs_azure_compute.$type.create($fields)
+    @operation = rs_azure_networking_interfaces.$type.create($fields)
     call stop_debugging()
     call sys_log.detail(to_object(@operation))
     call start_debugging()
