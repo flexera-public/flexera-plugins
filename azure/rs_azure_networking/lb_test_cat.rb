@@ -9,6 +9,10 @@ parameter "subscription_id" do
   default "8beb7791-9302-4ae4-97b4-afd482aadc59"
 end
 
+output "bu_pool" do
+  label "Backend pool"
+end
+
 permission "read_creds" do
   actions   "rs_cm.show_sensitive","rs_cm.index_sensitive"
   resources "rs_cm.credentials"
@@ -111,6 +115,9 @@ end
 operation "launch" do
  description "Launch the application"
  definition "launch_handler"
+  output_mappings do {
+    $bu_pool => @my_pub_lb.backendAddressPools[0]["id"]
+  end
 end
 
 define launch_handler(@server1,@server2,@lb_ip,@my_pub_lb,$subscription_id) return @server1,@lb_ip,@my_pub_lb do
