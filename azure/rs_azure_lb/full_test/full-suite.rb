@@ -57,7 +57,7 @@ resource "my_pub_lb", type: "rs_azure_lb.load_balancer" do
          "probe" => {
             "id" => join(["/subscriptions/",$subscription_id,"/resourceGroups/",@@deployment.name,"/providers/Microsoft.Network/loadBalancers/",join(["my-pub-lb-", last(split(@@deployment.href, "/"))]),"/probes/probe1"])
          },
-         "enableFloatingIP" => true,
+         "enableFloatingIP" => false,
          "idleTimeoutInMinutes" => 4,
          "loadDistribution" => "Default"
       }
@@ -88,6 +88,24 @@ resource "server1", type: "server" do
   instance_type "Standard_F1"
   security_groups "Default"
   associate_public_ip_address true
+  cloud_specific_attributes do {
+    "availability_set" => @@deployment.name
+  } end
+end
+
+resource "server2", type: "server" do
+  name join(["server2-", last(split(@@deployment.href, "/"))])
+  cloud "AzureRM Central US"
+  server_template "RightLink 10.6.0 Linux Base"
+  multi_cloud_image_href "/api/multi_cloud_images/423486003"
+  network "ARM-CentralUS"
+  subnets "default"
+  instance_type "Standard_F1"
+  security_groups "Default"
+  associate_public_ip_address true
+  cloud_specific_attributes do {
+    "availability_set" => @@deployment.name
+  } end
 end
 
 operation "launch" do
@@ -100,37 +118,40 @@ operation "add_to_lb" do
   definition "add_to_lb"
 end
 
-define launch_handler(@server1,@lb_ip,@my_pub_lb,$subscription_id) return @server1,@lb_ip,@my_pub_lb do
-  provision(@server1)
+define launch_handler(@server1,@server2,@lb_ip,@my_pub_lb,$subscription_id) return @server1,@lb_ip,@my_pub_lb do
+  task_label("Provisioning Server")
+  concurrent return @server1, @server2 do
+    provision(@server1)
+    provision(@server2)
+  end
+  task_label("Provisioning LB IP")
   provision(@lb_ip)
+  task_label("Provisioning Load Balancer")
   provision(@my_pub_lb)
-  call run_rightscript_by_name(@server1.current_instance(), 'install_apache.sh')
-  #call add_to_lb($subscription_id,@server1,@my_pub_lb)
+  task_label("Installing Apache")
+  concurrent return @server1, @server2 do
+    call run_rightscript_by_name(@server1.current_instance(), 'install_apache.sh')
+    call run_rightscript_by_name(@server2.current_instance(), 'install_apache.sh')
+  end
+  task_label("Adding Server to LB")
+  call add_to_lb($subscription_id,@server1,@my_pub_lb)
+  call add_to_lb($subscription_id,@server2,@my_pub_lb)
 end
 
-define add_to_lb($subscription_id,@server1,@my_pub_lb) return @server1,$nics,$a_nic do
+define add_to_lb($subscription_id,@server1,@my_pub_lb) return @server1,@my_target_nic do
   sub on_error: stop_debugging() do
     call start_debugging()
     @nics = rs_azure_networking_interfaces.interface.list(resource_group: @@deployment.name)
     call stop_debugging()
     call sys_log.detail(to_s(@nics))
-    $a_nic = []
+    @my_target_nic = rs_azure_networking_interfaces.interface.empty()
     foreach @nic in @nics do
       call sys_log.detail("nic:" + to_s(@nic))
       if @nic.name =~ @server1.name +"-default"
-        $a_nic << @nic.name
+        @my_target_nic = @nic
       end
     end
-    call update_network($subscription_id,$a_nic[0],@my_pub_lb)
-  end
-end
-
-define update_network($subscription_id,$nic_name,@my_pub_lb) return @my_nic do
-  sub on_error: stop_debugging() do
-    call start_debugging()
-    @my_nic = rs_azure_networking_interfaces.interface.show(resource_group: @@deployment.name, name: $nic_name)
-    call stop_debugging()
-    $object = to_object(@my_nic)
+    $object = to_object(@my_target_nic)
     call sys_log.detail("object:" + to_s($object)+"\n")
     $fields = $object["details"]
     call sys_log.detail("fields:" + to_s($fields) + "\n")
@@ -141,7 +162,7 @@ define update_network($subscription_id,$nic_name,@my_pub_lb) return @my_nic do
     $nic["properties"]["ipConfigurations"][0]["properties"]["loadBalancerBackendAddressPools"][0]["id"] = "/subscriptions/"+$subscription_id+"/resourceGroups/"+@@deployment.name+"/providers/Microsoft.Network/loadBalancers/"+@my_pub_lb.name+"/backendAddressPools/pool1"
     call sys_log.detail("updated_nic:" + to_s($nic))
     call start_debugging()
-    @updated_nic = @my_nic.update($nic)
+    @updated_nic = @my_target_nic.update($nic)
     call stop_debugging()
   end
 end
