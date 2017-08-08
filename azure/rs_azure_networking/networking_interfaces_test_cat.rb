@@ -2,7 +2,7 @@ name 'Azure NIC Test CAT'
 rs_ca_ver 20161221
 short_description "Azure Compute - Test CAT"
 import "sys_log"
-import "plugins/rs_azure_networking_interfaces"
+import "plugins/rs_azure_networking"
 
 parameter "subscription_id" do
   like $rs_azure_networking_interfaces.subscription_id
@@ -29,11 +29,6 @@ end
 operation "launch" do
  description "Launch the application"
  definition "launch_handler"
-end
-
-operation "add_to_lb" do
-  description "adds to lb"
-  definition "add_to_lb"
 end
 
 define launch_handler(@server1) return @server1 do

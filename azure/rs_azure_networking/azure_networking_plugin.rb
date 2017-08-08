@@ -1,9 +1,9 @@
-name 'rs_azure_networking_interfaces'
+name 'rs_azure_networking'
 type 'plugin'
 rs_ca_ver 20161221
-short_description "Azure Networking Interfaces Plugin"
+short_description "Azure Networking Plugin"
 long_description "Version: 1.2"
-package "plugins/rs_azure_networking_interfaces"
+package "plugins/rs_azure_networking"
 import "sys_log"
 
 parameter "subscription_id" do
@@ -16,7 +16,7 @@ permission "read_creds" do
   resources "rs_cm.credentials"
 end
 
-plugin "rs_azure_networking_interfaces" do
+plugin "rs_azure_networking" do
   endpoint do
     default_host "https://management.azure.com/"
     default_scheme "https"
@@ -113,8 +113,8 @@ plugin "rs_azure_networking_interfaces" do
   end
 end
 
-resource_pool "rs_azure_networking_interfaces" do
-    plugin $rs_azure_networking_interfaces
+resource_pool "rs_azure_networking" do
+    plugin $rs_azure_networking
     parameter_values do
       subscription_id $subscription_id
     end
