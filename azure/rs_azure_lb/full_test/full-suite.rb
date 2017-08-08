@@ -113,11 +113,6 @@ operation "launch" do
  definition "launch_handler"
 end
 
-operation "add_to_lb" do
-  description "adds to lb"
-  definition "add_to_lb"
-end
-
 define launch_handler(@server1,@server2,@lb_ip,@my_pub_lb,$subscription_id) return @server1,@lb_ip,@my_pub_lb do
   task_label("Provisioning Server")
   concurrent return @server1, @server2 do
