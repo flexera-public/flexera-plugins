@@ -20,7 +20,7 @@ resource "lb_ip", type: "rs_cm.ip_address" do
   network "ARM-CentralUS"
 end
 
-resource "my_pub_lb", type: "rs_azure_networking.load_balancer" do
+resource "my_pub_lb", type: "rs_azure_lb.load_balancer" do
   name join(["my-pub-lb-", last(split(@@deployment.href, "/"))])
   resource_group @@deployment.name
   location "Central US"

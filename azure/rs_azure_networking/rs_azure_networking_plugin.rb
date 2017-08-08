@@ -31,7 +31,7 @@ plugin "rs_azure_networking" do
   end
 
   type "interface" do
-    href_templates "{{type=='Microsoft.Network/NetworkInterfaces' && id || null}}","{{value[*].id}}"
+    href_templates "{{id}}","{{value[*].id}}"
     provision "provision_interface"
     delete    "delete_resource"
 
@@ -93,7 +93,7 @@ plugin "rs_azure_networking" do
         location "path"
       end
 
-      output_path "value[]"
+      output_path "value[*]"
     end
 
     action "get" do
@@ -109,6 +109,21 @@ plugin "rs_azure_networking" do
     end
 
     output "id","name","location","tags","properties"
+  end
+end
+
+plugin "rs_azure_lb" do
+  endpoint do
+    default_host "https://management.azure.com/"
+    default_scheme "https"
+    query do {
+      'api-version' =>  '2016-09-01'
+    } end
+  end
+
+  parameter "subscription_id" do
+    type  "string"
+    label "subscription_id"
   end
 
   type "load_balancer" do
@@ -249,6 +264,24 @@ resource_pool "rs_azure_networking" do
     end
 end
 
+resource_pool "rs_azure_lb" do
+    plugin $rs_azure_lb
+    parameter_values do
+      subscription_id $subscription_id
+    end
+
+    auth "azure_auth", type: "oauth2" do
+      token_url "https://login.microsoftonline.com/09b8fec1-4b8d-48dd-8afa-5c1a775ea0f2/oauth2/token"
+      grant type: "client_credentials" do
+        client_id cred("AZURE_APPLICATION_ID")
+        client_secret cred("AZURE_APPLICATION_KEY")
+        additional_params do {
+          "resource" => "https://management.azure.com/"     
+        } end
+      end
+    end
+end
+
 define skip_known_error() do
   # If all errors were concurrent resource group errors, skip
   $_error_behavior = "skip"
@@ -286,7 +319,7 @@ define provision_lb(@declaration) return @resource do
     call sys_log.summary(join(["Provision ", $type]))
     call sys_log.detail($object)
     call start_debugging()
-    @operation = rs_azure_networking.$type.create($create_fields)
+    @operation = rs_azure_lb.$type.create($create_fields)
     call sys_log.detail(to_object(@operation))
     @resource = @operation.show()
     $status = @resource.state
