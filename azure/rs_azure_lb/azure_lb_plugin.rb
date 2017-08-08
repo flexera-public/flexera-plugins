@@ -32,7 +32,7 @@ plugin "rs_azure_lb" do
 
   type "load_balancer" do
     href_templates "{{id}}"
-    provision "provision_resource"
+    provision "provision_lb"
     delete    "delete_resource"
 
     field "properties" do
@@ -179,7 +179,7 @@ define skip_known_error() do
   end
 end
 
-define provision_resource(@declaration) return @resource do
+define provision_lb(@declaration) return @resource do
   sub on_error: stop_debugging() do
     $object = to_object(@declaration)
     $fields = $object["fields"]

@@ -1,29 +1,12 @@
-name 'Azure LB Test CAT'
+name 'Azure Full Suite'
 rs_ca_ver 20161221
-short_description "Azure Load Balancing - Test CAT"
+short_description "Azure Full Suite - Test CAT"
 import "sys_log"
-import "plugins/rs_azure_lb"
+import "plugins/rs_azure_networking_plugin"
 
 parameter "subscription_id" do
-  like $rs_azure_lb.subscription_id
+  like $rs_azure_networking_plugin.subscription_id
   default "8beb7791-9302-4ae4-97b4-afd482aadc59"
-end
-
-parameter "resource_group" do
-  type  "string"
-  label "Resource Group"
-end
-
-output "publiclb_id" do
-  label "PublicLB-ID"
-  category "LoadBalancer"
-  default_value @my_pub_lb.id
-end
-
-output "privatelb_id" do
-  label "PrivateLB-ID"
-  category "LoadBalancer"
-  default_value @my_priv_lb.id
 end
 
 permission "read_creds" do
@@ -31,16 +14,22 @@ permission "read_creds" do
   resources "rs_cm.credentials"
 end
 
-resource "my_pub_lb", type: "rs_azure_lb.load_balancer" do
+resource "lb_ip", type: "rs_cm.ip_address" do
+  name @@deployment.name
+  cloud "AzureRM Central US"
+  network "ARM-CentralUS"
+end
+
+resource "my_pub_lb", type: "rs_azure_networking.load_balancer" do
   name join(["my-pub-lb-", last(split(@@deployment.href, "/"))])
-  resource_group "rs-default-centralus"
+  resource_group @@deployment.name
   location "Central US"
   frontendIPConfigurations do [
     {
      "name" => "ip1",
      "properties" => {
         "publicIPAddress" => {
-           "id" => join(["/subscriptions/",$subscription_id,"/resourceGroups/DF-Testing/providers/Microsoft.Network/publicIPAddresses/Shade"])
+           "id" => join(["/subscriptions/",$subscription_id,"/resourceGroups/",@@deployment.name,"/providers/Microsoft.Network/publicIPAddresses/",@@deployment.name])
         }
       }
     }
@@ -57,18 +46,18 @@ resource "my_pub_lb", type: "rs_azure_lb.load_balancer" do
       "name"=> "HTTP-Traffic",
       "properties" => {
          "frontendIPConfiguration" => {
-            "id" => join(["/subscriptions/",$subscription_id,"/resourceGroups/rs-default-centralus/providers/Microsoft.Network/loadBalancers/",join(["my-pub-lb-", last(split(@@deployment.href, "/"))]),"/frontendIPConfigurations/ip1"])
+            "id" => join(["/subscriptions/",$subscription_id,"/resourceGroups/",@@deployment.name,"/providers/Microsoft.Network/loadBalancers/",join(["my-pub-lb-", last(split(@@deployment.href, "/"))]),"/frontendIPConfigurations/ip1"])
          },  
          "backendAddressPool" => {
-            "id" => join(["/subscriptions/",$subscription_id,"/resourceGroups/rs-default-centralus/providers/Microsoft.Network/loadBalancers/",join(["my-pub-lb-", last(split(@@deployment.href, "/"))]),"/backendAddressPools/pool1"])
+            "id" => join(["/subscriptions/",$subscription_id,"/resourceGroups/",@@deployment.name,"/providers/Microsoft.Network/loadBalancers/",join(["my-pub-lb-", last(split(@@deployment.href, "/"))]),"/backendAddressPools/pool1"])
          },  
          "protocol" => "Tcp",
          "frontendPort" => 80,
-         "backendPort" => 8080,
+         "backendPort" => 80,
          "probe" => {
-            "id" => join(["/subscriptions/",$subscription_id,"/resourceGroups/rs-default-centralus/providers/Microsoft.Network/loadBalancers/",join(["my-pub-lb-", last(split(@@deployment.href, "/"))]),"/probes/probe1"])
+            "id" => join(["/subscriptions/",$subscription_id,"/resourceGroups/",@@deployment.name,"/providers/Microsoft.Network/loadBalancers/",join(["my-pub-lb-", last(split(@@deployment.href, "/"))]),"/probes/probe1"])
          },
-         "enableFloatingIP" => true,
+         "enableFloatingIP" => false,
          "idleTimeoutInMinutes" => 4,
          "loadDistribution" => "Default"
       }
@@ -80,7 +69,7 @@ resource "my_pub_lb", type: "rs_azure_lb.load_balancer" do
       "name" =>  "probe1",
       "properties" => {
         "protocol" =>  "Http",
-        "port" =>  8080,
+        "port" =>  80,
         "requestPath" =>  "/",
         "intervalInSeconds" =>  5,
         "numberOfProbes" =>  16
@@ -89,61 +78,110 @@ resource "my_pub_lb", type: "rs_azure_lb.load_balancer" do
   ] end
 end
 
-resource "my_priv_lb", type: "rs_azure_lb.load_balancer" do
-  name join(["my-priv-lb-", last(split(@@deployment.href, "/"))])
-  resource_group "rs-default-centralus"
-  location "Central US"
-  frontendIPConfigurations do [
-    {
-     "name" => "ip1",
-     "properties" => {
-        "subnet" => {
-           "id" => join(["/subscriptions/",$subscription_id,"/resourceGroups/rs-default-centralus/providers/Microsoft.Network/virtualNetworks/ARM-CentralUS/subnets/default"])
-        },
-        "privateIPAllocationMethod" => "Dynamic"
-      }
-    }
-  ] end
+resource "server1", type: "server" do
+  name join(["server1-", last(split(@@deployment.href, "/"))])
+  cloud "AzureRM Central US"
+  server_template "RightLink 10.6.0 Linux Base"
+  multi_cloud_image_href "/api/multi_cloud_images/423486003"
+  network "ARM-CentralUS"
+  subnets "default"
+  instance_type "Standard_F1"
+  security_groups "Default"
+  associate_public_ip_address true
+  cloud_specific_attributes do {
+    "availability_set" => @@deployment.name
+  } end
+end
 
-  backendAddressPools do [
-    {
-      "name" => "pool1" 
-    }
-  ] end
+resource "server2", type: "server" do
+  name join(["server2-", last(split(@@deployment.href, "/"))])
+  cloud "AzureRM Central US"
+  server_template "RightLink 10.6.0 Linux Base"
+  multi_cloud_image_href "/api/multi_cloud_images/423486003"
+  network "ARM-CentralUS"
+  subnets "default"
+  instance_type "Standard_F1"
+  security_groups "Default"
+  associate_public_ip_address true
+  cloud_specific_attributes do {
+    "availability_set" => @@deployment.name
+  } end
+end
 
-  loadBalancingRules do [
-    {
-      "name"=> "HTTP-Traffic",
-      "properties" => {
-         "frontendIPConfiguration" => {
-            "id" => join(["/subscriptions/",$subscription_id,"/resourceGroups/rs-default-centralus/providers/Microsoft.Network/loadBalancers/",join(["my-priv-lb-", last(split(@@deployment.href, "/"))]),"/frontendIPConfigurations/ip1"])
-         },  
-         "backendAddressPool" => {
-            "id" => join(["/subscriptions/",$subscription_id,"/resourceGroups/rs-default-centralus/providers/Microsoft.Network/loadBalancers/",join(["my-priv-lb-", last(split(@@deployment.href, "/"))]),"/backendAddressPools/pool1"])
-         },  
-         "protocol" => "Tcp",
-         "frontendPort" => 80,
-         "backendPort" => 8080,
-         "probe" => {
-            "id" => join(["/subscriptions/",$subscription_id,"/resourceGroups/rs-default-centralus/providers/Microsoft.Network/loadBalancers/",join(["my-priv-lb-", last(split(@@deployment.href, "/"))]),"/probes/probe1"])
-         },
-         "enableFloatingIP" => true,
-         "idleTimeoutInMinutes" => 4,
-         "loadDistribution" => "Default"
-      }
-    }  
-  ] end
+operation "launch" do
+ description "Launch the application"
+ definition "launch_handler"
+end
 
-  probes do [
-    {
-      "name" =>  "probe1",
-      "properties" => {
-        "protocol" =>  "Http",
-        "port" =>  8080,
-        "requestPath" =>  "/",
-        "intervalInSeconds" =>  5,
-        "numberOfProbes" =>  16
-      }
-    }
-  ] end
+define launch_handler(@server1,@server2,@lb_ip,@my_pub_lb,$subscription_id) return @server1,@lb_ip,@my_pub_lb do
+  task_label("Provisioning Server")
+  concurrent return @server1, @server2 do
+    provision(@server1)
+    provision(@server2)
+  end
+  task_label("Provisioning LB IP")
+  provision(@lb_ip)
+  task_label("Provisioning Load Balancer")
+  provision(@my_pub_lb)
+  task_label("Installing Apache")
+  concurrent return @server1, @server2 do
+    call run_rightscript_by_name(@server1.current_instance(), 'install_apache.sh')
+    call run_rightscript_by_name(@server2.current_instance(), 'install_apache.sh')
+  end
+  task_label("Adding Server to LB")
+  call add_to_lb($subscription_id,@server1,@my_pub_lb)
+  call add_to_lb($subscription_id,@server2,@my_pub_lb)
+end
+
+define add_to_lb($subscription_id,@server1,@my_pub_lb) return @server1,@my_target_nic do
+  sub on_error: stop_debugging() do
+    call start_debugging()
+    @nics = rs_azure_networking.interface.list(resource_group: @@deployment.name)
+    call stop_debugging()
+    call sys_log.detail(to_s(@nics))
+    @my_target_nic = rs_azure_networking.interface.empty()
+    foreach @nic in @nics do
+      call sys_log.detail("nic:" + to_s(@nic))
+      if @nic.name =~ @server1.name +"-default"
+        @my_target_nic = @nic
+      end
+    end
+    $object = to_object(@my_target_nic)
+    call sys_log.detail("object:" + to_s($object)+"\n")
+    $fields = $object["details"]
+    call sys_log.detail("fields:" + to_s($fields) + "\n")
+    $nic = $fields[0]
+    call sys_log.detail("nic:" + to_s($nic))
+    $nic["properties"]["ipConfigurations"][0]["properties"]["loadBalancerBackendAddressPools"] = []
+    $nic["properties"]["ipConfigurations"][0]["properties"]["loadBalancerBackendAddressPools"][0] = {}
+    $nic["properties"]["ipConfigurations"][0]["properties"]["loadBalancerBackendAddressPools"][0]["id"] = "/subscriptions/"+$subscription_id+"/resourceGroups/"+@@deployment.name+"/providers/Microsoft.Network/loadBalancers/"+@my_pub_lb.name+"/backendAddressPools/pool1"
+    call sys_log.detail("updated_nic:" + to_s($nic))
+    call start_debugging()
+    @updated_nic = @my_target_nic.update($nic)
+    call stop_debugging()
+  end
+end
+
+define run_rightscript_by_name(@target, $script_name) do
+  @script = rs_cm.right_scripts.index(latest_only: true, filter: [join(["name==", $script_name])])
+  @task = @target.run_executable(right_script_href: @script.href )
+  sleep_until(@task.summary =~ "^(Completed|Aborted)")
+  if @task.summary =~ "Aborted"
+    raise "Failed to run " + $script_name
+  end
+end
+
+define start_debugging() do
+  if $$debugging == false || logic_and($$debugging != false, $$debugging != true)
+    initiate_debug_report()
+    $$debugging = true
+  end
+end
+
+define stop_debugging() do
+  if $$debugging == true
+    $debug_report = complete_debug_report()
+    call sys_log.detail($debug_report)
+    $$debugging = false
+  end
 end
