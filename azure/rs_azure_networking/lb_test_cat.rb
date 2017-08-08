@@ -13,6 +13,10 @@ output "bu_pool" do
   label "Backend pool"
 end
 
+output "lb_ip1" do
+  label "Load Balancer IP"
+end
+
 permission "read_creds" do
   actions   "rs_cm.show_sensitive","rs_cm.index_sensitive"
   resources "rs_cm.credentials"
@@ -116,11 +120,12 @@ operation "launch" do
  description "Launch the application"
  definition "launch_handler"
   output_mappings do {
-    $bu_pool => @my_pub_lb.backendAddressPools[0]["id"]
-  end
+    $bu_pool => $pool_id,
+    $lb_ip1 => $lb_ip
+  } end
 end
 
-define launch_handler(@server1,@server2,@lb_ip,@my_pub_lb,$subscription_id) return @server1,@lb_ip,@my_pub_lb do
+define launch_handler(@server1,@server2,@lb_ip,@my_pub_lb,$subscription_id) return @server1,@lb_ip,@my_pub_lb,$pool_id,$lb_ip do
   task_label("Provisioning Server")
   concurrent return @server1, @server2 do
     provision(@server1)
@@ -136,11 +141,13 @@ define launch_handler(@server1,@server2,@lb_ip,@my_pub_lb,$subscription_id) retu
     call run_rightscript_by_name(@server2.current_instance(), 'install_apache.sh')
   end
   task_label("Adding Server to LB")
-  call add_to_lb($subscription_id,@server1,@my_pub_lb)
-  call add_to_lb($subscription_id,@server2,@my_pub_lb)
+  call add_to_lb(@server1,@my_pub_lb)
+  call add_to_lb(@server2,@my_pub_lb)
+  $pool_id = @my_pub_lb.backendAddressPools[0]["id"]
+  $lb_ip = @lb_ip.address
 end
 
-define add_to_lb($subscription_id,@server1,@my_pub_lb) return @server1,@my_target_nic do
+define add_to_lb(@server1,@my_pub_lb) return @server1,@my_target_nic do
   sub on_error: stop_debugging() do
     call start_debugging()
     @nics = rs_azure_networking.interface.list(resource_group: @@deployment.name)
@@ -163,7 +170,7 @@ define add_to_lb($subscription_id,@server1,@my_pub_lb) return @server1,@my_targe
     call sys_log.detail("nic:" + to_s($nic))
     $nic["properties"]["ipConfigurations"][0]["properties"]["loadBalancerBackendAddressPools"] = []
     $nic["properties"]["ipConfigurations"][0]["properties"]["loadBalancerBackendAddressPools"][0] = {}
-    $nic["properties"]["ipConfigurations"][0]["properties"]["loadBalancerBackendAddressPools"][0]["id"] = "/subscriptions/"+$subscription_id+"/resourceGroups/"+@@deployment.name+"/providers/Microsoft.Network/loadBalancers/"+@my_pub_lb.name+"/backendAddressPools/pool1"
+    $nic["properties"]["ipConfigurations"][0]["properties"]["loadBalancerBackendAddressPools"][0]["id"] = @my_pub_lb.backendAddressPools[0]["id"]
     call sys_log.detail("updated_nic:" + to_s($nic))
     call start_debugging()
     @updated_nic = @my_target_nic.update($nic)

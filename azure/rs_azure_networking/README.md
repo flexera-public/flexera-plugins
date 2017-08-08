@@ -33,7 +33,7 @@ The Azure Load Balancer Plugin integrates RightScale Self-Service with the basic
 ## How to Use
 The Azure Load Balancer Plugin has been packaged as `plugins/rs_azure_lb`. In order to use this plugin you must import this plugin into a CAT.
 ```
-import "plugins/rs_azure_lb"
+import "plugins/rs_azure_networking"
 ```
 For more information on using packages, please refer to the RightScale online documentation. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
@@ -41,7 +41,8 @@ Azure Load Balancer resources can now be created by specifying a resource declar
 The resulting resource can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
 
 ## Supported Resources
- - load_balancer
+ - rs_azure_lb.load_balancer
+ - rs_azure_networking.interface
 
 ## Usage
 ```
@@ -98,7 +99,7 @@ resource "my_pub_lb", type: "rs_azure_lb.load_balancer" do
          "probe" => {
             "id" => join(["/subscriptions/",$subscription_id,"/resourceGroups/",$resource_group,"/providers/Microsoft.Network/loadBalancers/",join(["my-pub-lb-", last(split(@@deployment.href, "/"))]),"/probes/probe1"])
          },
-         "enableFloatingIP" => true,
+         "enableFloatingIP" => false,
          "idleTimeoutInMinutes" => 4,
          "loadDistribution" => "Default"
       }
@@ -117,6 +118,25 @@ resource "my_pub_lb", type: "rs_azure_lb.load_balancer" do
       }
     }
   ] end
+end
+
+# connect to lb definition
+define add_to_lb(@server,@my_pub_lb) return @server1,@updated_nic do
+  @nics = rs_azure_networking.interface.list(resource_group: @@deployment.name)
+  @my_target_nic = rs_azure_networking.interface.empty()
+  foreach @nic in @nics do
+    call sys_log.detail("nic:" + to_s(@nic))
+    if @nic.name =~ @server.name +"-default"
+      @my_target_nic = @nic
+    end
+  end
+  $object = to_object(@my_target_nic)
+  $fields = $object["details"]
+  $nic = $fields[0]
+  $nic["properties"]["ipConfigurations"][0]["properties"]["loadBalancerBackendAddressPools"] = []
+  $nic["properties"]["ipConfigurations"][0]["properties"]["loadBalancerBackendAddressPools"][0] = {}
+  $nic["properties"]["ipConfigurations"][0]["properties"]["loadBalancerBackendAddressPools"][0]["id"] = @my_pub_lb.backendAddressPools[0]["id"]
+  @updated_nic = @my_target_nic.update($nic)
 end
 ```
 ## Resources
@@ -149,11 +169,39 @@ end
 - location
 - kind
 
+## interface
+#### Supported Fields
+| Field Name | Required? | Description |
+|------------|-----------|-------------|
+|name|Yes|The name of the NIC.|
+|resource_group|Yes|Name of resource group in which to launch the Deployment|
+|location|Yes|Datacenter to launch in|
+|properties| Hash of NIC properties|
+#### Supported Actions
+
+| Action | API Implementation | Support Level |
+|--------------|:----:|:-------------:|
+| create&update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/network/virtualnetwork/create-or-update-a-network-interface-card) | Supported |
+| destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/network/virtualnetwork/delete-a-network-interface-card) | Supported |
+| get | [Get](https://docs.microsoft.com/en-us/rest/api/network/virtualnetwork/get-information-about-a-network-interface-card)| Supported |
+| list | [Get](https://docs.microsoft.com/en-us/rest/api/network/virtualnetwork/list-network-interface-cards-within-a-resource-group)| Supported |
+
+#### Supported Outputs
+- id
+- name
+- type
+- location
+- properties
+- tags
+
+
 ## Implementation Notes
-- The Azure Load Balancer Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to an LB resource.) 
+- The Azure Networking Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to an LB resource.) 
 
  
-Full list of possible actions can be found on the [Azure Load Balancer API Documentation](https://docs.microsoft.com/en-us/rest/api/network/loadbalancer/)
+Full list of possible actions can be found on the 
+- [Azure Load Balancer API Documentation](https://docs.microsoft.com/en-us/rest/api/network/loadbalancer/)
+- [Azure Network Interface Card API Documentation](https://docs.microsoft.com/en-us/rest/api/network/virtualnetwork/network-interface-cards)
 ## Examples
 Please review [lb_test_cat.rb](./lb_test_cat.rb) for a basic example implementation.
 	
