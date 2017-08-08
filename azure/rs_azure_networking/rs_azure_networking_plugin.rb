@@ -31,7 +31,7 @@ plugin "rs_azure_networking" do
   end
 
   type "interface" do
-    href_templates "{{type=='Microsoft.Network/NetworkInterfaces' && id || null}}","{{value[0].type=='Microsoft.Network/NetworkInterfaces' && value[*].id || null}}"
+    href_templates "{{type=='Microsoft.Network/NetworkInterfaces' && id || null}}","{{value[*].id}}"
     provision "provision_interface"
     delete    "delete_resource"
 
@@ -73,7 +73,6 @@ plugin "rs_azure_networking" do
     end
 
     action "show" do
-      type "interface"
       path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Network/networkInterfaces/$name"
       verb "GET"
 
@@ -87,7 +86,6 @@ plugin "rs_azure_networking" do
     end
 
     action "list" do
-      type "interface"
       path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Network/networkInterfaces"
       verb "GET"
 
@@ -95,7 +93,7 @@ plugin "rs_azure_networking" do
         location "path"
       end
 
-      output_path "value[*]"
+      output_path "value[]"
     end
 
     action "get" do

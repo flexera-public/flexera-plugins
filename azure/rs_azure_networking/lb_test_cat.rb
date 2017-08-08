@@ -140,12 +140,14 @@ define add_to_lb($subscription_id,@server1,@my_pub_lb) return @server1,@my_targe
     call stop_debugging()
     call sys_log.detail(to_s(@nics))
     @my_target_nic = rs_azure_networking.interface.empty()
+    call start_debugging()
     foreach @nic in @nics do
       call sys_log.detail("nic:" + to_s(@nic))
       if @nic.name =~ @server1.name +"-default"
         @my_target_nic = @nic
       end
     end
+    call stop_debugging()
     $object = to_object(@my_target_nic)
     call sys_log.detail("object:" + to_s($object)+"\n")
     $fields = $object["details"]
