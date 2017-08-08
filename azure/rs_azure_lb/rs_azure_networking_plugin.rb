@@ -2,7 +2,7 @@ name 'rs_azure_networking_plugin'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Azure Networking Plugin"
-long_description "Version: 1.3"
+long_description "Version: 1.0"
 package "plugins/rs_azure_networking_plugin"
 import "sys_log"
 
@@ -87,6 +87,7 @@ plugin "rs_azure_networking" do
     end
 
     action "list" do
+      type "interface"
       path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Network/networkInterfaces"
       verb "GET"
 
@@ -287,7 +288,7 @@ define provision_lb(@declaration) return @resource do
     call sys_log.summary(join(["Provision ", $type]))
     call sys_log.detail($object)
     call start_debugging()
-    @operation = rs_azure_lb.$type.create($create_fields)
+    @operation = rs_azure_networking.$type.create($create_fields)
     call sys_log.detail(to_object(@operation))
     @resource = @operation.show()
     $status = @resource.state
@@ -315,45 +316,9 @@ define provision_interface(@declaration) return @resource do
     call sys_log.summary(join(["Provision ", $type]))
     call sys_log.detail($object)
     call start_debugging()
-    @operation = rs_azure_networking_interfaces.$type.create($fields)
+    @operation = rs_azure_networking.$type.create($fields)
     call sys_log.detail(to_object(@operation))
     @resource = @operation.show(resource_group: $resource_group, name: $name)
-    call sys_log.detail(to_object(@resource))
-    call stop_debugging()
-  end
-end
-
-define provision_extension(@declaration) return @resource do
-  sub on_error: stop_debugging() do
-    $object = to_object(@declaration)
-    $fields = $object["fields"]
-    $type = $object["type"]
-    $name = $fields["name"]
-    $resource_group = $fields["resource_group"]
-    $vm_name = $fields["virtualMachineName"]
-    call sys_log.detail(join(["fields", $fields]))
-    call sys_log.set_task_target(@@deployment)
-    call sys_log.summary(join(["Provision ", $type]))
-    call sys_log.detail($object)
-    call start_debugging()
-    @operation = rs_azure_networking_interfaces.$type.create($fields)
-    call stop_debugging()
-    call sys_log.detail(to_object(@operation))
-    call start_debugging()
-    @new_resource = @operation.show(resource_group: $resource_group, virtualMachineName: $vm_name, name: $name)
-    $status = @new_resource.state
-    while $status != "Succeeded" do
-      $status = @new_resource.state
-      if $status == "Failed"
-        call stop_debugging()
-        raise "Execution Name: "+ $name + ", Status: " + $status + ", VirtualMachine: " + $vm_name
-      end
-      call stop_debugging()
-      call sys_log.detail(join(["Status: ", $status]))
-      call start_debugging()
-      sleep(10)
-    end
-    @resource = @new_resource
     call sys_log.detail(to_object(@resource))
     call stop_debugging()
   end
