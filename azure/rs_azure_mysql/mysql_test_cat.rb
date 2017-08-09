@@ -56,12 +56,11 @@ operation "launch" do
  description "Launch the application"
  definition "launch_handler"
  output_mappings do {
-  $databases => $db_link_output,
   $firewall_rules => $firewall_rules_link_output
  } end
 end
 
-define launch_handler(@sql_server, @firewall_rule) return @databases,$db_link_output,$firewall_rules_link_output do
+define launch_handler(@sql_server, @firewall_rule) return $firewall_rules_link_output do
   provision(@sql_server)
   provision(@firewall_rule)
   call start_debugging()
