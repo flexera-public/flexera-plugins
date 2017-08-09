@@ -2,4 +2,4 @@ SQL Plugin changelog
 
 v1.0
 -----
-- initial release
+- initial release, includes database server and firewall rule resource

@@ -151,11 +151,6 @@ plugin "rs_azure_mysql" do
       location "body"
     end
 
-    #field "location" do
-    #  type "string"
-    #  location "body"
-    #end
-
     field "resource_group" do
       type "string"
       location "path"
@@ -188,18 +183,6 @@ plugin "rs_azure_mysql" do
       path "$href"
       verb "DELETE"
     end
-    
-    #action "pause" do
-    #  type "databases"
-    #  path "$href/pause"
-    #  verb "POST"
-    #end
-
-    #action "resume" do
-    #  type "databases"
-    #  path "$href/resume"
-    #  verb "POST"
-    #end
 
     action "update" do
       type "databases"
@@ -246,11 +229,6 @@ plugin "rs_azure_mysql" do
       type "composite"
       location "body"
     end
-
-    #field "location" do
-    #  type "string"
-    #  location "body"
-    #end
 
     field "resource_group" do
       type "string"
@@ -316,7 +294,7 @@ resource_pool "rs_azure_mysql" do
     end
 
     auth "azure_auth", type: "oauth2" do
-      token_url "https://login.microsoftonline.com/09b8fec1-4b8d-48dd-8afa-5c1a775ea0f2/oauth2/token"
+      token_url "https://login.microsoftonline.com/TENANT_ID/oauth2/token"
       grant type: "client_credentials" do
         client_id cred("AZURE_APPLICATION_ID")
         client_secret cred("AZURE_APPLICATION_KEY")
