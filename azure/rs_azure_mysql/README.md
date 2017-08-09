@@ -1,4 +1,4 @@
-# Azure SQL Database Plugin
+# Azure Database for MySQL Plugin
 
 ## Overview
 The Azure Database for MySQL Plugin integrates RightScale Self-Service with the basic functionality of the Azure Database for MySQL service.
