@@ -6,21 +6,6 @@ import "plugins/rs_azure_pgsql"
 
 parameter "subscription_id" do
   like $rs_azure_pgsql.subscription_id
-  default "8beb7791-9302-4ae4-97b4-afd482aadc59"
-end
-
-output "databases" do
-  label "Databases"
-  category "Databases"
-  default_value $db_link_output
-  description "Databases"
-end
-
-output "firewall_rules" do
-  label "firewall_rules"
-  category "Databases"
-  default_value $firewall_rules_link_output
-  description "firewall_rules"
 end
 
 permission "read_creds" do
@@ -63,13 +48,9 @@ end
 operation "launch" do
  description "Launch the application"
  definition "launch_handler"
- output_mappings do {
-  $databases => $db_link_output,
-  $firewall_rules => $firewall_rules_link_output
- } end
 end
 
-define launch_handler(@sql_server,@firewall_rule) return @databases,$db_link_output,$firewall_rules_link_output do
+define launch_handler(@sql_server,@firewall_rule) return @sql_server do
   call start_debugging()
   provision(@sql_server)
   provision(@firewall_rule)
