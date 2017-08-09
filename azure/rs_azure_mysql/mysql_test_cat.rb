@@ -9,13 +9,6 @@ parameter "subscription_id" do
   default "8beb7791-9302-4ae4-97b4-afd482aadc59"
 end
 
-output "databases" do
-  label "Databases"
-  category "Databases"
-  default_value $db_link_output
-  description "Databases"
-end
-
 output "firewall_rules" do
   label "firewall_rules"
   category "Databases"
@@ -50,16 +43,6 @@ resource "sql_server", type: "rs_azure_mysql.mysql_server" do
   } end
 end
 
-resource "database", type: "rs_azure_mysql.databases" do
-  name "sample-database"
-  resource_group "CCtestresourcegroup"
-  server_name @sql_server.name
-  properties do {
-      "charset" => "utf8",
-      "collation" => "utf8_general_ci"
-  } end
-end
-
 resource "firewall_rule", type: "rs_azure_mysql.firewall_rule" do
   name "sample-firewall-rule"
   resource_group "CCtestresourcegroup"
@@ -79,9 +62,8 @@ operation "launch" do
  } end
 end
 
-define launch_handler(@sql_server,@database,@firewall_rule) return @databases,$db_link_output,$firewall_rules_link_output do
+define launch_handler(@sql_server, @firewall_rule) return @databases,$db_link_output,$firewall_rules_link_output do
   provision(@sql_server)
-  provision(@database)
   provision(@firewall_rule)
   call start_debugging()
   sub on_error: skip, timeout: 2m do
