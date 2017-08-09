@@ -1,4 +1,4 @@
-SQL Plugin changelog
+Azure Database for MySQL Plugin changelog
 
 v1.0
 -----
