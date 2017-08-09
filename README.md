@@ -15,6 +15,7 @@ This repo contains a library of open source RightScale plugins.
 - [Azure Compute](./azure/rs_azure_compute)
 - [Azure Storage](./azure/rs_azure_storage/)
 - [Azure Container Services](./azure/rs_azure_containerservices/)
+- [Azure PostgreSQL](./azure/rs_azure_pgsql/)
 
 ### Google Cloud Platform
 - [GCP Google Compute Engine](./google/gce/)
