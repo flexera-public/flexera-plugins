@@ -54,14 +54,6 @@ define launch_handler(@sql_server,@firewall_rule) return @sql_server do
   call start_debugging()
   provision(@sql_server)
   provision(@firewall_rule)
-  sub on_error: skip, timeout: 2m do
-    call sys_log.detail("getting database link")
-    @databases = @sql_server.databases()
-    $db_link_output = to_s(to_object(@databases))
-    call sys_log.detail("getting firewall link")
-    @firewall_rules = @sql_server.firewall_rules() 
-    $firewall_rules_link_output  = to_s(to_object(@firewall_rules))
-  end
   call stop_debugging()
 end
 
