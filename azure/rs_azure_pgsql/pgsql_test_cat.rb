@@ -49,17 +49,6 @@ resource "sql_server", type: "rs_azure_pgsql.pgsql_server" do
   } end
 end
 
-resource "database", type: "rs_azure_pgsql.databases" do
-  name "sample-database"
-  resource_group "CCtestresourcegroup"
-  location "northcentralus"
-  server_name @sql_server.name
-  properties do {
-    "charset" => "UTF8",
-    "collation" => "English_United States.1252"
-  } end
-end
-
 resource "firewall_rule", type: "rs_azure_pgsql.firewall_rule" do
   name "sample-firewall-rule"
   resource_group "CCtestresourcegroup"
@@ -80,10 +69,9 @@ operation "launch" do
  } end
 end
 
-define launch_handler(@sql_server,@database,@firewall_rule) return @databases,$db_link_output,$firewall_rules_link_output do
+define launch_handler(@sql_server,@firewall_rule) return @databases,$db_link_output,$firewall_rules_link_output do
   call start_debugging()
   provision(@sql_server)
-  provision(@database)
   provision(@firewall_rule)
   sub on_error: skip, timeout: 2m do
     call sys_log.detail("getting database link")
