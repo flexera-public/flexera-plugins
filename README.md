@@ -16,6 +16,7 @@ This repo contains a library of open source RightScale plugins.
 - [Azure Database for MySQL](./azure/rs_azure_mysql)
 - [Azure Storage](./azure/rs_azure_storage/)
 - [Azure Container Services](./azure/rs_azure_containerservices/)
+- [Azure PostgreSQL](./azure/rs_azure_pgsql/)
 
 ### Google Cloud Platform
 - [GCP Google Compute Engine](./google/gce/)
