@@ -13,12 +13,17 @@ This repo contains a library of open source RightScale plugins.
 - [Azure SQL Database](./azure/rs_azure_sql/)
 - [Azure ARM Templates](./azure/rs_azure_template)
 - [Azure Compute](./azure/rs_azure_compute)
+- [Azure Database for MySQL](./azure/rs_azure_mysql)
 - [Azure Storage](./azure/rs_azure_storage/)
 - [Azure Container Services](./azure/rs_azure_containerservices/)
+- [Azure Load Balancer](./azure/rs_azure_networking/)
+- [Azure Networking Interface](./azure/rs_azure_networking/)
+- [Azure PostgreSQL](./azure/rs_azure_pgsql/)
 
 ### Google Cloud Platform
 - [GCP Google Compute Engine](./google/gce/)
 - [GCP Cloud DNS](./google/google_cloud_dns/)
+- [GCP Cloud SQL](./google/google_cloud_sql/)
 
 ## RightScale Plugin Documentation
 - [Guide](http://docs.rightscale.com/ss/guides/ss_plugins.html)
