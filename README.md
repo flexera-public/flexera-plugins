@@ -21,6 +21,7 @@ This repo contains a library of open source RightScale plugins.
 ### Google Cloud Platform
 - [GCP Google Compute Engine](./google/gce/)
 - [GCP Cloud DNS](./google/google_cloud_dns/)
+- [GCP Cloud SQL](./google/google_cloud_sql/)
 
 ## RightScale Plugin Documentation
 - [Guide](http://docs.rightscale.com/ss/guides/ss_plugins.html)
