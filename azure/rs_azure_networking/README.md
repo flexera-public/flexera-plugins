@@ -23,7 +23,7 @@ The Azure Load Balancer Plugin integrates RightScale Self-Service with the basic
 1. Create RightScale Credentials with values that match the Application ID (Credential name: `AZURE_APPLICATION_ID`) & Authentication Key (Credential name: `AZURE_APPLICATION_KEY`)
 1. [Retrieve your Tenant ID](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal#get-tenant-id)
 1. Update `azure_lb_plugin.rb` Plugin with your Tenant ID. 
-   - Replace "TENANT_ID" in `token_url "https://login.microsoftonline.com/AZURE_TENANT_ID/oauth2/token"` with your Tenant ID
+   - Replace "TENANT_ID" in `token_url "https://login.microsoftonline.com/TENANT_ID/oauth2/token"` with your Tenant ID
 1. Navigate to the appropriate Self-Service portal
    - For more details on using the portal review the [SS User Interface Guide](http://docs.rightscale.com/ss/guides/ss_user_interface_guide.html)
 1. In the Design section, use the `Upload CAT` interface to complete the following:
@@ -31,9 +31,9 @@ The Azure Load Balancer Plugin integrates RightScale Self-Service with the basic
    1. Upload the `azure_lb_plugin.rb` file located in this repository
  
 ## How to Use
-The Azure Load Balancer Plugin has been packaged as `plugins/rs_azure_lb`. In order to use this plugin you must import this plugin into a CAT.
+The Azure Load Balancer Plugin has been packaged as `plugins/rs_azure_networking_plugin`. In order to use this plugin you must import this plugin into a CAT.
 ```
-import "plugins/rs_azure_networking"
+import "plugins/rs_azure_networking_plugin"
 ```
 For more information on using packages, please refer to the RightScale online documentation. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
@@ -140,7 +140,7 @@ define add_to_lb(@server,@my_pub_lb) return @server1,@updated_nic do
 end
 ```
 ## Resources
-## load_balancer
+## rs_azure_lb.load_balancer
 #### Supported Fields
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
@@ -169,7 +169,7 @@ end
 - location
 - kind
 
-## interface
+## rs_azure_networking.interface
 #### Supported Fields
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
