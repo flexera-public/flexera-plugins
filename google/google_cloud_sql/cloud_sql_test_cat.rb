@@ -4,7 +4,7 @@ short_description "Cloud SQL - Test CAT"
 import "plugins/google_sql"
 
 parameter "google_project" do
-    like $googledns.google_project
+    like $google_sql.google_project
     default "rightscale.com:services1"
 end
 
