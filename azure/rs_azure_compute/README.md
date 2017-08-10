@@ -43,6 +43,7 @@ The resulting resource can be manipulated just like the native RightScale resour
 ## Supported Resources
  - availability_set
  - virtualmachine
+ - extensions
 
 ## Usage
 ```
@@ -118,6 +119,31 @@ end
 - properties
 - tags
 
+## extensions
+#### Supported Fields
+| Field Name | Required? | Description |
+|------------|-----------|-------------|
+|name|Yes|Specifies name of vm|
+|resource_group|Yes|Name of resource group in which to launch the Deployment|
+|location|Yes|Datacenter to launch in|
+|virtualMachineName|Yes|Name of virtual machine to add extension to|
+|properties|Yes|Hash of extension options|
+|protectedSettings|Yes|Private configuration for the Extension that is encrypted. For example,pass a database password to the script. NOTE: This value is not returned on the GET.|
+
+#### Supported Actions
+
+| Action | API Implementation | Support Level |
+|--------------|:----:|:-------------:|
+| get | [Get](https://docs.microsoft.com/en-us/rest/api/compute/extensions/extensions-get)| Supported |
+| create | [Put](https://docs.microsoft.com/en-us/rest/api/compute/extensions/extensions-add-or-update)|Supported|
+| delete | [Delete](https://docs.microsoft.com/en-us/rest/api/compute/extensions/extensions-delete)| Supported|
+
+#### Supported Outputs
+- id
+- name
+- type
+- location
+- properties
 
 ## Implementation Notes
 - The Azure Compute Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to an LB resource.) 
