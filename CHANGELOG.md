@@ -1,16 +1,25 @@
 # Change Log
 
-## [Unreleased](https://github.com/rightscale/rightscale-plugins/tree/HEAD)
-
-[Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/v1.0.0...HEAD)
+## [release-8102017](https://github.com/rightscale/rightscale-plugins/tree/release-8102017) (2017-08-10)
+[Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/v1.0.0...release-8102017)
 
 **Implemented enhancements:**
 
 - ARM Template - Improve Error Handling [\#47](https://github.com/rightscale/rightscale-plugins/issues/47)
 
+**Closed issues:**
+
+- Azure Container Service with rightlink, and container output in RS [\#45](https://github.com/rightscale/rightscale-plugins/issues/45)
+
 **Merged pull requests:**
 
+- Azure mysql [\#52](https://github.com/rightscale/rightscale-plugins/pull/52) ([srpomeroy](https://github.com/srpomeroy))
+- Rs azure networking [\#51](https://github.com/rightscale/rightscale-plugins/pull/51) ([rshade](https://github.com/rshade))
+- adding putty key [\#50](https://github.com/rightscale/rightscale-plugins/pull/50) ([rshade](https://github.com/rshade))
+- Google Cloud SQL [\#49](https://github.com/rightscale/rightscale-plugins/pull/49) ([dfrankel33](https://github.com/dfrankel33))
 - Improve Error Handling on ARM Template Plugin [\#48](https://github.com/rightscale/rightscale-plugins/pull/48) ([dfrankel33](https://github.com/dfrankel33))
+- Azure PGSQL [\#38](https://github.com/rightscale/rightscale-plugins/pull/38) ([rshade](https://github.com/rshade))
+- Azure LB [\#24](https://github.com/rightscale/rightscale-plugins/pull/24) ([rshade](https://github.com/rshade))
 
 ## [v1.0.0](https://github.com/rightscale/rightscale-plugins/tree/v1.0.0) (2017-08-02)
 **Implemented enhancements:**
