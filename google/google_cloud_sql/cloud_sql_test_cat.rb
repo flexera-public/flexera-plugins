@@ -44,5 +44,4 @@ resource "gsql_user", type: "cloud_sql.users" do
   name "frankel"
   instance_name @gsql_instance.name
   password "RightScale2017"
-  host "136.62.16.31"
 end 

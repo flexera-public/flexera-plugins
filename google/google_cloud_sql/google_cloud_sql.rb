@@ -68,7 +68,6 @@ plugin "cloud_sql" do
     end     
 
     #Optional fields for non-create calls
-
     field "max_results" do 
       location "query"
       alias_for "maxResults"
@@ -81,30 +80,46 @@ plugin "cloud_sql" do
       type "string"
     end 
 
-    output "kind","selfLink","targetProject","targetId","targetLink","name","operationType","status","user","insertTime","startTime","endTime","error","importContext","exportContext","connectionName","etag","project","state","backendType","databaseVersion","region","currentDiskSize","maxDiskSize","settings","suspensionReason"
+    field "clone_context" do
+      alias_for "cloneContext"
+      type "composite"
+    end
+    
+    field "failover_context" do
+      alias_for "failoverContext"
+      type "composite"
+    end 
 
-    # https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/insert
+    field "import_context" do
+      alias_for "importContext"
+      type "composite"
+    end 
+
+    field "export_context" do
+      alias_for "exportContext"
+      type "composite"
+    end 
+
+    output "kind","selfLink","name","connectionName","etag","project","state","backendType","databaseVersion","region","currentDiskSize","maxDiskSize","settings","serverCaCert","ipAddresses","instanceType","masterInstanceName","replicaNames","failoverReplica","ipv6Address","serviceAccountEmailAddress","onPremisesConfiguration","replicaConfiguration","suspensionReason"
+
     action "create" do 
       verb "POST"
       path "/projects/$project/instances"
       type "operation"
     end
 
-    # https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/delete
     action "delete" do 
       verb "DELETE"
       path "$href"
       type "operation"
     end
 
-    # https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/get
     action "get" do 
       verb "GET"
       path "$href"
       type "instances"
     end
 
-    # https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/list
     action "list" do 
       verb "GET"
       path "/projects/$project/instances"
@@ -122,7 +137,6 @@ plugin "cloud_sql" do
       end 
     end 
 
-    # https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/update 
     action "update" do
       verb "PUT"
       path "$href"
@@ -133,11 +147,50 @@ plugin "cloud_sql" do
       end
     end 
 
-    # https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/restart
     action "restart" do
       verb "POST"
       path "$href/restart"
       type "operation"
+    end 
+
+    action "clone" do
+      verb "POST"
+      path "$href/clone"
+      type "operation"
+
+      field "clone_context" do
+        alias_for "cloneContext"
+      end
+    end
+
+    action "failover" do
+      verb "POST"
+      path "$href/failover"
+      type "operation"
+
+      field "failover_context" do
+        alias_for "failoverContext"
+      end 
+    end 
+
+    action "import" do
+      verb "POST"
+      path "$href/import"
+      type "operation"
+
+      field "import_context" do
+        alias_for "importContext"
+      end
+    end 
+
+    action "export" do
+      verb "POST"
+      path "$href/export"
+      type "operation"
+
+      field "export_context" do
+        alias_for "exportContext"
+      end
     end 
 
     link "databases" do
@@ -167,6 +220,7 @@ plugin "cloud_sql" do
 
     field "charset" do
       type "string"
+      required true
     end 
 
     field "name" do
@@ -176,6 +230,7 @@ plugin "cloud_sql" do
 
     field "collation" do
       type "string"
+      required true
     end 
 
     action "create" do
@@ -247,6 +302,7 @@ plugin "cloud_sql" do
 
     field "password" do
       type "string"
+      required true
     end 
 
     action "create" do

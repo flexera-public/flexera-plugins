@@ -15,6 +15,7 @@ The GCP Cloud SQL Plugin consumes the Google Cloud SQL API and exposes the suppo
   - `GOOGLE_SQL_PLUGIN_PRIVATE_KEY`
 - The following packages are also required (See the Installation section for details):
   - [sys_log](sys_log.rb)
+- Enable the Google Cloud SQL API on your Project. Refer to [Google Documentation](https://cloud.google.com/sql/docs/mysql/admin-api/#activating_the_api) for more information.
 
 ## Getting Started
 ### Creating a GCP Service Account
@@ -60,82 +61,70 @@ For more information on using packages, please refer to the RightScale online do
 ### instances
 #### Supported Fields
 
+See Google documentation [here](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances#resource)
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 | name | yes | Instance Name | 
+| settings | yes | user settings hash (see sub-value details [here](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances)) |
+| database_version | no | The database engine type and version | 
+| failover_replica | no | The name and status of the failover replica |
+| master_instance_name | no | The name of the instance which will act as master in the replication setup |
+| on_premises_configuration | no | on-prem instance configuration hash (see sub-value details [here](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances)) |
+| region | no | The geographical region. Defaults to us-central or us-central1 depending on the instance type (First Generation or Second Generation/PostgreSQL) |
+| replica_configuration | no | Failover replica and read replica configuration hash (see sub-value details [here](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances)) |
 
-# EDIT FROM HERE
-
-| description | no | Zone Description |
-| dns_name | yes | Zone DNS Name | 
-| nameserver_set | no | Nameservers to use for the newly created Zone. If left empty, nameservers will be auto-populated by GCP |
+**Additional fields used in non-create actions:**
+| Field Name | Action(s) |
+|------------|-----------|
+| max_results | `list()` |
+| filter | `list()` |
+| clone_context | `clone()` |
+| failover_context | `failover()` |
+| import_context | `import()` |
+| export_context | `export()` |
 
 #### Supported Outputs
-- creationTime
-- description
-- dnsName
-- id
 - kind
+- selfLink
 - name
-- nameServerSet
-- nameServers
+- connectionName
+- etag
+- project
+- state
+- backendType
+- databaseVersion
+- region
+- currentDiskSize
+- maxDiskSize
+- settings
+- serverCaCert
+- ipAddresses
+- instanceType
+- masterInstanceName
+- replicaNames
+- failoverReplica
+- ipv6Address
+- serviceAccountEmailAddress
+- onPremisesConfiguration
+- replicaConfiguration
+- suspensionReason
 
 #### Usage
-GCP Cloud DNS resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
+GCP Cloud SQL resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
 The resulting resrouce can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
 ```
-#Creates a new EFS File System
-resource "my_zone", type: clouddns.managedZone do
-  name "zoneA"
-  description "DNS Zone A"
-  dns_name "example.com."
-```
-
-#### Supported Actions
-
-| Action | API Implementation | Support Level |
-|--------------|:----:|:-------------:|
-| create | [create](https://cloud.google.com/dns/api/v1/managedZones/create) | Supported
-| delete | [delete](https://cloud.google.com/dns/api/v1/managedZones/delete) | Supported
-| get | [get](https://cloud.google.com/dns/api/v1/managedZones/get) | Supported
-| list | [list](https://cloud.google.com/dns/api/v1/managedZones/list) | Supported
-
-#### Supported Links
-
-| Link | Resource Type | 
-|------|---------------|
-| project() | project |
-| resourceRecordSets() | resourceRecordSet |
-
-### resourceRecordSet
-#### Supported Fields
-
-| Field Name | Required? | Description |
-|------------|-----------|-------------|
-| name | yes | Full DNS Record name |
-| type | yes | Record Type (ie. A, CNAME, etc) |
-| ttl | yes | number value |
-| rrdatas | yes | IP address, hostname, etc |
-
-See Google documentation [here](https://cloud.google.com/dns/records/json-record)
-
-#### Supported Outputs
-
-- kind
-- name
-- type 
-- ttl 
-- rrdatas
-
-#### Usage
-
-```
-# Creates an Address Record
-resource "my_recordset", type: "clouddns.resourceRecordSet" do
-    name "foobar.example.com."
-    ttl 300
-    type "A"
-    rrdatas "192.168.1.33"
+#Creates a new SQL Instance
+resource "gsql_instance", type: "cloud_sql.instances" do
+  name join([$db_instance_prefix,"-",last(split(@@deployment.href, "/"))])
+  database_version "MYSQL_5_7"
+  region "us-central1"
+  settings do {
+    "tier" => "db-g1-small",
+    "activationPolicy" => "ALWAYS",
+    "dataDiskSizeGb" => "10",
+    "dataDiskType" => "PD_SSD"
+  } end 
 end
 ```
 
@@ -143,54 +132,116 @@ end
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
-| create | [create](https://cloud.google.com/dns/api/v1/changes/create) | Supported
-| delete | [create](https://cloud.google.com/dns/api/v1/changes/create) | Supported
-| get | [list](https://cloud.google.com/dns/api/v1/resourceRecordSets/list) | Supported
-| list | [list](https://cloud.google.com/dns/api/v1/resourceRecordSets/list) | Supported
+| create | [insert](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/insert) | Supported
+| delete | [delete](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/delete) | Supported
+| get | [get](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/get) | Supported
+| list | [list](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/list) | Supported
+| update | [update](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/update) | Untested 
+| restart | [restart](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/restart) | Untested
+| clone | [clone](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/clone) | Untested
+| failover | [failover](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/failover) | Untested
+| import | [import](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/import) | Untested
+| export | [export](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/export) | Untested
 
 
 #### Supported Links
 
 | Link | Resource Type | 
 |------|---------------|
-| project() | project |
-| managedZone() | managedZone |
+| databases() | databases |
+| users() | users |
 
-### project
+### databases
 #### Supported Fields
-N/A
+
+See Google documentation [here](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/databases#resource)
+
+| Field Name | Required? | Description |
+|------------|-----------|-------------|
+| instance_name | yes | SQL Instance name |
+| charset | yes | MySQL charset value |
+| name | yes | DB name |
+| collation | yes | MySQL collation value |
 
 #### Supported Outputs
 
+- charset
+- collation
+- etag
+- instance
 - kind
-- number
-- id
-- managedZones_quota
-- resourceRecordsPerRrset_quota
-- rrsetAdditionsPerChange_quota
-- rrsetDeletionsPerChange_quota
-- rrsetsPerManagedZone_quota
-- totalRrdataSizePerChange_quota
+- name
+- project
+- selfLink
 
 #### Usage
 
-Project resources cannot be created via the Cloud DNS API, however by using the `project()` link, you can retrieve the associate Project information available via the Cloud DNS API.
+```
+# Creates a MySQL DB
+resource "gsql_db", type: "cloud_sql.databases" do
+  name $db_name
+  instance_name @gsql_instance.name
+  collation "utf8_general_ci"
+  charset "utf8"
+end 
+```
 
 #### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
-| get | [get](https://cloud.google.com/dns/api/v1/projects/get) | Supported
+| create | [insert](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/databases/insert) | Supported
+| delete | [delete](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/databases/delete) | Supported
+| get | [get](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/databases/get) | Supported
+| list | [list](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/databases/list) | Supported
+| update | [update](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/databases/update) | Untested
 
-#### Supported Links
-N/A
+### users
+#### Supported Fields
+| Field Name | Required? | Description |
+|------------|-----------|-------------|
+| instance_name | yes | SQL Instance name |
+| host | no | host name from which the user can connect |
+| name | yes | user name |
+| password | yes | password for the user |
+
+
+#### Supported Outputs
+
+- etag
+- host
+- instance
+- kind
+- name
+- project
+- password
+
+#### Usage
+
+```
+# Creates a MySQL user
+resource "gsql_user", type: "cloud_sql.users" do
+  name "frankel"
+  instance_name @gsql_instance.name
+  password "RightScale2017"
+end 
+```
+**NOTE:** Due to an API limitation for this resource type, you will not be able to manipulate **users** resources via an RCL Resource Collection (ie. `@user.output`).  For this resource type, the best practice is to get **users** resources and then convert to an object, within a variable (ie. `$user`), and then parse the hash to retrieve outputs.
+
+#### Supported Actions
+
+| Action | API Implementation | Support Level |
+|--------------|:----:|:-------------:|
+| create | [insert](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/users/insert) | Supported
+| delete | [delete](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/users/delete) | Supported
+| list | [list](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/users/list) | Supported
+| update | [update](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/users/update) | Untested
 
 ## Examples
-- [test_cat-record_only.rb](./test_cat-record_only.rb)
-- [test_cat-zone&record.rb](./test_cat-zone&record.rb)
+- [cloud_sql_test_cat.rb](./cloud_sql_test_cat.rb)
 	
 ## Known Issues / Limitations
-- Project resources only allow a GET actions, which will return DNS Quotas allowed for the associated GCP Project.
+- User resources do no support a `get()` call which will make these resources behave a bit differently than standard resource types.  See the note in the Users resource documentation for more information.
 
 ## Getting Help
 Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.
