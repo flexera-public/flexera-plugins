@@ -2,7 +2,7 @@ name 'rs_azure_containerservices'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Azure Container Services Plugin"
-long_description "Version: 1.0"
+long_description "Version: 1.1"
 package "plugins/rs_azure_containerservices"
 import "sys_log"
 
@@ -88,6 +88,12 @@ plugin "rs_azure_containerservices" do
       type "containerservice"
       path "$href"
       verb "GET"
+    end
+
+    action "update" do
+      type "containerservice"
+      path "$href"
+      verb "PUT"
     end
 
     action "list" do
