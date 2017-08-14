@@ -195,9 +195,22 @@ define provision_resource(@declaration) return @resource do
   end
 end
 
+define handle_retries($attempts) do
+  if $attempts <= 6
+    sleep(10*to_n($attempts))
+    call sys_log.detail("error:"+$_error["type"] + ": " + $_error["message"])
+    log_error($_error["type"] + ": " + $_error["message"])
+    $_error_behavior = "retry"
+  else
+    raise $_errors
+  end
+end
+
 define delete_resource(@declaration) do
   call start_debugging()
-  sub on_error: skip do
+  $delete_count = 0
+  sub on_error: handle_retries($delete_count) do 
+    $delete_count = $delete_count + 1
     @declaration.destroy()
   end
   call stop_debugging()
