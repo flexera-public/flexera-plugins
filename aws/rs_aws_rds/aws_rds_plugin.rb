@@ -939,6 +939,17 @@ define provision_db_instance(@declaration) return @db_instance do
   end
 end
 
+define handle_retries($attempts) do
+  if $attempts <= 6
+    sleep(10*to_n($attempts))
+    call sys_log.detail("error:"+$_error["type"] + ": " + $_error["message"])
+    log_error($_error["type"] + ": " + $_error["message"])
+    $_error_behavior = "retry"
+  else
+    raise $_errors
+  end
+end
+
 define delete_db_instance(@db_instance) do
   $delete_count = 0
   sub on_error: handle_retries($delete_count) do 
