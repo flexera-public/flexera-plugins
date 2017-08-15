@@ -100,9 +100,15 @@ define launch_handler(@cache1,@firewall_rule,@patch_schedule) return @cache1,@fi
 end
 
 define terminate_handler(@cache1,@firewall_rule,@patch_schedule) return @cache1,@firewall_rule,@patch_schedule do
-  delete(@patch_schedule)
-  delete(@firewall_rule)
-  delete(@cache1)
+  sub on_error: skip do
+    delete(@patch_schedule)
+  end
+  sub on_error: skip do
+    delete(@firewall_rule)
+  end
+  sub on_error: skip do
+    delete(@cache1)
+  end
 end
 
 define start_debugging() do
