@@ -952,11 +952,13 @@ end
 
 define delete_db_instance(@db_instance) do
   $delete_count = 0
-  sub on_error: handle_retries($delete_count) do 
+  sub on_error: handle_retries($delete_count) do
     $delete_count = $delete_count + 1
+    call start_debugging()
     if @db_instance.DBInstanceStatus != "deleting"
       @db_instance.destroy({ "skip_final_snapshot": "true" })
-    end 
+    end
+    call stop_debugging()
   end 
 end
 
