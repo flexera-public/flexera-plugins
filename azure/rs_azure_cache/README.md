@@ -1,7 +1,7 @@
-# Azure Database for MySQL Plugin
+# Azure Redis Cache Plugin
 
 ## Overview
-The Azure Database for MySQL Plugin integrates RightScale Self-Service with the basic functionality of the Azure Database for MySQL service.
+The Azure Redis Cache Plugin integrates RightScale Self-Service with the basic functionality of the Azure Redis Cache service.
 
 ## Requirements
 - A general understanding CAT development and definitions
@@ -31,79 +31,102 @@ The Azure Database for MySQL Plugin integrates RightScale Self-Service with the 
    1. Upload the `azure_mysql_plugin.rb` file located in this repository
  
 ## How to Use
-The Azure Database for MySQL Plugin has been packaged as `plugins/rs_azure_mysql`. In order to use this plugin you must import this plugin into a CAT.
+The Azure Redis Cache Plugin has been packaged as `plugins/rs_azure_redis`. In order to use this plugin you must import this plugin into a CAT.
 ```
-import "plugins/rs_azure_mysql"
+import "plugins/rs_azure_redis"
 ```
 For more information on using packages, please refer to the RightScale online documentation. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
-Azure MySQL Database resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
+Azure Redis Cache resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
 The resulting resource can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
 
 ## Supported Resources
- - mysql_server
+ - cache
  - firewall_rule
+ - patch_schedule
 
 ## Usage
 ```
-#Creates an MySQL Server
+#Creates a Redis Cache
 
 parameter "subscription_id" do
-  like $rs_azure_sql.subscription_id
+  like $rs_azure_redis.subscription_id
 end
 
-resource "sql_server", type: "rs_azure_sql.mysql_server" do
-  name join(["my-mysql-server-", last(split(@@deployment.href, "/"))])
-  resource_group "DF-Testing"
-  location "Central US"
+resource "cache1", type: "rs_azure_redis.cache" do
+  name join(["cache1-", last(split(@@deployment.href, "/"))])
+  resource_group "CCtestresourcegroup"
+  location "North Central US"
   properties do {
-      "storageMB": 51200,
-      "sslEnforcement": "Enabled",
-      "createMode": "Default",
-      "administratorLogin" => "superdbadmin",
-      "administratorLoginPassword" => "RightScale2017!",
-      "version" => "5.6"
-  } end
-  sku do {
-      "name" => "MYSQLS3M100",
-      "tier" => "Basic",
-      "capacity" => 100
+    "sku": {
+      "name": "Premium",
+      "family": "P",
+      "capacity": 1
+    },
+    "enableNonSslPort": true,
+    "shardCount": 1,
+    "redisConfiguration": {
+      "maxclients": "7500",
+      "maxmemory-reserved": "200",
+      "maxfragmentationmemory-reserved": "300",
+      "maxmemory-delta": "200"
+    }
   } end
   tags do {
-      "ElasticServer" => "1"
+      "ElasticCache" => "1"
   } end
 end
 
-resource "firewall_rule", type: "rs_azure_sql.firewall_rule" do
-  name "sample-firewall-rule"
-  resource_group "DF-Testing"
-  location "Central US"
-  server_name @sql_server.name
+resource "firewall_rule", type: "rs_azure_redis.firewall_rule" do
+  name "samplefirewallrule"
+  resource_group "CCtestresourcegroup"
+  server_name @cache1.name
   properties do {
-    "startIpAddress" => "0.0.0.1",
-    "endIpAddress" => "0.0.0.1"
+    "startIP" => "192.168.1.1",
+    "endIP" => "192.168.1.254"
   } end
 end
 
-
+resource "patch_schedule", type: "rs_azure_redis.patch_schedule" do
+  resource_group "CCtestresourcegroup"
+  server_name @cache1.name
+  properties do {
+    "scheduleEntries": [
+      {
+        "dayOfWeek": "Monday",
+        "startHourUtc": 12,
+        "maintenanceWindow": "PT6H"
+      },
+      {
+        "dayOfWeek": "Tuesday",
+        "startHourUtc": 12
+      }
+    ]
+  } end
+end
 ```
 ## Resources
-## mysql_server
+## cache
 #### Supported Fields
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
-|name|Yes|The name of the MySQL server.|
+|name|Yes|The name of the Redis server.|
 |resource_group|Yes|Name of resource group in which to launch the Deployment|
 |location|Yes|Datacenter to launch in|
-|properties|Yes|Hash of SQL Server properties (https://docs.microsoft.com/en-us/rest/api/mysql/)|
+|properties|Yes|Hash of Redis Cache properties (https://docs.microsoft.com/en-us/rest/api/redis/redis)|
 
 #### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
-| create&update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/mysql/servers#Servers_CreateOrUpdate) | Supported |
-| destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/mysql/servers#Servers_Delete) | Supported |
-| get | [Get](https://docs.microsoft.com/en-us/rest/api/mysql/servers#Servers_Get)| Supported |
+| create&update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/redis/redis#Redis_Create) | Supported |
+| destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/redis/redis#Redis_Delete) | Supported |
+| get | [Get](https://docs.microsoft.com/en-us/rest/api/redis/redis#Redis_Get)| Supported |
+| import | [Import](https://docs.microsoft.com/en-us/rest/api/redis/redis#Redis_ImportData)| Untested |
+| export | [Export](https://docs.microsoft.com/en-us/rest/api/redis/redis#Redis_ExportData)| Untested |
+| reboot | [forceReboot](https://docs.microsoft.com/en-us/rest/api/redis/redis#Redis_ForceReboot)| Untested |
+| listkeys | [listKeys](https://docs.microsoft.com/en-us/rest/api/redis/redis#Redis_ListKeys)| Untested |
+| regeneratekey | [RegenerateKey](https://docs.microsoft.com/en-us/rest/api/redis/redis#Redis_RegenerateKey)| Untested |
 
 #### Supported Outputs
 - "id"
@@ -111,45 +134,75 @@ end
 - "type"
 - "location"
 - "kind"
-- "fullyQualifiedDomainName"
-- "administratorLogin"
-- "administratorLoginPassword"
-- "version"
+- "properties"
 - "state"
-- "sslEnforcement"
-- "userVisibleState"
+- "provisioningState"
+- "provisioningState"
+- "redisVersion"
+- "primaryKey"
+- "secondaryKey"
+- "sku"
+- "enableNonSslPort"
+- "redisConfiguration"
+- "hostName"
+- "port"
+- "sslPort"
 
 ## firewall_rule
 #### Supported Fields
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
-|name|Yes|The name of the sql server.|
+|name|Yes|The name of the Redis Server FW Rule.|
 |resource_group|Yes|Name of resource group in which to launch the Deployment|
 |location|Yes|Datacenter to launch in|
 |server_name|Yes|Server to create the fw rule on|
-|properties|Yes|Hash of FirewallRule properties (https://docs.microsoft.com/en-us/rest/api/sql/firewallrules)|
+|properties|Yes|Hash of FirewallRule properties (https://docs.microsoft.com/en-us/rest/api/redis/redisfirewallrule)|
 
 #### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
-| create&update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/sql/firewallrules#FirewallRules_CreateOrUpdate) | Supported |
-| destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/sql/firewallrules#FirewallRules_Delete) | Supported |
-| get | [Get](https://docs.microsoft.com/en-us/rest/api/sql/firewallrules#FirewallRules_Get)| Supported |
+| create&update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/redis/redisfirewallrule#FirewallRule_CreateOrUpdate) | Supported |
+| destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/redis/redisfirewallrule#FirewallRule_Delete) | Supported |
+| get | [Get](https://docs.microsoft.com/en-us/rest/api/redis/redisfirewallrule#FirewallRule_Get)| Supported |
 
 #### Supported Outputs
 - "id"
 - "name"
 - "type"
-- "startIpAddress"
-- "endIpAddress"
+- "startIP"
+- "endIP"
+
+## patch_schedule
+#### Supported Fields
+| Field Name | Required? | Description |
+|------------|-----------|-------------|
+|resource_group|Yes|Name of resource group in which to launch the Deployment|
+|location|Yes|Datacenter to launch in|
+|server_name|Yes|Server to create the patch schedule on|
+|properties|Yes|Hash of Patch Schedule properties (https://docs.microsoft.com/en-us/rest/api/redis/patchschedules)|
+
+#### Supported Actions
+
+| Action | API Implementation | Support Level |
+|--------------|:----:|:-------------:|
+| create&update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/redis/patchschedules#PatchSchedules_CreateOrUpdate) | Supported |
+| destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/redis/patchschedules#PatchSchedules_Delete) | Supported |
+| get | [Get](https://docs.microsoft.com/en-us/rest/api/redis/patchschedules#PatchSchedules_Get)| Supported |
+
+#### Supported Outputs
+- "id"
+- "name"
+- "type"
+- "properties"
+- "scheduleEntries"
 
 ## Implementation Notes
-- The Azure Database for MySQL Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to an MySQL resource.) 
+- The Azure Redis Cache Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to a Redis Cache resource.) 
  
-Full list of possible actions can be found on the [Azure Database for MySQL API Documentation](https://docs.microsoft.com/en-us/rest/api/mysql/)
+Full list of possible actions can be found on the [Azure Redis Cache API Documentation](https://docs.microsoft.com/en-us/rest/api/redis/redis)
 ## Examples
-Please review [mysql_test_cat.rb](./mysql_test_cat.rb) for a basic example implementation.
+Please review [redis_test_cat.rb](./redis_test_cat.rb) for a basic example implementation.
 	
 ## Known Issues / Limitations
 
@@ -158,4 +211,4 @@ Support for this plugin will be provided though GitHub Issues and the RightScale
 Visit http://chat.rightscale.com/ to join!
 
 ## License
-The Azure SQL Database Plugin source code is subject to the MIT license, see the [LICENSE](../LICENSE) file.
+The Azure Redis Cache Plugin source code is subject to the MIT license, see the [LICENSE](../LICENSE) file.

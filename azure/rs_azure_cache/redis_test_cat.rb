@@ -1,16 +1,17 @@
-name 'Azure MySQL Test CAT'
+name 'Azure Redis Test CAT'
 rs_ca_ver 20161221
 short_description "Azure MySQL Database Service - Test CAT"
 import "sys_log"
-import "plugins/rs_azure_mysql"
+import "plugins/rs_azure_redis"
 
 parameter "subscription_id" do
-  like $rs_azure_mysql.subscription_id
+  like $rs_azure_redis.subscription_id
+  default "8beb7791-9302-4ae4-97b4-afd482aadc59"
 end
 
 output "firewall_rules" do
   label "firewall_rules"
-  category "Databases"
+  category "Firewall Rules"
   default_value $firewall_rules_link_output
   description "firewall_rules"
 end
@@ -20,35 +21,55 @@ permission "read_creds" do
   resources "rs_cm.credentials"
 end
 
-resource "sql_server", type: "rs_azure_mysql.mysql_server" do
-  name join(["my-sql-server-", last(split(@@deployment.href, "/"))])
+resource "cache1", type: "rs_azure_redis.cache" do
+  name join(["cache1-", last(split(@@deployment.href, "/"))])
   resource_group "CCtestresourcegroup"
-  location "northcentralus"
+  location "North Central US"
   properties do {
-      "storageMB": 51200,
-      "sslEnforcement": "Enabled",
-      "createMode": "Default",
-      "administratorLogin" => "superdbadmin",
-      "administratorLoginPassword" => "RightScale2017!",
-      "version" => "5.6"
-  } end
-  sku do {
-      "name" => "MYSQLS3M100",
-      "tier" => "Basic",
-      "capacity" => 100
+    "sku": {
+      "name": "Premium",
+      "family": "P",
+      "capacity": 1
+    },
+    "enableNonSslPort": true,
+    "shardCount": 1,
+    "redisConfiguration": {
+      "maxclients": "7500",
+      "maxmemory-reserved": "200",
+      "maxfragmentationmemory-reserved": "300",
+      "maxmemory-delta": "200"
+    }
   } end
   tags do {
-      "ElasticServer" => "1"
+      "ElasticCache" => "1"
   } end
 end
 
-resource "firewall_rule", type: "rs_azure_mysql.firewall_rule" do
-  name "sample-firewall-rule"
+resource "firewall_rule", type: "rs_azure_redis.firewall_rule" do
+  name "samplefirewallrule"
   resource_group "CCtestresourcegroup"
-  server_name @sql_server.name
+  server_name @cache1.name
   properties do {
-    "startIpAddress" => "0.0.0.1",
-    "endIpAddress" => "0.0.0.1"
+    "startIP" => "192.168.1.1",
+    "endIP" => "192.168.1.254"
+  } end
+end
+
+resource "patch_schedule", type: "rs_azure_redis.patch_schedule" do
+  resource_group "CCtestresourcegroup"
+  server_name @cache1.name
+  properties do {
+    "scheduleEntries": [
+      {
+        "dayOfWeek": "Monday",
+        "startHourUtc": 12,
+        "maintenanceWindow": "PT6H"
+      },
+      {
+        "dayOfWeek": "Tuesday",
+        "startHourUtc": 12
+      }
+    ]
   } end
 end
 
@@ -60,19 +81,28 @@ operation "launch" do
  } end
 end
 
-define launch_handler(@sql_server, @firewall_rule) return $firewall_rules_link_output do
-  provision(@sql_server)
+operation "terminate" do
+  description "terminates the application"
+  definition "terminate_handler"
+end
+
+define launch_handler(@cache1,@firewall_rule,@patch_schedule) return @cache1,@firewall_rule,@patch_schedule,$firewall_rules_link_output do
+  provision(@cache1)
   provision(@firewall_rule)
+  provision(@patch_schedule)
   call start_debugging()
   sub on_error: skip, timeout: 2m do
-    call sys_log.detail("getting database link")
-    @databases = @sql_server.databases()
-    $db_link_output = to_s(to_object(@databases))
     call sys_log.detail("getting firewall link")
-    @firewall_rules = @sql_server.firewall_rules() 
+    @firewall_rules = @cache1.firewall_rules() 
     $firewall_rules_link_output  = to_s(to_object(@firewall_rules))
   end
   call stop_debugging()
+end
+
+define terminate_handler(@cache1,@firewall_rule,@patch_schedule) return @cache1,@firewall_rule,@patch_schedule do
+  delete(@patch_schedule)
+  delete(@firewall_rule)
+  delete(@cache1)
 end
 
 define start_debugging() do

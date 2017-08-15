@@ -1,5 +1,5 @@
-Azure Database for MySQL Plugin changelog
+Azure Redis Plugin changelog
 
 v1.0
 -----
-- initial release, includes database server and firewall rule resource
+- initial release, includes Redis Cache, Firewall Rules and Patch Schedules
