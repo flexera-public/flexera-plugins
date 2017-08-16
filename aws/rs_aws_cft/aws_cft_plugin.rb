@@ -615,12 +615,12 @@ plugin "rs_aws_cft" do
 
     output "OutputKey" do
       body_path "//DescribeStacksResult/Stacks/member/Outputs/member/OutputKey"
-      type "simple_element"
+      type "array"
     end
 
     output "OutputValue" do
       body_path "//DescribeStacksResult/Stacks/member/Outputs/member/OutputValue"
-      type "simple_element"
+      type "array"
     end 
 
     provision "create_stack"
