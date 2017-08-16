@@ -97,6 +97,14 @@ define launch_handler(@my_availability_group,@server1,@my_vm_extension,@deployme
   $vms = to_s(@my_availability_group.virtualmachines)
   $vms = $vms + to_s(@deployment_ag.virtualmachines)
   call sys_log.detail("vms:" + to_s($vms))
+  @vm=rs_azure_compute.virtualmachine.show(resource_group: $resource_group, virtualMachineName: @server1.name)
+  $vm_object=to_object(@vm)
+  $vm_fields=$vm_object["details"][0]
+  $vm_fields["properties"]["diagnosticsProfile"]={}
+  $vm_fields["properties"]["diagnosticsProfile"]["bootDiagnostics"]={}
+  $vm_fields["properties"]["diagnosticsProfile"]["bootDiagnostics"]["enabled"] = true
+  $vm_fields["properties"]["diagnosticsProfile"]["bootDiagnostics"]["storageUri"] = "https://dftestingdiag134.blob.core.windows.net"
+  @vm.update($vm_fields)
   call stop_debugging()
 end
 

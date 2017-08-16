@@ -110,6 +110,7 @@ end
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
 | get | [Get](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachines/virtualmachines-get)| Supported |
+| update| [Update](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachines/virtualmachines-create-or-update)| Supported |
 
 #### Supported Outputs
 - id
