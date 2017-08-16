@@ -15,14 +15,6 @@ parameter "vmSize" do
   default "Standard_F1"
 end
 
-parameter "vmSize2" do
-  label "VMS"
-  type "string"
-  description "json:{\"definition\":\"getSizes\", \"description\": \"Pick the vmSize\"}"
-  operations "change_size"
-end
-
-
 permission "read_creds" do
   actions   "rs_cm.show_sensitive","rs_cm.index_sensitive"
   resources "rs_cm.credentials"
@@ -149,7 +141,6 @@ define getSizes() return $values do
   foreach $size in $$vmss[0]["value"] do
     $values << $size["name"]
   end
-
 end
 
 define supersize_me(@server1,$vmSize) return @server1 do
