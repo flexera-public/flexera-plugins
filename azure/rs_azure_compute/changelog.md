@@ -1,5 +1,9 @@
 Compute Plugin changelog
 
+v1.3 (08-16-2017)
+-----------------
+- adding update to virtualmachine resource
+
 v1.2 (08-01-2017)
 -----------------
 - fixing compute extensions to fail properly
