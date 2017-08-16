@@ -2,7 +2,7 @@ name 'aws_rds_plugin'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Amazon Web Services - Relational Database Service"
-long_description "Version: 1.2"
+long_description "Version: 1.3"
 package "plugins/rs_aws_rds"
 import "sys_log"
 
