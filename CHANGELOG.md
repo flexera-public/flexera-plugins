@@ -1,7 +1,21 @@
 # Change Log
 
-## [release-8102017](https://github.com/rightscale/rightscale-plugins/tree/release-8102017) (2017-08-10)
-[Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/v1.0.0...release-8102017)
+## [Unreleased](https://github.com/rightscale/rightscale-plugins/tree/HEAD)
+
+[Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-08-07-2017...HEAD)
+
+**Closed issues:**
+
+- Azure Container Service - Add in Agent Update for scaling [\#53](https://github.com/rightscale/rightscale-plugins/issues/53)
+
+**Merged pull requests:**
+
+- Adding vmSizes\(\) action to VirtualMachine resource [\#62](https://github.com/rightscale/rightscale-plugins/pull/62) ([rshade](https://github.com/rshade))
+- Adding update to the Azure Compute VirtualMachine resource [\#60](https://github.com/rightscale/rightscale-plugins/pull/60) ([rshade](https://github.com/rshade))
+- Azure Redis Cache Plugin [\#58](https://github.com/rightscale/rightscale-plugins/pull/58) ([rshade](https://github.com/rshade))
+
+## [Week-of-08-07-2017](https://github.com/rightscale/rightscale-plugins/tree/Week-of-08-07-2017) (2017-08-10)
+[Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-07-31-2017...Week-of-08-07-2017)
 
 **Implemented enhancements:**
 
@@ -21,7 +35,7 @@
 - Azure PGSQL [\#38](https://github.com/rightscale/rightscale-plugins/pull/38) ([rshade](https://github.com/rshade))
 - Azure LB [\#24](https://github.com/rightscale/rightscale-plugins/pull/24) ([rshade](https://github.com/rshade))
 
-## [v1.0.0](https://github.com/rightscale/rightscale-plugins/tree/v1.0.0) (2017-08-02)
+## [Week-of-07-31-2017](https://github.com/rightscale/rightscale-plugins/tree/Week-of-07-31-2017) (2017-08-02)
 **Implemented enhancements:**
 
 - add VM Extension support to Azure Compute plugin [\#31](https://github.com/rightscale/rightscale-plugins/issues/31)
