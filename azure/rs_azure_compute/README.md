@@ -111,6 +111,7 @@ end
 |--------------|:----:|:-------------:|
 | get | [Get](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachines/virtualmachines-get)| Supported |
 | update| [Update](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachines/virtualmachines-create-or-update)| Supported |
+| vmSizes | [vmSizes](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachines/virtualmachines-list-sizes-for-resizing)| Supported |
 
 #### Supported Outputs
 - id

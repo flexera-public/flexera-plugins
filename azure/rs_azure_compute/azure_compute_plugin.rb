@@ -2,7 +2,7 @@ name 'rs_azure_compute'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Azure Compute Plugin"
-long_description "Version: 1.3"
+long_description "Version: 1.4"
 package "plugins/rs_azure_compute"
 import "sys_log"
 
@@ -143,6 +143,12 @@ plugin "rs_azure_compute" do
       type "virtualmachine"
       path "$href"
       verb "PUT"
+    end
+
+    action "vmSizes" do
+      verb "GET"
+      path "$href/vmSizes"
+      output_path "value[*]"
     end
 
     output "id","name","location","tags","properties"
