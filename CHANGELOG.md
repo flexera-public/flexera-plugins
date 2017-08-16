@@ -13,6 +13,7 @@
 - Adding vmSizes\(\) action to VirtualMachine resource [\#62](https://github.com/rightscale/rightscale-plugins/pull/62) ([rshade](https://github.com/rshade))
 - Adding update to the Azure Compute VirtualMachine resource [\#60](https://github.com/rightscale/rightscale-plugins/pull/60) ([rshade](https://github.com/rshade))
 - Azure Redis Cache Plugin [\#58](https://github.com/rightscale/rightscale-plugins/pull/58) ([rshade](https://github.com/rshade))
+- Adding Changelog to root folder to allow for better release notes [\#46](https://github.com/rightscale/rightscale-plugins/pull/46) ([rshade](https://github.com/rshade))
 
 ## [Week-of-08-07-2017](https://github.com/rightscale/rightscale-plugins/tree/Week-of-08-07-2017) (2017-08-10)
 [Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-07-31-2017...Week-of-08-07-2017)
@@ -29,7 +30,7 @@
 
 - Azure mysql [\#52](https://github.com/rightscale/rightscale-plugins/pull/52) ([srpomeroy](https://github.com/srpomeroy))
 - Rs azure networking [\#51](https://github.com/rightscale/rightscale-plugins/pull/51) ([rshade](https://github.com/rshade))
-- adding putty key [\#50](https://github.com/rightscale/rightscale-plugins/pull/50) ([rshade](https://github.com/rshade))
+- Adding putty key to azure container services test cat.  [\#50](https://github.com/rightscale/rightscale-plugins/pull/50) ([rshade](https://github.com/rshade))
 - Google Cloud SQL [\#49](https://github.com/rightscale/rightscale-plugins/pull/49) ([dfrankel33](https://github.com/dfrankel33))
 - Improve Error Handling on ARM Template Plugin [\#48](https://github.com/rightscale/rightscale-plugins/pull/48) ([dfrankel33](https://github.com/dfrankel33))
 - Azure PGSQL [\#38](https://github.com/rightscale/rightscale-plugins/pull/38) ([rshade](https://github.com/rshade))
@@ -74,9 +75,9 @@
 - rs\_aws\_elb [\#8](https://github.com/rightscale/rightscale-plugins/pull/8) ([dfrankel33](https://github.com/dfrankel33))
 - rs\_aws\_rds [\#7](https://github.com/rightscale/rightscale-plugins/pull/7) ([dfrankel33](https://github.com/dfrankel33))
 - rs\_aws\_efs [\#6](https://github.com/rightscale/rightscale-plugins/pull/6) ([dfrankel33](https://github.com/dfrankel33))
-- Rds db subnet group [\#4](https://github.com/rightscale/rightscale-plugins/pull/4) ([rshade](https://github.com/rshade))
+- Adding db\_subnet\_group resource to AWS RDS Plugin [\#4](https://github.com/rightscale/rightscale-plugins/pull/4) ([rshade](https://github.com/rshade))
 - Allow - in project name [\#2](https://github.com/rightscale/rightscale-plugins/pull/2) ([bryankaraffa](https://github.com/bryankaraffa))
-- Rds plugin [\#1](https://github.com/rightscale/rightscale-plugins/pull/1) ([dfrankel33](https://github.com/dfrankel33))
+- Amazon RDS Plugin - v0.0.1 [\#1](https://github.com/rightscale/rightscale-plugins/pull/1) ([dfrankel33](https://github.com/dfrankel33))
 
 
 
