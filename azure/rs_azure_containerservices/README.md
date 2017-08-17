@@ -128,7 +128,7 @@ end
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
-| create| [Create Or Update](https://docs.microsoft.com/en-us/rest/api/compute/containerservices#ContainerServices_CreateOrUpdate) | Supported |
+| create||update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/compute/containerservices#ContainerServices_CreateOrUpdate) | Supported |
 | destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/compute/containerservices#ContainerServices_Delete) | Supported |
 | get | [Get](https://docs.microsoft.com/en-us/rest/api/compute/containerservices#ContainerServices_Get)| Supported |
 
