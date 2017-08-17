@@ -2,7 +2,7 @@ name 'aws_rds_plugin'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Amazon Web Services - Relational Database Service"
-long_description "Version: 1.2"
+long_description "Version: 1.3"
 package "plugins/rs_aws_rds"
 import "sys_log"
 
@@ -939,13 +939,26 @@ define provision_db_instance(@declaration) return @db_instance do
   end
 end
 
+define handle_retries($attempts) do
+  if $attempts <= 6
+    sleep(10*to_n($attempts))
+    call sys_log.detail("error:"+$_error["type"] + ": " + $_error["message"])
+    log_error($_error["type"] + ": " + $_error["message"])
+    $_error_behavior = "retry"
+  else
+    raise $_errors
+  end
+end
+
 define delete_db_instance(@db_instance) do
   $delete_count = 0
-  sub on_error: handle_retries($delete_count) do 
+  sub on_error: handle_retries($delete_count) do
     $delete_count = $delete_count + 1
+    call start_debugging()
     if @db_instance.DBInstanceStatus != "deleting"
       @db_instance.destroy({ "skip_final_snapshot": "true" })
-    end 
+    end
+    call stop_debugging()
   end 
 end
 
