@@ -1,142 +1,94 @@
-name 'aws_elb_plugin'
+name 'aws_vpc_plugin'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Amazon Web Services - Elastic Load Balancer"
-package "plugin/rs_aws_elb"
+package "plugin/rs_aws_vpc"
 import "sys_log"
 
-plugin "rs_aws_elb" do
+plugin "rs_aws_vpc" do
   endpoint do
-    default_host "elasticloadbalancing.amazonaws.com"
+    default_host "ec2.amazonaws.com"
     default_scheme "https"
     path "/"
     query do {
-      "Version" => "2012-06-01"
+      "Version" => "2016-11-15"
     } end
   end
   
-  type "elb" do
+  type "vpc" do
     # HREF is set to the correct template in the provision definition due to a lack of usable fields in the response to build the href
-    href_templates "/?Action=DescribeLoadBalancers&LoadBalancerNames.member.1={{//LoadBalancerDescriptions/member/LoadBalancerName}}","/?Action=DescribeLoadBalancers&LoadBalancerNames.member.1={{//CreateLoadBalancerResult/DNSName}}", "/?Action=DescribeLoadBalancers&LoadBalancerNames.member.1={{/LoadBalancerName}}"
-    provision 'provision_elb'
-    delete    'delete_elb'
+    href_templates "/?Action=DescribeVpcs&VpcId.1={{//CreateVpcResponse/vpc/vpcId}}","/?DescribeVpcs&VpcId.1={{//DescribeVpcsResponse/vpcSet/item/vpcId}}"
+    provision 'provision_vpc'
+    delete    'delete_vpc'
 
-    field "name" do
-      alias_for "LoadBalancerName"
-      type      "string"
-      location  "query"
-      required true
-    end
-
-    field "az1" do
-      alias_for "AvailabilityZones.member.1"
+    field "amazon_provided_ipv6_cidr_block" do
+      alias_for "AmazonProvidedIpv6CidrBlock"
       type      "string"
       location  "query"
     end
 
-    field "az2" do
-      alias_for "AvailabilityZones.member.2"
+    field "cidr_block" do
+      alias_for "CidrBlock"
       type      "string"
       location  "query"
     end
 
-    field "az3" do
-      alias_for "AvailabilityZones.member.3"
+    field "instance_tenancy" do
+      alias_for "InstanceTenancy"
       type      "string"
       location  "query"
     end
+    
+    output "vpc"
 
-    field "list_lbport" do
-      alias_for "Listeners.member.1.LoadBalancerPort"
-      type      "string"
-      location  "query"
-    end
-
-    field "list_instport" do
-      alias_for "Listeners.member.1.InstancePort"
-      type      "string"
-      location  "query"
-    end
-
-    field "list_proto" do
-      alias_for "Listeners.member.1.Protocol"
-      type      "string"
-      location  "query"
-    end
-
-    field "list_instproto" do
-      alias_for "Listeners.member.1.InstanceProtocol"
-      type      "string"
-      location  "query"
-    end
-
-    field "security_group1" do
-      alias_for "SecurityGroups.member.1"
-      type "string"
-      location "query"
-    end
-
-    field "security_group2" do
-      alias_for "SecurityGroups.member.2"
-      type "string"
-      location "query"
-    end
-
-    field "security_group3" do
-      alias_for "SecurityGroups.member.3"
-      type "string"
-      location "query"
-    end
-
-    field "subnet1" do
-      alias_for "Subnets.member.1"
-      type "string"
-      location "query"
-    end
-
-    field "subnet2" do
-      alias_for "Subnets.member.2"
-      type "string"
-      location "query"
-    end
-
-    field "subnet3" do
-      alias_for "Subnets.member.3"
-      type "string"
-      location "query"
-    end
-
-    #Non-Create Fields
-    field "load_balancer_port" do
-      alias_for "LoadBalancerPort"
-      location "query"
-      type "number"
-    end 
-
-    field "ssl_certificate_id" do
-      alias_for "SSLCertificateId"
-      location "query"
-      type "string"
-    end 
-
-    output 'LoadBalancerName' do
-      body_path '//LoadBalancerDescriptions/member/LoadBalancerName'
+    output "vpcId" do
+      body_path "//CreateVpcResponse/vpc/vpcId"
       type "simple_element"
     end
 
-    output 'DNSName' do
-      body_path '//LoadBalancerDescriptions/member/DNSName'
+    output "state" do
+      body_path "//DescribeVpcsResponse/vpcSet/item/state"
+      type "simple_element"
+    end
+
+    output "cidrBlock" do
+      body_path "//DescribeVpcsResponse/vpcSet/item/cidrBlock"
+      type "simple_element"
+    end
+
+    output "ipv6CidrBlockAssociationSet" do
+      body_path "//DescribeVpcsResponse/vpcSet/item/ipv6CidrBlockAssociationSet"
+      type "simple_element"
+    end
+
+    output "dhcpOptionsId" do
+      body_path "//DescribeVpcsResponse/vpcSet/item/dhcpOptionsId"
+      type "simple_element"
+    end
+
+    output "tagSet" do
+      body_path "//DescribeVpcsResponse/vpcSet/item/tagSet"
+      type "simple_element"
+    end
+
+    output "instanceTenancy" do
+      body_path "//DescribeVpcsResponse/vpcSet/item/instanceTenancy"
+      type "simple_element"
+    end
+
+    output "isDefault" do
+      body_path "//DescribeVpcsResponse/vpcSet/item/isDefault"
       type "simple_element"
     end
 
     action "create" do
       verb "POST"
-      path "/?Action=CreateLoadBalancer"
+      path "/?Action=CreateVpc"
     end
     
     action "destroy" do
       verb "POST"
-      path "/?Action=DeleteLoadBalancer&LoadBalancerName=$LoadBalancerName"
+      path "/?Action=DeleteVpc&VpcId=$vpcId"
     end
  
     action "get" do
@@ -145,52 +97,96 @@ plugin "rs_aws_elb" do
  
     action "list" do
       verb "POST"
-      path "/?Action=DescribeLoadBalancers"
-      output_path "//LoadBalancerDescriptions/member"
+      path "/?Action=DescribeVpcs"
+      output_path "//DescribeVpcsResponse/vpcSet/item"
+    end
+  end
+
+  type "endpoint" do
+    href_templates "/?Action=DescribeVpcEndpoints?VpcEndpointId.member.1={{//CreateVpcEndpointResponse/vpcEndpoint/vpcEndpointId}}","/?Action=DescribeVpcEndpoints?VpcEndpointId.member.1={{//DescribeVpcEndpointsResponse/vpcEndpointSet/item/vpcEndpointId}}"
+    provision 'provision_endpoint'
+    delete    'delete_endpoint'
+
+    field "vpc_id" do
+      alias_for "VpcId"
+      type      "string"
+      location  "query"
     end
 
-    action "register_instance" do
-      verb "POST"
-      path "/?Action=RegisterInstancesWithLoadBalancer/&LoadBalancerName=$LoadBalancerName"
+    field "service_name" do
+      alias_for "ServiceName"
+      type      "string"
+      location  "query"
+    end
 
-      field "instance" do
-        alias_for "Instances.member.1.InstanceId"
-        location "query"
-      end
+    field "route_table_id_1" do
+      alias_for "RouteTableId.1"
+      type      "string"
+      location  "query"
     end
     
-    action "deregister_instance" do
-      verb "POST"
-      path "/?Action=DeregisterInstancesFromLoadBalancer/&LoadBalancerName=$LoadBalancerName"
-
-      field "instance" do
-        alias_for "Instances.member.1.InstanceId"
-        location "query"
-      end
+    output "vpcEndpointId" do
+      body_path "//CreateVpcEndpointResponse/vpcEndpoint/vpcEndpointId"
+      type "simple_element"
     end
 
-    action "set_certificate" do
+    output "vpcId" do
+      body_path "//DescribeVpcEndpointsResponse/vpcEndpointSet/item/vpcId"
+      type "simple_element"
+    end
+
+    output "state" do
+      body_path "//DescribeVpcEndpointsResponse/vpcEndpointSet/item/state"
+      type "simple_element"
+    end
+
+    output "routeTableIdSet" do
+      body_path "//DescribeVpcEndpointsResponse/vpcEndpointSet/item/routeTableIdSet"
+      type "array"
+    end
+
+    output "creationTimestamp" do
+      body_path "//DescribeVpcEndpointsResponse/vpcEndpointSet/item/creationTimestamp"
+      type "simple_element"
+    end
+
+    output "policyDocument" do
+      body_path "//DescribeVpcEndpointsResponse/vpcEndpointSet/item/policyDocument"
+      type "simple_element"
+    end
+
+    output "serviceName" do
+      body_path "//DescribeVpcEndpointsResponse/vpcEndpointSet/item/serviceName"
+      type "simple_element"
+    end
+
+    action "create" do
       verb "POST"
-      path "/?Action=SetLoadBalancerListenerSSLCertificate&LoadBalancerName=$LoadBalancerName"
-
-      field "load_balancer_port" do
-        alias_for "LoadBalancerPort"
-        location "query"
-      end
-
-      field "ssl_certificate_id" do
-        alias_for "SSLCertificateId"
-        location "query"
-      end
-    end 
+      path "/?Action=CreateVpcEndpoint"
+    end
+    
+    action "destroy" do
+      verb "POST"
+      path "/?Action=DeleteVpcEndpoint&VpcEndpointId.member.1=$vpcEndpointId"
+    end
+ 
+    action "get" do
+      verb "POST"
+    end
+ 
+    action "list" do
+      verb "POST"
+      path "/?Action=DescribeVpcEndpoints"
+      output_path "//DescribeVpcEndpointsResponse/vpcEndpointSet/item"
+    end
   end
 end
 
-resource_pool "elb_pool" do
-  plugin $rs_aws_elb
+resource_pool "vpc_pool" do
+  plugin $rs_aws_vpc
   auth "key", type: "aws" do
     version     4
-    service    'elasticloadbalancing'
+    service    'ec2'
     region     'us-east-1'
     access_key cred('AWS_ACCESS_KEY_ID')
     secret_key cred('AWS_SECRET_ACCESS_KEY')
@@ -200,84 +196,97 @@ end
 parameter "lb_name" do
   label "ELB Name"
   description "ELB Name"
-  default "myelb-1"
+  default "myvpc-1"
   type "string"
 end
 
-output "list_elb" do
+output "list_vpc" do
   label 'list action'
 end
 
-resource "my_elb", type: "rs_aws_elb.elb" do
-  name $lb_name
-  list_lbport "80"
-  list_instport "80"
-  list_proto "http"
-  list_instproto "http"
-  #subnet1 "subnet-7c295240"
-  #security_group1 "sg-a9b9e8d6"
-  az1 "us-east-1a"
-  az2 "us-east-1d"
-  description "a simple elb"
+resource "my_vpc", type: "rs_aws_vpc.vpc" do
+  cidr_block "10.0.0.0/16"
+  instance_tenancy "default"
 end
 
-operation 'list_elb' do
-  definition 'list_elbs'
+resource "my_vpc_endpont", type: "rs_aws_vpc.endpoint" do
+  vpc_id @my_vpc.vpcId
+  service_name "com.amazonaws.us-east-1.s3"
+end
+
+operation 'list_vpc' do
+  definition 'list_vpcs'
   output_mappings do{
-    $list_elb => $object
+    $list_vpc => $object
   } end
 end
 
-define provision_elb(@declaration) return @elb do
+define provision_vpc(@declaration) return @vpc do
   sub on_error: stop_debugging() do
     $object = to_object(@declaration)
     $fields = $object["fields"]
     $name = $fields['name']
-    # call sys_log.set_task_target(@@deployment)
-    # call sys_log.summary("ELB Object")
-    # call sys_log.detail($fields)
-    
-    # call sys_log.set_task_target(@@deployment)
-    # call sys_log.summary("Create ELB")
-    # call start_debugging()
-    @elb = rs_aws_elb.elb.create($fields)
-   #  call stop_debugging()
-
-   # call sys_log.set_task_target(@@deployment)
-   # call sys_log.summary("ELB Object")
-    $elb = to_object(@elb)
-   # call sys_log.detail(join(["Original: ",to_object(@elb)]))
-    $elb["hrefs"][0] = join(["?Action=DescribeLoadBalancers&LoadBalancerNames.member.1=",$name])
-    @elb = $elb
-   # call sys_log.detail(join(["Modified: ",to_object(@elb)]))
-    
-   # call sys_log.set_task_target(@@deployment)
-   # call sys_log.summary("Get ELB")
-   # call start_debugging()
-    @elb = @elb.get()
-   # call stop_debugging()
-   # call sys_log.detail(join(["After Get: ",to_object(@elb)]))
+    call start_debugging()
+    @vpc = rs_aws_vpc.vpc.create($fields)
+    call stop_debugging()
+    $vpc = to_object(@vpc)
+    call sys_log.detail(join(["vpc:", to_s($vpc)]))
+    #$vpc["hrefs"][0] = join(["?Action=DescribeLoadBalancers&LoadBalancerNames.member.1=",$name])
+    #@vpc = $vpc
+    $state = @vpc.state
+    while $state != "available" do
+      sleep(10)
+      call sys_log.detail(join(["state: ", $state]))
+      call start_debugging()
+      $state = @vpc.state
+      call stop_debugging()
+    end
   end
 end
 
-define list_elbs() return $object do
-#  call sys_log.set_task_target(@@deployment)
-#  call sys_log.summary("List ELB")
+define provision_endpoint(@declaration) return @vpc do
+  sub on_error: stop_debugging() do
+    $object = to_object(@declaration)
+    $fields = $object["fields"]
+    $name = $fields['name']
+    call start_debugging()
+    @vpcendpoint = rs_aws_vpc.endpoint.create($fields)
+    call stop_debugging()
+    $vpc = to_object(@vpcendpoint)
+    call sys_log.detail(join(["vpcendpoint:", to_s($vpc)]))
+    $state = @vpcendpoint.state
+    while $state != "available" do
+      sleep(10)
+      call sys_log.detail(join(["state: ", $state]))
+      call start_debugging()
+      $state = @vpcendpoint.state
+      call stop_debugging()
+    end
+  end
+end
+
+define list_vpcs() return $object do
+
 #  call start_debugging()
-  @elbs = rs_aws_elb.elb.list()
+  @vpcs = rs_aws_vpc.vpc.list()
 #  call stop_debugging()
-  $object = to_object(first(@elbs))
+  $object = to_object(first(@vpcs))
   $object = to_s($object)
 end
 
-define delete_elb(@elb) do
+define delete_vpc(@vpc) do
   sub on_error: stop_debugging() do
-#    call sys_log.set_task_target(@@deployment)
-#    call sys_log.summary("Destroy ELB")
-#    call sys_log.detail(to_object(@elb))
-#    call start_debugging()
-    @elb.destroy()
-#    call stop_debugging()
+    call start_debugging()
+    @vpc.destroy()
+    call stop_debugging()
+  end
+end
+
+define delete_endpoint(@endpoint) do
+  sub on_error: stop_debugging() do
+    call start_debugging()
+    @endpoint.destroy()
+    call stop_debugging()
   end
 end
 
