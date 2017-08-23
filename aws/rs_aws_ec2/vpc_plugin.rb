@@ -1,7 +1,8 @@
 name 'aws_vpc_plugin'
 type 'plugin'
 rs_ca_ver 20161221
-short_description "Amazon Web Services - Elastic Load Balancer"
+short_description "Amazon Web Services - VPC Plugin"
+long_description "Version 1.0"
 package "plugin/rs_aws_vpc"
 import "sys_log"
 
@@ -93,11 +94,17 @@ plugin "rs_aws_vpc" do
       path "/?Action=DescribeVpcs"
       output_path "//DescribeVpcsResponse/vpcSet/item"
     end
+
+    action "routeTables" do
+      type "route_table"
+      verb "POST"
+      path "/?Action=DescribeRouteTables&Filter.1.Name=vpc-id&Filter.1.Value=$vpcId"
+    end
   end
 
   type "endpoint" do
-    href_templates "/?Action=DescribeVpcEndpoints?VpcEndpointIds.1={{//CreateVpcEndpointResponse/vpcEndpoint/vpcEndpointId}}","/?Action=DescribeVpcEndpoints?VpcEndpointIds.1={{//DescribeVpcEndpointsResponse/vpcEndpointSet/item/vpcEndpointId}}"
-    #href_templates "/?Action=DescribeVpcEndpoints?Filter.1=Name=vpc-endpoint-id,Value={{//CreateVpcEndpointResponse/vpcEndpoint/vpcEndpointId}}"
+    href_templates "/?Action=DescribeVpcEndpoints&VpcEndpointId.1={{//CreateVpcEndpointResponse/vpcEndpoint/vpcEndpointId}}","/?Action=DescribeVpcEndpoints&VpcEndpointId.1={{//DescribeVpcEndpointsResponse/vpcEndpointSet/item/vpcEndpointId}}"
+    #href_templates "/?Action=DescribeVpcEndpoints?Filter.1.Name=vpc-endpoint-id&Filter.1.Value={{//CreateVpcEndpointResponse/vpcEndpoint/vpcEndpointId}}"
     provision 'provision_endpoint'
     delete    'delete_endpoint'
 
@@ -155,7 +162,7 @@ plugin "rs_aws_vpc" do
     
     action "destroy" do
       verb "POST"
-      path "/?Action=DeleteVpcEndpoint&VpcEndpointId.1=$vpcEndpointId"
+      path "/?Action=DeleteVpcEndpoints&VpcEndpointId.1=$vpcEndpointId"
     end
  
     action "get" do
@@ -169,6 +176,64 @@ plugin "rs_aws_vpc" do
       output_path "//DescribeVpcEndpointsResponse/vpcEndpointSet/item"
     end
   end
+
+  type "route_table" do
+    href_templates "/?Action=DescribeRouteTables&RouteTableId.1={{//CreateRouteTableResponse/routeTable/routeTableId}}","/?Action=DescribeRouteTables&RouteTableId.1={{//DescribeRouteTablesResponse/routeTableSet/item/routeTableId}}"
+    provision 'provision_route_table'
+    delete    'delete_route_table'
+
+    field "vpc_id" do
+      alias_for "VpcId"
+      type      "string"
+      location  "query"
+    end
+    
+    output "routeTableId" do
+      type "simple_element"
+    end
+
+    output "vpcId" do
+      type "simple_element"
+    end
+
+    output "state" do
+      type "simple_element"
+    end
+
+    output "routeSet" do
+      type "array"
+    end
+
+    output "associationSet" do
+      type "simple_element"
+    end
+
+    output "tagSet" do
+      type "simple_element"
+    end
+
+    action "create" do
+      verb "POST"
+      path "/?Action=CreateRouteTable"
+      output_path "//CreateRouteTableResponse/routeTable"
+    end
+    
+    action "destroy" do
+      verb "POST"
+      path "/?Action=DeleteRouteTables&RouteTableId.1=$routeTableId"
+    end
+ 
+    action "get" do
+      verb "POST"
+      output_path "//DescribeRouteTablesResponse/routeTableSet/item"
+    end
+ 
+    action "list" do
+      verb "POST"
+      path "/?Action=DescribeVpcEndpoints"
+      output_path "//DescribeRouteTablesResponse/routeTableSet/item"
+    end
+  end
 end
 
 resource_pool "vpc_pool" do
@@ -180,34 +245,6 @@ resource_pool "vpc_pool" do
     access_key cred('AWS_ACCESS_KEY_ID')
     secret_key cred('AWS_SECRET_ACCESS_KEY')
   end
-end
-
-parameter "lb_name" do
-  label "ELB Name"
-  description "ELB Name"
-  default "myvpc-1"
-  type "string"
-end
-
-output "list_vpc" do
-  label 'list action'
-end
-
-resource "my_vpc", type: "rs_aws_vpc.vpc" do
-  cidr_block "10.0.0.0/16"
-  instance_tenancy "default"
-end
-
-resource "my_vpc_endpont", type: "rs_aws_vpc.endpoint" do
-  vpc_id @my_vpc.vpcId
-  service_name "com.amazonaws.us-east-1.s3"
-end
-
-operation 'list_vpc' do
-  definition 'list_vpcs'
-  output_mappings do{
-    $list_vpc => $object
-  } end
 end
 
 define provision_vpc(@declaration) return @vpc do
@@ -233,7 +270,7 @@ define provision_vpc(@declaration) return @vpc do
   end
 end
 
-define provision_endpoint(@declaration) return @vpc do
+define provision_endpoint(@declaration) return @vpcendpoint do
   sub on_error: stop_debugging() do
     $object = to_object(@declaration)
     $fields = $object["fields"]
@@ -244,8 +281,6 @@ define provision_endpoint(@declaration) return @vpc do
     $vpc = to_object(@vpcendpoint)
     call sys_log.detail(join(["vpcendpoint:", to_s($vpc)]))
     call start_debugging()
-    @vpcendpoint.get()
-    call sys_log.detail(join(["e2:", to_s(to_object(@vpcendpoint))]))
     $state = @vpcendpoint.state
     call stop_debugging()
     while $state != "available" do
@@ -258,13 +293,27 @@ define provision_endpoint(@declaration) return @vpc do
   end
 end
 
-define list_vpcs() return $object do
-
-#  call start_debugging()
-  @vpcs = rs_aws_vpc.vpc.list()
-#  call stop_debugging()
-  $object = to_object(first(@vpcs))
-  $object = to_s($object)
+define provision_route_table(@declaration) return @resource do
+  sub on_error: stop_debugging() do
+    $object = to_object(@declaration)
+    $fields = $object["fields"]
+    $name = $fields['name']
+    call start_debugging()
+    @resource = rs_aws_vpc.route_table.create($fields)
+    call stop_debugging()
+    $vpc = to_object(@resource)
+    call sys_log.detail(join(["vpcendpoint:", to_s($vpc)]))
+    call start_debugging()
+    $state = @resource.state
+    call stop_debugging()
+    while $state != "available" do
+      sleep(10)
+      call sys_log.detail(join(["state: ", $state]))
+      call start_debugging()
+      $state = @resource.state
+      call stop_debugging()
+    end
+  end
 end
 
 define delete_vpc(@vpc) do
@@ -279,6 +328,14 @@ define delete_endpoint(@endpoint) do
   sub on_error: stop_debugging() do
     call start_debugging()
     @endpoint.destroy()
+    call stop_debugging()
+  end
+end
+
+define delete_route_table(@route_table) do
+  sub on_error: stop_debugging() do
+    call start_debugging()
+    @route_table.destroy()
     call stop_debugging()
   end
 end
