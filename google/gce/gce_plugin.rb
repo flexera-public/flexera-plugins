@@ -1,6 +1,7 @@
 name "Google Compute Engine"
 rs_ca_ver 20161221
 short_description "Google Compute Engine plugin"
+long_description "Version: 1.0"
 type 'plugin'
 package "plugins/gce"
 import "sys_log"

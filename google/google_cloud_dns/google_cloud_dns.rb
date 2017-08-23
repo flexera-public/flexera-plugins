@@ -1,6 +1,7 @@
 name "Google Cloud DNS"
 rs_ca_ver 20161221
 short_description "Google Cloud DNS plugin"
+long_description "Version: 1.0"
 type 'plugin'
 package "plugins/googledns"
 import "sys_log"
