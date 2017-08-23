@@ -2,4 +2,4 @@
 * @nathan-rightscale @dfrankel33 @rshade @srpomeroy @cdwilhelm @stefhen @gonzalez
 
 #This is for a specific folder
-# aws/rs_aws_cft/ @dfrankel33
+aws/rs_aws_cft/* @dfrankel33
