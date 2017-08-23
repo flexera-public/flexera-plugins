@@ -2,6 +2,7 @@ name 'aws_efs_plugin'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Amazon Web Services - Elastic File System"
+long_description "Version: 1.0"
 package "plugins/rs_aws_efs"
 import "sys_log"
 

@@ -2,7 +2,7 @@ name 'rs_aws_cft'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Amazon Web Services - Cloud Formation"
-long_description "Version: 1.1"
+long_description "Version: 1.2"
 package "plugins/rs_aws_cft"
 import "sys_log"
 
@@ -16,7 +16,7 @@ plugin "rs_aws_cft" do
   
   # http://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/Welcome.html
   type "stack" do
-    href_templates "/?Action=DescribeStacks&StackName={{//DescribeStacksResult/Stacks/member/StackName}}","{{//CreateStackResult/StackId}}"#,"/?Action=DescribeStacks&StackName={{//ListStacksResult/StackSummaries/member/StackName}}"
+    href_templates "/?Action=DescribeStacks&StackName={{//DescribeStacksResult/Stacks/member/StackName}}","{{//CreateStackResult/StackId}}"
 
     field "capabilities" do
       alias_for "Capabilities.member.1"
@@ -306,7 +306,7 @@ plugin "rs_aws_cft" do
     # Non-create fields
 
     field "stack_status_filter" do
-      alias_for "StackStatusFilter.memeber.1"
+      alias_for "StackStatusFilter.member.1"
       type "string"
       location "query"
     end 
