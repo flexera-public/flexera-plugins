@@ -9,7 +9,6 @@ plugin "rs_aws_vpc" do
   endpoint do
     default_host "ec2.amazonaws.com"
     default_scheme "https"
-    path "/"
     query do {
       "Version" => "2016-11-15"
     } end
@@ -42,48 +41,41 @@ plugin "rs_aws_vpc" do
     output "vpc"
 
     output "vpcId" do
-      body_path "//CreateVpcResponse/vpc/vpcId"
       type "simple_element"
     end
 
     output "state" do
-      body_path "//DescribeVpcsResponse/vpcSet/item/state"
       type "simple_element"
     end
 
     output "cidrBlock" do
-      body_path "//DescribeVpcsResponse/vpcSet/item/cidrBlock"
       type "simple_element"
     end
 
     output "ipv6CidrBlockAssociationSet" do
-      body_path "//DescribeVpcsResponse/vpcSet/item/ipv6CidrBlockAssociationSet"
       type "simple_element"
     end
 
     output "dhcpOptionsId" do
-      body_path "//DescribeVpcsResponse/vpcSet/item/dhcpOptionsId"
       type "simple_element"
     end
 
     output "tagSet" do
-      body_path "//DescribeVpcsResponse/vpcSet/item/tagSet"
       type "simple_element"
     end
 
     output "instanceTenancy" do
-      body_path "//DescribeVpcsResponse/vpcSet/item/instanceTenancy"
       type "simple_element"
     end
 
     output "isDefault" do
-      body_path "//DescribeVpcsResponse/vpcSet/item/isDefault"
       type "simple_element"
     end
 
     action "create" do
       verb "POST"
       path "/?Action=CreateVpc"
+      output_path "//CreateVpcResponse/vpc"
     end
     
     action "destroy" do
@@ -93,6 +85,7 @@ plugin "rs_aws_vpc" do
  
     action "get" do
       verb "POST"
+      output_path "//DescribeVpcsResponse/vpcSet/item"
     end
  
     action "list" do
@@ -103,7 +96,8 @@ plugin "rs_aws_vpc" do
   end
 
   type "endpoint" do
-    href_templates "/?Action=DescribeVpcEndpoints?VpcEndpointId.member.1={{//CreateVpcEndpointResponse/vpcEndpoint/vpcEndpointId}}","/?Action=DescribeVpcEndpoints?VpcEndpointId.member.1={{//DescribeVpcEndpointsResponse/vpcEndpointSet/item/vpcEndpointId}}"
+    href_templates "/?Action=DescribeVpcEndpoints?VpcEndpointIds.1={{//CreateVpcEndpointResponse/vpcEndpoint/vpcEndpointId}}","/?Action=DescribeVpcEndpoints?VpcEndpointIds.1={{//DescribeVpcEndpointsResponse/vpcEndpointSet/item/vpcEndpointId}}"
+    #href_templates "/?Action=DescribeVpcEndpoints?Filter.1=Name=vpc-endpoint-id,Value={{//CreateVpcEndpointResponse/vpcEndpoint/vpcEndpointId}}"
     provision 'provision_endpoint'
     delete    'delete_endpoint'
 
@@ -126,52 +120,47 @@ plugin "rs_aws_vpc" do
     end
     
     output "vpcEndpointId" do
-      body_path "//CreateVpcEndpointResponse/vpcEndpoint/vpcEndpointId"
       type "simple_element"
     end
 
     output "vpcId" do
-      body_path "//DescribeVpcEndpointsResponse/vpcEndpointSet/item/vpcId"
       type "simple_element"
     end
 
     output "state" do
-      body_path "//DescribeVpcEndpointsResponse/vpcEndpointSet/item/state"
       type "simple_element"
     end
 
     output "routeTableIdSet" do
-      body_path "//DescribeVpcEndpointsResponse/vpcEndpointSet/item/routeTableIdSet"
       type "array"
     end
 
     output "creationTimestamp" do
-      body_path "//DescribeVpcEndpointsResponse/vpcEndpointSet/item/creationTimestamp"
       type "simple_element"
     end
 
     output "policyDocument" do
-      body_path "//DescribeVpcEndpointsResponse/vpcEndpointSet/item/policyDocument"
       type "simple_element"
     end
 
     output "serviceName" do
-      body_path "//DescribeVpcEndpointsResponse/vpcEndpointSet/item/serviceName"
       type "simple_element"
     end
 
     action "create" do
       verb "POST"
       path "/?Action=CreateVpcEndpoint"
+      output_path "//CreateVpcEndpointResponse/vpcEndpoint"
     end
     
     action "destroy" do
       verb "POST"
-      path "/?Action=DeleteVpcEndpoint&VpcEndpointId.member.1=$vpcEndpointId"
+      path "/?Action=DeleteVpcEndpoint&VpcEndpointId.1=$vpcEndpointId"
     end
  
     action "get" do
       verb "POST"
+      output_path "//DescribeVpcEndpointsResponse/vpcEndpointSet/item"
     end
  
     action "list" do
@@ -254,7 +243,11 @@ define provision_endpoint(@declaration) return @vpc do
     call stop_debugging()
     $vpc = to_object(@vpcendpoint)
     call sys_log.detail(join(["vpcendpoint:", to_s($vpc)]))
+    call start_debugging()
+    @vpcendpoint.get()
+    call sys_log.detail(join(["e2:", to_s(to_object(@vpcendpoint))]))
     $state = @vpcendpoint.state
+    call stop_debugging()
     while $state != "available" do
       sleep(10)
       call sys_log.detail(join(["state: ", $state]))
