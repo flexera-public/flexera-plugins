@@ -1,5 +1,5 @@
 # AWS CFT Plugin
-
+foobar
 ## Overview
 The AWS CFT Plugin integrates RightScale Self-Service with the basic functionality of the AWS CloudFormation API. 
 
