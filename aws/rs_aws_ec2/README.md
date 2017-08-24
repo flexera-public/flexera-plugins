@@ -1,7 +1,7 @@
 # AWS VPC Plugin
 
 ## Overview
-The AWS VPC Plugin integrates RightScale Self-Service with the basic functionality of the AWS Elastic Load Balancer. 
+The AWS VPC Plugin integrates RightScale Self-Service with the basic functionality of the AWS VPC. 
 
 ## Requirements
 - A general understanding CAT development and definitions
@@ -14,9 +14,6 @@ The AWS VPC Plugin integrates RightScale Self-Service with the basic functionali
   - `AWS_SECRET_ACCESS_KEY`
 - The following packages are also required (See the Installation section for details):
   - [sys_log](sys_log.rb)
-
-## Getting Started
-**Coming Soon**
 
 ## Installation
 1. Be sure your RightScale account is SelfService enabled
@@ -82,6 +79,7 @@ end
 | destroy | [DeleteVpc](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DeleteVpc.html) | Supported |
 | list | [DescribeVpcs](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeVpcs.html) | Supported |
 | routeTables | [DescribeRouteTables](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeRouteTables.html) | Supported |
+*Note*:  routeTables behaves more like a link then action
 
 ## endpoint
 #### Supported Fields
@@ -120,7 +118,6 @@ Full list of possible actions can be found on the [AWS VPC API Documentation](ht
 Please review [vpc_plugin_test_cat.rb](./vpc_plugin_test_cat.rb) for a basic example implementation.
 	
 ## Known Issues / Limitations
-- Currently only supports CRUD and instance register/deregister functions.
 
 ## Getting Help
 Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.

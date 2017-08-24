@@ -38,8 +38,6 @@ plugin "rs_aws_vpc" do
       type      "string"
       location  "query"
     end
-    
-    output "vpc"
 
     output "vpcId" do
       type "simple_element"
