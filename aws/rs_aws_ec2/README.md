@@ -1,13 +1,13 @@
-# AWS ELB Plugin
+# AWS VPC Plugin
 
 ## Overview
-The AWS ELB Plugin integrates RightScale Self-Service with the basic functionality of the AWS Elastic Load Balancer. 
+The AWS VPC Plugin integrates RightScale Self-Service with the basic functionality of the AWS Elastic Load Balancer. 
 
 ## Requirements
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
 - Admin rights to a RightScale account with SelfService enabled
-  - Admin is needed to set/retrieve the RightScale Credentials for the GCE API.
+  - Admin is needed to set/retrieve the RightScale Credentials for the VPC API.
 - AWS Account credentials with the appropriate permissions to manage elastic load balancers
 - The following RightScale Credentials
   - `AWS_ACCESS_KEY_ID`
@@ -25,49 +25,99 @@ The AWS ELB Plugin integrates RightScale Self-Service with the basic functionali
    - For more details on using the portal review the [SS User Interface Guide](http://docs.rightscale.com/ss/guides/ss_user_interface_guide.html)
 1. In the Design section, use the `Upload CAT` interface to complete the following:
    1. Upload each of packages listed in the Requirements Section
-   1. Upload the `aws_elb_plugin.rb` file located in this repository
+   1. Upload the `aws_vpc_plugin.rb` file located in this repository
  
 ## How to Use
-The GCE Plugin has been packaged as `plugin/rs_aws_elb`. In order to use this plugin you must import this plugin into a CAT.
+The VPC Plugin has been packaged as `plugin/rs_aws_vpc`. In order to use this plugin you must import this plugin into a CAT.
 ```
-import "plugin/rs_aws_elb"
+import "plugin/rs_aws_vpc"
 ```
 For more information on using packages, please refer to the RightScale online documenataion. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
-AWS ELB resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
+AWS VPC resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
 The resulting resrouce can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
+## Supported Resources
+ - vpc
+ - endpoint
+ - route_table
+
+## Usage
 ```
-#Creates an ELB
-resource "my_elb", type: "rs_aws_elb.elb" do
-  name "my-elb"
-  list_lbport "80"
-  list_instport "80"
-  list_proto "http"
-  list_instproto "http"
-  subnets "<subnet_id>"
-  security_groups "<sg_id>"
-  description "Example address created by the AWS ELB Plugin"
+#Creates an VPC
+resource "my_vpc", type: "rs_aws_vpc.vpc" do
+  cidr_block "10.0.0.0/16"
+  instance_tenancy "default"
+end
+
+resource "my_vpc_endpoint", type: "rs_aws_vpc.endpoint" do
+  vpc_id @my_vpc.vpcId
+  service_name "com.amazonaws.us-east-1.s3"
+end
+
+resource "my_rs_vpc", type: "rs_cm.network" do
+  name "my_rs_vpc"
+  cidr_block "10.0.0.0/16"
+  cloud_href "/api/clouds/1"
+end
+
+resource "my_rs_vpc_endpoint", type: "rs_aws_vpc.endpoint" do
+  vpc_id @my_rs_vpc.resource_uid
+  service_name "com.amazonaws.us-east-1.s3"
 end
 ```
-
-## Implementation Notes
-- The AWS ELB Plugin makes no attempt to support non-AWS resources. (i.e. Allow the passing the RightScale or other resources as arguments to an ELB resource.) 
- - The most common example might be to pass a RightScale instance to attach it to the ELB or similar. Support for this functionality will need to be implemented in the application CAT.
+#
+## Resources
+## vpc
+#### Supported Fields
+| Field Name | Required? | Description |
+|------------|-----------|-------------|
+|amazon_provided_ipv6_cidr_block|No|Requests an Amazon-provided IPv6 CIDR block with a /56 prefix length for the VPC. You cannot specify the range of IP addresses, or the size of the CIDR block.|
+|cidr_block|Yes|The IPv4 network range for the VPC, in CIDR notation. For example, 10.0.0.0/16.|
+|instance_tenancy|No|The tenancy options for instances launched into the VPC. For default, instances are launched with shared tenancy by default. You can launch instances with any tenancy into a shared tenancy VPC. For dedicated, instances are launched as dedicated tenancy instances by default. You can only launch instances with a tenancy of dedicated or host into a dedicated tenancy VPC.|
 
 ## Supported Actions
-
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
-| create | CreateLoadBalancer | Supported |
-| destroy | DeleteLoadBalancer | Supported |
-| list | DescribeLoadBalancers | Supported |
-| register_instance | RegisterInstancesWithLoadBalancer | Untested |
-| deregister_instance | DeregisterInstancesWithLoadBalancer | Untested |
-| set_certificate | SetLoadBalancerListenerSSLCertificate | Untested |
+| create | [CreateVpc](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateVpc.html) | Supported |
+| destroy | [DeleteVpc](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DeleteVpc.html) | Supported |
+| list | [DescribeVpcs](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeVpcs.html) | Supported |
+| routeTables | [DescribeRouteTables](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeRouteTables.html) | Supported |
 
-Full list of possible actions can be found on the [AWS ELB API Documentation](http://docs.aws.amazon.com/elasticloadbalancing/2012-06-01/APIReference/API_Operations.html)
+## endpoint
+#### Supported Fields
+| Field Name | Required? | Description |
+|------------|-----------|-------------|
+|vpc_id| Yes | The ID of the VPC in which the endpoint will be used. |
+|service_name| Yes | The AWS service name, in the form com.amazonaws.region.service . |
+|route_table_id_1| No | Route Table to pin to |
+
+## Supported Actions
+| Action | API Implementation | Support Level |
+|--------------|:----:|:-------------:|
+| create | [CreateVpcEndpoint](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateVpcEndpoint.html) | Supported |
+| destroy | [DeleteVpcEndpoints](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DeleteVpcEndpoints.html) | Supported |
+| list | [DescribeVpcEndpoints](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeVpcEndpoints.html) | Supported |
+
+## route_table
+#### Supported Fields
+| Field Name | Required? | Description |
+|------------|-----------|-------------|
+|vpc_id| Yes | The ID of the VPC in which the endpoint will be used. |
+
+## Supported Actions
+| Action | API Implementation | Support Level |
+|--------------|:----:|:-------------:|
+| create | [CreateRouteTable](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateRouteTable.html) | Supported |
+| destroy | [DeleteRouteTable](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DeleteRouteTable.html) | Supported |
+| list | [DescribeRouteTables](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeRouteTables.html) | Supported |
+
+# Implementation Notes
+- The AWS VPC Plugin makes no attempt to support non-AWS resources. (i.e. Allow the passing the RightScale or other resources as arguments to an VPC resource.) 
+ - The most common example might be to pass a RightScale instance to attach it to the VPC or similar. Support for this functionality will need to be implemented in the application CAT.
+ 
+Full list of possible actions can be found on the [AWS VPC API Documentation](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/Welcome.html)
 ## Examples
-Please review [elb_plugin.rb](./elb_plugin.rb) for a basic example implementation.
+Please review [vpc_plugin_test_cat.rb](./vpc_plugin_test_cat.rb) for a basic example implementation.
 	
 ## Known Issues / Limitations
 - Currently only supports CRUD and instance register/deregister functions.
@@ -77,4 +127,4 @@ Support for this plugin will be provided though GitHub Issues and the RightScale
 Visit http://chat.rightscale.com/ to join!
 
 ## License
-The AWS ELB Plugin source code is subject to the MIT license, see the [LICENSE](../LICENSE) file.
+The AWS VPC Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.

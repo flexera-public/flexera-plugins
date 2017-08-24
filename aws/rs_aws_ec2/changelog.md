@@ -1,5 +1,5 @@
-ELB Plugin changelog
+VPC Plugin changelog
 
 v1.0
 -----
-- initial release
+- initial release of VPC Plugin
