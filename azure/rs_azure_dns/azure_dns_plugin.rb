@@ -124,7 +124,7 @@ contains(id, '/soa/'))\
     provision "provision_resource"
     delete    "delete_resource"
 
-    field "parameters" do
+    field "properties" do
       type "object"
       location "body"
       required true

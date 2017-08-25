@@ -31,10 +31,9 @@ resource 'a_record', type: "rs_azure_dns.record_set" do
   resource_group @@deployment.name
   recordType 'a'
   zoneName @rsazdnstest_com.name
-  parameters do {
-    "TTL" => 60,
-    "ARecords" => {
-      "ipv4Address" => "4.4.4.4"
-    }
+  properties do {
+"TTL" => 60,
+"ARecords" => [
+      "ipv4Address" => "4.4.4.4"]
   }end
 end
