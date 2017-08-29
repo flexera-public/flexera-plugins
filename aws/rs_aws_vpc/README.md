@@ -37,6 +37,8 @@ The resulting resrouce can be manipulated just like the native RightScale resour
  - vpc
  - endpoint
  - route_table
+ - nat_gateway
+ - addresses
 
 ## Usage
 ```
@@ -108,6 +110,32 @@ end
 | create | [CreateRouteTable](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateRouteTable.html) | Supported |
 | destroy | [DeleteRouteTable](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DeleteRouteTable.html) | Supported |
 | list | [DescribeRouteTables](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeRouteTables.html) | Supported |
+
+## nat_gateway
+#### Supported Fields
+| Field Name | Required? | Description |
+|------------|-----------|-------------|
+|allocation_id| Yes | The allocation ID of an Elastic IP address to associate with the NAT gateway. If the Elastic IP address is associated with another resource, you must first disassociate it. |
+|subnet_id| Yes | The subnet in which to create the NAT gateway.|
+
+## Supported Actions
+| Action | API Implementation | Support Level |
+|--------------|:----:|:-------------:|
+| create | [CreateNatGateway](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateNatGateway.html) | Supported |
+| destroy | [DeleteNatGateway](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DeleteNatGateway.html) | Supported |
+| list | [DescribeNatGateways](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeNatGateways.html) | Supported |
+
+## addresses
+#### Supported Fields
+| Field Name | Required? | Description |
+|------------|-----------|-------------|
+|allocation_id_1| No | One or more allocation IDs. |
+|public_ip_1| No | One or more Elastic IP addresses|
+
+## Supported Actions
+| Action | API Implementation | Support Level |
+|--------------|:----:|:-------------:|
+| show | [DescribeAddresses](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeAddresses.html) | Supported |
 
 # Implementation Notes
 - The AWS VPC Plugin makes no attempt to support non-AWS resources. (i.e. Allow the passing the RightScale or other resources as arguments to an VPC resource.) 

@@ -2,7 +2,7 @@ name 'aws_vpc_plugin'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Amazon Web Services - VPC Plugin"
-long_description "Version 1.0"
+long_description "Version 1.1"
 package "plugin/rs_aws_vpc"
 import "sys_log"
 
@@ -232,6 +232,122 @@ plugin "rs_aws_vpc" do
       output_path "//DescribeRouteTablesResponse/routeTableSet/item"
     end
   end
+
+  type "nat_gateway" do
+    href_templates "/?Action=DescribeNatGateways&NatGatewayId.1={{//CreateNatGatewayResponse/natGateway/natGatewayId}}","/?Action=DescribeNatGateways&NatGatewayId.1={{//DescribeNatGatewaysResponse/natGatewaySet/item/natGatewayId}}"
+    provision 'provision_nat_gateway'
+    delete    'delete_nat_gateway'
+
+    field "allocation_id" do
+      alias_for "AllocationId"
+      type      "string"
+      location  "query"
+    end
+
+    field "subnet_id" do
+      alias_for "SubnetId"
+      type      "string"
+      location  "query"
+    end
+
+    output "natGatewayId" do
+      type "simple_element"
+    end
+
+    output "subnetId" do
+      type "simple_element"
+    end
+
+    output "vpcId" do
+      type "simple_element"
+    end
+
+    output "state" do
+      type "simple_element"
+    end
+
+    output "natGatewayAddressSet" do
+      type "array"
+    end
+
+    action "create" do
+      verb "POST"
+      path "/?Action=CreateNatGateway"
+      output_path "//CreateNatGatewayResponse/natGateway"
+    end
+    
+    action "destroy" do
+      verb "POST"
+      path "/?Action=DeleteNatGateway&NatGatewayId=$natGatewayId"
+    end
+ 
+    action "get" do
+      verb "POST"
+      output_path "//DescribeNatGatewaysResponse/natGatewaySet/item"
+    end
+ 
+    action "list" do
+      verb "POST"
+      path "/?Action=DescribeNatGateways"
+      output_path "//DescribeNatGatewaysResponse/natGatewaySet/item"
+    end
+  end
+
+  type "addresses" do
+    href_templates "/?Action=DescribeAddresses&AllocationId.1={{//DescribeAddressesResponse/addressesSet/item/allocationId}}"
+    provision 'no_operation'
+    delete    'no_operation'
+
+    field "allocation_id_1" do
+      alias_for "AllocationId.1"
+      type "string"
+      location "query"
+    end
+
+    field "public_ip_1" do
+      alias_for "PublicIp.1"
+      type "string"
+      location "query"
+    end
+
+    action "get" do
+      verb "POST"
+      path "/?Action=DescribeAddresses"
+      output_path "//DescribeAddressesResponse/addressesSet/item"
+    end
+
+    action "show" do
+      verb "POST"
+      path "/?Action=DescribeAddresses"
+      output_path "//DescribeAddressesResponse/addressesSet/item"
+      field "allocation_id_1" do
+        alias_for "AllocationId.1"
+        location "query"
+      end
+
+      field "public_ip_1" do
+        alias_for "PublicIp.1"
+        location "query"
+      end
+    end
+    action "list" do
+      verb "POST"
+      path "/?Action=DescribeAddresses"
+      output_path "//DescribeAddressesResponse/addressesSet/item"
+    end
+
+    output "publicIP" do
+      type "simple_element"
+    end
+
+    output "domain" do
+      type "simple_element"
+    end
+
+    output "allocationId" do
+      type "simple_element"
+    end
+  end
 end
 
 resource_pool "vpc_pool" do
@@ -314,6 +430,29 @@ define provision_route_table(@declaration) return @resource do
   end
 end
 
+define provision_nat_gateway(@declaration) return @resource do
+  sub on_error: stop_debugging() do
+    $object = to_object(@declaration)
+    $fields = $object["fields"]
+    $name = $fields['name']
+    call start_debugging()
+    @resource = rs_aws_vpc.nat_gateway.create($fields)
+    call stop_debugging()
+    $vpc = to_object(@resource)
+    call sys_log.detail(join(["natgateway:", to_s($vpc)]))
+    call start_debugging()
+    $state = @resource.state
+    call stop_debugging()
+    while $state != "available" do
+      sleep(10)
+      call sys_log.detail(join(["state: ", $state]))
+      call start_debugging()
+      $state = @resource.state
+      call stop_debugging()
+    end
+  end
+end
+
 define delete_vpc(@vpc) do
   sub on_error: stop_debugging() do
     call start_debugging()
@@ -336,6 +475,18 @@ define delete_route_table(@route_table) do
     @route_table.destroy()
     call stop_debugging()
   end
+end
+
+define delete_nat_gateway(@nat_gateway) do
+  sub on_error: stop_debugging() do
+    call start_debugging()
+    @nat_gateway.destroy()
+    call stop_debugging()
+  end
+end
+
+define no_operation(@resource) return @resource do
+  @resource=@resource
 end
 
 define start_debugging() do

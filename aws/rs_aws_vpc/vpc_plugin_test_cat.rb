@@ -28,9 +28,34 @@ resource "my_rs_vpc", type: "rs_cm.network" do
   cloud_href "/api/clouds/1"
 end
 
+resource "my_subnet", type: "rs_cm.subnet" do
+  name join([@@deployment.name, "-us-east-1a"])
+  cidr_block "10.0.1.0/24"
+  network_href "replace-me"
+  datacenter "us-east-1a"
+  cloud_href "/api/clouds/1"
+end
+
+resource "my_igw", type: "rs_cm.network_gateway" do
+  name join([@@deployment.name, "-igw"])
+  cloud_href "/api/clouds/1"
+  type "internet"
+end
+
 resource "my_rs_vpc_endpoint", type: "rs_aws_vpc.endpoint" do
   vpc_id @my_rs_vpc.resource_uid
   service_name "com.amazonaws.us-east-1.s3"
+end
+
+resource "my_nat_ip", type: "rs_cm.ip_address" do
+  name @@deployment.name
+  domain "vpc"
+  cloud_href "/api/clouds/1"
+end
+
+resource "my_nat_gateway", type: "rs_aws_vpc.nat_gateway" do
+  allocation_id "replace-me"
+  subnet_id @my_subnet.resource_uid
 end
 
 operation 'list_vpc' do
@@ -59,7 +84,7 @@ define list_vpcs(@my_vpc) return $object,$rt_tbl do
   call rs_aws_vpc.stop_debugging()
 end
 
-define generated_launch(@my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs_vpc_endpoint) return @my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs_vpc_endpoint do
+define generated_launch(@my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs_vpc_endpoint,@my_nat_ip,@my_nat_gateway,@my_subnet,@my_igw) return @my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs_vpc_endpoint,@my_nat_ip,@my_nat_gateway,@my_subnet,@my_igw do
   provision(@my_vpc)
   @route_tables = @my_vpc.routeTables()
   $endpoint = to_object(@my_vpc_endpoint)
@@ -67,7 +92,19 @@ define generated_launch(@my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs_vpc_endpoint)
   @my_vpc_endpoint = $endpoint
   provision(@my_vpc_endpoint)
   provision(@my_rs_vpc)
+  $subnet = to_object(@my_subnet)
+  $subnet["fields"]["network_href"] = @my_rs_vpc.href
+  @my_subnet = $subnet
+  provision(@my_subnet)
+  provision(@my_igw)
+  @my_igw.update(network_gateway: { network_href: @my_rs_vpc.href })
   provision(@my_rs_vpc_endpoint)
+  provision(@my_nat_ip)
+  @aws_ip = rs_aws_vpc.addresses.show(public_ip_1: @my_nat_ip.address)
+  $nat_gateway = to_object(@my_nat_gateway)
+  $nat_gateway["fields"]["allocation_id"] = @aws_ip.allocationId
+  @my_nat_gateway = $nat_gateway
+  provision(@my_nat_gateway)
 end
 
 define generated_terminate(@my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs_vpc_endpoint) do
