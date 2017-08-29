@@ -2,7 +2,7 @@ name 'aws_vpc_plugin'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Amazon Web Services - VPC Plugin"
-long_description "Version 1.1"
+long_description "Version 1.2"
 package "plugin/rs_aws_vpc"
 import "sys_log"
 
@@ -81,12 +81,22 @@ plugin "rs_aws_vpc" do
       verb "POST"
       path "/?Action=DeleteVpc&VpcId=$vpcId"
     end
- 
+
     action "get" do
       verb "POST"
       output_path "//DescribeVpcsResponse/vpcSet/item"
     end
- 
+
+    action "show" do
+      path "/?Action=DescribeVpcs"
+      verb "POST"
+      output_path "//DescribeVpcsResponse/vpcSet/item"
+      field "vpcId" do
+        alias_for "VpcId.1"
+        location "query"
+      end
+    end
+
     action "list" do
       verb "POST"
       path "/?Action=DescribeVpcs"
@@ -97,6 +107,49 @@ plugin "rs_aws_vpc" do
       type "route_table"
       verb "POST"
       path "/?Action=DescribeRouteTables&Filter.1.Name=vpc-id&Filter.1.Value=$vpcId"
+    end
+
+    action "enablevpcclassiclink" do
+      verb "POST"
+      path "/?Action=EnableVpcClassicLink&VpcId=$vpcId"
+    end
+
+    action "disablevpcclassiclink" do
+      verb "POST"
+      path "/?Action=DisableVpcClassicLink&VpcId=$vpcId"
+    end
+
+    action "enablevpcclassiclinkdnssupport" do
+      verb "POST"
+      path "/?Action=EnableVpcClassicLinkDnsSupport&VpcId=$vpcId"
+    end
+
+    action "disablevpcclassiclinkdnssupport" do
+      verb "POST"
+      path "/?Action=DisableVpcClassicLinkDnsSupport&VpcId=$vpcId"
+    end
+
+    action "create_tag" do
+      path "/?Action=CreateTags&ResourceId.1=$vpcId"
+      verb "POST"
+      field "tag_1_key" do
+        alias_for "Tag.1.Key"
+        location "query"
+      end
+
+      field "tag_1_value" do
+        alias_for "Tag.1.Value"
+        location "query"
+      end
+    end
+
+    action "delete_tag" do
+      path "/?Action=CreateTags&ResourceId.1=$vpcId"
+      verb "POST"
+      field "tag_1_key" do
+        alias_for "Tag.1.Key"
+        location "query"
+      end
     end
   end
 
@@ -348,6 +401,68 @@ plugin "rs_aws_vpc" do
       type "simple_element"
     end
   end
+
+  type "tags" do
+    href_templates "/?Action=DescribeTags&Filter.1.Name=key&Filter.1.Value={{//DescribeTagsResponse/tagSet/item/key}}&Filter.2.Name=value&Filter.2.Value={{//DescribeTagsResponse/tagSet/item/value}}&Filter.3.Name=resource-id&Filter.3.Value.1={{//DescribeTagsResponse/tagSet/item/resourceId}}","/?Action=DescribeTags&Filter.1.Name=key&Filter.1.Value=$tag_1_key&Filter.2.Name=value&Filter.2.Value=$tag_1_value&Filter.3.Name=resource-id&Filter.3.Value.1=$resource_id_1"
+    provision 'provision_tags'
+    delete    'delete_tags'
+
+    field "resource_id_1" do
+      alias_for "ResourceId.1"
+      type "string"
+      location "query"
+    end
+
+    field "tag_1_key" do
+      alias_for "Tag.1.Key"
+      type "string"
+      location "query"
+    end
+
+    field "tag_1_value" do
+      alias_for "Tag.1.Value"
+      type "string"
+      location "query"
+    end
+
+    action "create" do
+      verb "POST"
+      path "/?Action=CreateTags"
+    end
+
+    action "get" do
+      verb "POST"
+      path "/?Action=DescribeTags"
+      output_path "//DescribeTagsResponse/tagSet/item"
+    end
+
+    action "destroy" do
+      verb "POST"
+      path "/?Action=DeleteTags"
+    end
+
+    action "list" do
+      verb "POST"
+      path "/?Action=DescribeTags"
+      output_path "//DescribeTagsResponse/tagSet/item"
+    end
+
+    output "resourceId" do
+      type "simple_element"
+    end
+
+    output "resourceType" do
+      type "simple_element"
+    end
+
+    output "key" do
+      type "simple_element"
+    end
+
+    output "value" do
+      type "simple_element"
+    end
+  end
 end
 
 resource_pool "vpc_pool" do
@@ -453,6 +568,19 @@ define provision_nat_gateway(@declaration) return @resource do
   end
 end
 
+define provision_tags(@declaration) return @resource do
+  sub on_error: stop_debugging() do
+    $object = to_object(@declaration)
+    $fields = $object["fields"]
+    $name = $fields['name']
+    call start_debugging()
+    @resource = rs_aws_vpc.tags.create($fields)
+    call stop_debugging()
+    $vpc = to_object(@resource)
+    call sys_log.detail(join(["tags:", to_s($vpc)]))
+  end
+end
+
 define delete_vpc(@vpc) do
   sub on_error: stop_debugging() do
     call start_debugging()
@@ -481,6 +609,14 @@ define delete_nat_gateway(@nat_gateway) do
   sub on_error: stop_debugging() do
     call start_debugging()
     @nat_gateway.destroy()
+    call stop_debugging()
+  end
+end
+
+define delete_tags(@tag) do
+  sub on_error: stop_debugging() do
+    call start_debugging()
+    @tag.destroy()
     call stop_debugging()
   end
 end

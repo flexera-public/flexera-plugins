@@ -39,6 +39,7 @@ The resulting resrouce can be manipulated just like the native RightScale resour
  - route_table
  - nat_gateway
  - addresses
+ - tags
 
 ## Usage
 ```
@@ -79,8 +80,14 @@ end
 |--------------|:----:|:-------------:|
 | create | [CreateVpc](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateVpc.html) | Supported |
 | destroy | [DeleteVpc](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DeleteVpc.html) | Supported |
-| list | [DescribeVpcs](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeVpcs.html) | Supported |
+| list,get, show | [DescribeVpcs](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeVpcs.html) | Supported |
 | routeTables | [DescribeRouteTables](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeRouteTables.html) | Supported |
+| enablevpcclassiclink | [EnableVpcClassicLink](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_EnableVpcClassicLink.html) | Supported |
+| disablevpcclassiclink | [DisableVpcClassicLink](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DisableVpcClassicLink.html) | Untested |
+| enablevpcclassiclinkdnssupport | [EnableVpcClassicLinkDnsSupport](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_EnableVpcClassicLinkDnsSupport.html) | Supported |
+| disablevpcclassiclinkdnssupport | [DisableVpcClassicLinkDnsSupport](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DisableVpcClassicLinkDnsSupport.html) | Untested |
+| create_tag | [CreateTags](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateTags.html) | Supported |
+| delete_tag | [DeleteTags](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DeleteTags.html) | Untested |
 *Note*:  routeTables behaves more like a link then action
 
 ## endpoint
@@ -136,6 +143,20 @@ end
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
 | show | [DescribeAddresses](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeAddresses.html) | Supported |
+
+## tags
+#### Supported Fields
+| Field Name | Required? | Description |
+|------------|-----------|-------------|
+|resource_id_1| Yes | The IDs of one or more resources to tag. |
+|tag_1_key| Yes | Tag Key |
+|tag_1_value | Yes | Tag Value |
+
+## Supported Actions
+| Action | API Implementation | Support Level |
+|--------------|:----:|:-------------:|
+| create | [CreateTags](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateTags.html) | Supported |
+| destroy | [DeleteTags](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DeleteTags.html) | Supported |
 
 # Implementation Notes
 - The AWS VPC Plugin makes no attempt to support non-AWS resources. (i.e. Allow the passing the RightScale or other resources as arguments to an VPC resource.) 

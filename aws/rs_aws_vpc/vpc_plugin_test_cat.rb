@@ -28,6 +28,12 @@ resource "my_rs_vpc", type: "rs_cm.network" do
   cloud_href "/api/clouds/1"
 end
 
+resource "my_rs_vpc_tag", type: "rs_aws_vpc.tags" do
+  resource_id_1 @my_rs_vpc.resource_uid
+  tag_1_key "Name"
+  tag_1_value @@deployment.name
+end
+
 resource "my_subnet", type: "rs_cm.subnet" do
   name join([@@deployment.name, "-us-east-1a"])
   cidr_block "10.0.1.0/24"
@@ -84,7 +90,7 @@ define list_vpcs(@my_vpc) return $object,$rt_tbl do
   call rs_aws_vpc.stop_debugging()
 end
 
-define generated_launch(@my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs_vpc_endpoint,@my_nat_ip,@my_nat_gateway,@my_subnet,@my_igw) return @my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs_vpc_endpoint,@my_nat_ip,@my_nat_gateway,@my_subnet,@my_igw do
+define generated_launch(@my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs_vpc_endpoint,@my_nat_ip,@my_nat_gateway,@my_subnet,@my_igw,@my_rs_vpc_tag) return @my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs_vpc_endpoint,@my_nat_ip,@my_nat_gateway,@my_subnet,@my_igw,@my_rs_vpc_tag do
   provision(@my_vpc)
   @route_tables = @my_vpc.routeTables()
   $endpoint = to_object(@my_vpc_endpoint)
@@ -105,6 +111,11 @@ define generated_launch(@my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs_vpc_endpoint,
   $nat_gateway["fields"]["allocation_id"] = @aws_ip.allocationId
   @my_nat_gateway = $nat_gateway
   provision(@my_nat_gateway)
+  @vpc1 = rs_aws_vpc.vpc.show(vpcId: @my_rs_vpc.resource_uid)
+  @vpc1.enablevpcclassiclink()
+  @vpc1.enablevpcclassiclinkdnssupport()
+  provision(@my_rs_vpc_tag)
+  @vpc1.create_tag(tag_1_key: "new_key", tag_1_value: "new_value")
 end
 
 define generated_terminate(@my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs_vpc_endpoint) do
