@@ -8,6 +8,7 @@ This repo contains a library of open source RightScale plugins.
 - [AWS Elastic File System](./aws/rs_aws_efs/)
 - [AWS Relational Database Service](./aws/rs_aws_rds/)
 - [AWS CloudFormation](./aws/rs_aws_cft/)
+- [AWS Virtual Private Cloud](./aws/rs_aws_vpc/)
 - [AWS ElastiCache](./aws/rs_aws_elasticache)
 
 ### Azure
@@ -20,6 +21,7 @@ This repo contains a library of open source RightScale plugins.
 - [Azure Load Balancer](./azure/rs_azure_networking/)
 - [Azure Networking Interface](./azure/rs_azure_networking/)
 - [Azure PostgreSQL](./azure/rs_azure_pgsql/)
+- [Azure Redis Cache](./azure/rs_azure_cache/)
 
 ### Google Cloud Platform
 - [GCP Google Compute Engine](./google/gce/)

@@ -1,5 +1,9 @@
 RDS Plugin changelog
 
+v1.3 (08-16-2017)
+-----
+- adding in handle_retries logic
+
 v1.2
 -----
 - improve auto-terminate logic
