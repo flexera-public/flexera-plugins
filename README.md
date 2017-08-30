@@ -9,6 +9,7 @@ This repo contains a library of open source RightScale plugins.
 - [AWS Relational Database Service](./aws/rs_aws_rds/)
 - [AWS CloudFormation](./aws/rs_aws_cft/)
 - [AWS Virtual Private Cloud](./aws/rs_aws_vpc/)
+- [AWS ElastiCache](./aws/rs_aws_elasticache)
 
 ### Azure
 - [Azure SQL Database](./azure/rs_azure_sql/)
