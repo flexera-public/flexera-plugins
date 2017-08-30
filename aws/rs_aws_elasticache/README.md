@@ -214,7 +214,7 @@ end
 - SubnetAvailabilityZone
 
 ## Implementation Notes
-- The AWS ElastiCache Plugin makes no attempt to support non-AWS resources. (i.e. Allow the passing the RightScale or other resources as arguments to an VPC resource.) 
+- The AWS ElastiCache Plugin makes no attempt to support non-AWS resources. (i.e. Allow the passing the RightScale or other resources as arguments to an ElastiCache resource.) 
  
 Full list of possible actions can be found on the [AWS ElastiCache API Documentation](http://docs.aws.amazon.com/AmazonElastiCache/latest/APIReference/Welcome.html)
 
@@ -242,4 +242,4 @@ Support for this plugin will be provided though GitHub Issues and the RightScale
 Visit http://chat.rightscale.com/ to join!
 
 ## License
-The AWS VPC Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.
+The AWS ElastiCache Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.
