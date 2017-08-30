@@ -184,7 +184,16 @@ plugin "rs_aws_lambda" do
       verb "PUT"
       path "/functions/$FunctionName/configuration" 
     end
+    
+    action "invoke" do
+      verb "POST"
+      path "/functions/$FunctionName/invocations?Qualifier=$Version"
 
+      field "payload" do
+        alias_for "Payload"
+      end
+    end 
+    
     output "CodeSha256","CodeSize","Description","FunctionArn","FunctionName","Handler","KMSKeyArn","LastModified","MasterArn","MemorySize","Role","Runtime","Timeout","Version"
     
     output "DeadLetterConfig" do
@@ -219,8 +228,7 @@ plugin "rs_aws_lambda" do
       body_path "VpcConfig.VpcId"
     end
 
-  end    
-
+  end
 end
 
 resource_pool "rs_aws_lambda" do
@@ -244,12 +252,21 @@ define provision_resource(@declaration) return @resource do
     call sys_log.set_task_target(@@deployment)
     call sys_log.summary(join(["Provision ", $type]))
     call sys_log.detail($object)
-    @operation = rs_aws_elasticache.$type.create($fields)
+    @operation = rs_aws_lambda.$type.create($fields)
     call sys_log.detail(to_object(@operation))
     @resource = @operation.get()
     call sys_log.detail(to_object(@resource))
     call stop_debugging()
   end
+end
+
+define delete_resource(@resource) do
+  sub on_error: skip do
+    call sys_log.set_task_target(@@deployment)
+    call sys_log.summary("Destroy Resource")
+    call sys_log.detail(to_object(@resource))
+  end
+  @resource.destroy()
 end
 
 define start_debugging() do
@@ -265,4 +282,11 @@ define stop_debugging() do
     call sys_log.detail($debug_report)
     $$debugging = false
   end
+end
+
+resource "my_function", type: "rs_aws_lambda.function" do
+  function_name last(split(@@deployment.href, "/"))
+  description join(["launched from SS - ", last(split(@@deployment.href, "/"))])
+  runtime "nodejs6.10"
+  
 end
