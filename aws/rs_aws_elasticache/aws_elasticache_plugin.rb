@@ -800,16 +800,12 @@ resource_pool "rs_aws_elasticache" do
 end
 
 define delete_resource(@resource) do
-  call start_debugging()  
-  sub on_error: stop_debugging() do
+  sub on_error: skip do
     call sys_log.set_task_target(@@deployment)
     call sys_log.summary("Destroy Resource")
     call sys_log.detail(to_object(@resource))
-    sub on_error: skip do
-      @resource.destroy()
-    end
-    call stop_debugging()
   end
+  @resource.destroy()
 end
 
 define provision_cluster(@declaration) return @resource do
