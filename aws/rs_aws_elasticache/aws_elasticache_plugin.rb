@@ -2,7 +2,7 @@ name 'rs_aws_elasticache'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Amazon Web Services - ElastiCache Plugin"
-long_description "Version: 1.0"
+long_description "Version: 1.1"
 package "plugins/rs_aws_elasticache"
 import "sys_log"
 
