@@ -28,7 +28,7 @@ The AWS ELB Plugin integrates RightScale Self-Service with the basic functionali
    1. Upload the `aws_elb_plugin.rb` file located in this repository
  
 ## How to Use
-The GCE Plugin has been packaged as `plugin/rs_aws_elb`. In order to use this plugin you must import this plugin into a CAT.
+The ELB Plugin has been packaged as `plugin/rs_aws_elb`. In order to use this plugin you must import this plugin into a CAT.
 ```
 import "plugin/rs_aws_elb"
 ```
