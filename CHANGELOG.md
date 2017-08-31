@@ -1,5 +1,20 @@
 # Change Log
 
+## [Week-of-08-28-2017](https://github.com/rightscale/rightscale-plugins/tree/Week-of-08-28-2017) (2017-08-30)
+[Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-08-21-2017...Week-of-08-28-2017)
+
+**Fixed bugs:**
+
+- ElastiCache - Fix debug report on auto-terminate [\#78](https://github.com/rightscale/rightscale-plugins/issues/78)
+
+**Merged pull requests:**
+
+- ElastiCache - bug fix issue \#78 [\#79](https://github.com/rightscale/rightscale-plugins/pull/79) ([dfrankel33](https://github.com/dfrankel33))
+- AWS ElastiCache - Initial Release [\#76](https://github.com/rightscale/rightscale-plugins/pull/76) ([dfrankel33](https://github.com/dfrankel33))
+- AWS VPC Plugin - Adding in Actions: EnableVpcClassicLink,EnableVpcClassicLinkDnsSupport,Create\_Tag [\#75](https://github.com/rightscale/rightscale-plugins/pull/75) ([rshade](https://github.com/rshade))
+- AWS VPC Plugin - Adding Nat Gateway Support, Addresses Read-Only Support [\#74](https://github.com/rightscale/rightscale-plugins/pull/74) ([rshade](https://github.com/rshade))
+- Changelog Update for 08-21-2017 Release [\#72](https://github.com/rightscale/rightscale-plugins/pull/72) ([rshade](https://github.com/rshade))
+
 ## [Week-of-08-21-2017](https://github.com/rightscale/rightscale-plugins/tree/Week-of-08-21-2017) (2017-08-24)
 [Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-08-14-2017...Week-of-08-21-2017)
 
