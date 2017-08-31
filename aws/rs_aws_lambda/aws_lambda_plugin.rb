@@ -13,7 +13,7 @@ plugin "rs_aws_lambda" do
   end
   
   type "function" do
-    href_templates "/functions/{{FunctionName}}?Qualifier={{Version}}","/functions/{{Functions[*].FunctionName}}?Qualifier={{Functions[*].Version}}",
+    href_templates "/functions/{{FunctionName}}?Qualifier={{Version}}","/functions/{{Functions[*].FunctionName}}?Qualifier={{Functions[*].Version}}","/functions/{{Configuration.FunctionName}}?Qualifier={{Configuration.Version}}"
     provision "provision_resource"
     delete    "delete_resource"
 
@@ -106,7 +106,16 @@ plugin "rs_aws_lambda" do
     # http://docs.aws.amazon.com/lambda/latest/dg/API_DeleteFunction.html
     action "destroy" do
       verb "DELETE"
-      path "$href"
+      path "/functions/$FunctionName"
+    end
+
+    action "destroy_version" do
+      verb "DELETE"
+      path "/function/$FunctionName?Qualifier=$version"
+
+      field "version" do
+        location "path"
+      end
     end
     
     # http://docs.aws.amazon.com/lambda/latest/dg/API_GetFunction.html
@@ -185,13 +194,10 @@ plugin "rs_aws_lambda" do
       path "/functions/$FunctionName/configuration" 
     end
     
+    # http://docs.aws.amazon.com/lambda/latest/dg/API_Invoke.html
     action "invoke" do
       verb "POST"
       path "/functions/$FunctionName/invocations?Qualifier=$Version"
-
-      field "payload" do
-        alias_for "Payload"
-      end
     end 
     
     output "CodeSha256","CodeSize","Description","FunctionArn","FunctionName","Handler","KMSKeyArn","LastModified","MasterArn","MemorySize","Role","Runtime","Timeout","Version"
@@ -266,7 +272,12 @@ define delete_resource(@resource) do
     call sys_log.summary("Destroy Resource")
     call sys_log.detail(to_object(@resource))
   end
-  @resource.destroy()
+  $version = @resource.Version
+  if $version == "$LATEST"
+    @resource.destroy()
+  else 
+    @resource.destroy_version(version: $version)
+  end
 end
 
 define start_debugging() do
@@ -282,11 +293,4 @@ define stop_debugging() do
     call sys_log.detail($debug_report)
     $$debugging = false
   end
-end
-
-resource "my_function", type: "rs_aws_lambda.function" do
-  function_name last(split(@@deployment.href, "/"))
-  description join(["launched from SS - ", last(split(@@deployment.href, "/"))])
-  runtime "nodejs6.10"
-  
 end
