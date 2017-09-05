@@ -59,7 +59,7 @@ plugin "rs_infoblox_ipam" do
       verb "POST"
       path "/record:host?_return_fields=ipv4addrs" 
     end
-   
+
     output "host_ref" do
       body_path "_ref"
     end
