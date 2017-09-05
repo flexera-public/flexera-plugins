@@ -5,6 +5,7 @@ The Infoblox IPAM plugin integrates RightScale Self-Service with the basic funct
 
 ## TO-DOs
 - Make tunnel token a field so it can be passed as a cred.
+- Support bulk provisioning.
 - Add inputs to specify name and zone and then construct the name passed to infoblox instead of requiring user to provide entire name.
 
 ## Requirements

@@ -55,7 +55,6 @@ end
 resource "hostrecord", type: "rs_infoblox_ipam.record_host" do
     name $param_hostname
     ipv4addrs [{ ipv4addr:join(["func:nextavailableip:",$param_cidrblock]) }]
-#    tunnel_token cred("INFOBLOX_TUNNEL_TOKEN")
 end
 
 ##########################

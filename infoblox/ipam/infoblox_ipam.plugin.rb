@@ -53,28 +53,13 @@ plugin "rs_infoblox_ipam" do
       required true
     end
     
-    # wsTunnel token
-    # Best practice is to create a RightScale CREDENTIAL containing the tunnel token, and 
-    # then pass it in the declaratin using the cred() function.
-#    field "tunnel_token" do
-#      type "string"
-#      location "path"
-#      required true
-#    end
-
+    action "show", "destroy" 
+      
     action "create" do
       verb "POST"
       path "/record:host?_return_fields=ipv4addrs" 
     end
-
-    action "destroy" do
-      verb "DELETE"
-    end
-
-    action "get" do
-      verb "GET"
-    end
-    
+   
     output "host_ref" do
       body_path "_ref"
     end
@@ -96,7 +81,7 @@ resource_pool "infoblox_ipam" do
     password cred('INFOBLOX_PASSWORD')
   end
   parameter_values do
-    tunnel_token "WSTUNNEL_TOKEN" # REPLACE with the wsTunnel token
+    tunnel_token "WSTUNNEL_TOKEN" # REPLACE with the wsTunnel token BEFORE uploading
   end
 end
 
