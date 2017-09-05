@@ -1,5 +1,38 @@
 # Change Log
 
+## [Week-of-08-28-2017](https://github.com/rightscale/rightscale-plugins/tree/Week-of-08-28-2017) (2017-08-30)
+[Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-08-21-2017...Week-of-08-28-2017)
+
+**Fixed bugs:**
+
+- ElastiCache - Fix debug report on auto-terminate [\#78](https://github.com/rightscale/rightscale-plugins/issues/78)
+
+**Merged pull requests:**
+
+- ElastiCache - bug fix issue \#78 [\#79](https://github.com/rightscale/rightscale-plugins/pull/79) ([dfrankel33](https://github.com/dfrankel33))
+- AWS ElastiCache - Initial Release [\#76](https://github.com/rightscale/rightscale-plugins/pull/76) ([dfrankel33](https://github.com/dfrankel33))
+- AWS VPC Plugin - Adding in Actions: EnableVpcClassicLink,EnableVpcClassicLinkDnsSupport,Create\_Tag [\#75](https://github.com/rightscale/rightscale-plugins/pull/75) ([rshade](https://github.com/rshade))
+- AWS VPC Plugin - Adding Nat Gateway Support, Addresses Read-Only Support [\#74](https://github.com/rightscale/rightscale-plugins/pull/74) ([rshade](https://github.com/rshade))
+- Changelog Update for 08-21-2017 Release [\#72](https://github.com/rightscale/rightscale-plugins/pull/72) ([rshade](https://github.com/rshade))
+
+## [Week-of-08-21-2017](https://github.com/rightscale/rightscale-plugins/tree/Week-of-08-21-2017) (2017-08-24)
+[Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-08-14-2017...Week-of-08-21-2017)
+
+**Closed issues:**
+
+- CFT Plugin: Needs to handle nested CFTs [\#57](https://github.com/rightscale/rightscale-plugins/issues/57)
+- handle\_retries is not defined  [\#55](https://github.com/rightscale/rightscale-plugins/issues/55)
+
+**Merged pull requests:**
+
+- AWS VPC - add readme link.  change folder name [\#71](https://github.com/rightscale/rightscale-plugins/pull/71) ([dfrankel33](https://github.com/dfrankel33))
+- Codeowners [\#69](https://github.com/rightscale/rightscale-plugins/pull/69) ([rshade](https://github.com/rshade))
+- AWS VPC Plugin - Initial Release [\#67](https://github.com/rightscale/rightscale-plugins/pull/67) ([rshade](https://github.com/rshade))
+- Adding CODEOWNERS to git root [\#66](https://github.com/rightscale/rightscale-plugins/pull/66) ([rshade](https://github.com/rshade))
+- Libraries - move cat\_spec package [\#65](https://github.com/rightscale/rightscale-plugins/pull/65) ([dfrankel33](https://github.com/dfrankel33))
+- AWS CFT - fix "filter" field [\#64](https://github.com/rightscale/rightscale-plugins/pull/64) ([dfrankel33](https://github.com/dfrankel33))
+- Cleaning up Pull Request Names and fixing changelog [\#63](https://github.com/rightscale/rightscale-plugins/pull/63) ([rshade](https://github.com/rshade))
+
 ## [Week-of-08-14-2017](https://github.com/rightscale/rightscale-plugins/tree/Week-of-08-14-2017) (2017-08-17)
 [Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-08-07-2017...Week-of-08-14-2017)
 
