@@ -1,6 +1,8 @@
 name 'Infoblox IPAM Test CAT'
 rs_ca_ver 20161221
 short_description "Infoblox IPAM Test CAT"
+
+import "sys_log"
 import "plugins/rs_infoblox_ipam"
 
 ##########################
@@ -17,6 +19,11 @@ end
 
 parameter "param_cidrblock" do
   label "Network CIDR to Use"
+  type "string"
+end
+
+parameter "param_name_filter" do
+  label "Regexp to filter host name"
   type "string"
 end
 
@@ -44,6 +51,11 @@ output "hostref" do
     default_value @hostrecord.host_ref
 end
 
+output "output_list" do
+  label "Hosts List"
+  category "Hosts List"
+  default_value "Run \"More Actions\""
+end
 
 ##########################
 ##########################
@@ -57,46 +69,30 @@ resource "hostrecord", type: "rs_infoblox_ipam.record_host" do
     ipv4addrs [{ ipv4addr:join(["func:nextavailableip:",$param_cidrblock]) }]
 end
 
+operation "test_list_by_name" do
+  label "Test list_by_name Action"
+  definition "list_by_name"
+  output_mappings do {
+      $output_list => $host_list
+  } end
+end
+
 ##########################
 ##########################
 ###### Operations ########
 ##########################
 ##########################
 
+define list_by_name($param_name_filter) return $host_list do
+  $hostrecords = rs_infoblox_ipam.record_host.list_by_name(name_filter: $param_name_filter)
+  call log("host records", to_s($hostrecords))
+  foreach $hostrecord in $hostrecords[0] do
+    call log("host record item", to_s($hostrecord))
+  end
+  
+  $host_list = to_s($hostrecords)
+end
 
-#operation "get_record" do
-#    definition "get_record"
-#    output_mappings do {
-#        $record_object => $object
-#    } end
-#end
-#
-#operation "launch" do
-#    definition "launch_handler"
-#    output_mappings do {
-#        $record_name => $name,
-#        $record_rrdatas => $rrdatas,
-#        $record_type => $type,
-#        $record_ttl => $ttl
-#    } end
-#end 
-
-
-##########################
-##########################
-###### Definitions #######
-##########################
-##########################
-
-define launch_handler(@my_recordset) return @my_recordset, $rrdatas, $type, $ttl, $name do
-    provision(@my_recordset)
-    $rrdatas = to_s(@my_recordset.rrdatas)
-    $type = @my_recordset.type
-    $ttl = to_s(@my_recordset.ttl)
-    $name = @my_recordset.name
-end 
-
-define get_record(@my_recordset) return $object do
-    @my_recordset = @my_recordset.get()
-    $object = to_s(to_object(@my_recordset))
+define log($summary, $details) do
+  rs_cm.audit_entries.create(notify: "None", audit_entry: { auditee_href: @@deployment, summary: $summary , detail: $details})
 end

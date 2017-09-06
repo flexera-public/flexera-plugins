@@ -59,7 +59,19 @@ plugin "rs_infoblox_ipam" do
       verb "POST"
       path "/record:host?_return_fields=ipv4addrs" 
     end
-
+    
+    # Returns an array of a single array of host record hashes
+    # TODO: Have the action return just the array of hashes. 
+    action "list_by_name" do
+      verb "GET"
+      path "/record:host?name~=$name_filter"
+      type "array"
+      
+      field "name_filter" do   
+        location "path"
+      end
+    end
+    
     output "host_ref" do
       body_path "_ref"
     end
