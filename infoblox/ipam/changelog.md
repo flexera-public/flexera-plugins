@@ -1,8 +1,8 @@
 Infoblox IPAM plugin changelog
 
-v0.1
+v1.0
 ----
-- WIP on initial release
+- Support for the record:host object type.
 
 
 
