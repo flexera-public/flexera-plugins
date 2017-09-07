@@ -29,6 +29,9 @@ This repo contains a library of open source RightScale plugins.
 - [GCP Cloud DNS](./google/google_cloud_dns/)
 - [GCP Cloud SQL](./google/google_cloud_sql/)
 
+### Infoblox
+- [Infoblox IPAM Appliance](./infoblox/ipam/)
+
 ## RightScale Plugin Documentation
 - [Guide](http://docs.rightscale.com/ss/guides/ss_plugins.html)
 - [Reference Documentation](http://docs.rightscale.com/ss/reference/cat/v20161221/ss_plugins.html)
