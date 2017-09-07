@@ -101,10 +101,10 @@ end
 | search | https://ipam.illinois.edu/wapidoc/objects/record.host.html#fields-list | supported |
 
 #### Supported Outputs
-= "_ref" - Infoblox host:record reference
-= "name" - host name
-= "ipv4addr" - host IPv4 address (if configured)
-= "ipv6addr" - host IPv6 address (if configured)
+- "_ref" - Infoblox host:record reference
+- "name" - host name
+- "ipv4addr" - host IPv4 address (if configured)
+- "ipv6addr" - host IPv6 address (if configured)
 
 #### Supported Links
 NONE
