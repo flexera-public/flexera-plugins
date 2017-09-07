@@ -1,5 +1,14 @@
 # Change Log
 
+## [Week-of-09-04-2017](https://github.com/rightscale/rightscale-plugins/tree/Week-of-09-04-2017) (2017-09-07)
+[Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-08-28-2017...Week-of-09-04-2017)
+
+**Merged pull requests:**
+
+- Infoblox [\#83](https://github.com/rightscale/rightscale-plugins/pull/83) ([MitchellGerdisch](https://github.com/MitchellGerdisch))
+- AWS Lambda - Initial Release [\#82](https://github.com/rightscale/rightscale-plugins/pull/82) ([dfrankel33](https://github.com/dfrankel33))
+- AWS ELB - Fix README [\#81](https://github.com/rightscale/rightscale-plugins/pull/81) ([gonzalez](https://github.com/gonzalez))
+
 ## [Week-of-08-28-2017](https://github.com/rightscale/rightscale-plugins/tree/Week-of-08-28-2017) (2017-08-30)
 [Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-08-21-2017...Week-of-08-28-2017)
 
