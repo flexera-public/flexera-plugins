@@ -28,6 +28,7 @@ This repo contains a library of open source RightScale plugins.
 - [GCP Google Compute Engine](./google/gce/)
 - [GCP Cloud DNS](./google/google_cloud_dns/)
 - [GCP Cloud SQL](./google/google_cloud_sql/)
+- [GCP Bigtable](./google/google_bigtable/)
 
 ### Infoblox
 - [Infoblox IPAM Appliance](./infoblox/ipam/)
