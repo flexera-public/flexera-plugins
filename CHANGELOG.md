@@ -1,11 +1,18 @@
 # Change Log
 
+## [Week-of-09-18-2017](https://github.com/rightscale/rightscale-plugins/tree/Week-of-09-18-2017) (2017-09-19)
+[Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-09-04-2017...Week-of-09-18-2017)
+
+**Merged pull requests:**
+
+- GCP Bigtable - Initial Release [\#85](https://github.com/rightscale/rightscale-plugins/pull/85) ([dfrankel33](https://github.com/dfrankel33))
+
 ## [Week-of-09-04-2017](https://github.com/rightscale/rightscale-plugins/tree/Week-of-09-04-2017) (2017-09-07)
 [Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-08-28-2017...Week-of-09-04-2017)
 
 **Merged pull requests:**
 
-- Infoblox [\#83](https://github.com/rightscale/rightscale-plugins/pull/83) ([MitchellGerdisch](https://github.com/MitchellGerdisch))
+- Infoblox IPAM - Initial Release [\#83](https://github.com/rightscale/rightscale-plugins/pull/83) ([MitchellGerdisch](https://github.com/MitchellGerdisch))
 - AWS Lambda - Initial Release [\#82](https://github.com/rightscale/rightscale-plugins/pull/82) ([dfrankel33](https://github.com/dfrankel33))
 - AWS ELB - Fix README [\#81](https://github.com/rightscale/rightscale-plugins/pull/81) ([gonzalez](https://github.com/gonzalez))
 
@@ -22,7 +29,6 @@
 - AWS ElastiCache - Initial Release [\#76](https://github.com/rightscale/rightscale-plugins/pull/76) ([dfrankel33](https://github.com/dfrankel33))
 - AWS VPC Plugin - Adding in Actions: EnableVpcClassicLink,EnableVpcClassicLinkDnsSupport,Create\_Tag [\#75](https://github.com/rightscale/rightscale-plugins/pull/75) ([rshade](https://github.com/rshade))
 - AWS VPC Plugin - Adding Nat Gateway Support, Addresses Read-Only Support [\#74](https://github.com/rightscale/rightscale-plugins/pull/74) ([rshade](https://github.com/rshade))
-- Changelog Update for 08-21-2017 Release [\#72](https://github.com/rightscale/rightscale-plugins/pull/72) ([rshade](https://github.com/rshade))
 
 ## [Week-of-08-21-2017](https://github.com/rightscale/rightscale-plugins/tree/Week-of-08-21-2017) (2017-08-24)
 [Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-08-14-2017...Week-of-08-21-2017)
@@ -40,7 +46,6 @@
 - Adding CODEOWNERS to git root [\#66](https://github.com/rightscale/rightscale-plugins/pull/66) ([rshade](https://github.com/rshade))
 - Libraries - move cat\_spec package [\#65](https://github.com/rightscale/rightscale-plugins/pull/65) ([dfrankel33](https://github.com/dfrankel33))
 - AWS CFT - fix "filter" field [\#64](https://github.com/rightscale/rightscale-plugins/pull/64) ([dfrankel33](https://github.com/dfrankel33))
-- Cleaning up Pull Request Names and fixing changelog [\#63](https://github.com/rightscale/rightscale-plugins/pull/63) ([rshade](https://github.com/rshade))
 
 ## [Week-of-08-14-2017](https://github.com/rightscale/rightscale-plugins/tree/Week-of-08-14-2017) (2017-08-17)
 [Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-08-07-2017...Week-of-08-14-2017)
@@ -57,7 +62,6 @@
 - Amazon RDS Plugin - Adding in handle\_retries definition, Fixes \#55 [\#59](https://github.com/rightscale/rightscale-plugins/pull/59) ([rshade](https://github.com/rshade))
 - Azure Redis Cache Plugin [\#58](https://github.com/rightscale/rightscale-plugins/pull/58) ([rshade](https://github.com/rshade))
 - Azure Container Service adding in update, and delete retry [\#56](https://github.com/rightscale/rightscale-plugins/pull/56) ([rshade](https://github.com/rshade))
-- Adding Changelog to root folder to allow for better release notes [\#46](https://github.com/rightscale/rightscale-plugins/pull/46) ([rshade](https://github.com/rshade))
 
 ## [Week-of-08-07-2017](https://github.com/rightscale/rightscale-plugins/tree/Week-of-08-07-2017) (2017-08-10)
 [Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-07-31-2017...Week-of-08-07-2017)
@@ -105,7 +109,6 @@
 - Azure Microsoft SQL Server Plugin - Adding databases, firewall\_rules, elastic\_pools,and failover\_groups links [\#23](https://github.com/rightscale/rightscale-plugins/pull/23) ([rshade](https://github.com/rshade))
 - Updating Root Readme, Adding Cloud Categories [\#22](https://github.com/rightscale/rightscale-plugins/pull/22) ([dfrankel33](https://github.com/dfrankel33))
 - Updating Google Plugins moving them into a Google Cloud Folder [\#21](https://github.com/rightscale/rightscale-plugins/pull/21) ([dfrankel33](https://github.com/dfrankel33))
-- Creating Changelogs Across Multiple Plugins [\#20](https://github.com/rightscale/rightscale-plugins/pull/20) ([dfrankel33](https://github.com/dfrankel33))
 - Azure ARM Template Plugin [\#19](https://github.com/rightscale/rightscale-plugins/pull/19) ([dfrankel33](https://github.com/dfrankel33))
 - Azure Microsoft SQL Server Plugin [\#18](https://github.com/rightscale/rightscale-plugins/pull/18) ([rshade](https://github.com/rshade))
 - Azure SQL Server Plugin - Adding Additional Resources  [\#17](https://github.com/rightscale/rightscale-plugins/pull/17) ([rshade](https://github.com/rshade))
