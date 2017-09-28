@@ -5,13 +5,13 @@ import "sys_log"
 import "plugins/rs_azure_keyvault"
 
 parameter "subscription_id" do
-  like $rs_azure_containerservices.subscription_id
-  default "8beb7791-9302-4ae4-97b4-afd482aadc59"
+  like $rs_azure_keyvault.subscription_id
+  default "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 end
 
 resource "my_vault", type: "rs_azure_keyvault.vaults" do
   name join(["myvault-",last(split(@@deployment.href, "/"))])
-  resource_group "DF-Testing"
+  resource_group "Testing"
   location "Central US"
   properties do {
     "accessPolicies" => [],
@@ -24,6 +24,6 @@ resource "my_vault", type: "rs_azure_keyvault.vaults" do
       "family" => "A",
       "name" => "standard"
     },
-    "tenantId" => "09b8fec1-4b8d-48dd-8afa-5c1a775ea0f2"
+    "tenantId" => "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
   } end 
 end 
