@@ -60,7 +60,7 @@ resource "my_vault", type: "rs_azure_keyvault.vaults" do
       "family" => "A",
       "name" => "standard"
     },
-    "tenantId" => "09b8fec1-4b8d-48dd-8afa-5c1a775ea0f2"
+    "tenantId" => "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
   } end 
 end 
 ```
