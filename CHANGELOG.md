@@ -1,5 +1,12 @@
 # Change Log
 
+## [Week-of-10-02-2017](https://github.com/rightscale/rightscale-plugins/tree/Week-of-10-02-2017) (2017-10-04)
+[Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-09-18-2017...Week-of-10-02-2017)
+
+**Merged pull requests:**
+
+- Azure Key Vault - Initial Release [\#88](https://github.com/rightscale/rightscale-plugins/pull/88) ([dfrankel33](https://github.com/dfrankel33))
+
 ## [Week-of-09-18-2017](https://github.com/rightscale/rightscale-plugins/tree/Week-of-09-18-2017) (2017-09-19)
 [Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-09-04-2017...Week-of-09-18-2017)
 
