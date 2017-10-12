@@ -23,6 +23,7 @@ This repo contains a library of open source RightScale plugins.
 - [Azure Networking Interface](./azure/rs_azure_networking/)
 - [Azure PostgreSQL](./azure/rs_azure_pgsql/)
 - [Azure Redis Cache](./azure/rs_azure_cache/)
+- [Azure Key Vault](./azure/rs_azure_key_vault/)
 
 ### Google Cloud Platform
 - [GCP Google Compute Engine](./google/gce/)
