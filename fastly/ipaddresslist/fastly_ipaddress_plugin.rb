@@ -68,6 +68,6 @@ define gen_launch() return @fastly,$address_list do
   @fastly = rs_fastly_ipaddress.public_ip_list.show()
   call stop_debugging()
   call start_debugging()
-  $address_list = @fastly.addresses
+  $address_list = to_s(@fastly.addresses)
   call stop_debugging()
 end
