@@ -31,6 +31,9 @@ This repo contains a library of open source RightScale plugins.
 - [GCP Cloud SQL](./google/google_cloud_sql/)
 - [GCP Bigtable](./google/google_bigtable/)
 
+### Fastly
+- [Fastly IP Address](./fastly/ipaddresslist/)
+
 ### Infoblox
 - [Infoblox IPAM Appliance](./infoblox/ipam/)
 
