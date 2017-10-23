@@ -1,4 +1,3 @@
-#fastly plugin
 name 'rs_fastly_ipaddress'
 type 'plugin'
 rs_ca_ver 20161221
@@ -9,12 +8,12 @@ import "sys_log"
 
 plugin "rs_fastly_ipaddress" do
   endpoint do
-    default_host "https://api.fastly.com"  # Change to wstunnel10-1 if applicable
+    default_host "https://api.fastly.com"
     default_scheme "https"
   end
 
   type "public_ip_list" do
-    href_templates "{{addresses[*] && '/public-ip-list' || null}}"  # The leading slash is makes the reference that comes back from infoblox href-like
+    href_templates "{{addresses[*] && '/public-ip-list' || null}}"
     provision "no_operation"
     delete "no_operation"
 
@@ -47,27 +46,4 @@ define stop_debugging() do
     call sys_log.detail($debug_report)
     $$debugging = false
   end
-end
-
-output "addresses" do
-  label "Host IPv4 Address"
-  category "Outputs"
-  default_value $address_list
-end
-
-operation "launch" do
-  label "Launch"
-  definition "gen_launch"
-  output_mappings do {
-      $addresses => $address_list
-  } end
-end
-
-define gen_launch() return @fastly,$address_list do
-  call start_debugging()
-  @fastly = rs_fastly_ipaddress.public_ip_list.show()
-  call stop_debugging()
-  call start_debugging()
-  $address_list = to_s(@fastly.addresses)
-  call stop_debugging()
 end

@@ -1,8 +1,8 @@
-Infoblox IPAM plugin changelog
+Fastly Ipaddresslist plugin changelog
 
 v1.0
 ----
-- Support for the record:host object type.
+- Support for polling ipaddresslist
 
 
 
