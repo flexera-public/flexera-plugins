@@ -1,5 +1,5 @@
 # This adds codeowners for everything in the repo
-* @nathan-rightscale @dfrankel33 @rshade @srpomeroy @cdwilhelm @stefhen @gonzalez @tusharshah
+* @nathan-rightscale @dfrankel33 @rshade @srpomeroy @cdwilhelm @stefhen @gonzalez @tusharshahrs
 
 #This is for a specific folder
 aws/rs_aws_cft/* @dfrankel33 @rshade
