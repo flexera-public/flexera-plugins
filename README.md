@@ -37,7 +37,6 @@ Visit http://chat.rightscale.com/ to join!
 
 ### Opening an Issue
 Github issues contain a template for three types of requests(Bugs, New Features to an existing Plugin, New Plugin Request)
-Use one of the three templates and remove the other template sections. 
 
 - Bugs: Any issue you are having with an existing plugin not functioning correctly, this does not include missing features, or actions.
 - New Feature Request: Any feature(Field, Action, Link, Output, etc) that are to be added to an existing plugin. 
