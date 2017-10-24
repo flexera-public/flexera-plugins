@@ -44,3 +44,10 @@ This repo contains a library of open source RightScale plugins.
 ## Getting Help
 Support for these plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.
 Visit http://chat.rightscale.com/ to join!
+
+### Opening an Issue
+Github issues contain a template for three types of requests(Bugs, New Features to an existing Plugin, New Plugin Request)
+
+- Bugs: Any issue you are having with an existing plugin not functioning correctly, this does not include missing features, or actions.
+- New Feature Request: Any feature(Field, Action, Link, Output, etc) that are to be added to an existing plugin. 
+- New Plugin Request: Request for a new plugin based off of a new Resource(i.e Cloud Resource Type(`rds`,`elb`), Third Party Service(`riverbed`,`f5`,`cisco`), etc. 
