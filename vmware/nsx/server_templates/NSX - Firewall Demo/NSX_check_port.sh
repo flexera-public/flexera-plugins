@@ -1,6 +1,6 @@
 #!/bin/bash -ex
 # ---
-# RightScript Name: Telstra - NXS check port
+# RightScript Name: NSX check port
 # Inputs:
 #   HOST:
 #     Category: Uncategorized

@@ -67,12 +67,12 @@ RightScripts:
   - RL10_Linux_Enable_Monitoring.sh
   - RL10_Linux_Setup_Alerts.sh
   - RL10_Linux_Setup_Automatic_Upgrade.sh
-  - Telstra-NSX_Setup_nginx.sh
+  - NSX_Setup_nginx.sh
   Decommission:
   - RL10_Linux_Shutdown_Reason.sh
   - RL10_Linux_RedHat_Subscription_Unregister.sh
   Operational:
-  - Telstra-NXS_check_port.sh
+  - NSX_check_port.sh
   - RL10_Linux_Setup_Automatic_Upgrade.sh
   - RL10_Linux_Upgrade.sh
   - RL10_Linux_Enable_Docker_Support_Beta.sh
@@ -83,7 +83,7 @@ Alerts:
   Description: Raise an alert if the instance has been terminated abnormally, i.e.
     not through the RightScale interface or by an elasticity daemon resizing server
     arrays.
-  Clause: If RS/server.state == terminated for 1 minutes Then escalate critical
+  Clause: If RS/server.state == terminated for 1 minutes Tlshen escalate critical
 - Name: rs instance stranded
   Description: Raise an alert if the instance enters the stranded state.
   Clause: If RS/server-failure.state == stranded for 1 minutes Then escalate warning

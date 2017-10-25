@@ -1,6 +1,6 @@
 #!/bin/bash -ex
 # ---
-# RightScript Name: Telstra - NSX Setup nginx
+# RightScript Name: NSX Setup nginx
 # Inputs:
 #   PORT1:
 #     Category: Uncategorized
@@ -32,5 +32,5 @@ sudo sed "s/80/$PORT2/g" default | sudo tee port_$PORT2 > /dev/null
 sudo ln -s ../sites-available/port_$PORT1 ../sites-enabled/port_$PORT1
 sudo ln -s ../sites-available/port_$PORT2 ../sites-enabled/port_$PORT2
 
-echo "Hello Telstra" | sudo tee /var/www/html/index.html > /dev/null
+echo "Hello World" | sudo tee /var/www/html/index.html > /dev/null
 sudo service nginx restart

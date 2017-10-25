@@ -14,10 +14,14 @@ import 'sys_log'
 
 plugin 'nsx' do
   endpoint do
+    # Currently plugins do not support XML payloads, heroku currently hosts an application to convert json to xml payloads.
+    # Source available here: https://github.com/flaccid/j2xrp
     default_host 'j2xrp.herokuapp.com'
     default_scheme 'https'
-    
-    path "/_token/asdfghd4678nyt123"
+
+    # Insert your wstunnel token here
+    # Currently it's hard coded
+    path "/_token/<token>"
 
     # TODO: wait for parser fix
     # request_content_type 'application/xml'
