@@ -6,7 +6,6 @@
 **Merged pull requests:**
 
 - Fastly Public IP Address List Plugins [\#91](https://github.com/rightscale/rightscale-plugins/pull/91) ([rshade](https://github.com/rshade))
-- REPO Maintenance: Adding in issue templates [\#73](https://github.com/rightscale/rightscale-plugins/pull/73) ([rshade](https://github.com/rshade))
 
 ## [Week-of-10-02-2017](https://github.com/rightscale/rightscale-plugins/tree/Week-of-10-02-2017) (2017-10-04)
 [Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-09-18-2017...Week-of-10-02-2017)
