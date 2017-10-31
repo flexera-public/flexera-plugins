@@ -30,6 +30,7 @@ This repo contains a library of open source RightScale plugins.
 - [GCP Cloud DNS](./google/google_cloud_dns/)
 - [GCP Cloud SQL](./google/google_cloud_sql/)
 - [GCP Bigtable](./google/google_bigtable/)
+- [GKE](./google/gke)
 
 ### Fastly
 - [Fastly IP Address](./fastly/ipaddresslist/)
