@@ -11,7 +11,6 @@ import "plugins/gce_gke"
 
 parameter "google_project" do
     like $gce_gke.google_project
-    default "rightscale.com:services1"
 end
 
 ##########################
