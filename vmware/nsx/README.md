@@ -95,7 +95,6 @@ resource 'stack_security_group', type: 'nsx.security_group' do
 end
 ```
 ## Resources
-Please refer to [NSX for vShpere API Guide](https://docs.vmware.com/en/VMware-NSX-for-vSphere/6.3/nsx_63_api.pdf) for detailed usage, descriptions and object property requirements.
 ### security_group
 #### Supported Fields
 | Field Name | Required? | Description |
@@ -103,7 +102,7 @@ Please refer to [NSX for vShpere API Guide](https://docs.vmware.com/en/VMware-NS
 |name|Yes|Name of the resource.|
 |description|No|Description for the resource.|
 |scope|Yes|For the scopeId use globalroot-0 for non-universal security groups and universalroot-0 for universal security groups.|
-|isUniversal|Set to true when creating a univeral Security Group.|
+|isUniversal|Yes|Set to true when creating a univeral Security Group.|
 |inheritanceAllowed|No|Set to true to allow inheritance.|
 
 #### Supported Actions
@@ -149,43 +148,77 @@ Please refer to [NSX for vShpere API Guide](https://docs.vmware.com/en/VMware-NS
 |------------|-----------|-------------|
 
 #### Supported Actions
-
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
-
+|get|[Working With Security Tags pg.197](https://docs.vmware.com/en/VMware-NSX-for-vSphere/6.3/nsx_63_api.pdf)|Supported|
+|create_layer2section|[Working With Security Tags pg.197](https://docs.vmware.com/en/VMware-NSX-for-vSphere/6.3/nsx_63_api.pdf)|See known issues|
+|create_layer3section|[Working With Security Tags pg.197](https://docs.vmware.com/en/VMware-NSX-for-vSphere/6.3/nsx_63_api.pdf)|See known issues|
 #### Supported Outputs
+- firewallConfiguration
+- ETag
+
 ### firewall_layer3section
 #### Supported Fields
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
+|section|Yes|Object defining a section.|
 
 #### Supported Actions
-
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
-
+|create|[Working With Layer 3 Sections in Distributed Firewall pg.201](https://docs.vmware.com/en/VMware-NSX-for-vSphere/6.3/nsx_63_api.pdf)|Supported|
+|delete|[Working With Layer 3 Sections in Distributed Firewall pg.201](https://docs.vmware.com/en/VMware-NSX-for-vSphere/6.3/nsx_63_api.pdf)|Supported|
+|update|[Working With Layer 3 Sections in Distributed Firewall pg.201](https://docs.vmware.com/en/VMware-NSX-for-vSphere/6.3/nsx_63_api.pdf)|Supported|
+|show|[Working With Layer 3 Sections in Distributed Firewall pg.201](https://docs.vmware.com/en/VMware-NSX-for-vSphere/6.3/nsx_63_api.pdf)|Supported|
+|list|[Working With Layer 3 Sections in Distributed Firewall pg.201](https://docs.vmware.com/en/VMware-NSX-for-vSphere/6.3/nsx_63_api.pdf)|Supported|
+|add_firewall_rule|[Working With Layer 3 Sections in Distributed Firewall pg.201](https://docs.vmware.com/en/VMware-NSX-for-vSphere/6.3/nsx_63_api.pdf)|Supported|
+|list_firewall_rules|[Working With Layer 3 Sections in Distributed Firewall pg.201](https://docs.vmware.com/en/VMware-NSX-for-vSphere/6.3/nsx_63_api.pdf)|Supported|
 #### Supported Outputs
+- objectId
+- ETag
+
 ### firewall_layer3rules
 #### Supported Fields
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
+|rule|Yes|Object defining a rule.|
+|sectionId|Yes|sectionId to add rule to.|
+|section_etag|Yes|Current ETag of the section being modified|
 
 #### Supported Actions
-
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
+|create|[Working With Distributed Firewall Rules in a Layer 3 Section pg.210](https://docs.vmware.com/en/VMware-NSX-for-vSphere/6.3/nsx_63_api.pdf)|Supported|
+|delete|[Working With Distributed Firewall Rules in a Layer 3 Section pg.210](https://docs.vmware.com/en/VMware-NSX-for-vSphere/6.3/nsx_63_api.pdf)|Supported|
+|update|[Working With Distributed Firewall Rules in a Layer 3 Section pg.210](https://docs.vmware.com/en/VMware-NSX-for-vSphere/6.3/nsx_63_api.pdf)|Supported|
+|get|[Working With Distributed Firewall Rules in a Layer 3 Section pg.210](https://docs.vmware.com/en/VMware-NSX-for-vSphere/6.3/nsx_63_api.pdf)|Supported|
 
 #### Supported Outputs
+- objectId
+- ETag
+
 ### application
 #### Supported Fields
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
-
+|name|Yes|Name of the resource.|
+|element|Yes|Object describing the element.|
+|description|No|Description of the resource.|
+|revision|No|Application Revision|
 #### Supported Actions
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
-
+|create|[Working With Services Grouping Objects pg.61](https://docs.vmware.com/en/VMware-NSX-for-vSphere/6.3/nsx_63_api.pdf)|Supported|
+|delete|[Working With Services Grouping Objects pg.61](https://docs.vmware.com/en/VMware-NSX-for-vSphere/6.3/nsx_63_api.pdf)|Supported|
+|update|[Working With Services Grouping Objects pg.61](https://docs.vmware.com/en/VMware-NSX-for-vSphere/6.3/nsx_63_api.pdf)|Supported|
+|get|[Working With Services Grouping Objects pg.61](https://docs.vmware.com/en/VMware-NSX-for-vSphere/6.3/nsx_63_api.pdf)|Supported|
+|list|[Working With Services Grouping Objects pg.61](https://docs.vmware.com/en/VMware-NSX-for-vSphere/6.3/nsx_63_api.pdf)|Supported|
 #### Supported Outputs
+- element
+- objectId
+- description
+- name
+- revision
 
 ## Implementation Notes
 - Firewall manipulation with this plugin happens at a global level. Make sure your rules are setup disallow all unwanted traffic (default deny) prior to using this plugin to avoid undesirable behavior.
