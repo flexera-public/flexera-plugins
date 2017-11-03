@@ -1,5 +1,19 @@
 # Change Log
 
+## [Week-of-10-30-2017](https://github.com/rightscale/rightscale-plugins/tree/Week-of-10-30-2017) (2017-10-31)
+[Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-10-23-2017...Week-of-10-30-2017)
+
+**Merged pull requests:**
+
+- GKE - Initial Release [\#95](https://github.com/rightscale/rightscale-plugins/pull/95) ([dfrankel33](https://github.com/dfrankel33))
+
+## [Week-of-10-23-2017](https://github.com/rightscale/rightscale-plugins/tree/Week-of-10-23-2017) (2017-10-24)
+[Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-10-02-2017...Week-of-10-23-2017)
+
+**Merged pull requests:**
+
+- Fastly Public IP Address List Plugins [\#91](https://github.com/rightscale/rightscale-plugins/pull/91) ([rshade](https://github.com/rshade))
+
 ## [Week-of-10-02-2017](https://github.com/rightscale/rightscale-plugins/tree/Week-of-10-02-2017) (2017-10-04)
 [Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-09-18-2017...Week-of-10-02-2017)
 
