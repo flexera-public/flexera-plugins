@@ -124,9 +124,10 @@ end
 #### Supported Fields
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
+|name|Yes|Name of the resource.|
+|description|No|Description for the resource.|
 
 #### Supported Actions
-
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
 |create|[Working With Security Tags pg.73](https://docs.vmware.com/en/VMware-NSX-for-vSphere/6.3/nsx_63_api.pdf)|Supported|
@@ -224,7 +225,6 @@ end
 - Firewall manipulation with this plugin happens at a global level. Make sure your rules are setup disallow all unwanted traffic (default deny) prior to using this plugin to avoid undesirable behavior.
 - It recommended to group CloudApp firewall rules grouped using firewall layer sections.
  
-Full list of possible actions can be found on the [Azure Compute API Documentation](https://docs.microsoft.com/en-us/rest/api/network/loadbalancer/)
 ## Examples
 See [Examples](./examples).
 	
