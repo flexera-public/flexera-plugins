@@ -1,4 +1,4 @@
-name 'NSX Firewall Demo'
+name 'NSX Firewall Demo (RS Debug)'
 short_description "![Gist](http://blogs.vmware.com/kb/files/2015/08/NSX.png =128x66) \n
 NSX Firewall Demo."
 long_description "![Gist](http://blogs.vmware.com/kb/files/2015/08/NSX.png =128x66) \n
@@ -189,7 +189,7 @@ end
 
 resource "server", type: "rs_cm.server" do
   name join([$stack_name,"-server"])
-  cloud "CSXgen2LAB"
+  cloud "GEN2Lab"
   datacenter "VMware_Zone_1"
   subnets "vxw-dvs-10-virtualwire-5-sid-5004-Rightscale (VMware_Zone_1)"
   instance_type "1 CPU, 4GB RAM"
@@ -204,7 +204,7 @@ end
 
 resource "client", type: "rs_cm.server" do
   name join([$stack_name,"-client"])
-  cloud "CSXgen2LAB"
+  cloud "GEN2Lab"
   datacenter "VMware_Zone_1"
   subnets "vxw-dvs-10-virtualwire-5-sid-5004-Rightscale (VMware_Zone_1)"
   instance_type "1 CPU, 4GB RAM"
