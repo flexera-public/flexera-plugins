@@ -39,7 +39,7 @@ This is a JSON to XML payload conversion service. It's required to workaround a 
    1. Upload the `nsx_plugin.cat.rb` file located in this repository
  
 ## How to Use
-The Azure Compute Plugin has been packaged as `plugins/rs_vmware_nsx`. In order to use this plugin you must import this plugin into a CAT.
+The VMWare NSX Plugin has been packaged as `plugins/nsx`. In order to use this plugin you must import this plugin into a CAT.
 ```
 import "plugins/nsx"
 ```

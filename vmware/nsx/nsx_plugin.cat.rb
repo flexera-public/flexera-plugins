@@ -1,5 +1,6 @@
 name 'VMware NSX Plugin'
 short_description 'A RightScale Self-Service plugin for VMware NSX.'
+long_description 'Version 1.0'
 rs_ca_ver 20161221
 type 'plugin'
 package 'plugins/nsx'
@@ -72,26 +73,6 @@ plugin 'nsx' do
     output_path '/securitygroup'
     
     output 'objectId','objectTypeName','revision','description','name'
-
-    # output 'objectId'
-    #   type 'simple_element'
-    # end
-
-    # output 'objectTypeName' do
-    #   type 'simple_element'
-    # end
-
-    # output 'revision' do
-    #   type 'simple_element'
-    # end
-
-    # output 'description' do
-    #   type 'simple_element'
-    # end
-
-    # output 'name' do
-    #   type 'simple_element'
-    # end
 
     provision 'provision_resource'
     delete 'delete_resource'

@@ -59,23 +59,49 @@ Description: |
 Inputs: {}
 RightScripts:
   Boot:
-  - RL10_Linux_Setup_Hostname.sh
-  - RL10_Linux_Enable_Managed_Login.sh
-  - RL10_Linux_Wait_For_EIP.sh
-  - RL10_Linux_RedHat_Subscription_Register.sh
-  - RL10_Linux_Setup_NTP.sh
-  - RL10_Linux_Enable_Monitoring.sh
-  - RL10_Linux_Setup_Alerts.sh
-  - RL10_Linux_Setup_Automatic_Upgrade.sh
+  - Name: RL10 Linux Setup Hostname
+    Publisher: RightScale
+    Revision: 8
+  - Name: RL10 Linux Enable Managed Login
+    Publisher: RightScale
+    Revision: 12
+  - Name: RL10 Linux Wait For EIP
+    Publisher: RightScale
+    Revision: 5
+  - Name: RL10 Linux RedHat Subscription Register
+    Publisher: RightScale
+    Revision: 3
+  - Name: RL10 Linux Setup NTP
+    Publisher: RightScale
+    Revision: 1
+  - Name: RL10 Linux Enable Monitoring
+    Publisher: RightScale
+    Revision: 8
+  - Name: RL10 Linux Setup Alerts
+    Publisher: RightScale
+    Revision: 2
+  - Name: RL10 Linux Setup Automatic Upgrade
+    Publisher: RightScale
+    Revision: 4
   - NSX_Setup_nginx.sh
   Decommission:
-  - RL10_Linux_Shutdown_Reason.sh
-  - RL10_Linux_RedHat_Subscription_Unregister.sh
+  - Name: RL10 Linux Shutdown Reason
+    Publisher: RightScale
+    Revision: 5
+  - Name: RL10 Linux RedHat Subscription Unregister
+    Publisher: RightScale
+    Revision: 1
   Operational:
   - NSX_check_port.sh
-  - RL10_Linux_Setup_Automatic_Upgrade.sh
-  - RL10_Linux_Upgrade.sh
-  - RL10_Linux_Enable_Docker_Support_Beta.sh
+  - Name: RL10 Linux Setup Automatic Upgrade
+    Publisher: RightScale
+    Revision: 4
+  - Name: RL10 Linux Upgrade
+    Publisher: RightScale
+    Revision: 8
+  - Name: RL10 Linux Enable Docker Support (Beta)
+    Publisher: RightScale
+    Revision: 3
 MultiCloudImages:
 - Name: CW - CSXgen2LAB - Xenial
 Alerts:
