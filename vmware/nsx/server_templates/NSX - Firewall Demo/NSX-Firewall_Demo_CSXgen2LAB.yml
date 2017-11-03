@@ -1,0 +1,158 @@
+Name: NSX - Firewall Demo (CSXgen2LAB)
+Description: |
+  Base ServerTemplate for RightLink10. RightLink10 is a new agent to connect
+  servers to the RightScale platform that is very lightweight and simple to
+  install. _It is not a plug-in upgrade from the older RightLink v6 or prior
+  versions._ See [http://docs.rightscale.com/rl/about.html](http://docs.rightscale.com/rl/about.html)
+  for details.
+
+  This base ST includes a few boot scripts that:
+
+  * Wait for an EIP to settle (AWS only)
+  * Sets up a valid hostname
+  * Configures NTP if not configured
+  * Enables RightScale OS monitoring
+  * Sets up RightLink10 automatic upgrades
+  * Enables Docker support
+
+  It has an operational script to force a RightLink10 upgrade. And we also
+  provide a decommission script that provides the reason for shutdown. The
+  source of the scripts on this ServerTemplate is available at
+  [https://github.com/rightscale/rightlink_scripts/tree/10.6.0](https://github.com/rightscale/rightlink_scripts/tree/10.6.0).
+
+  __Tested Linux distros:__
+
+  * Ubuntu 16.04 x86_64
+  * Ubuntu 14.04 x86_64
+  * Ubuntu 12.04 x86_64
+  * CentOS 7 x86_64
+  * CentOS 6 x86_64
+  * CoreOS Stable x86_64
+  * Red Hat Enterprise Linux 7 x86_64
+  * Red Hat Enterprise Linux 6 x86_64
+
+  __Tested compute clouds:__
+
+  * AWS
+  * Azure RM
+  * Softlayer
+  * Google Compute Engine
+  * Openstack
+  * RCA-V (VMware)
+
+  __Tested use cases:__
+
+  * Install-At-Boot
+  * Enable-Running
+  * Custom-Image
+
+  The images included are stock/official images made available by the cloud
+  provider or the OS developer. Therefore they can be deregistered and made
+  unavailable at any time at the discretion of the owner. It is advised that you
+  create your own MultiCloud Image with your own custom image for Linux or
+  Windows. Please refer to
+  [http://docs.rightscale.com/rl10/reference/rl10_os_compatibility.html#rightscale-tested-images](http://docs.rightscale.com/rl10/reference/rl10_os_compatibility.html#rightscale-tested-images)
+
+  Some of the images included may require you to accept terms of service before
+  using the image. Please follow the instructions provided in the error message
+  during launch or refer to the OS compatibility link above.
+Inputs: {}
+RightScripts:
+  Boot:
+  - Name: RL10 Linux Setup Hostname
+    Publisher: RightScale
+    Revision: 8
+  - Name: RL10 Linux Enable Managed Login
+    Publisher: RightScale
+    Revision: 12
+  - Name: RL10 Linux Wait For EIP
+    Publisher: RightScale
+    Revision: 5
+  - Name: RL10 Linux RedHat Subscription Register
+    Publisher: RightScale
+    Revision: 3
+  - Name: RL10 Linux Setup NTP
+    Publisher: RightScale
+    Revision: 1
+  - Name: RL10 Linux Enable Monitoring
+    Publisher: RightScale
+    Revision: 8
+  - Name: RL10 Linux Setup Alerts
+    Publisher: RightScale
+    Revision: 2
+  - Name: RL10 Linux Setup Automatic Upgrade
+    Publisher: RightScale
+    Revision: 4
+  - NSX_Setup_nginx.sh
+  Decommission:
+  - Name: RL10 Linux Shutdown Reason
+    Publisher: RightScale
+    Revision: 5
+  - Name: RL10 Linux RedHat Subscription Unregister
+    Publisher: RightScale
+    Revision: 1
+  Operational:
+  - NSX_check_port.sh
+  - Name: RL10 Linux Setup Automatic Upgrade
+    Publisher: RightScale
+    Revision: 4
+  - Name: RL10 Linux Upgrade
+    Publisher: RightScale
+    Revision: 8
+  - Name: RL10 Linux Enable Docker Support (Beta)
+    Publisher: RightScale
+    Revision: 3
+MultiCloudImages:
+- Name: CW - CSXgen2LAB - Xenial
+Alerts:
+- Name: rs instance terminated
+  Description: Raise an alert if the instance has been terminated abnormally, i.e.
+    not through the RightScale interface or by an elasticity daemon resizing server
+    arrays.
+  Clause: If RS/server.state == terminated for 1 minutes Tlshen escalate critical
+- Name: rs instance stranded
+  Description: Raise an alert if the instance enters the stranded state.
+  Clause: If RS/server-failure.state == stranded for 1 minutes Then escalate warning
+- Name: rs instance not responding
+  Description: Raise an alert if the instance fails to send monitoring information
+    for 5 minutes.
+  Clause: If cpu-0/cpu-idle.value == NaN for 5 minutes Then escalate critical
+- Name: rs cpu busy
+  Description: Raise an alert if the idle time is too low.
+  Clause: If cpu-0/cpu-idle.value < 15 for 3 minutes Then escalate warning
+- Name: rs cpu overloaded
+  Description: Raise an alert when the cpu idle time is too low.
+  Clause: If cpu-0/cpu-idle.value < 3 for 5 minutes Then escalate critical
+- Name: rs cpu I/O wait
+  Description: Raise an alert if disk io is too high.
+  Clause: If cpu-0/cpu-wait.value > 40 for 15 minutes Then escalate warning
+- Name: rs low space in root partition
+  Description: Raise an alert if the available space in the root partition is too
+    low. This alert may be modified on an instance to match the metric name df/df-root.free
+    instead if the instance is running collectd 4. See the RL10 Linux Setup Alerts
+    RightScript (rll/setup-alerts.sh) for more details.
+  Clause: If df-root/df_complex-free.value < 1073741824 for 5 minutes Then escalate
+    critical
+- Name: rs high network tx activity
+  Description: Raise an alert if the amount of network data transmitted is too high.
+    This alert may be modified or cloned on an instance to match the actual network
+    interfaces that are present. See the RL10 Linux Setup Alerts RightScript (rll/setup-alerts.sh)
+    for more details.
+  Clause: If interface-eth0/if_octets.tx > 10000000 for 10 minutes Then escalate critical
+- Name: rs high network rx activity
+  Description: Raise an alert if the amount of network data received is too high.
+    This alert may be modified or cloned on an instance to match the actual network
+    interfaces that are present. See the RL10 Linux Setup Alerts RightScript (rll/setup-alerts.sh)
+    for more details.
+  Clause: If interface-eth0/if_octets.rx > 50000000 for 30 minutes Then escalate critical
+- Name: rs low swap space
+  Description: Raise alert if the free swap space is too low. This alert may be removed
+    from an instance if swap is not enabled. See the RL10 Linux Setup Alerts RightScript
+    (rll/setup-alerts.sh) for more details.
+  Clause: If swap/swap-free.value < 104857600 for 5 minutes Then escalate critical
+- Name: rs memory low
+  Description: Raise an alert if free memory is too low.
+  Clause: If memory/memory-free.value < 1000000 for 1 minutes Then escalate critical
+- Name: rs out of memory
+  Description: Raise an alert when the server is out of free memory.
+  Clause: If memory/memory-free.value == 0 for 1 minutes Then escalate critical
