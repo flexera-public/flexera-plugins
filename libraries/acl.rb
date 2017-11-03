@@ -32,6 +32,34 @@ package "acl"
 #  ------
 
 # Append to the audit entry detail for this process
+define find_my_cookies($email_id, $password_id) return $cookies do
+  call find_shard() retrieve $shard_number
+  call get_account_href() retrieve $account_href
+  $rightscale_endpoint = "https://us-" + $shard_number +".rightscale.com" 
+  $the_body={
+    "account_href": $account_href,
+    "email": $email_id,
+    "password": $password_id
+  }
+  $response = http_post(
+    url: $rightscale_endpoint + "/api/session",
+    headers: { "X_API_VERSION": "1.5" },
+    body: $the_body
+  )
+  $mycookie_information = $response["cookies"]
+end
+
+define get_account_href() return $account_href do
+  $session = rs_cm.sessions.index(view: "whoami")
+  $account_href = select($session[0]["links"], {"rel":"account"})[0]["href"]
+end
+
+# Finding the shard number for the current account
+define find_shard() return $shard_number do
+  call get_account_href() retrieve $account_href
+  $account = rs_cm.get(href: $account_href)
+  $shard_number = last(split(select($account[0]["links"], {"rel":"cluster"})[0]["href"],"/"))
+end
 
 define find_user_href() return $user_href do
   $session_info = rs_cm.sessions.get(view: "whoami")
@@ -41,10 +69,12 @@ end
 
 define get_user_groups($user_href) return $groups do
     $user_id = last(split($user_href, '/'))
+    call find_shard() retrieve $shard_number
+    call find_my_cookies($email_id, $password) retrieve $cookies
     $cloud_response = http_get(
-        url: "https:/us-3.rightscale.com/grs/users/" + $user_id,
+        url: "https:/us-" + $shard_number + ".rightscale.com/grs/users/" + $user_id,
         headers: { "X_API_VERSION": "2.0" },
-        cookies: $account_cookies
+        cookies: $cookies
     )
     $clouds = $cloud_response["body"]
 end
