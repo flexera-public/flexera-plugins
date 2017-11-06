@@ -196,7 +196,7 @@ end
 - tags
 
 ## Resources
-## iit_azure_peering.peering
+## rs_azure_peering.peering
 #### Supported Fields
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
