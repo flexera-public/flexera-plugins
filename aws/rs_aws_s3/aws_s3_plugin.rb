@@ -8,7 +8,7 @@ import "sys_log"
 
 plugin "rs_aws_s3" do
   endpoint do
-    default_host "s3-website-us-east-1.amazonaws.com"
+    default_host "s3.amazonaws.com"
     default_scheme "https"
     query do {
         "Version" => "2012-10-17"
@@ -16,73 +16,58 @@ plugin "rs_aws_s3" do
     end
   end
 
-type "s3" do
-    #  field "aws_access_key_id" do
-    #    alias_for "AWS Access Key ID"
-    #    type      "string"
-    #    location  "query"
-    #    required true
-    #  end
-    
-    #  field "aws_secret_access_key_id" do
-    #    alias_for "AWS Secret Access Key ID"
-    #    type      "string"
-    #    location  "query"
-    #    required true
-    #  end
-    
-    #  field "default_region_name" do
-    #    alias_for "default region name"
-    #    type      "string"
-    #    location  "query"
-    #    required true  
-    #  end
-        
+type "bucket" do
         # bucket acl
-        field "display_name" do
-          alias_for "DisplayName"
+        field "Bucket_Name" do
           type "string"
+          required true
+          location "path"
         end
 
         # bucket acl
-        field "bucket_owner_id" do
-            alias_for "ID"
-            type "string"
-        end
+        #field "bucket_owner_id" do
+        #    alias_for "ID"
+        #    type "string"
+        #end
 
         # bucket acl
-        field "permission_given_to_the_grantee_for_bucket" do
-            alias_for "Permission"
-            type "string"
-        end
+        #field "permission_given_to_the_grantee_for_bucket" do
+        #    alias_for "Permission"
+        #    type "string"
+        #end
 
         #http://docs.aws.amazon.com/AmazonS3/latest/API/RESTCommonRequestHeaders.html
         # common header
-        field "the_date_and_time_amazon_S3_responded" do
-            alias_for "Date"
-            type "string"
-        end
+        #field "the_date_and_time_amazon_S3_responded" do
+        #    alias_for "Date"
+        #    type "string"
+        #end
 
         # common header
-        field "the_name_of_the_server_that_created_the_response" do
-            alias_for "Server"
-            type "string"
-        end
+        #field "the_name_of_the_server_that_created_the_response" do
+        #    alias_for "Server"
+        #    type "string"
+        #end
 
          output "DisplayName","ID", "Permission","Date","Server"
+
 
           #http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETpolicy.html
           action "policy" do
             verb "GET"
-            path "/?policy HTTP/1.1"
+            path "/$Bucket_Name?policy"
           end
         
           #http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETacl.html
           action "acl" do
             verb "GET"
-            path "/?acl HTTP/1.1"
+            path "/$Bucket_Name?acl"   
 
           end   
+
+          provision "no_operation"
+          delete "no_operation"
+      
     end
     
 end
@@ -97,6 +82,9 @@ resource_pool "s3" do
       access_key cred('AWS_ACCESS_KEY_ID')
       secret_key cred('AWS_SECRET_ACCESS_KEY')
     end
+  end
+ 
+  define no_operation(@declaration) do
   end
 
 define start_debugging() do
