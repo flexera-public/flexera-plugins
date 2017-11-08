@@ -18,7 +18,7 @@ plugin "rs_aws_s3" do
 
 type "bucket" do
         # bucket acl
-        field "Bucket_Name" do
+        field "bucket_name" do
           type "string"
           required true
           location "path"
@@ -101,3 +101,21 @@ define start_debugging() do
       $$debugging = false
     end
    end
+
+
+   operation "launch" do
+    label "Launch"
+    definition "gen_launch"
+  end
+
+   resource "my_bucketinfo", type: "rs_aws_s3.bucket" do
+    bucket_name "tushar-rightscale"
+  end
+
+  define gen_launch(@my_bucketinfo) return @my_bucketinfo do
+    call start_debugging()
+    sub on_error:stop_debugging() do
+       provision(@my_bucketinfo)
+      end
+    call stop_debugging()
+  end
