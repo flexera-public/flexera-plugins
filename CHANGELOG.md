@@ -1,5 +1,15 @@
 # Change Log
 
+## [Week-of-11-05-2017](https://github.com/rightscale/rightscale-plugins/tree/Week-of-11-05-2017) (2017-11-06)
+[Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-10-30-2017...Week-of-11-05-2017)
+
+**Merged pull requests:**
+
+- Add VNET peering resource \(\#96\) [\#101](https://github.com/rightscale/rightscale-plugins/pull/101) ([rshade](https://github.com/rshade))
+- Add VMWare NSX to readme [\#100](https://github.com/rightscale/rightscale-plugins/pull/100) ([nathan-rightscale](https://github.com/nathan-rightscale))
+- VMWare NSX Plugin [\#99](https://github.com/rightscale/rightscale-plugins/pull/99) ([nathan-rightscale](https://github.com/nathan-rightscale))
+- Add VNET peering resource [\#96](https://github.com/rightscale/rightscale-plugins/pull/96) ([AnominousSign](https://github.com/AnominousSign))
+
 ## [Week-of-10-30-2017](https://github.com/rightscale/rightscale-plugins/tree/Week-of-10-30-2017) (2017-10-31)
 [Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-10-23-2017...Week-of-10-30-2017)
 
