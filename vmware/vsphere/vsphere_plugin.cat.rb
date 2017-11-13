@@ -1,15 +1,15 @@
-name 'VMware Tagging Plugin'
-short_description 'A RightScale Self-Service plugin for VMware Tagging'
+name 'VMware VSphere Plugin'
+short_description 'A RightScale Self-Service plugin for VMware Vsphere'
 long_description 'Version 1.0'
 rs_ca_ver 20161221
 type 'plugin'
-package 'plugins/vmware_tagging'
+package 'plugins/vmware_vsphere'
 
 import 'sys_log'
 
 # requires vcenter > 6.0
 
-plugin 'vmware_tagging' do
+plugin 'vmware_vsphere' do
   endpoint do
     default_host 'wstunnel'
     default_scheme 'https'
@@ -27,7 +27,7 @@ plugin 'vmware_tagging' do
     no_cert_check true
   end
   
-  type 'category' do
+  type 'cis_tagging_category' do
     href_templates "/rest/com/vmware/cis/tagging/category"
 
     field "name" do
@@ -47,7 +47,7 @@ plugin 'vmware_tagging' do
     end
   end
 
-  type 'tag' do
+  type 'cis_tagging_tag' do
     href_templates "/rest/com/vmware/cis/tagging/tag"
 
     field "name" do
@@ -70,14 +70,17 @@ plugin 'vmware_tagging' do
       path "/rest/com/vmware/cis/tagging/tag-association/id:$name?~action=detach"
     end 
   end
+
+  type 'vcenter_vm_hardware_disk' do
+  end
 end
 
   
 ##
 # Resource Pool(s)
 ###
-resource_pool 'nsx' do
-  plugin $nsx
+resource_pool 'vmware_vsphere' do
+  plugin $vmware_vsphere
 
   host "j2xrp.herokuapp.com"
 
