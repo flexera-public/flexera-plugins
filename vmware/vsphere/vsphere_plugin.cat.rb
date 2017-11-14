@@ -3,13 +3,13 @@ short_description 'A RightScale Self-Service plugin for VMware Vsphere'
 long_description 'Version 1.0'
 rs_ca_ver 20161221
 type 'plugin'
-package 'plugins/vmware_vsphere'
+package 'plugins/rs_vmware_vsphere'
 
 import 'sys_log'
 
 # requires vcenter > 6.0
 
-plugin 'vmware_vsphere' do
+plugin 'rs_vmware_vsphere' do
   endpoint do
     default_host 'wstunnel'
     default_scheme 'https'
@@ -28,7 +28,9 @@ plugin 'vmware_vsphere' do
   end
   
   type 'cis_tagging_category' do
-    href_templates "/rest/com/vmware/cis/tagging/category"
+    href_templates "/rest/com/vmware/cis/tagging/category/id:$value"
+    provision "provision_resource"
+    delete "delete_resource"
 
     field "name" do
       type "string"
@@ -45,10 +47,38 @@ plugin 'vmware_vsphere' do
     field "associable_types" do
       type "array"
     end
+
+    action "create" do
+      type "cis_tagging_category"
+      path "/rest/com/vmware/cis/tagging/category"
+      verb "POST"
+    end
+
+    action "update" do
+      type "cis_tagging_category"
+      path "$href"
+      verb "PATCH"
+    end
+
+    action "destroy" do
+      type "cis_tagging_category"
+      path "$href"
+      verb "DELETE"
+    end
+
+    action "list" do
+      type "cis_tagging_category"
+      path "/rest/com/vmware/cis/tagging/category"
+      verb "GET"
+    end
+
+    output "value"
   end
 
   type 'cis_tagging_tag' do
-    href_templates "/rest/com/vmware/cis/tagging/tag"
+    href_templates "/rest/com/vmware/cis/tagging/tag/id:$value"
+    provision "provision_resource"
+    delete "delete_resource"
 
     field "name" do
       type "string"
@@ -62,20 +92,47 @@ plugin 'vmware_vsphere' do
       type "string"
     end
 
+    action "create" do
+      type "cis_tagging_tag"
+      path "/rest/com/vmware/cis/tagging/tag"
+      verb "POST"
+    end
+
+    action "update" do
+      type "cis_tagging_category"
+      path "$href"
+      verb "PATCH"
+    end
+
+    action "destroy" do
+      type "cis_tagging_category"
+      path "$href"
+      verb "DELETE"
+    end
+
+    action "list" do
+      type "cis_tagging_category"
+      path "/rest/com/vmware/cis/tagging/tag"
+      verb "GET"
+    end
+
     action "attach" do
       path "/rest/com/vmware/cis/tagging/tag-association/id:$name?~action=attach"
     end
 
     action "detach" do
       path "/rest/com/vmware/cis/tagging/tag-association/id:$name?~action=detach"
-    end 
+    end
+
+    output "value"
   end
 
   type 'vcenter_vm_hardware_disk' do
+    provision "provision_resource"
+    delete "delete_resource"
   end
 end
 
-  
 ##
 # Resource Pool(s)
 ###
@@ -109,7 +166,22 @@ end
 # Provisioning Definitions
 ###
 define provision_resource(@declaration) return @resource on_error: stop_debugging() do
-
+  sub on_error: stop_debugging() do
+    $object = to_object(@declaration)
+    $fields = $object["fields"]
+    $type = $object["type"]
+    call sys_log.set_task_target(@@deployment)
+    call sys_log.summary(join(["Provision ", $type]))
+    call sys_log.detail($object)
+    call start_debugging()
+    @operation = rs_vmware_vsphere.$type.create($fields)
+    call stop_debugging()
+    call sys_log.detail(to_object(@operation))
+    call start_debugging()
+    @resource = @operation.get()
+    call stop_debugging()
+    call sys_log.detail(to_object(@resource))
+  end
 end
 
 define delete_resource(@resource) do
