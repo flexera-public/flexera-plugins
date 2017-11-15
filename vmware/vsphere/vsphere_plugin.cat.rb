@@ -138,12 +138,11 @@ end
 ###
 resource_pool 'vmware_vsphere' do
   plugin $vmware_vsphere
+  host "https://wstunnel10-1.rightscale.com/_token/vscale6rest_58lnw6X@WEuL0ut6H2YBdA==/rest/com/vmware/cis/session"
 
-  host "j2xrp.herokuapp.com"
-
-  auth 'nsx_auth', type: 'basic' do
-    username cred('NSX_USER')
-    password cred('NSX_PASSWORD')
+  auth 'vmware_auth', type: 'basic' do
+    username cred('VMW_USER')
+    password cred('VMW_PASSWORD')
   end
 end
 
