@@ -135,13 +135,13 @@ resource_pool 'rs_vmware_vsphere' do
   plugin $rs_vmware_vsphere
   host "https://wstunnel10-1.rightscale.com/_token/vscale6rest_58lnw6X@WEuL0ut6H2YBdA==/rest/com/vmware/cis/session"
 
-  auth 'vmware_auth', type: 'basic' do
+  auth "vmware_auth", type: "basic" do
     username cred('VMW_USER')
     password cred('VMW_PASSWORD')
   end
   
   auth "my_JWT_auth", type: "jwt" do
-    basic $vmware_auth
+    basic @vmware_auth
     # URL used to retrieve JWT, request is a GET to that URL signed with either $my_basic_auth or $my_API_key_auth
     token_url "https://wstunnel10-1.rightscale.com/_token/vscale6rest_58lnw6X@WEuL0ut6H2YBdA==/rest/com/vmware/cis/session?~action=get"
     # Location of the authorization, "header" or "query" - defaults to "header"
