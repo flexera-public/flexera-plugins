@@ -6,26 +6,19 @@ type 'plugin'
 package 'plugins/rs_vmware_vsphere'
 import 'sys_log'
 # requires vcenter > 6.0
-permission "read_creds" do
-  actions   "rs_cm.show_sensitive","rs_cm.index_sensitive"
-  resources "rs_cm.credentials"
-end
 
 plugin 'rs_vmware_vsphere' do
   endpoint do
-    default_host 'wstunnel'
+    default_host 'https://wstunnel10-1.rightscale.com'
     default_scheme 'https'
 
     # Insert your wstunnel token here
     # Currently it's hard coded
-    path "/_token/<token>"
+    path "/_token/vscale6rest_58lnw6X@WEuL0ut6H2YBdA=="
 
     headers do {
       'User-Agent' => 'RightScale Self-Service/20161221'
     } end
-
-    # unfortunately, very common to be using self-signed or
-    # not a public CA
     no_cert_check true
   end
   
@@ -212,8 +205,4 @@ end
 
 resource "my_tag_category", type: "rs_vmware_vsphere.cis_tagging_category" do
   name "rs_test_tag_category"
-end
-
-resource "my_tag", type: "rs_vmware_vsphere.cis_tagging_tag" do
-  name "name:predicate=value"
 end
