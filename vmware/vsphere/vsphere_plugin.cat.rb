@@ -4,10 +4,12 @@ long_description 'Version 1.0'
 rs_ca_ver 20161221
 type 'plugin'
 package 'plugins/rs_vmware_vsphere'
-
 import 'sys_log'
-
 # requires vcenter > 6.0
+permission "read_creds" do
+  actions   "rs_cm.show_sensitive","rs_cm.index_sensitive"
+  resources "rs_cm.credentials"
+end
 
 plugin 'rs_vmware_vsphere' do
   endpoint do
@@ -136,8 +138,8 @@ end
 ##
 # Resource Pool(s)
 ###
-resource_pool 'vmware_vsphere' do
-  plugin $vmware_vsphere
+resource_pool 'rs_vmware_vsphere' do
+  plugin $rs_vmware_vsphere
   host "https://wstunnel10-1.rightscale.com/_token/vscale6rest_58lnw6X@WEuL0ut6H2YBdA==/rest/com/vmware/cis/session"
 
   auth 'vmware_auth', type: 'basic' do
@@ -206,4 +208,12 @@ define skip_not_found_error() do
     call sys_log.detail($_error["type"] + ": " + $_error["message"])
     $_error_behavior = "skip"
   end
+end
+
+resource "my_tag_category", type: "rs_vmware_vsphere.cis_tagging_category" do
+  name "rs_test_tag_category"
+end
+
+resource "my_tag", type: "rs_vmware_vsphere.cis_tagging_tag" do
+  name "name:predicate=value"
 end
