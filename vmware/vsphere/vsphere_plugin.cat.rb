@@ -15,10 +15,6 @@ plugin 'rs_vmware_vsphere' do
     # Insert your wstunnel token here
     # Currently it's hard coded
     path "/_token/vscale6rest_58lnw6X@WEuL0ut6H2YBdA=="
-
-    headers do {
-      'User-Agent' => 'RightScale Self-Service/20161221'
-    } end
     no_cert_check true
   end
   
@@ -140,7 +136,7 @@ resource_pool 'rs_vmware_vsphere' do
     password cred('VMW_PASSWORD')
   end
   
-  auth "my_JWT_auth", type: "jwt" do
+  auth "vmware_jwt", type: "jwt" do
     basic @vmware_auth
     # URL used to retrieve JWT, request is a GET to that URL signed with either $my_basic_auth or $my_API_key_auth
     token_url "https://wstunnel10-1.rightscale.com/_token/vscale6rest_58lnw6X@WEuL0ut6H2YBdA==/rest/com/vmware/cis/session"
