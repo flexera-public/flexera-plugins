@@ -19,12 +19,14 @@ plugin "rs_aws_route53" do
     delete "delete_resource"
 
     field "callerreference" do
+      alias_for "CallerReference"
       type "string"
       required "true"
       location "body"
     end
 
     field "name" do
+      alias_for "Name"
       type "string"
       required true
       location "body"
