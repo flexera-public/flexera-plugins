@@ -15,6 +15,8 @@ plugin "rs_aws_route53" do
   
   type "hosted_zone" do
     href_templates "/hostedzone/{{//CreateHostedZoneResponse/HostedZone/Id}}", "/hostedzone/{{//GetHostedZoneResponse/HostedZone/Id}}"
+    provision "provision_resource"
+    delete "delete_resource"
 
     field "caller_reference" do
       alias_for "CallerReference"
@@ -68,10 +70,9 @@ define provision_resource(@declaration) return @resource do
     call start_debugging()
     $object = to_object(@declaration)
     $existing_fields = $object["fields"]
-    $tags = $fields["tags"]
     $type = $object["type"]
-    $fields = ["CreateHostedZoneRequest"]
-    $fields["CreateHostedZoneRequest"] = $existing_fields
+    $fields = {"CreateHostedZoneRequest": $existing_fields }
+    call sys_log.detail("fields:" + $fields)
     @operation = rs_aws_route53.$type.create($fields)
     @resource = @operation.get()
     call stop_debugging()
@@ -79,11 +80,17 @@ define provision_resource(@declaration) return @resource do
 end
 
 define delete_resource(@declaration) do
-  call start_debugging()
-  call stop_debugging()
+  sub on_error: stop_debugging() do
+    call start_debugging()
+    $object = to_object(@declaration)
+    $fields = $object["fields"]
+    $type = $object["type"]
+    rs_aws_route53.$type.delete($fields)
+    call stop_debugging()
+  end
 end
 
-define start_debugging()
+define start_debugging() do
   if $$debugging == false || logic_and($$debugging != false, $$debugging != true)
     initiate_debug_report()
     $$debugging = true
