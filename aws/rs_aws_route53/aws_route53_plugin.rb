@@ -18,15 +18,13 @@ plugin "rs_aws_route53" do
     provision "provision_resource"
     delete "delete_resource"
 
-    field "caller_reference" do
-      alias_for "CallerReference"
+    field "callerreference" do
       type "string"
       required "true"
       location "body"
     end
 
     field "name" do
-      alias_for "Name"
       type "string"
       required true
       location "body"
@@ -36,7 +34,7 @@ plugin "rs_aws_route53" do
 
     action "create" do
       verb "POST"
-      path "/2013-04-01/hostedzone"
+      path "/hostedzone"
       output_path "//CreateHostedZoneResponse/HostedZone"
     end
 
@@ -72,7 +70,9 @@ define provision_resource(@declaration) return @resource do
     $existing_fields = $object["fields"]
     $type = $object["type"]
     $fields = {"CreateHostedZoneRequest": $existing_fields }
-    call sys_log.detail("fields:" + $fields)
+    call stop_debugging()
+    call sys_log.detail("fields:" + to_s($fields))
+    call start_debugging()
     @operation = rs_aws_route53.$type.create($fields)
     @resource = @operation.get()
     call stop_debugging()
@@ -107,5 +107,5 @@ end
 
 resource "hostedzone", type: "rs_aws_route53.hosted_zone" do
   name "example.com"
-  caller_reference to_s(uuid())
+  callerreference to_s(uuid())
 end
