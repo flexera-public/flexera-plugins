@@ -73,8 +73,12 @@ define provision_resource(@declaration) return @resource do
     call stop_debugging()
     call sys_log.detail("1 fields:" + to_s($fields))
     call start_debugging()
-    $fields["CreateHostedZoneRequest"]["Name"] = $existing_fields["name"]
-    $fields["CreateHostedZoneRequest"]["CallerReference"] = uuid()
+    $fields["CreateHostedZoneRequest"][""] = []
+    $fields["CreateHostedZoneRequest"][""][0] = {}
+    $fields["CreateHostedZoneRequest"][""][0]["Name"] = []
+    $fields["CreateHostedZoneRequest"][""][0]["Name"][0] = $existing_fields["name"]
+    $fields["CreateHostedZoneRequest"][""][0]["CallerReference"] = []
+    $fields["CreateHostedZoneRequest"][""][0]["CallerReference"][0] = uuid()
     call stop_debugging()
     call sys_log.detail("fields:" + to_s($fields))
     call start_debugging()
