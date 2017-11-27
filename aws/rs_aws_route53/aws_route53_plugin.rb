@@ -18,13 +18,6 @@ plugin "rs_aws_route53" do
     provision "provision_resource"
     delete "delete_resource"
 
-    field "callerreference" do
-      alias_for "CallerReference"
-      type "string"
-      required "true"
-      location "body"
-    end
-
     field "name" do
       alias_for "Name"
       type "string"
@@ -60,8 +53,8 @@ resource_pool "route53" do
     version     4
     service    'route53'
     region     'us-east-1'
-    access_key cred('AWS_ACCESS_KEY_ID')
-    secret_key cred('AWS_SECRET_ACCESS_KEY')
+    access_key cred('RR53_KEY')
+    secret_key cred('RR53_SECRET')
   end
 end
 
@@ -70,8 +63,18 @@ define provision_resource(@declaration) return @resource do
     call start_debugging()
     $object = to_object(@declaration)
     $existing_fields = $object["fields"]
+    call stop_debugging()
+    call sys_log.detail("existing_fields:" + to_s($existing_fields))
+    call start_debugging()
     $type = $object["type"]
-    $fields = {"CreateHostedZoneRequest": $existing_fields }
+    $fields = {}
+    $fields["CreateHostedZoneRequest"] = {}
+    $fields["CreateHostedZoneRequest"]["xmlns"] = "https://route53.amazonaws.com/doc/2013-04-01/"
+    call stop_debugging()
+    call sys_log.detail("1 fields:" + to_s($fields))
+    call start_debugging()
+    $fields["CreateHostedZoneRequest"][]["Name"] = $existing_fields["name"]
+    $fields["CreateHostedZoneRequest"][]["CallerReference"] = uuid()
     call stop_debugging()
     call sys_log.detail("fields:" + to_s($fields))
     call start_debugging()
@@ -109,5 +112,4 @@ end
 
 resource "hostedzone", type: "rs_aws_route53.hosted_zone" do
   name "example.com"
-  callerreference to_s(uuid())
 end
