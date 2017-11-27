@@ -14,7 +14,7 @@ plugin "rs_aws_route53" do
   end
   
   type "hosted_zone" do
-    href_templates "/hostedzone/{{//CreateHostedZoneResponse/HostedZone/Id}}", "/hostedzone/{{//GetHostedZoneResponse/HostedZone/Id}}"
+    href_templates "{{//CreateHostedZoneResponse/HostedZone/Id}}", "{{//GetHostedZoneResponse/HostedZone/Id}}"
     provision "provision_resource"
     delete "delete_resource"
 
@@ -35,12 +35,12 @@ plugin "rs_aws_route53" do
 
     action "destroy" do
       verb "DELETE"
-      path "/hostedzone/$Id"
+      path "$Id"
     end
     
     action "get" do
       verb "GET"
-      path "/hostedzone/$Id"
+      path "$Id"
       output_path "//GetHostedZoneResponse/HostedZone"
     end
   end
@@ -73,8 +73,6 @@ define provision_resource(@declaration) return @resource do
     call stop_debugging()
     call sys_log.detail("1 fields:" + to_s($fields))
     call start_debugging()
-    #$fields["CreateHostedZoneRequest"]["."] = []
-    #$fields["CreateHostedZoneRequest"]["."][0] = {}
     $fields["CreateHostedZoneRequest"]["Name"] = []
     $fields["CreateHostedZoneRequest"]["Name"][0] = $existing_fields["name"]
     $fields["CreateHostedZoneRequest"]["CallerReference"] = []
@@ -94,7 +92,7 @@ define delete_resource(@declaration) do
     $object = to_object(@declaration)
     $fields = $object["fields"]
     $type = $object["type"]
-    rs_aws_route53.$type.delete($fields)
+    rs_aws_route53.$type.delete()
     call stop_debugging()
   end
 end
