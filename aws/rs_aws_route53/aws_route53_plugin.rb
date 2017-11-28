@@ -17,14 +17,14 @@ plugin "rs_aws_route53" do
     href_templates "{{//CreateHostedZoneResponse/HostedZone/Id}}", "{{//GetHostedZoneResponse/HostedZone/Id}}"
     provision "provision_resource"
     delete "delete_resource"
-
-    field "name" do
-      alias_for "Name"
-      type "string"
+    
+    field "create_hosted_zone_request" do
+      alias_for "CreateHostedZoneRequest"
+      type "composite"
       required true
       location "body"
     end
- 
+
     output "Id"
 
     action "create" do
@@ -64,20 +64,10 @@ define provision_resource(@declaration) return @resource do
     $object = to_object(@declaration)
     call stop_debugging()
     call sys_log.detail("object:"+ to_s($object)) 
-    $existing_fields = $object["fields"]
-    call sys_log.detail("existing_fields:" + to_s($existing_fields))
+    $fields = $object["fields"]
+    call sys_log.detail("existing_fields:" + to_s($fields))
     call start_debugging()
     $type = $object["type"]
-    $fields = {}
-    $fields["CreateHostedZoneRequest"] = {}
-    $fields["CreateHostedZoneRequest"]["xmlns"] = "https://route53.amazonaws.com/doc/2013-04-01/"
-    call stop_debugging()
-    call sys_log.detail("1 fields:" + to_s($fields))
-    call start_debugging()
-    $fields["CreateHostedZoneRequest"]["Name"] = []
-    $fields["CreateHostedZoneRequest"]["Name"][0] = $existing_fields["name"]
-    $fields["CreateHostedZoneRequest"]["CallerReference"] = []
-    $fields["CreateHostedZoneRequest"]["CallerReference"][0] = uuid()
     call stop_debugging()
     call sys_log.detail("fields:" + to_s($fields))
     call start_debugging()
@@ -114,5 +104,9 @@ define stop_debugging() do
 end
 
 resource "hostedzone", type: "rs_aws_route53.hosted_zone" do
-  name join([split(uuid(),'-'),".rsps.com"])
+  create_hosted_zone_request do {
+    "xmlns" => "https://route53.amazonaws.com/doc/2013-04-01/",
+    "Name" => [ join([first(split(uuid(),'-')), ".rsps.com"]) ],
+    "CallerReference" => [ uuid() ]
+  } end
 end
