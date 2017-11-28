@@ -60,10 +60,11 @@ end
 
 define provision_resource(@declaration) return @resource do
   sub on_error: stop_debugging() do
-    call start_debugging()
+   call start_debugging()
     $object = to_object(@declaration)
-    $existing_fields = $object["fields"]
     call stop_debugging()
+    call sys_log.detail("object:"+ to_s($object)) 
+    $existing_fields = $object["fields"]
     call sys_log.detail("existing_fields:" + to_s($existing_fields))
     call start_debugging()
     $type = $object["type"]
