@@ -33,11 +33,11 @@ plugin "rs_aws_route53" do
       output_path "//CreateHostedZoneResponse/HostedZone"
     end
 
-    action "destroy" do
+    action "delete" do
       verb "DELETE"
       path "$Id"
     end
-    
+
     action "get" do
       verb "GET"
       path "$Id"
