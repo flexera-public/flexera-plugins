@@ -31,7 +31,6 @@ plugin "rs_aws_mq" do
 
     field "configuration" do
       type "composite"
-      required true
     end
 
     field "creator_request_id" do
@@ -66,7 +65,6 @@ plugin "rs_aws_mq" do
     field "maintenance_window_start_time" do
       alias_for "maintenanceWindowStartTime"
       type "composite"
-      required true
     end
 
     field "publicly_accessible" do
@@ -301,7 +299,7 @@ plugin "rs_aws_mq" do
     end 
 
     action "destroy" do
-      verb "DELET"
+      verb "DELETE"
       path "$href"
     end 
 
