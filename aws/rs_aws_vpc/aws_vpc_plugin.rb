@@ -176,6 +176,24 @@ plugin "rs_aws_vpc" do
       type      "string"
       location  "query"
     end
+
+    field "vpc_endpoint_type" do
+      alias_for "VpcEndpointType"
+      type "string"
+      location "query"
+    end
+
+    field "private_dns_enabled" do
+      alias_for "PrivateDnsEnabled"
+      type "string"
+      location "query"
+    end
+
+    field "security_group_id_1" do
+      alias_for "SecurityGroupId.1"
+      type "string"
+      location "query"
+    end
     
     output "vpcEndpointId" do
       type "simple_element"
