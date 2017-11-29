@@ -11,6 +11,7 @@ This repo contains a library of open source RightScale plugins.
 - [AWS Virtual Private Cloud](./aws/rs_aws_vpc/)
 - [AWS ElastiCache](./aws/rs_aws_elasticache)
 - [AWS Lambda](./aws/rs_aws_lambda)
+- [AWS MQ](./aws/rs_aws_mq)
 
 ### Azure
 - [Azure SQL Database](./azure/rs_azure_sql/)
