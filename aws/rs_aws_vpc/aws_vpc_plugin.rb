@@ -2,7 +2,7 @@ name 'aws_vpc_plugin'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Amazon Web Services - VPC Plugin"
-long_description "Version 1.2"
+long_description "Version 1.3"
 package "plugin/rs_aws_vpc"
 import "sys_log"
 
