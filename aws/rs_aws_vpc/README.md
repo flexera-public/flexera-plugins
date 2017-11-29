@@ -97,6 +97,9 @@ end
 |vpc_id| Yes | The ID of the VPC in which the endpoint will be used. |
 |service_name| Yes | The AWS service name, in the form com.amazonaws.region.service . |
 |route_table_id_1| No | Route Table to pin to |
+|vpc_interface_type| No | The type of endpoint. Options: Interface/Gateway, Default: Gateway |
+|private_dns_enabled| No| (Interface endpoint) Indicate whether to associate a private hosted zone with the specified VPC. Default: True |
+|security_group_id_1| No | (Interface endpoint) The ID of one or more security groups to associate with the endpoint network interface. |
 
 ## Supported Actions
 | Action | API Implementation | Support Level |
