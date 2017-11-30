@@ -1,5 +1,12 @@
 # Change Log
 
+## [Week-of-11-27-2017](https://github.com/rightscale/rightscale-plugins/tree/Week-of-11-27-2017) (2017-11-30)
+[Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-11-05-2017...Week-of-11-27-2017)
+
+**Merged pull requests:**
+
+- AWS MQ & AWS PrivateLink - Initial Releases  [\#108](https://github.com/rightscale/rightscale-plugins/pull/108) ([dfrankel33](https://github.com/dfrankel33))
+
 ## [Week-of-11-05-2017](https://github.com/rightscale/rightscale-plugins/tree/Week-of-11-05-2017) (2017-11-06)
 [Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-10-30-2017...Week-of-11-05-2017)
 
