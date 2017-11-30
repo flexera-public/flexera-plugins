@@ -1,9 +1,9 @@
-name 'rs_azure_networking_plugin'
+name 'rs_azure_networking_plugin1'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Azure Networking Plugin"
-long_description "Version: 1.1"
-package "plugins/rs_azure_networking_plugin"
+long_description "Version: 1.2"
+package "plugins/rs_azure_networking_plugin1"
 import "sys_log"
 
 parameter "subscription_id" do
@@ -21,7 +21,7 @@ plugin "rs_azure_networking" do
     default_host "https://management.azure.com/"
     default_scheme "https"
     query do {
-      'api-version' =>  '2016-09-01'
+      'api-version' =>  '2017-09-01'
     } end
   end
 
@@ -31,7 +31,8 @@ plugin "rs_azure_networking" do
   end
 
   type "interface" do
-    href_templates "{{id}}","{{value[*].id}}"
+    #href_templates "{{id}}","{{value[*].id}}"
+    href_templates "{{contains(id, 'Microsoft.Network/networkInterfaces') && id || null}}"
     provision "provision_interface"
     delete    "delete_resource"
 
@@ -110,6 +111,268 @@ plugin "rs_azure_networking" do
 
     output "id","name","location","tags","properties"
   end
+
+  type "subnet" do
+    href_templates "{{contains(value[0].id, '/subnets/') && value[0].id || null}}"
+    provision "provision_subnet"
+    delete    "delete_resource"
+
+    field "properties" do
+      type "composite"
+      location "body"
+    end
+
+    field "location" do
+      type "string"
+      location "body"
+    end
+
+    field "resource_group" do
+      type "string"
+      location "path"
+    end
+
+    field "name" do
+      type "string"
+      location "path"
+    end
+
+    field "tags" do
+      type "composite"
+      location "body"
+    end
+
+    action "create" do
+      type "subnet"
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Network/virtualNetworks/$vnet_name/subnets/$name"
+      verb "PUT"
+    end
+
+    action "update" do
+      type "subnet"
+      path "$href"
+      verb "PUT"
+    end
+
+    action "show" do
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Network/virtualNetworks/$vnet_name/subnets/$name"
+      verb "GET"
+
+      field "resource_group" do
+        location "path"
+      end
+
+      field "vnet_name" do
+        location "path"
+      end
+
+      field "name" do
+        location "path"
+      end
+    end
+
+    action "list" do
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Network/virtualNetworks/$vnet_name/subnets/"
+      verb "GET"
+
+      field "resource_group" do
+        location "path"
+      end
+
+      field "vnet_name" do
+        location "path"
+      end
+
+      output_path "value[*]"
+    end
+
+    action "get" do
+      type "subnet"
+      path "$href"
+      verb "GET"
+    end
+
+    action "destroy" do
+      type "subnet"
+      path "$href"
+      verb "DELETE"
+    end
+
+    output "id","name","location","tags","properties"
+  end
+
+  type "network" do
+    href_templates "{{contains(value[0].type, 'Microsoft.Network/virtualNetworks') && value[0].id || null}}","{{type=='Microsoft.Network/virtualNetworks' && id || null}}","{{value[0].type=='Microsoft.Network/virtualNetworks' && value[].id || null}}"
+    provision "provision_vnet"
+    delete    "delete_resource"
+
+    field "properties" do
+      type "composite"
+      location "body"
+    end
+
+    field "location" do
+      type "string"
+      location "body"
+    end
+
+    field "resource_group" do
+      type "string"
+      location "path"
+    end
+
+    field "name" do
+      type "string"
+      location "path"
+    end
+
+    field "tags" do
+      type "composite"
+      location "body"
+    end
+
+    action "create" do
+      type "network"
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Network/virtualNetworks/$name"
+      verb "PUT"
+    end
+
+    action "update" do
+      type "network"
+      path "$href"
+      verb "PUT"
+    end
+
+    action "show" do
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Network/virtualNetworks/$name"
+      verb "GET"
+
+      field "resource_group" do
+        location "path"
+      end
+
+      field "name" do
+        location "path"
+      end
+    end
+
+    action "list" do
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Network/virtualNetworks/"
+      verb "GET"
+
+      field "resource_group" do
+        location "path"
+      end
+
+      output_path "value[*]"
+    end
+
+    action "get" do
+      type "network"
+      path "$href"
+      verb "GET"
+    end
+
+    action "destroy" do
+      type "network"
+      path "$href"
+      verb "DELETE"
+    end
+
+    output "id","name","location","tags","properties"
+  end
+
+  type "peering" do
+    href_templates "{{contains(id, 'virtualNetworkPeerings') && id || null}}"
+    provision "provision_peering"
+    delete    "delete_resource"
+
+    field "name" do
+      type "string"
+      location "path"
+    end
+
+    field "resource_group" do
+      type "string"
+      location "path"
+    end
+
+    field "local_vnet" do
+      type "string"
+      location "path"
+    end
+
+    field "remote_vnet" do
+      type "string"
+      location "path"
+    end
+
+    field "properties" do
+      type "composite"
+      location "body"
+    end
+
+    action "create" do
+      type "peering"
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Network/virtualNetworks/$local_vnet/virtualNetworkPeerings/$name"
+      verb "PUT"
+    end
+
+    action "list" do
+      type "peering"
+      path "$href"
+      verb "GET"
+    end
+
+    action "show" do
+      type "peering"
+      path "$href"
+      verb "GET"
+    end
+
+    action "get" do
+      type "peering"
+      path "$href"
+      verb "GET"
+    end
+
+    action "destroy" do
+      type "peering"
+      path "$href"
+      verb "DELETE"
+    end
+
+    output "id","name"
+
+    output "allowVirtualNetworkAccess" do
+      body_path "properties.allowVirtualNetworkAccess"
+    end
+
+    output "allowForwardedTraffic" do
+      body_path "properties.allowForwardedTraffic"
+    end
+
+    output "allowGatewayTransit" do
+      body_path "properties.allowGatewayTransit"
+    end
+
+    output "useRemoteGateways" do
+      body_path "properties.useRemoteGateways"
+    end
+
+    output "remoteVirtualNetwork" do
+      body_path "properties.remoteVirtualNetwork.id"
+    end
+
+    output "peeringState" do
+      body_path "properties.peeringState"
+    end
+
+    output "provisioningState" do
+      body_path "properties.provisioningState"
+    end
+  end
+
 end
 
 plugin "rs_azure_lb" do
@@ -246,116 +509,6 @@ plugin "rs_azure_lb" do
   end
 end
 
-plugin "rs_azure_peering" do
-  endpoint do
-    default_host "https://management.azure.com/"
-    default_scheme "https"
-    query do {
-      'api-version' =>  '2017-09-01'
-    } end
-  end
-
-  parameter "subscription_id" do
-    type  "string"
-    label "subscription_id"
-  end
-
-  type "peering" do
-    href_templates "{{contains(id, 'virtualNetworkPeerings') && id || null}}"
-    provision "provision_peering"
-    delete    "delete_resource"
-
-    field "name" do
-      type "string"
-      location "path"
-    end
-
-    field "subscription_id" do
-      type "string"
-      location "path"
-    end
-
-    field "resource_group" do
-      type "string"
-      location "path"
-    end
-
-    field "local_vnet" do
-      type "string"
-      location "path"
-    end
-
-    field "remote_vnet" do
-      type "string"
-      location "path"
-    end
-
-    field "properties" do
-      type "composite"
-      location "body"
-    end
-
-    action "create" do
-      type "peering"
-      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Network/virtualNetworks/$local_vnet/virtualNetworkPeerings/$name"
-      verb "PUT"
-    end
-
-    action "list" do
-      type "peering"
-      path "$href"
-      verb "GET"
-    end
-
-    action "show" do
-      type "peering"
-      path "$href"
-      verb "GET"
-    end
-
-    action "get" do
-      type "peering"
-      path "$href"
-      verb "GET"
-    end
-
-    action "destroy" do
-      type "peering"
-      path "$href"
-      verb "DELETE"
-    end
-
-    output "id","name"
-
-    output "allowVirtualNetworkAccess" do
-      body_path "properties.allowVirtualNetworkAccess"
-    end
-
-    output "allowForwardedTraffic" do
-      body_path "properties.allowForwardedTraffic"
-    end
-
-    output "allowGatewayTransit" do
-      body_path "properties.allowGatewayTransit"
-    end
-
-    output "useRemoteGateways" do
-      body_path "properties.useRemoteGateways"
-    end
-
-    output "remoteVirtualNetwork" do
-      body_path "properties.remoteVirtualNetwork.id"
-    end
-
-    output "peeringState" do
-      body_path "properties.peeringState"
-    end
-
-    output "provisioningState" do
-      body_path "properties.provisioningState"
-    end
-  end
-end
 
 resource_pool "rs_azure_networking" do
     plugin $rs_azure_networking
@@ -364,7 +517,7 @@ resource_pool "rs_azure_networking" do
     end
 
     auth "azure_auth", type: "oauth2" do
-      token_url "https://login.microsoftonline.com/TENANT_ID/oauth2/token"
+      token_url "https://login.microsoftonline.com/09b8fec1-4b8d-48dd-8afa-5c1a775ea0f2/oauth2/token"
       grant type: "client_credentials" do
         client_id cred("AZURE_APPLICATION_ID")
         client_secret cred("AZURE_APPLICATION_KEY")
@@ -382,7 +535,7 @@ resource_pool "rs_azure_lb" do
     end
 
     auth "azure_auth", type: "oauth2" do
-      token_url "https://login.microsoftonline.com/TENANT_ID/oauth2/token"
+      token_url "https://login.microsoftonline.com/09b8fec1-4b8d-48dd-8afa-5c1a775ea0f2/oauth2/token"
       grant type: "client_credentials" do
         client_id cred("AZURE_APPLICATION_ID")
         client_secret cred("AZURE_APPLICATION_KEY")
@@ -391,24 +544,6 @@ resource_pool "rs_azure_lb" do
         } end
       end
     end
-end
-
-resource_pool "rs_azure_peering" do
-  plugin $rs_azure_peering
-  parameter_values do
-    subscription_id $subscription_id
-  end
-
-  auth "azure_auth", type: "oauth2" do
-    token_url "https://login.microsoftonline.com/TENANT_ID/oauth2/token"
-    grant type: "client_credentials" do
-      client_id cred("AZURE_APPLICATION_ID")
-      client_secret cred("AZURE_APPLICATION_KEY")
-      additional_params do {
-        "resource" => "https://management.azure.com/"
-      } end
-    end
-  end
 end
 
 define skip_known_error() do
@@ -465,6 +600,47 @@ define provision_lb(@declaration) return @resource do
 end
 
 define provision_interface(@declaration) return @resource do
+  sub on_error: stop_debugging() do
+    $object = to_object(@declaration)
+    $fields = $object["fields"]
+    call sys_log.detail(join(["fields", $fields]))
+    $type = $object["type"]
+    $name = $fields["name"]
+    $resource_group = $fields["resource_group"]
+    call sys_log.set_task_target(@@deployment)
+    call sys_log.summary(join(["Provision ", $type]))
+    call sys_log.detail($object)
+    call start_debugging()
+    @operation = rs_azure_networking.$type.create($fields)
+    call sys_log.detail(to_object(@operation))
+    @resource = @operation.show(resource_group: $resource_group, name: $name)
+    call sys_log.detail(to_object(@resource))
+    call stop_debugging()
+  end
+end
+
+define provision_subnet(@declaration) return @resource do
+  sub on_error: stop_debugging() do
+    $object = to_object(@declaration)
+    $fields = $object["fields"]
+    call sys_log.detail(join(["fields", $fields]))
+    $type = $object["type"]
+    $name = $fields["name"]
+    $resource_group = $fields["resource_group"]
+    $vnet_name = $fields["vnet_name"]
+    call sys_log.set_task_target(@@deployment)
+    call sys_log.summary(join(["Provision ", $type]))
+    call sys_log.detail($object)
+    call start_debugging()
+    @operation = rs_azure_networking.$type.create($fields)
+    call sys_log.detail(to_object(@operation))
+    @resource = @operation.show(resource_group: $resource_group, name: $name)
+    call sys_log.detail(to_object(@resource))
+    call stop_debugging()
+  end
+end
+
+define provision_vnet(@declaration) return @resource do
   sub on_error: stop_debugging() do
     $object = to_object(@declaration)
     $fields = $object["fields"]

@@ -42,8 +42,10 @@ The resulting resource can be manipulated just like the native RightScale resour
 
 ## Supported Resources
  - rs_azure_lb.load_balancer
+ - rs_azure_networking.subnet
+ - rs_azure_networking.vnet
  - rs_azure_networking.interface
- - rs_azure_peering.peering
+ - rs_azure_peering.peering=
 
 ## Usage
 ```
@@ -140,6 +142,7 @@ define add_to_lb(@server,@my_pub_lb) return @server1,@updated_nic do
   @updated_nic = @my_target_nic.update($nic)
 end
 ```
+
 ## Resources
 ## rs_azure_lb.load_balancer
 #### Supported Fields
@@ -170,6 +173,57 @@ end
 - location
 - kind
 
+## rs_azure_networking.network
+#### Supported Fields
+| Field Name | Required? | Description |
+|------------|-----------|-------------|
+|name|Yes|The name of the vnet.|
+|resource_group|Yes|Name of resource group in which to launch the Deployment|
+|location|Yes|Datacenter to launch in|
+|properties| Hash of vNet properties|
+#### Supported Actions
+
+| Action | API Implementation | Support Level |
+|--------------|:----:|:-------------:|
+| create&update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/VirtualNetworks/CreateOrUpdate) | Supported |
+| destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/virtualnetworks/delete) | Supported |
+| get | [Get](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/virtualnetworks/get)| Supported |
+| list | [Get](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/virtualnetworks/list)| Supported |
+
+#### Supported Outputs
+- id
+- name
+- type
+- location
+- properties
+- tags
+
+## rs_azure_networking.subnet
+#### Supported Fields
+| Field Name | Required? | Description |
+|------------|-----------|-------------|
+|name|Yes|The name of the NIC.|
+|resource_group|Yes|Name of resource group in which to launch the Deployment|
+|vnet_name|Yes|Name of the vNet that contains the subnet|
+|location|Yes|Datacenter to launch in|
+|properties| Hash of subnet properties|
+#### Supported Actions
+
+| Action | API Implementation | Support Level |
+|--------------|:----:|:-------------:|
+| create&update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/Subnets/CreateOrUpdate) | Supported |
+| destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/subnets/delete) | Supported |
+| get | [Get](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/subnets/get)| Supported |
+| list | [Get](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/subnets/list)| Supported |
+
+#### Supported Outputs
+- id
+- name
+- type
+- location
+- properties
+- tags
+
 ## rs_azure_networking.interface
 #### Supported Fields
 | Field Name | Required? | Description |
@@ -195,8 +249,7 @@ end
 - properties
 - tags
 
-## Resources
-## rs_azure_peering.peering
+## rs_azure_networking.peering
 #### Supported Fields
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
