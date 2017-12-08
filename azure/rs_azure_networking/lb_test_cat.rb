@@ -124,7 +124,7 @@ operation "launch" do
   } end
 end
 
-define launch_handler(@server1,@server2,@lb_ip,@my_pub_lb,$subscription_id) return @server1,@lb_ip,@my_pub_lb,$pool_id,$lb_ip do
+define launch_handler(@server1,@server2,@lb_ip,@my_pub_lb,$subscription_id) return @server1,@server2,@lb_ip,@my_pub_lb,$pool_id,$lb_ip do
   task_label("Provisioning Server")
   concurrent return @server1, @server2 do
     provision(@server1)
@@ -146,7 +146,7 @@ define launch_handler(@server1,@server2,@lb_ip,@my_pub_lb,$subscription_id) retu
   $lb_ip = @lb_ip.address
 end
 
-define add_to_lb(@server,@my_pub_lb) return @server1,@my_target_nic do
+define add_to_lb(@server,@my_pub_lb) return @server,@my_target_nic do
   sub on_error: stop_debugging() do
     call start_debugging()
     @nics = rs_azure_networking.interface.list(resource_group: @@deployment.resource_group().name)
