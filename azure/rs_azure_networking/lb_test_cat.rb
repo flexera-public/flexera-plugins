@@ -6,7 +6,6 @@ import "plugins/rs_azure_networking_plugin"
 
 parameter "subscription_id" do
   like $rs_azure_networking_plugin.subscription_id
-  default "8beb7791-9302-4ae4-97b4-afd482aadc59"
 end
 
 output "bu_pool" do
@@ -97,7 +96,7 @@ resource "server1", type: "server" do
   security_groups "Default"
   associate_public_ip_address true
   cloud_specific_attributes do {
-    "availability_set" => @@deployment.name
+    "availability_set" => join(["availability-set_", last(split(@@deployment.href, "/"))])
   } end
 end
 
@@ -112,7 +111,7 @@ resource "server2", type: "server" do
   security_groups "Default"
   associate_public_ip_address true
   cloud_specific_attributes do {
-    "availability_set" => @@deployment.name
+    "availability_set" => join(["availability-set_", last(split(@@deployment.href, "/"))])
   } end
 end
 
@@ -147,17 +146,17 @@ define launch_handler(@server1,@server2,@lb_ip,@my_pub_lb,$subscription_id) retu
   $lb_ip = @lb_ip.address
 end
 
-define add_to_lb(@server1,@my_pub_lb) return @server1,@my_target_nic do
+define add_to_lb(@server,@my_pub_lb) return @server1,@my_target_nic do
   sub on_error: stop_debugging() do
     call start_debugging()
-    @nics = rs_azure_networking.interface.list(resource_group: @@deployment.name)
+    @nics = rs_azure_networking.interface.list(resource_group: @@deployment.resource_group().name)
     call stop_debugging()
     call sys_log.detail(to_s(@nics))
     @my_target_nic = rs_azure_networking.interface.empty()
     call start_debugging()
     foreach @nic in @nics do
       call sys_log.detail("nic:" + to_s(@nic))
-      if @nic.name =~ @server1.name +"-default"
+      if @nic.name =~ @server.name +"-default"
         @my_target_nic = @nic
       end
     end

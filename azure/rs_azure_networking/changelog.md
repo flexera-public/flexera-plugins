@@ -1,6 +1,6 @@
 Networking Plugin changelog
 
-v1.2 (11-21-2017)
+v1.2 (12-08-2017)
 -----------------
 - moved vNet Peering resource under the `rs_azure_networking` plugin
 - added subnet resource

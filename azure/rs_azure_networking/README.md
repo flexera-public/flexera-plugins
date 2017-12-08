@@ -45,7 +45,8 @@ The resulting resource can be manipulated just like the native RightScale resour
  - rs_azure_networking.subnet
  - rs_azure_networking.vnet
  - rs_azure_networking.interface
- - rs_azure_peering.peering=
+ - rs_azure_networking.network
+ - rs_azure_networking.peering
 
 ## Usage
 ```
@@ -284,17 +285,21 @@ end
 - provisioningState
 
 ## Implementation Notes
-- The Azure Networking Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to an LB resource.)
-
+- The Azure Networking Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to an LB resource.)  
 
 Full list of possible actions can be found on the
 - [Azure Load Balancer API Documentation](https://docs.microsoft.com/en-us/rest/api/network/loadbalancer/)
 - [Azure Network Interface Card API Documentation](https://docs.microsoft.com/en-us/rest/api/network/virtualnetwork/network-interface-cards)
 - [Azure Virtual Network Peerings](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/virtualnetworkpeerings)
+- [Azure Virtual Networks](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/virtualnetworks)
+- [Azure Subnets](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/subnets)
+
 ## Examples
 Please review
 - [lb_test_cat.rb](./lb_test_cat.rb) for a basic load balancer example implementation.
 - [peering_test_cat.rb](./peering_test_cat.rb) for a basic network peering example.
+- [nsg_to_subnet_test_cat.rb](./nsg_to_subnet_test_cat.rb) for an example of attaching a Network Security Group to a subnet
+- [vnet_dns_test_cat.rb](./vnet_dns_test_cat.rb) for an example of setting custom dns servers and tags on a vnet
 
 ## Known Issues / Limitations
 

@@ -1,9 +1,9 @@
-name 'rs_azure_networking_plugin1'
+name 'rs_azure_networking_plugin'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Azure Networking Plugin"
 long_description "Version: 1.2"
-package "plugins/rs_azure_networking_plugin1"
+package "plugins/rs_azure_networking_plugin"
 import "sys_log"
 
 parameter "subscription_id" do
@@ -202,7 +202,7 @@ plugin "rs_azure_networking" do
   end
 
   type "network" do
-    href_templates "{{contains(value[0].type, 'Microsoft.Network/virtualNetworks') && value[0].id || null}}","{{type=='Microsoft.Network/virtualNetworks' && id || null}}","{{value[0].type=='Microsoft.Network/virtualNetworks' && value[].id || null}}"
+    href_templates "{{contains(value[0].type, 'Microsoft.Network/virtualNetworks') && value[0].id || null}}"#,"{{type=='Microsoft.Network/virtualNetworks' && id || null}}","{{value[0].type=='Microsoft.Network/virtualNetworks' && value[].id || null}}"
     provision "provision_vnet"
     delete    "delete_resource"
 
@@ -293,6 +293,11 @@ plugin "rs_azure_networking" do
     end
 
     field "resource_group" do
+      type "string"
+      location "path"
+    end
+
+    field "subscription_id" do
       type "string"
       location "path"
     end
@@ -517,7 +522,7 @@ resource_pool "rs_azure_networking" do
     end
 
     auth "azure_auth", type: "oauth2" do
-      token_url "https://login.microsoftonline.com/09b8fec1-4b8d-48dd-8afa-5c1a775ea0f2/oauth2/token"
+      token_url "https://login.microsoftonline.com/TENANT_ID/oauth2/token"
       grant type: "client_credentials" do
         client_id cred("AZURE_APPLICATION_ID")
         client_secret cred("AZURE_APPLICATION_KEY")
@@ -535,7 +540,7 @@ resource_pool "rs_azure_lb" do
     end
 
     auth "azure_auth", type: "oauth2" do
-      token_url "https://login.microsoftonline.com/09b8fec1-4b8d-48dd-8afa-5c1a775ea0f2/oauth2/token"
+      token_url "https://login.microsoftonline.com/TENANT_ID/oauth2/token"
       grant type: "client_credentials" do
         client_id cred("AZURE_APPLICATION_ID")
         client_secret cred("AZURE_APPLICATION_KEY")
@@ -676,7 +681,7 @@ define provision_peering(@declaration) return @resource do
     call sys_log.summary(join(["Provision ", $type, ": ", $fields["name"]]))
     call sys_log.detail(join(["fields", $fields]))
     call start_debugging()
-    @operation = rs_azure_peering.$type.create($fields)
+    @operation = rs_azure_networking.$type.create($fields)
     call sys_log.detail(to_object(@operation))
     @resource = @operation.show()
     $status = @resource.provisioningState
