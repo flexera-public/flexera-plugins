@@ -44,6 +44,45 @@ plugin "rs_aws_route53" do
       output_path "//GetHostedZoneResponse/HostedZone"
     end
   end
+
+  type "resource_recordset" do
+    href_templates "{{//ChangeResourceRecordSetsRequest/ChangeInfo/Id}}", "{{//GetChangeResponse/ChangeInfo/Id}}"
+    provision "provision_resource"
+    delete "delete_recordset"
+    
+    field "hosted_zone_id" do
+      type "string"
+      location "path"
+      required true
+    end
+    
+    field "change_resource_record_sets_request" do
+      alias_for "ChangeResourceRecordSetsRequest"
+      type "composite"
+      required true
+      location "body"
+    end
+
+    output "Id", "Status","Comment","SubmittedAt"
+
+    action "create" do
+      verb "POST"
+      path "/2013-04-01/hostedzone/$hosted_zone_id/rrset/"
+      output_path "//ChangeResourceRecordSetsResponse/ChangeInfo}}"
+    end
+
+    action "delete" do
+      verb "POST"
+      path "/2013-04-01/hostedzone/$hosted_zone_id/rrset/"
+      output_path "//ChangeResourceRecordSetsResponse/ChangeInfo}}"
+    end
+
+    action "get" do
+      verb "GET"
+      path "/2013-04-01/change/$Id"
+      output_path "//GetChangeResponse/ChangeInfo"
+    end
+  end
 end
 
 resource_pool "route53" do
@@ -53,8 +92,8 @@ resource_pool "route53" do
     version     4
     service    'route53'
     region     'us-east-1'
-    access_key cred('RR53_KEY')
-    secret_key cred('RR53_SECRET')
+    access_key cred('AWS_ACCESS_KEY_ID')
+    secret_key cred('AWS_SECRET_ACCESS_KEY')
   end
 end
 
