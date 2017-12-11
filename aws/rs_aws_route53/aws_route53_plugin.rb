@@ -102,11 +102,3 @@ define stop_debugging() do
     $$debugging = false
   end
 end
-
-resource "hostedzone", type: "rs_aws_route53.hosted_zone" do
-  create_hosted_zone_request do {
-    "xmlns" => "https://route53.amazonaws.com/doc/2013-04-01/",
-    "Name" => [ join([first(split(uuid(),'-')), ".rsps.com"]) ],
-    "CallerReference" => [ uuid() ]
-  } end
-end
