@@ -42,8 +42,11 @@ The resulting resource can be manipulated just like the native RightScale resour
 
 ## Supported Resources
  - rs_azure_lb.load_balancer
+ - rs_azure_networking.subnet
+ - rs_azure_networking.vnet
  - rs_azure_networking.interface
- - rs_azure_peering.peering
+ - rs_azure_networking.network
+ - rs_azure_networking.peering
 
 ## Usage
 ```
@@ -140,6 +143,7 @@ define add_to_lb(@server,@my_pub_lb) return @server1,@updated_nic do
   @updated_nic = @my_target_nic.update($nic)
 end
 ```
+
 ## Resources
 ## rs_azure_lb.load_balancer
 #### Supported Fields
@@ -170,6 +174,57 @@ end
 - location
 - kind
 
+## rs_azure_networking.network
+#### Supported Fields
+| Field Name | Required? | Description |
+|------------|-----------|-------------|
+|name|Yes|The name of the vnet.|
+|resource_group|Yes|Name of resource group in which to launch the Deployment|
+|location|Yes|Datacenter to launch in|
+|properties| Hash of vNet properties|
+#### Supported Actions
+
+| Action | API Implementation | Support Level |
+|--------------|:----:|:-------------:|
+| create&update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/VirtualNetworks/CreateOrUpdate) | Supported |
+| destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/virtualnetworks/delete) | Supported |
+| get | [Get](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/virtualnetworks/get)| Supported |
+| list | [Get](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/virtualnetworks/list)| Supported |
+
+#### Supported Outputs
+- id
+- name
+- type
+- location
+- properties
+- tags
+
+## rs_azure_networking.subnet
+#### Supported Fields
+| Field Name | Required? | Description |
+|------------|-----------|-------------|
+|name|Yes|The name of the NIC.|
+|resource_group|Yes|Name of resource group in which to launch the Deployment|
+|vnet_name|Yes|Name of the vNet that contains the subnet|
+|location|Yes|Datacenter to launch in|
+|properties| Hash of subnet properties|
+#### Supported Actions
+
+| Action | API Implementation | Support Level |
+|--------------|:----:|:-------------:|
+| create&update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/Subnets/CreateOrUpdate) | Supported |
+| destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/subnets/delete) | Supported |
+| get | [Get](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/subnets/get)| Supported |
+| list | [Get](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/subnets/list)| Supported |
+
+#### Supported Outputs
+- id
+- name
+- type
+- location
+- properties
+- tags
+
 ## rs_azure_networking.interface
 #### Supported Fields
 | Field Name | Required? | Description |
@@ -195,8 +250,7 @@ end
 - properties
 - tags
 
-## Resources
-## rs_azure_peering.peering
+## rs_azure_networking.peering
 #### Supported Fields
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
@@ -231,17 +285,21 @@ end
 - provisioningState
 
 ## Implementation Notes
-- The Azure Networking Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to an LB resource.)
-
+- The Azure Networking Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to an LB resource.)  
 
 Full list of possible actions can be found on the
 - [Azure Load Balancer API Documentation](https://docs.microsoft.com/en-us/rest/api/network/loadbalancer/)
 - [Azure Network Interface Card API Documentation](https://docs.microsoft.com/en-us/rest/api/network/virtualnetwork/network-interface-cards)
 - [Azure Virtual Network Peerings](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/virtualnetworkpeerings)
+- [Azure Virtual Networks](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/virtualnetworks)
+- [Azure Subnets](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/subnets)
+
 ## Examples
 Please review
 - [lb_test_cat.rb](./lb_test_cat.rb) for a basic load balancer example implementation.
 - [peering_test_cat.rb](./peering_test_cat.rb) for a basic network peering example.
+- [nsg_to_subnet_test_cat.rb](./nsg_to_subnet_test_cat.rb) for an example of attaching a Network Security Group to a subnet
+- [vnet_dns_test_cat.rb](./vnet_dns_test_cat.rb) for an example of setting custom dns servers and tags on a vnet
 
 ## Known Issues / Limitations
 

@@ -15,20 +15,20 @@ permission 'read_creds' do
 end
 
 resource 'network1', type: 'network' do
-  name        'Network1'
-  description	'Network 1'
+  name        join(["network1-", last(split(@@deployment.href, "/"))])
+  description	join(["network1-", last(split(@@deployment.href, "/"))])
   cloud       'AzureRM Central US'
   cidr_block  '10.1.0.0/16'
 end
 
 resource 'network2', type: 'network' do
-  name        'Network2'
-  description	'Network 2'
+  name        join(["network2-", last(split(@@deployment.href, "/"))])
+  description	join(["network2-", last(split(@@deployment.href, "/"))])
   cloud       'AzureRM Central US'
   cidr_block  '10.2.0.0/16'
 end
 
-resource 'net1_to_net2', type: 'rs_azure_peering.peering' do
+resource 'net1_to_net2', type: 'rs_azure_networking.peering' do
   name 'net1-to-net2'
   resource_group "@@deployment.resource_group().name"
   subscription_id $subscription_id
@@ -42,7 +42,7 @@ resource 'net1_to_net2', type: 'rs_azure_peering.peering' do
   } end
 end
 
-resource 'net2_to_net1', type: 'rs_azure_peering.peering' do
+resource 'net2_to_net1', type: 'rs_azure_networking.peering' do
   name 'net2-to-net1'
   resource_group "@@deployment.resource_group().name"
   subscription_id $subscription_id
