@@ -31,8 +31,7 @@ plugin "rs_azure_networking" do
   end
 
   type "interface" do
-    #href_templates "{{id}}","{{value[*].id}}"
-    href_templates "{{contains(id, 'Microsoft.Network/networkInterfaces') && id || null}}"
+    href_templates "{{(type(id)=='string' && contains(id, 'Microsoft.Network/networkInterfaces')) && id || null}}","{{(type(value)=='array' && contains(value[0].id, 'Microsoft.Network/networkInterfaces')) && value[].id || null}}"
     provision "provision_interface"
     delete    "delete_resource"
 
@@ -74,6 +73,7 @@ plugin "rs_azure_networking" do
     end
 
     action "show" do
+      type "interface"
       path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Network/networkInterfaces/$name"
       verb "GET"
 
@@ -87,6 +87,7 @@ plugin "rs_azure_networking" do
     end
 
     action "list" do
+      type "interface"
       path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Network/networkInterfaces"
       verb "GET"
 
@@ -113,7 +114,7 @@ plugin "rs_azure_networking" do
   end
 
   type "subnet" do
-    href_templates "{{contains(value[0].id, '/subnets/') && value[0].id || null}}"
+    href_templates "{{(type(id)=='string' && contains(id, '/subnets/')) && id || null}}","{{(type(value)=='array' && contains(value[0].id, '/subnets/')) && value[].id || null}}"
     provision "provision_subnet"
     delete    "delete_resource"
 
@@ -202,7 +203,7 @@ plugin "rs_azure_networking" do
   end
 
   type "network" do
-    href_templates "{{contains(value[0].type, 'Microsoft.Network/virtualNetworks') && value[0].id || null}}"#,"{{type=='Microsoft.Network/virtualNetworks' && id || null}}","{{value[0].type=='Microsoft.Network/virtualNetworks' && value[].id || null}}"
+    href_templates "{{(type(type)=='string' && contains(type, 'Microsoft.Network/virtualNetworks')) && id || null}}","{{(type(value)=='array' && contains(value[0].type, 'Microsoft.Network/virtualNetworks')) && value[].id || null}}"
     provision "provision_vnet"
     delete    "delete_resource"
 

@@ -1,6 +1,6 @@
-name 'Azure Full Suite'
+name 'Azure Load Balancer - Test CAT'
 rs_ca_ver 20161221
-short_description "Azure Full Suite - Test CAT"
+short_description "Azure Load Balancer - Test CAT"
 import "sys_log"
 import "plugins/rs_azure_networking_plugin"
 
@@ -36,7 +36,7 @@ resource "my_pub_lb", type: "rs_azure_lb.load_balancer" do
      "name" => "ip1",
      "properties" => {
         "publicIPAddress" => {
-           "id" => join(["/subscriptions/",$subscription_id,"/resourceGroups/",@@deployment.name,"/providers/Microsoft.Network/publicIPAddresses/",@@deployment.name])
+          "id" => join(["/subscriptions/",$subscription_id,"/resourceGroups/",@@deployment.name,"/providers/Microsoft.Network/publicIPAddresses/",@@deployment.name])
         }
       }
     }
@@ -44,7 +44,7 @@ resource "my_pub_lb", type: "rs_azure_lb.load_balancer" do
 
   backendAddressPools do [
     {
-      "name" => "pool1" 
+      "name" => "pool1"
     }
   ] end
 
@@ -54,10 +54,10 @@ resource "my_pub_lb", type: "rs_azure_lb.load_balancer" do
       "properties" => {
          "frontendIPConfiguration" => {
             "id" => join(["/subscriptions/",$subscription_id,"/resourceGroups/",@@deployment.name,"/providers/Microsoft.Network/loadBalancers/",join(["my-pub-lb-", last(split(@@deployment.href, "/"))]),"/frontendIPConfigurations/ip1"])
-         },  
+         },
          "backendAddressPool" => {
             "id" => join(["/subscriptions/",$subscription_id,"/resourceGroups/",@@deployment.name,"/providers/Microsoft.Network/loadBalancers/",join(["my-pub-lb-", last(split(@@deployment.href, "/"))]),"/backendAddressPools/pool1"])
-         },  
+         },
          "protocol" => "Tcp",
          "frontendPort" => 80,
          "backendPort" => 80,
@@ -68,7 +68,7 @@ resource "my_pub_lb", type: "rs_azure_lb.load_balancer" do
          "idleTimeoutInMinutes" => 4,
          "loadDistribution" => "Default"
       }
-    }  
+    }
   ] end
 
   probes do [
@@ -96,7 +96,8 @@ resource "server1", type: "server" do
   security_groups "Default"
   associate_public_ip_address true
   cloud_specific_attributes do {
-    "availability_set" => join(["availability-set_", last(split(@@deployment.href, "/"))])
+    "availability_set" => join(["availability-set_", last(split(@@deployment.href, "/"))]),
+    "root_volume_type_uid" => "Standard_LRS"
   } end
 end
 
@@ -111,7 +112,8 @@ resource "server2", type: "server" do
   security_groups "Default"
   associate_public_ip_address true
   cloud_specific_attributes do {
-    "availability_set" => join(["availability-set_", last(split(@@deployment.href, "/"))])
+    "availability_set" => join(["availability-set_", last(split(@@deployment.href, "/"))]),
+    "root_volume_type_uid" => "Standard_LRS"
   } end
 end
 
@@ -149,28 +151,34 @@ end
 define add_to_lb(@server,@my_pub_lb) return @server,@my_target_nic do
   sub on_error: stop_debugging() do
     call start_debugging()
-    @nics = rs_azure_networking.interface.list(resource_group: @@deployment.resource_group().name)
+    @nics = rs_azure_networking.interface.list(resource_group: @@deployment.name)
     call stop_debugging()
-    call sys_log.detail(to_s(@nics))
+    call sys_log.detail("all nics:"+to_s(@nics))
     @my_target_nic = rs_azure_networking.interface.empty()
-    call start_debugging()
     foreach @nic in @nics do
-      call sys_log.detail("nic:" + to_s(@nic))
+      call sys_log.detail("server name:"+to_s(@server.name))
+      call start_debugging()
+      @nic.get()
+      call stop_debugging()
+      call sys_log.detail("nic:"+to_s(@nic))
+      call sys_log.detail("nic_name:" + @nic.name)
       if @nic.name =~ @server.name +"-default"
         @my_target_nic = @nic
+        call sys_log.detail("target nic: true")
+      else
+        call sys_log.detail("target nic: false")
       end
     end
-    call stop_debugging()
     $object = to_object(@my_target_nic)
-    call sys_log.detail("object:" + to_s($object)+"\n")
+    call sys_log.detail("target nic object:" + to_s($object)+"\n")
     $fields = $object["details"]
-    call sys_log.detail("fields:" + to_s($fields) + "\n")
+    call sys_log.detail("target nic fields:" + to_s($fields) + "\n")
     $nic = $fields[0]
-    call sys_log.detail("nic:" + to_s($nic))
+    call sys_log.detail("target nic:" + to_s($nic))
     $nic["properties"]["ipConfigurations"][0]["properties"]["loadBalancerBackendAddressPools"] = []
     $nic["properties"]["ipConfigurations"][0]["properties"]["loadBalancerBackendAddressPools"][0] = {}
     $nic["properties"]["ipConfigurations"][0]["properties"]["loadBalancerBackendAddressPools"][0]["id"] = @my_pub_lb.backendAddressPools[0]["id"]
-    call sys_log.detail("updated_nic:" + to_s($nic))
+    call sys_log.detail("updated target nic:" + to_s($nic))
     call start_debugging()
     @updated_nic = @my_target_nic.update($nic)
     call stop_debugging()
