@@ -710,7 +710,7 @@ resource_pool "rds" do
 end
 
 define provision_db_instance(@declaration) return @db_instance do
-  sub on_error: stop_debugging() do
+  sub on_error: plugin_generics.stop_debugging() do
     call plugin_generics.start_debugging()
     $object = to_object(@declaration)
     $fields = $object["fields"]
@@ -723,7 +723,7 @@ define provision_db_instance(@declaration) return @db_instance do
       sleep_until(@db_instance.DBInstanceStatus == "available")
     end 
     @db_instance = @db_instance.get()
-    call stop_debugging()
+    call plugin_generics.stop_debugging()
   end
 end
 
@@ -748,12 +748,12 @@ define delete_db_instance(@db_instance) do
     if @db_instance.DBInstanceStatus != "deleting"
       @db_instance.destroy({ "skip_final_snapshot": "true" })
     end
-    call stop_debugging()
+    call plugin_generics.stop_debugging()
   end 
 end
 
 define provision_sg(@declaration) return @sec_group do
-  sub on_error: stop_debugging() do
+  sub on_error: plugin_generics.stop_debugging() do
     call plugin_generics.start_debugging()
     $object = to_object(@declaration)
     $fields = $object["fields"]
