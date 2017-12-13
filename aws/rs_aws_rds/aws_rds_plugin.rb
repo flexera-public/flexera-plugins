@@ -5,6 +5,7 @@ short_description "Amazon Web Services - Relational Database Service"
 long_description "Version: 1.3"
 package "plugins/rs_aws_rds"
 import "sys_log"
+import "plugin_generics"
 
 plugin "rs_aws_rds" do
   endpoint do
@@ -710,7 +711,7 @@ end
 
 define provision_db_instance(@declaration) return @db_instance do
   sub on_error: stop_debugging() do
-    call start_debugging()
+    call plugin_generics.start_debugging()
     $object = to_object(@declaration)
     $fields = $object["fields"]
     if $fields["db_snapshot_identifier"] != null 
@@ -729,6 +730,8 @@ end
 define handle_retries($attempts) do
   if $attempts <= 6
     sleep(10*to_n($attempts))
+    call sys_log.set_task_target(@@deployment)
+    call sys_log.summary("error:"+$_error["type"] + ": " + $_error["message"])
     call sys_log.detail("error:"+$_error["type"] + ": " + $_error["message"])
     log_error($_error["type"] + ": " + $_error["message"])
     $_error_behavior = "retry"
@@ -741,7 +744,7 @@ define delete_db_instance(@db_instance) do
   $delete_count = 0
   sub on_error: handle_retries($delete_count) do
     $delete_count = $delete_count + 1
-    call start_debugging()
+    call plugin_generics.start_debugging()
     if @db_instance.DBInstanceStatus != "deleting"
       @db_instance.destroy({ "skip_final_snapshot": "true" })
     end
@@ -751,12 +754,12 @@ end
 
 define provision_sg(@declaration) return @sec_group do
   sub on_error: stop_debugging() do
-    call start_debugging()
+    call plugin_generics.start_debugging()
     $object = to_object(@declaration)
     $fields = $object["fields"]
     @sec_group = rs_aws_rds.security_groups.create($fields)
     @sec_group = @sec_group.get()
-    call stop_debugging()
+    call plugin_generics.stop_debugging()
   end
 end
 
@@ -780,20 +783,5 @@ define delete_db_subnet_group(@db_subnet_group) do
   sub on_error: handle_retries($delete_count) do
     $delete_count = $delete_count + 1
     @db_subnet_group.destroy()
-  end
-end
-
-define start_debugging() do
-  if $$debugging == false || logic_and($$debugging != false, $$debugging != true)
-    initiate_debug_report()
-    $$debugging = true
-  end
-end
-
-define stop_debugging() do
-  if $$debugging == true
-    $debug_report = complete_debug_report()
-    call sys_log.detail($debug_report)
-    $$debugging = false
   end
 end
