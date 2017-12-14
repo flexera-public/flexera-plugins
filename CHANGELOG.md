@@ -1,15 +1,11 @@
 # Change Log
 
-## [Unreleased](https://github.com/rightscale/rightscale-plugins/tree/HEAD)
-
-[Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-12-11-2017...HEAD)
+## [Week-of-12-11-2017](https://github.com/rightscale/rightscale-plugins/tree/Week-of-12-11-2017) (2017-12-14)
+[Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-11-27-2017...Week-of-12-11-2017)
 
 **Fixed bugs:**
 
 - stop\_debugging needs updating on all plugins, time to create a generic library [\#112](https://github.com/rightscale/rightscale-plugins/issues/112)
-
-## [Week-of-12-11-2017](https://github.com/rightscale/rightscale-plugins/tree/Week-of-12-11-2017) (2017-12-14)
-[Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-11-27-2017...Week-of-12-11-2017)
 
 **Merged pull requests:**
 
