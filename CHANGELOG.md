@@ -1,5 +1,21 @@
 # Change Log
 
+## [Unreleased](https://github.com/rightscale/rightscale-plugins/tree/HEAD)
+
+[Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-12-11-2017...HEAD)
+
+**Fixed bugs:**
+
+- stop\_debugging needs updating on all plugins, time to create a generic library [\#112](https://github.com/rightscale/rightscale-plugins/issues/112)
+
+## [Week-of-12-11-2017](https://github.com/rightscale/rightscale-plugins/tree/Week-of-12-11-2017) (2017-12-14)
+[Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-11-27-2017...Week-of-12-11-2017)
+
+**Merged pull requests:**
+
+- AWS RDS Plugin - updating to use generics, fix stop\_debugging.  [\#113](https://github.com/rightscale/rightscale-plugins/pull/113) ([rshade](https://github.com/rshade))
+- Add Azure virtual network and subnet types [\#110](https://github.com/rightscale/rightscale-plugins/pull/110) ([srpomeroy](https://github.com/srpomeroy))
+
 ## [Week-of-11-27-2017](https://github.com/rightscale/rightscale-plugins/tree/Week-of-11-27-2017) (2017-11-30)
 [Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-11-05-2017...Week-of-11-27-2017)
 
