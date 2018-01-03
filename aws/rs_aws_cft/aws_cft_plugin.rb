@@ -181,6 +181,246 @@ plugin "rs_aws_cft" do
       type "string"
       location "query"
     end 
+    
+    field "parameter_11_name" do
+      alias_for "Parameters.member.11.ParameterKey"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_11_value" do
+      alias_for "Parameters.member.11.ParameterValue"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_12_name" do
+      alias_for "Parameters.member.12.ParameterKey"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_12_value" do
+      alias_for "Parameters.member.12.ParameterValue"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_13_name" do
+      alias_for "Parameters.member.13.ParameterKey"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_13_value" do
+      alias_for "Parameters.member.13.ParameterValue"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_14_name" do
+      alias_for "Parameters.member.14.ParameterKey"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_14_value" do
+      alias_for "Parameters.member.14.ParameterValue"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_15_name" do
+      alias_for "Parameters.member.15.ParameterKey"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_15_value" do
+      alias_for "Parameters.member.15.ParameterValue"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_16_name" do
+      alias_for "Parameters.member.16.ParameterKey"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_16_value" do
+      alias_for "Parameters.member.16.ParameterValue"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_17_name" do
+      alias_for "Parameters.member.17.ParameterKey"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_17_value" do
+      alias_for "Parameters.member.17.ParameterValue"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_18_name" do
+      alias_for "Parameters.member.18.ParameterKey"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_18_value" do
+      alias_for "Parameters.member.18.ParameterValue"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_19_name" do
+      alias_for "Parameters.member.19.ParameterKey"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_19_value" do
+      alias_for "Parameters.member.19.ParameterValue"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_20_name" do
+      alias_for "Parameters.member.20.ParameterKey"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_20_value" do
+      alias_for "Parameters.member.20.ParameterValue"
+      type "string"
+      location "query"
+    end 
+    
+    field "parameter_21_name" do
+      alias_for "Parameters.member.21.ParameterKey"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_21_value" do
+      alias_for "Parameters.member.21.ParameterValue"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_22_name" do
+      alias_for "Parameters.member.22.ParameterKey"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_22_value" do
+      alias_for "Parameters.member.22.ParameterValue"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_23_name" do
+      alias_for "Parameters.member.23.ParameterKey"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_23_value" do
+      alias_for "Parameters.member.23.ParameterValue"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_24_name" do
+      alias_for "Parameters.member.24.ParameterKey"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_24_value" do
+      alias_for "Parameters.member.24.ParameterValue"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_25_name" do
+      alias_for "Parameters.member.25.ParameterKey"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_25_value" do
+      alias_for "Parameters.member.25.ParameterValue"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_26_name" do
+      alias_for "Parameters.member.26.ParameterKey"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_26_value" do
+      alias_for "Parameters.member.26.ParameterValue"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_27_name" do
+      alias_for "Parameters.member.27.ParameterKey"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_27_value" do
+      alias_for "Parameters.member.27.ParameterValue"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_28_name" do
+      alias_for "Parameters.member.28.ParameterKey"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_28_value" do
+      alias_for "Parameters.member.28.ParameterValue"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_29_name" do
+      alias_for "Parameters.member.29.ParameterKey"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_29_value" do
+      alias_for "Parameters.member.29.ParameterValue"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_30_name" do
+      alias_for "Parameters.member.30.ParameterKey"
+      type "string"
+      location "query"
+    end 
+
+    field "parameter_30_value" do
+      alias_for "Parameters.member.30.ParameterValue"
+      type "string"
+      location "query"
+    end 
 
     field "resource_type_1" do
       alias_for "ResourceTypes.member.1"
@@ -490,6 +730,206 @@ plugin "rs_aws_cft" do
 
       field "parameter_10_value" do
         alias_for "Parameters.member.10.ParameterValue"
+        location "query"
+      end 
+      
+      field "parameter_11_name" do
+        alias_for "Parameters.member.11.ParameterKey"
+        location "query"
+      end 
+  
+      field "parameter_11_value" do
+        alias_for "Parameters.member.11.ParameterValue"
+        location "query"
+      end 
+  
+      field "parameter_12_name" do
+        alias_for "Parameters.member.12.ParameterKey"
+        location "query"
+      end 
+  
+      field "parameter_12_value" do
+        alias_for "Parameters.member.12.ParameterValue"
+        location "query"
+      end 
+  
+      field "parameter_13_name" do
+        alias_for "Parameters.member.13.ParameterKey"
+        location "query"
+      end 
+  
+      field "parameter_13_value" do
+        alias_for "Parameters.member.13.ParameterValue"
+        location "query"
+      end 
+  
+      field "parameter_14_name" do
+        alias_for "Parameters.member.14.ParameterKey"
+        location "query"
+      end 
+  
+      field "parameter_14_value" do
+        alias_for "Parameters.member.4.ParameterValue"
+        location "query"
+      end 
+  
+      field "parameter_15_name" do
+        alias_for "Parameters.member.15.ParameterKey"
+        location "query"
+      end 
+  
+      field "parameter_15_value" do
+        alias_for "Parameters.member.15.ParameterValue"
+        location "query"
+      end 
+  
+      field "parameter_16_name" do
+        alias_for "Parameters.member.16.ParameterKey"
+        location "query"
+      end 
+  
+      field "parameter_16_value" do
+        alias_for "Parameters.member.16.ParameterValue"
+        location "query"
+      end 
+  
+      field "parameter_17_name" do
+        alias_for "Parameters.member.17.ParameterKey"
+        location "query"
+      end 
+  
+      field "parameter_17_value" do
+        alias_for "Parameters.member.17.ParameterValue"
+        location "query"
+      end 
+  
+      field "parameter_18_name" do
+        alias_for "Parameters.member.18.ParameterKey"
+        location "query"
+      end 
+  
+      field "parameter_18_value" do
+        alias_for "Parameters.member.18.ParameterValue"
+        location "query"
+      end 
+  
+      field "parameter_19_name" do
+        alias_for "Parameters.member.19.ParameterKey"
+        location "query"
+      end 
+  
+      field "parameter_19_value" do
+        alias_for "Parameters.member.19.ParameterValue"
+        location "query"
+      end 
+  
+      field "parameter_20_name" do
+        alias_for "Parameters.member.20.ParameterKey"
+        location "query"
+      end 
+  
+      field "parameter_20_value" do
+        alias_for "Parameters.member.20.ParameterValue"
+        location "query"
+      end 
+      
+      field "parameter_21_name" do
+        alias_for "Parameters.member.21.ParameterKey"
+        location "query"
+      end 
+  
+      field "parameter_21_value" do
+        alias_for "Parameters.member.21.ParameterValue"
+        location "query"
+      end 
+  
+      field "parameter_22_name" do
+        alias_for "Parameters.member.22.ParameterKey"
+        location "query"
+      end 
+  
+      field "parameter_22_value" do
+        alias_for "Parameters.member.22.ParameterValue"
+        location "query"
+      end 
+  
+      field "parameter_23_name" do
+        alias_for "Parameters.member.23.ParameterKey"
+        location "query"
+      end 
+  
+      field "parameter_23_value" do
+        alias_for "Parameters.member.23.ParameterValue"
+        location "query"
+      end 
+  
+      field "parameter_24_name" do
+        alias_for "Parameters.member.24.ParameterKey"
+        location "query"
+      end 
+  
+      field "parameter_24_value" do
+        alias_for "Parameters.member.24.ParameterValue"
+        location "query"
+      end 
+  
+      field "parameter_25_name" do
+        alias_for "Parameters.member.25.ParameterKey"
+        location "query"
+      end 
+  
+      field "parameter_25_value" do
+        alias_for "Parameters.member.25.ParameterValue"
+        location "query"
+      end 
+  
+      field "parameter_26_name" do
+        alias_for "Parameters.member.26.ParameterKey"
+        location "query"
+      end 
+  
+      field "parameter_26_value" do
+        alias_for "Parameters.member.26.ParameterValue"
+        location "query"
+      end 
+  
+      field "parameter_27_name" do
+        alias_for "Parameters.member.27.ParameterKey"
+        location "query"
+      end 
+  
+      field "parameter_27_value" do
+        alias_for "Parameters.member.27.ParameterValue"
+        location "query"
+      end 
+  
+      field "parameter_28_name" do
+        alias_for "Parameters.member.28.ParameterKey"
+        location "query"
+      end 
+  
+      field "parameter_28_value" do
+        alias_for "Parameters.member.28.ParameterValue"
+        location "query"
+      end 
+  
+      field "parameter_29_name" do
+        alias_for "Parameters.member.29.ParameterKey"
+        location "query"
+      end 
+  
+      field "parameter_29_value" do
+        alias_for "Parameters.member.29.ParameterValue"
+        location "query"
+      end 
+  
+      field "parameter_30_name" do
+        alias_for "Parameters.member.30.ParameterKey"
+        location "query"
+      end 
+  
+      field "parameter_30_value" do
+        alias_for "Parameters.member.30.ParameterValue"
         location "query"
       end 
 
