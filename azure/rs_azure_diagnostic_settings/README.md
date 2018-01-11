@@ -23,7 +23,7 @@ The Azure Service Diagnostic Settings Plugin integrates RightScale Self-Service 
 1. [Retrieve the Application ID & Authentication Key](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal#get-application-id-and-authentication-key)
 1. Create RightScale Credentials with values that match the Application ID (Credential name: `AZURE_APPLICATION_ID`) & Authentication Key (Credential name: `AZURE_APPLICATION_KEY`)
 1. [Retrieve your Tenant ID](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal#get-tenant-id)
-1. Update `rs_azure_template.rb` Plugin with your Tenant ID. 
+1. Update `rs_azure_diagnostic_settings_plugin.rb` Plugin with your Tenant ID. 
    - Replace "TENANT_ID" in `token_url "https://login.microsoftonline.com/TENANT_ID/oauth2/token"` with your Tenant ID
 1. Navigate to the appropriate Self-Service portal
    - For more details on using the portal review the [SS User Interface Guide](http://docs.rightscale.com/ss/guides/ss_user_interface_guide.html)
