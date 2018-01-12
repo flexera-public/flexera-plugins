@@ -1,7 +1,7 @@
 name "Google Container Engine Plugin"
 rs_ca_ver 20161221
 short_description "GKE plugin"
-long_description "Version: 1.0"
+long_description "Version: 1.1"
 type 'plugin'
 package "plugins/gke"
 import "sys_log"
