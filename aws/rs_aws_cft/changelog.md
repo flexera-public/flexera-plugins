@@ -1,5 +1,9 @@
 CFT Plugin changelog
 
+v1.3
+----
+- Add support for up to 30 CFT parameters.
+
 v1.2
 ----
 - cleanup comments
