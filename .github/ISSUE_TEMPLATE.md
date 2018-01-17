@@ -4,7 +4,7 @@
 ### Issue Type
 [Bug -or- Feature Request -or- New Plugin Request]
 
-### Plugin version
+### Plugin version (Bug -or Feature Request Only)
 [Version of Plugin in use, this can be found in the long_description]
 
 ### Use Case (Feature Request -or- New Plugin Request Only)
