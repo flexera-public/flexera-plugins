@@ -7,14 +7,11 @@
 ### Plugin version
 [Version of Plugin in use, this can be found in the long_description]
 
-### Scenario:
-[What you are trying to achieve and you can't?]
+### Use Case (Feature Request -or- New Policy Request Only)
+[Describe the use case for this feature request or new plugin request]
 
-### Steps to Reproduce:
-[If you are filing an issue what are the things we need to do in order to reproduce your problem? How are you using this plugin or any resource types & actions it includes?]
+### Code Snippet (Bug Only)
+[Please provide any relevant code snippets (ie. CAT resource declaration, RCL, etc.) as it relates to the bug]
 
-### Expected Result:
-[What are you expecting to happen as the consequence of above reproduction steps?]
-
-### Actual Result:
-[What actually happens after the reproduction steps? Include the error output or a link to a gist if possible.]
+### Error Messages (Bug Only)
+[Provide any error messages returned (if applicable)]
