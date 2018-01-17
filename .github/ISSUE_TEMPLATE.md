@@ -7,7 +7,7 @@
 ### Plugin version
 [Version of Plugin in use, this can be found in the long_description]
 
-### Use Case (Feature Request -or- New Policy Request Only)
+### Use Case (Feature Request -or- New Plugin Request Only)
 [Describe the use case for this feature request or new plugin request]
 
 ### Code Snippet (Bug Only)
