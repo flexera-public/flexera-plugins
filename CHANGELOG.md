@@ -1,11 +1,20 @@
 # Change Log
 
+## [Week-of-01-15-2018](https://github.com/rightscale/rightscale-plugins/tree/Week-of-01-15-2018) (2018-01-18)
+[Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-12-11-2017...Week-of-01-15-2018)
+
+**Merged pull requests:**
+
+- Google GKE Plugin: minor corrections to the CAT \(version used\) and README. [\#119](https://github.com/rightscale/rightscale-plugins/pull/119) ([MitchellGerdisch](https://github.com/MitchellGerdisch))
+- Azure Service Diagnostic Settings plugin - Initial Release [\#117](https://github.com/rightscale/rightscale-plugins/pull/117) ([srpomeroy](https://github.com/srpomeroy))
+- AWS CloudFormation Plugin: Increased number of allowed CFT parameters from 10 to 30. [\#115](https://github.com/rightscale/rightscale-plugins/pull/115) ([MitchellGerdisch](https://github.com/MitchellGerdisch))
+
 ## [Week-of-12-11-2017](https://github.com/rightscale/rightscale-plugins/tree/Week-of-12-11-2017) (2017-12-14)
 [Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-11-27-2017...Week-of-12-11-2017)
 
 **Fixed bugs:**
 
-- stop\_debugging needs updating on all plugins, time to create a generic library [\#112](https://github.com/rightscale/rightscale-plugins/issues/112)
+- RDS Plugin: fix stop\_debugging  [\#112](https://github.com/rightscale/rightscale-plugins/issues/112)
 
 **Merged pull requests:**
 
