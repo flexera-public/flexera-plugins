@@ -2,8 +2,8 @@ name 'aws_elb_plugin'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Amazon Web Services - Elastic Load Balancer"
-long_description "Version: 1.0"
-package "plugin/rs_aws_elb"
+long_description "Version: 1.1"
+package "plugins/rs_aws_elb"
 import "sys_log"
 
 plugin "rs_aws_elb" do
@@ -11,6 +11,9 @@ plugin "rs_aws_elb" do
     default_host "elasticloadbalancing.amazonaws.com"
     default_scheme "https"
     path "/"
+    headers do {
+      "content-type" => "application/xml"
+    } end
     query do {
       "Version" => "2012-06-01"
     } end
@@ -198,87 +201,33 @@ resource_pool "elb_pool" do
   end
 end
 
-parameter "lb_name" do
-  label "ELB Name"
-  description "ELB Name"
-  default "myelb-1"
-  type "string"
-end
-
-output "list_elb" do
-  label 'list action'
-end
-
-resource "my_elb", type: "rs_aws_elb.elb" do
-  name $lb_name
-  list_lbport "80"
-  list_instport "80"
-  list_proto "http"
-  list_instproto "http"
-  #subnet1 "subnet-7c295240"
-  #security_group1 "sg-a9b9e8d6"
-  az1 "us-east-1a"
-  az2 "us-east-1d"
-  description "a simple elb"
-end
-
-operation 'list_elb' do
-  definition 'list_elbs'
-  output_mappings do{
-    $list_elb => $object
-  } end
-end
-
 define provision_elb(@declaration) return @elb do
   sub on_error: stop_debugging() do
     $object = to_object(@declaration)
     $fields = $object["fields"]
     $name = $fields['name']
-    # call sys_log.set_task_target(@@deployment)
-    # call sys_log.summary("ELB Object")
-    # call sys_log.detail($fields)
-    
-    # call sys_log.set_task_target(@@deployment)
-    # call sys_log.summary("Create ELB")
-    # call start_debugging()
-    @elb = rs_aws_elb.elb.create($fields)
-   #  call stop_debugging()
+    call sys_log.set_task_target(@@deployment)
+    call sys_log.summary("ELB Object")
+    call sys_log.detail($fields)
 
-   # call sys_log.set_task_target(@@deployment)
-   # call sys_log.summary("ELB Object")
+    call start_debugging()
+    @elb = rs_aws_elb.elb.create($fields)
+    call stop_debugging()
+
     $elb = to_object(@elb)
-   # call sys_log.detail(join(["Original: ",to_object(@elb)]))
     $elb["hrefs"][0] = join(["?Action=DescribeLoadBalancers&LoadBalancerNames.member.1=",$name])
     @elb = $elb
-   # call sys_log.detail(join(["Modified: ",to_object(@elb)]))
-    
-   # call sys_log.set_task_target(@@deployment)
-   # call sys_log.summary("Get ELB")
-   # call start_debugging()
+    call start_debugging()
     @elb = @elb.get()
-   # call stop_debugging()
-   # call sys_log.detail(join(["After Get: ",to_object(@elb)]))
+    call stop_debugging()
   end
-end
-
-define list_elbs() return $object do
-#  call sys_log.set_task_target(@@deployment)
-#  call sys_log.summary("List ELB")
-#  call start_debugging()
-  @elbs = rs_aws_elb.elb.list()
-#  call stop_debugging()
-  $object = to_object(first(@elbs))
-  $object = to_s($object)
 end
 
 define delete_elb(@elb) do
   sub on_error: stop_debugging() do
-#    call sys_log.set_task_target(@@deployment)
-#    call sys_log.summary("Destroy ELB")
-#    call sys_log.detail(to_object(@elb))
-#    call start_debugging()
+    call start_debugging()
     @elb.destroy()
-#    call stop_debugging()
+    call stop_debugging()
   end
 end
 
