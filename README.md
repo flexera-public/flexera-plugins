@@ -11,6 +11,7 @@ This repo contains a library of open source RightScale plugins.
 - [AWS Virtual Private Cloud](./aws/rs_aws_vpc/)
 - [AWS ElastiCache](./aws/rs_aws_elasticache)
 - [AWS Lambda](./aws/rs_aws_lambda)
+- [AWS MQ](./aws/rs_aws_mq)
 
 ### Azure
 - [Azure SQL Database](./azure/rs_azure_sql/)
@@ -24,6 +25,7 @@ This repo contains a library of open source RightScale plugins.
 - [Azure PostgreSQL](./azure/rs_azure_pgsql/)
 - [Azure Redis Cache](./azure/rs_azure_cache/)
 - [Azure Key Vault](./azure/rs_azure_key_vault/)
+- [Azure Service Diagnostic Settings](./azure/rs_azure_diagnostic_settings/)
 
 ### Google Cloud Platform
 - [GCP Google Compute Engine](./google/gce/)

@@ -2,7 +2,7 @@ name 'aws_vpc_plugin'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Amazon Web Services - VPC Plugin"
-long_description "Version 1.2"
+long_description "Version 1.3"
 package "plugin/rs_aws_vpc"
 import "sys_log"
 
@@ -175,6 +175,24 @@ plugin "rs_aws_vpc" do
       alias_for "RouteTableId.1"
       type      "string"
       location  "query"
+    end
+
+    field "vpc_endpoint_type" do
+      alias_for "VpcEndpointType"
+      type "string"
+      location "query"
+    end
+
+    field "private_dns_enabled" do
+      alias_for "PrivateDnsEnabled"
+      type "string"
+      location "query"
+    end
+
+    field "security_group_id_1" do
+      alias_for "SecurityGroupId.1"
+      type "string"
+      location "query"
     end
     
     output "vpcEndpointId" do

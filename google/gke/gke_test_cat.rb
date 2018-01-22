@@ -1,7 +1,7 @@
 name 'GKE - Test CAT'
 rs_ca_ver 20161221
 short_description "Google Cloud Platform - GKE - Test CAT"
-import "plugins/gce_gke"
+import "plugins/gke"
 
 ##########################
 ##########################
@@ -10,7 +10,7 @@ import "plugins/gce_gke"
 ##########################
 
 parameter "google_project" do
-    like $gce_gke.google_project
+    like $gke.google_project
 end
 
 ##########################
@@ -31,7 +31,7 @@ resource "my_cluster", type: "gke.clusters" do
   cluster do {
     "name" => join(["rs-cluster-", last(split(@@deployment.href, "/"))]),
     "initialNodeCount" => 3,
-    "initialClusterVersion" => "1.7.6-gke.1"
+    "initialClusterVersion" => "1.7.11-gke.1"
   } end 
 end 
 
