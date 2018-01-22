@@ -11,6 +11,9 @@ plugin "rs_aws_alb" do
     default_host "elasticloadbalancing.amazonaws.com"
     default_scheme "https"
     path "/"
+    headers do {
+      "content-type" => "application/xml"
+    } end
     query do {
       "Version" => "2015-12-01"
     } end
@@ -1060,7 +1063,6 @@ define delete_resource(@resource) do
 end
 
 define provision_resource(@declaration) return @resource do
-  call start_debugging()
   sub on_error: stop_debugging() do
     $object = to_object(@declaration)
     $fields = $object["fields"]
@@ -1068,11 +1070,14 @@ define provision_resource(@declaration) return @resource do
     call sys_log.set_task_target(@@deployment)
     call sys_log.summary(join(["Provision ", $type]))
     call sys_log.detail($object)
+    call start_debugging()
     @operation = rs_aws_alb.$type.create($fields)
-    call sys_log.detail(to_object(@operation))
-    @resource = @operation.get()
-    call sys_log.detail(to_object(@resource))
     call stop_debugging()
+    call sys_log.detail(to_object(@operation))
+    call start_debugging()
+    @resource = @operation.get()
+    call stop_debugging()
+    call sys_log.detail(to_object(@resource))
   end
 end
 
