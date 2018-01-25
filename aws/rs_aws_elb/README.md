@@ -60,8 +60,8 @@ end
 |--------------|:----:|:-------------:|
 | create | CreateLoadBalancer | Supported |
 | destroy | DeleteLoadBalancer | Supported |
-| list | DescribeLoadBalancers | Supported |
-| register_instance | RegisterInstancesWithLoadBalancer | Untested |
+| get,list,show | DescribeLoadBalancers | Supported |
+| register_instance | RegisterInstancesWithLoadBalancer | Supported |
 | deregister_instance | DeregisterInstancesWithLoadBalancer | Untested |
 | set_certificate | SetLoadBalancerListenerSSLCertificate | Untested |
 
