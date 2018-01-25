@@ -60,8 +60,8 @@ end
 |--------------|:----:|:-------------:|
 | create | CreateLoadBalancer | Supported |
 | destroy | DeleteLoadBalancer | Supported |
-| list | DescribeLoadBalancers | Supported |
-| register_instance | RegisterInstancesWithLoadBalancer | Untested |
+| get,list,show | DescribeLoadBalancers | Supported |
+| register_instance | RegisterInstancesWithLoadBalancer | Supported |
 | deregister_instance | DeregisterInstancesWithLoadBalancer | Untested |
 | set_certificate | SetLoadBalancerListenerSSLCertificate | Untested |
 
@@ -70,7 +70,20 @@ Full list of possible actions can be found on the [AWS ELB API Documentation](ht
 Please review [elb_plugin.rb](./elb_plugin.rb) for a basic example implementation.
 	
 ## Known Issues / Limitations
-- Currently only supports CRUD and instance register/deregister functions.
+- Currently only supports a single region.  To support a different region, edit the `host` & `region` fields of the `resource_pool` declaration in the Plugin:
+```
+resource_pool "elb_pool" do
+  plugin $rs_aws_elb
+  host "elasticloadbalancing.us-east-1.amazonaws.com"
+  auth "key", type: "aws" do
+    version     4
+    service    'elasticloadbalancing'
+    region     'us-east-1'
+    access_key cred('AWS_ACCESS_KEY_ID')
+    secret_key cred('AWS_SECRET_ACCESS_KEY')
+  end
+end
+```
 
 ## Getting Help
 Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.

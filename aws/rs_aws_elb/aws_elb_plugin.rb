@@ -2,13 +2,12 @@ name 'aws_elb_plugin'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Amazon Web Services - Elastic Load Balancer"
-long_description "Version: 1.1"
+long_description "Version: 1.2"
 package "plugins/rs_aws_elb"
 import "sys_log"
 
 plugin "rs_aws_elb" do
   endpoint do
-    default_host "elasticloadbalancing.amazonaws.com"
     default_scheme "https"
     path "/"
     headers do {
@@ -18,7 +17,7 @@ plugin "rs_aws_elb" do
       "Version" => "2012-06-01"
     } end
   end
-  
+
   type "elb" do
     # HREF is set to the correct template in the provision definition due to a lack of usable fields in the response to build the href
     href_templates "/?Action=DescribeLoadBalancers&LoadBalancerNames.member.1={{//LoadBalancerDescriptions/member/LoadBalancerName}}","/?Action=DescribeLoadBalancers&LoadBalancerNames.member.1={{//CreateLoadBalancerResult/DNSName}}", "/?Action=DescribeLoadBalancers&LoadBalancerNames.member.1={{/LoadBalancerName}}"
@@ -115,13 +114,13 @@ plugin "rs_aws_elb" do
       alias_for "LoadBalancerPort"
       location "query"
       type "number"
-    end 
+    end
 
     field "ssl_certificate_id" do
       alias_for "SSLCertificateId"
       location "query"
       type "string"
-    end 
+    end
 
     output 'LoadBalancerName' do
       body_path '//LoadBalancerDescriptions/member/LoadBalancerName'
@@ -137,16 +136,26 @@ plugin "rs_aws_elb" do
       verb "POST"
       path "/?Action=CreateLoadBalancer"
     end
-    
+
     action "destroy" do
       verb "POST"
       path "/?Action=DeleteLoadBalancer&LoadBalancerName=$LoadBalancerName"
     end
- 
+
     action "get" do
       verb "POST"
     end
- 
+
+    action "show" do
+      verb "POST"
+      path "/?Action=DescribeLoadBalancers"
+
+      field "name" do
+        location "query"
+        alias_for "LoadBalancerNames.member.1"
+      end 
+    end 
+
     action "list" do
       verb "POST"
       path "/?Action=DescribeLoadBalancers"
@@ -155,17 +164,17 @@ plugin "rs_aws_elb" do
 
     action "register_instance" do
       verb "POST"
-      path "/?Action=RegisterInstancesWithLoadBalancer/&LoadBalancerName=$LoadBalancerName"
+      path "/?Action=RegisterInstancesWithLoadBalancer&LoadBalancerName=$LoadBalancerName"
 
       field "instance" do
         alias_for "Instances.member.1.InstanceId"
         location "query"
       end
     end
-    
+
     action "deregister_instance" do
       verb "POST"
-      path "/?Action=DeregisterInstancesFromLoadBalancer/&LoadBalancerName=$LoadBalancerName"
+      path "/?Action=DeregisterInstancesFromLoadBalancer&LoadBalancerName=$LoadBalancerName"
 
       field "instance" do
         alias_for "Instances.member.1.InstanceId"
@@ -186,12 +195,13 @@ plugin "rs_aws_elb" do
         alias_for "SSLCertificateId"
         location "query"
       end
-    end 
+    end
   end
 end
 
 resource_pool "elb_pool" do
   plugin $rs_aws_elb
+  host "elasticloadbalancing.us-east-1.amazonaws.com"
   auth "key", type: "aws" do
     version     4
     service    'elasticloadbalancing'
@@ -214,9 +224,7 @@ define provision_elb(@declaration) return @elb do
     @elb = rs_aws_elb.elb.create($fields)
     call stop_debugging()
 
-    $elb = to_object(@elb)
-    $elb["hrefs"][0] = join(["?Action=DescribeLoadBalancers&LoadBalancerNames.member.1=",$name])
-    @elb = $elb
+    @elb = rs_aws_elb.elb.show(name: $name)
     call start_debugging()
     @elb = @elb.get()
     call stop_debugging()
