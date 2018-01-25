@@ -1,5 +1,17 @@
 # Change Log
 
+## [Week-of-01-22-2018](https://github.com/rightscale/rightscale-plugins/tree/Week-of-01-22-2018) (2018-01-22)
+[Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-01-15-2018...Week-of-01-22-2018)
+
+**Fixed bugs:**
+
+- AWS ELB & ALB - Serialization Exception [\#106](https://github.com/rightscale/rightscale-plugins/issues/106)
+
+**Merged pull requests:**
+
+- AWS ELB Plugin - Setting Content-Type header and removing description.  [\#123](https://github.com/rightscale/rightscale-plugins/pull/123) ([rshade](https://github.com/rshade))
+- AWS ALB Plugin: Updating header to fix serialization exception.  [\#122](https://github.com/rightscale/rightscale-plugins/pull/122) ([rshade](https://github.com/rshade))
+
 ## [Week-of-01-15-2018](https://github.com/rightscale/rightscale-plugins/tree/Week-of-01-15-2018) (2018-01-18)
 [Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-12-11-2017...Week-of-01-15-2018)
 
