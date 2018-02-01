@@ -1,5 +1,18 @@
 # Change Log
 
+## [Week-of-01-29-2018](https://github.com/rightscale/rightscale-plugins/tree/Week-of-01-29-2018) (2018-01-29)
+[Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-01-22-2018...Week-of-01-29-2018)
+
+**Fixed bugs:**
+
+- Azure MySQL: firewall\_rules provisioning loop [\#127](https://github.com/rightscale/rightscale-plugins/issues/127)
+- AWS ELB: Provision function gets DNSName instead of Name  [\#125](https://github.com/rightscale/rightscale-plugins/issues/125)
+
+**Merged pull requests:**
+
+- Azure MySQL: Firewall\_Rules Provision\(\) Bug Fix [\#128](https://github.com/rightscale/rightscale-plugins/pull/128) ([dfrankel33](https://github.com/dfrankel33))
+- AWS ELB: Bug Fixes  [\#126](https://github.com/rightscale/rightscale-plugins/pull/126) ([dfrankel33](https://github.com/dfrankel33))
+
 ## [Week-of-01-22-2018](https://github.com/rightscale/rightscale-plugins/tree/Week-of-01-22-2018) (2018-01-22)
 [Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-01-15-2018...Week-of-01-22-2018)
 
@@ -17,7 +30,9 @@
 
 **Merged pull requests:**
 
+- Update Issue Template [\#120](https://github.com/rightscale/rightscale-plugins/pull/120) ([dfrankel33](https://github.com/dfrankel33))
 - Google GKE Plugin: minor corrections to the CAT \(version used\) and README. [\#119](https://github.com/rightscale/rightscale-plugins/pull/119) ([MitchellGerdisch](https://github.com/MitchellGerdisch))
+- Add Azure Service Diagnostic Settings to root readme [\#118](https://github.com/rightscale/rightscale-plugins/pull/118) ([srpomeroy](https://github.com/srpomeroy))
 - Azure Service Diagnostic Settings plugin - Initial Release [\#117](https://github.com/rightscale/rightscale-plugins/pull/117) ([srpomeroy](https://github.com/srpomeroy))
 - AWS CloudFormation Plugin: Increased number of allowed CFT parameters from 10 to 30. [\#115](https://github.com/rightscale/rightscale-plugins/pull/115) ([MitchellGerdisch](https://github.com/MitchellGerdisch))
 
@@ -31,14 +46,20 @@
 **Merged pull requests:**
 
 - AWS RDS Plugin - updating to use generics, fix stop\_debugging.  [\#113](https://github.com/rightscale/rightscale-plugins/pull/113) ([rshade](https://github.com/rshade))
+- Add Complex Lambda Plugin Example [\#111](https://github.com/rightscale/rightscale-plugins/pull/111) ([dfrankel33](https://github.com/dfrankel33))
 - Add Azure virtual network and subnet types [\#110](https://github.com/rightscale/rightscale-plugins/pull/110) ([srpomeroy](https://github.com/srpomeroy))
 
 ## [Week-of-11-27-2017](https://github.com/rightscale/rightscale-plugins/tree/Week-of-11-27-2017) (2017-11-30)
 [Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-11-05-2017...Week-of-11-27-2017)
 
+**Closed issues:**
+
+- notification test [\#105](https://github.com/rightscale/rightscale-plugins/issues/105)
+
 **Merged pull requests:**
 
 - AWS MQ & AWS PrivateLink - Initial Releases  [\#108](https://github.com/rightscale/rightscale-plugins/pull/108) ([dfrankel33](https://github.com/dfrankel33))
+- CODEOWNERS update [\#104](https://github.com/rightscale/rightscale-plugins/pull/104) ([dfrankel33](https://github.com/dfrankel33))
 
 ## [Week-of-11-05-2017](https://github.com/rightscale/rightscale-plugins/tree/Week-of-11-05-2017) (2017-11-06)
 [Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-10-30-2017...Week-of-11-05-2017)
@@ -62,7 +83,10 @@
 
 **Merged pull requests:**
 
+- REPO Maintenance: Updating contributing.md and Codeowners [\#92](https://github.com/rightscale/rightscale-plugins/pull/92) ([rshade](https://github.com/rshade))
 - Fastly Public IP Address List Plugins [\#91](https://github.com/rightscale/rightscale-plugins/pull/91) ([rshade](https://github.com/rshade))
+- Update README [\#90](https://github.com/rightscale/rightscale-plugins/pull/90) ([dfrankel33](https://github.com/dfrankel33))
+- REPO Maintenance: Adding in issue templates [\#73](https://github.com/rightscale/rightscale-plugins/pull/73) ([rshade](https://github.com/rshade))
 
 ## [Week-of-10-02-2017](https://github.com/rightscale/rightscale-plugins/tree/Week-of-10-02-2017) (2017-10-04)
 [Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-09-18-2017...Week-of-10-02-2017)
