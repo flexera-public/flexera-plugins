@@ -162,7 +162,7 @@ define add_to_lb(@server,@my_pub_lb) return @server,@my_target_nic do
       call stop_debugging()
       call sys_log.detail("nic:"+to_s(@nic))
       call sys_log.detail("nic_name:" + @nic.name)
-      if @nic.name =~ @server.name +"-default"
+      if @nic.name =~ @server.name
         @my_target_nic = @nic
         call sys_log.detail("target nic: true")
       else
