@@ -21,7 +21,7 @@ The Infoblox IPAM plugin integrates RightScale Self-Service with the basic funct
   - `INFOBLOX_USERID` - The Infoblox service account username.
   - `INFOBLOX_PASSWORD` - The Infoblox service account password.
 - The following packages are also required (See the Installation section for details):
-  - [sys_log](sys_log.rb)
+  - [sys_log](../../libraries/sys_log.rb)
 
 ## Getting Started
 

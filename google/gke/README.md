@@ -14,7 +14,7 @@ The GKE Plugin consumes the Google Container Engine API and exposes the supporte
   - `GOOGLE_CONTAINER_ENGINE_ACCOUNT`
   - `GOOGLE_CONTAINER_ENGINE_KEY`
 - The following packages are also required (See the Installation section for details):
-  - [sys_log](sys_log.rb)
+  - [sys_log](../../libraries/sys_log.rb)
 
 ## Getting Started
 ### Creating a GCP Service Account
