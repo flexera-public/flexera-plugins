@@ -126,6 +126,10 @@ operation "launch" do
   } end
 end
 
+operation "terminate" do 
+  definition "terminate"
+end
+
 define launch_handler(@server1,@server2,@lb_ip,@my_pub_lb,$subscription_id) return @server1,@server2,@lb_ip,@my_pub_lb,$pool_id,$lb_ip do
   task_label("Provisioning Server")
   concurrent return @server1, @server2 do
@@ -207,4 +211,11 @@ define stop_debugging() do
     call sys_log.detail($debug_report)
     $$debugging = false
   end
+end
+
+define terminate(@server1,@server2,@lb_ip,@my_pub_lb) return @server1,@server2,@lb_ip,@my_pub_lb do
+  delete(@server1)
+  delete(@server2)
+  delete(@my_pub_lb)
+  delete(@lb_ip)
 end
