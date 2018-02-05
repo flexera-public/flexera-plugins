@@ -14,7 +14,7 @@ The GCP Cloud DNS Plugin consumes the Google Cloud DNS API and exposes the suppo
   - `GOOGLE_DNS_PLUGIN_ACCOUNT`
   - `GOOGLE_DNS_PLUGIN_PRIVATE_KEY`
 - The following packages are also required (See the Installation section for details):
-  - [sys_log](sys_log.rb)
+  - [sys_log](../../libraries/sys_log.rb)
 
 ## Getting Started
 ### Creating a GCP Service Account

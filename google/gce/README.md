@@ -17,7 +17,7 @@ The GCE Plugin consumes the Google Compute v1 API and exposes the supported reso
   - `GCE_PLUGIN_ACCOUNT`
   - `GCE_PLUGIN_PRIVATE_KEY`
 - The following packages are also required (See the Installation section for details):
-  - [sys_log](sys_log.rb)
+  - [sys_log](../../libraries/sys_log.rb)
 
 ## Getting Started
 ### Creating a GCE Service Account

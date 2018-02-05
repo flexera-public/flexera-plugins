@@ -12,7 +12,7 @@ The AWS EFS Plugin integrates RightScale Self-Service with the basic functionali
   - `AWS_ACCESS_KEY_ID`
   - `AWS_SECRET_ACCESS_KEY`
 - The following packages are also required (See the Installation section for details):
-  - [sys_log](sys_log.rb)
+  - [sys_log](../../libraries/sys_log.rb)
 
 ## Getting Started
 **Coming Soon**

@@ -12,7 +12,7 @@ The Azure Networking Plugin integrates RightScale Self-Service with the basic fu
   - `AZURE_APPLICATION_ID`
   - `AZURE_APPLICATION_KEY`
 - The following packages are also required (See the Installation section for details):
-  - [sys_log](sys_log.rb)
+  - [sys_log](../../libraries/sys_log.rb)
 
 ## Installation
 1. Be sure your RightScale account has Self-Service enabled

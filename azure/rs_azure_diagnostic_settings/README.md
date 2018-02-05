@@ -12,7 +12,7 @@ The Azure Service Diagnostic Settings Plugin integrates RightScale Self-Service 
   - `AZURE_APPLICATION_ID`
   - `AZURE_APPLICATION_KEY`
 - The following packages are also required (See the Installation section for details):
-  - [sys_log](sys_log.rb)
+  - [sys_log](../../libraries/sys_log.rb)
 
 
 ## Installation
