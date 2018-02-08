@@ -22,13 +22,13 @@ The Azure Storage Account Plugin integrates RightScale Self-Service with the bas
 1. [Retrieve the Application ID & Authentication Key](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal#get-application-id-and-authentication-key)
 1. Create RightScale Credentials with values that match the Application ID (Credential name: `AZURE_APPLICATION_ID`) & Authentication Key (Credential name: `AZURE_APPLICATION_KEY`)
 1. [Retrieve your Tenant ID](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal#get-tenant-id)
-1. Update `azure_lb_plugin.rb` Plugin with your Tenant ID. 
+1. Update `azure_storage_plugin.rb` Plugin with your Tenant ID. 
    - Replace "TENANT_ID" in `token_url "https://login.microsoftonline.com/TENANT_ID/oauth2/token"` with your Tenant ID
 1. Navigate to the appropriate Self-Service portal
    - For more details on using the portal review the [SS User Interface Guide](http://docs.rightscale.com/ss/guides/ss_user_interface_guide.html)
 1. In the Design section, use the `Upload CAT` interface to complete the following:
    1. Upload each of packages listed in the Requirements Section
-   1. Upload the `azure_lb_plugin.rb` file located in this repository
+   1. Upload the `azure_storage_plugin.rb` file located in this repository
  
 ## How to Use
 The Azure Storage Account Plugin has been packaged as `plugins/rs_azure_storage`. In order to use this plugin you must import this plugin into a CAT.
@@ -92,11 +92,12 @@ end
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
-| create| [Create Or Update](https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts#StorageAccounts_Create) | Supported |
-| destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts#StorageAccounts_Delete) | Supported |
-| get | [Get](https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts#StorageAccounts_GetProperties)| Supported |
-| show| [Get](https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts#StorageAccounts_GetProperties)| Supported |
-| list_keys| [Post] (https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts#StorageAccounts_ListKeys)| Supported |
+| create| [Create](https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts/create) | Supported |
+| update | [Update](https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts/update) | Supported |
+| destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts/delete) | Supported |
+| get | [Get](https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts/getproperties)| Supported |
+| show| [Get](https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts/getproperties)| Supported |
+| list_keys| [Post] (https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts/listkeys)| Supported |
 #### Supported Outputs
 - id
 - name
@@ -124,7 +125,7 @@ end
 - The Azure Storage Account Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to an SA resource.) 
 
  
-Full list of possible actions can be found on the [Azure Storage Account API Documentation](https://docs.microsoft.com/en-us/rest/api/network/loadbalancer/)
+Full list of possible actions can be found on the [Azure Storage Account API Documentation](https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts)
 ## Examples
 Please review [storage_test_cat.rb](./storage_test_cat.rb) for a basic example implementation.
 	
