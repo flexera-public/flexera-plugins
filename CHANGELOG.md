@@ -1,4 +1,4 @@
-# Change Log
+# Change Log 
 
 ## [Week-of-01-29-2018](https://github.com/rightscale/rightscale-plugins/tree/Week-of-01-29-2018) (2018-01-29)
 [Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-01-22-2018...Week-of-01-29-2018)
