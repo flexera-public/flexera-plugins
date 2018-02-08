@@ -2,13 +2,16 @@ name 'rs_aws_elasticache'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Amazon Web Services - ElastiCache Plugin"
-long_description "Version: 1.1"
+long_description "Version: 1.2"
 package "plugins/rs_aws_elasticache"
 import "sys_log"
 
 plugin "rs_aws_elasticache" do
   endpoint do
     default_scheme "https"
+    headers do {
+      "content-type" => "application/xml"
+    } end
     query do {
       "Version" => "2015-02-02"
     } end
@@ -809,7 +812,6 @@ define delete_resource(@resource) do
 end
 
 define provision_cluster(@declaration) return @resource do
-  call start_debugging()
   sub on_error: stop_debugging() do
     $object = to_object(@declaration)
     $fields = $object["fields"]
@@ -817,19 +819,21 @@ define provision_cluster(@declaration) return @resource do
     call sys_log.set_task_target(@@deployment)
     call sys_log.summary(join(["Provision ", $type]))
     call sys_log.detail($object)
+    call start_debugging()
     @operation = rs_aws_elasticache.$type.create($fields)
+    call stop_debugging()
     call sys_log.detail(to_object(@operation))
     sub on_error: skip do
       sleep_until(@operation.CacheClusterStatus == "available")
     end 
+    call start_debugging()
     @resource = @operation.get()
-    call sys_log.detail(to_object(@resource))
     call stop_debugging()
+    call sys_log.detail(to_object(@resource))
   end
 end
 
 define provision_resource(@declaration) return @resource do
-  call start_debugging()
   sub on_error: stop_debugging() do
     $object = to_object(@declaration)
     $fields = $object["fields"]
@@ -837,11 +841,14 @@ define provision_resource(@declaration) return @resource do
     call sys_log.set_task_target(@@deployment)
     call sys_log.summary(join(["Provision ", $type]))
     call sys_log.detail($object)
+    call start_debugging()
     @operation = rs_aws_elasticache.$type.create($fields)
-    call sys_log.detail(to_object(@operation))
-    @resource = @operation.get()
-    call sys_log.detail(to_object(@resource))
     call stop_debugging()
+    call sys_log.detail(to_object(@operation))
+    call start_debugging()
+    @resource = @operation.get()
+    call stop_debugging()
+    call sys_log.detail(to_object(@resource))
   end
 end
 
