@@ -3,6 +3,8 @@ rs_ca_ver 20161221
 short_description "Provides logging functionality for sending logs to audit entries in CM"
 package "sys_log"
 
+#NOTE: this package requires CM ACTOR permissions.
+#THESE PERMISSIONS CAN NOT BE DELEGATED
 ########################################################
 #  USAGE
 #
