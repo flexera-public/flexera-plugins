@@ -1,5 +1,9 @@
 Networking Plugin changelog
 
+v1.3 (02-09-2018)
+-----------------
+- Added `list_all` action to the `network` type
+
 v1.2 (12-08-2017)
 -----------------
 - moved vNet Peering resource under the `rs_azure_networking` plugin

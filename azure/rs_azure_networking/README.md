@@ -190,6 +190,7 @@ end
 | destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/virtualnetworks/delete) | Supported |
 | get | [Get](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/virtualnetworks/get)| Supported |
 | list | [Get](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/virtualnetworks/list)| Supported |
+| list_all | [Get](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/virtualnetworks/listall)| Supported |
 
 #### Supported Outputs
 - id

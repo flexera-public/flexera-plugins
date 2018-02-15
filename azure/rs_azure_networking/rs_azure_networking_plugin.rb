@@ -2,7 +2,7 @@ name 'rs_azure_networking_plugin'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Azure Networking Plugin"
-long_description "Version: 1.2"
+long_description "Version: 1.3"
 package "plugins/rs_azure_networking_plugin"
 import "sys_log"
 
@@ -264,6 +264,13 @@ plugin "rs_azure_networking" do
       field "resource_group" do
         location "path"
       end
+
+      output_path "value[*]"
+    end
+    
+    action "list_all" do
+      path "/subscriptions/$subscription_id/providers/Microsoft.Network/virtualNetworks"
+      verb "GET"
 
       output_path "value[*]"
     end
