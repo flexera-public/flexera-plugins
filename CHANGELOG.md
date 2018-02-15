@@ -1,5 +1,17 @@
 # Change Log
 
+## [Week-of-02-12-2018](https://github.com/rightscale/rightscale-plugins/tree/Week-of-02-12-2018) (2018-02-15)
+[Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-02-05-2018...Week-of-02-12-2018)
+
+**Closed issues:**
+
+- AWS ElasticCache Plugin - com.amazon.coral.service\#UnknownOperationException [\#138](https://github.com/rightscale/rightscale-plugins/issues/138)
+
+**Merged pull requests:**
+
+- rs\_azure\_networking: added list\_all action to network type [\#142](https://github.com/rightscale/rightscale-plugins/pull/142) ([srpomeroy](https://github.com/srpomeroy))
+- AWS ElastiCache: adding header for content\_type=application/xml, fixes \#138 [\#139](https://github.com/rightscale/rightscale-plugins/pull/139) ([rshade](https://github.com/rshade))
+
 ## [Week-of-02-05-2018](https://github.com/rightscale/rightscale-plugins/tree/Week-of-02-05-2018) (2018-02-08)
 [Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-01-29-2018...Week-of-02-05-2018)
 
