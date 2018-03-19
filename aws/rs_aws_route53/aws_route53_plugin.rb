@@ -48,7 +48,7 @@ plugin "rs_aws_route53" do
   type "resource_recordset" do
     href_templates "{{//ChangeResourceRecordSetsRequest/ChangeInfo/Id}}", "{{//GetChangeResponse/ChangeInfo/Id}}"
     provision "provision_resource"
-    delete "delete_recordset"
+    delete "delete_resource"
     
     field "hosted_zone_id" do
       type "string"
@@ -126,6 +126,17 @@ define delete_resource(@declaration) do
     call stop_debugging()
   end
 end
+
+#define delete_recordset(@declaration) do
+#  sub on_error: stop_debugging() do
+#    call start_debugging()
+#    $object = to_object(@declaration)
+#    $fields = $object["fields"]
+#    $type = $object
+#    rs_aws_route53.$resource.delete()
+#    call stop_debugging()
+#  end
+#end
 
 define start_debugging() do
   if $$debugging == false || logic_and($$debugging != false, $$debugging != true)
