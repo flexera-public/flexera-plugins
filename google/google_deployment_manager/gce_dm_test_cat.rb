@@ -88,8 +88,5 @@ define gen_launch(@gce_dm_deployment,$gce_project) return @gce_dm_deployment, @b
   $dm["fields"]["target"]["imports"] = $imports
   @gce_dm_deployment = $dm
   provision(@gce_dm_deployment)
-  call gce_dm.start_debugging()
-  @bt_deployment = gce_dm.deployment.show(operation_href: join(["/deploymentmanager/v2/projects/",$gce_project,"/global/deployments/beyondtrust-1"]))
-  call gce_dm.stop_debugging()
 end
 

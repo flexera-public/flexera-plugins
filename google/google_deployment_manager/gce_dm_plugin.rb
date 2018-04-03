@@ -170,8 +170,8 @@ define get_google_import($filename) return $data do
       url: join(["https://raw.githubusercontent.com/GoogleCloudPlatform/deploymentmanager-samples/master/templates/", $filename])
   )
   call sys_log.detail(join(["Filename: ", $filename, " response: ", $response["code"]]))
-  if $response["code"] == "404"
-    raise join(["File: ", $filename, " Not Found"])
+  if $response["code"] != "200"
+    raise join(["File: ", $filename, " Response: ", $response])
   end
   $data = { "name" => $filename, "content" => $response["body"] }
 end
@@ -181,6 +181,9 @@ define get_additional_import($hash) return $data do
       url: $hash["url"]
   )
   call sys_log.detail(join(["Filename: ", $hash["name"], " response: ", $response["code"]]))
+  if $response["code"] != "200"
+    raise join(["File: ", $filename," Response: ", $response])
+  end
   $data = { "name" => $hash["name"], "content" => $response["body"] }
 end
 
