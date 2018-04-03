@@ -166,23 +166,30 @@ define stop_debugging() do
 end
 
 define get_google_import($filename) return $data do
+  if $$audit_targets == null
+    call sys_log.set_task_target(@@deployment)
+  end
+  call sys_log.summary("Imports")
+  task_label(join(["Getting Content for file: ", $filename]))
   $response = http_get(
       url: join(["https://raw.githubusercontent.com/GoogleCloudPlatform/deploymentmanager-samples/master/templates/", $filename])
   )
   call sys_log.detail(join(["Filename: ", $filename, " response: ", $response["code"]]))
-  if $response["code"] != "200"
+  if $response["code"] != 200
     raise join(["File: ", $filename, " Response: ", $response])
   end
   $data = { "name" => $filename, "content" => $response["body"] }
 end
 
 define get_additional_import($hash) return $data do
+  call sys_log.summary("Imports")
+  task_label(join(["Getting Content for file: ", $hash["name"]]))
   $response = http_get(
       url: $hash["url"]
   )
   call sys_log.detail(join(["Filename: ", $hash["name"], " response: ", $response["code"]]))
-  if $response["code"] != "200"
-    raise join(["File: ", $filename," Response: ", $response])
+  if $response["code"] != 200
+    raise join(["File: ", $hash["name"]," Response: ", $response])
   end
   $data = { "name" => $hash["name"], "content" => $response["body"] }
 end

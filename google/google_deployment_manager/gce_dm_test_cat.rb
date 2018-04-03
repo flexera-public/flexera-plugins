@@ -53,17 +53,23 @@ resource "gce_dm_deployment", type: "gce_dm.deployment" do
 end
 
 define gen_launch(@gce_dm_deployment,$gce_project) return @gce_dm_deployment, @bt_deployment do
-  $imports = []
+  #{ "name" => "c2d_deployment_configuration.json", "url" => "https://s3.amazonaws.com/gce-dm-templates/c2d_deployment_configuration.json"},
+  $imports = [{"name" => "c2d_deployment_configuration.json", "content" => '{
+  "defaultDeploymentType": "SINGLE_VM",
+  "imageName": "bt-uvm-240-final",
+  "projectId": "beyondtrust-production",
+  "templateName": "nonexistent_template",
+  "useSolutionPackage": true
+}' }]
   $additional_imports = [
+    { "name" => "beyondtrust.jinja", "url" => "https://s3.amazonaws.com/gce-dm-templates/beyondtrust.jinja" },
     { "name" => "beyondtrust.jinja.schema", "url" => "https://s3.amazonaws.com/gce-dm-templates/beyondtrust.jinja.schema"},
     { "name" => "beyondtrust.jinja.display", "url" => "https://s3.amazonaws.com/gce-dm-templates/beyondtrust.jinja.display"},
-    { "name" => "resources/en-us/beyondtrust_small.png", "url" => "https://s3.amazonaws.com/gce-dm-templates/beyondtrust_small.png"},
-    { "name" => "resources/en-us/beyondtrust_store.png", "url" => "https://s3.amazonaws.com/gce-dm-templates/beyondtrust_store.png"},
-    { "name" => "beyondtrust.jinja", "url" => "https://s3.amazonaws.com/gce-dm-templates/beyondtrust.jinja" },
-    { "name" => "c2d_deployment_configuration.json", "url" => "https://s3.amazonaws.com/gce-dm-templates/c2d_deployment_configuration.json"},
     { "name" => "password.py", "url" => "https://s3.amazonaws.com/gce-dm-templates/password.py"},
     { "name" => "path_utils.jinja", "url" => "https://s3.amazonaws.com/gce-dm-templates/path_utils.jinja"},
-    { "name" => "test_config.yaml", "url" => "https://s3.amazonaws.com/gce-dm-templates/test_config.yaml"}
+    { "name" => "test_config.yaml", "url" => "https://s3.amazonaws.com/gce-dm-templates/test_config.yaml"},
+    { "name" => "resources/en-us/beyondtrust_small.png", "url" => "https://s3.amazonaws.com/gce-dm-templates/beyondtrust_small.png"},
+    { "name" => "resources/en-us/beyondtrust_store.png", "url" => "https://s3.amazonaws.com/gce-dm-templates/beyondtrust_store.png"}
   ]
   
   foreach $import in $additional_imports do
