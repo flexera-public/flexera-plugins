@@ -38,6 +38,10 @@ plugin "gce_dm" do
       required true
       type "composite"
     end
+
+    field "labels" do
+      type "composite"
+    end
  
     output "kind","id","creationTimestamp","name","zone","clientOperationId","operationType","targetLink","targetId","status","statusMessage","user","progress","insertTime","startTime","endTime","error","warnings","httpErrorStatusCode","httpErrorMessage","selfLink","region","description"
 

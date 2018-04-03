@@ -45,6 +45,11 @@ resource "gce_dm_deployment", type: "gce_dm.deployment" do
     "imports" =>  [
     ]
   } end
+  labels do [
+    { "key": "cloud-marketplace", "value":"beyondtrust-production-beyondtrust" },
+    { "key": "cloud-marketplace-partner-id", "value":"beyondtrust-production" },
+    { "key": "cloud-marketplace-solution-id", "value":"beyondtrust" }
+  ] end
 end
 
 define gen_launch(@gce_dm_deployment,$gce_project) return @gce_dm_deployment, @bt_deployment do
