@@ -26,7 +26,7 @@ plugin "rs_aws_iam" do
     field "assume_role_policy_document" do
       alias_for "AssumeRolePolicyDocument"
       location "query"
-      type "string"
+      type "composite"
       required true
     end
     field "description" do
@@ -61,6 +61,11 @@ plugin "rs_aws_iam" do
     action "destroy" do
       verb "POST"
       path "$href?Action=DeleteRole"
+    end
+
+    action "get" do
+      verb "POST"
+      path "$href?Action=GetRole"
     end
   end
 end
