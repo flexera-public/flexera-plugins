@@ -17,7 +17,7 @@ end
 
 output "instance_profile_name" do
   label "IAM Policy Name"
-  default_value @instance_profile.InstanceProfileName
+  default_value @my_instance_profile.InstanceProfileName
 end
 
 resource "my_role", type: "rs_aws_iam.role" do
@@ -35,6 +35,6 @@ resource "my_policy", type: "rs_aws_iam.policy" do
   description "test policy description"
 end
 
-resource "instance_profile", type:"rs_aws_iam.instance_profile" do
+resource "my_instance_profile", type:"rs_aws_iam.instance_profile" do
   name "MyInstanceProfile"
 end
