@@ -15,11 +15,14 @@ output "policy_name" do
   default_value @my_policy.PolicyName
 end
 
+output "instance_profile_name" do
+  label "IAM Policy Name"
+  default_value @instance_profile.InstanceProfileName
+end
+
 resource "my_role", type: "rs_aws_iam.role" do
   name 'MyTestRole'
-  assume_role_policy_document <<-EOS
-{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"Service":["ec2.amazonaws.com"]},"Action":["sts:AssumeRole"]}]}
-EOS
+  assume_role_policy_document '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"Service":["ec2.amazonaws.com"]},"Action":["sts:AssumeRole"]}]}'
   description "test role description"
   max_session_duration 3600
 end
@@ -30,4 +33,8 @@ resource "my_policy", type: "rs_aws_iam.policy" do
 "Resource":"arn:aws:s3:::*"},{"Effect":"Allow","Action":["s3:Get*","s3:List*"],"Resource":
 ["arn:aws:s3:::EXAMPLE-BUCKET","arn:aws:s3:::EXAMPLE-BUCKET/*"]}]}'
   description "test policy description"
+end
+
+resource "instance_profile", type:"rs_aws_iam.instance_profile" do
+  name "MyInstanceProfile"
 end

@@ -129,6 +129,43 @@ plugin "rs_aws_iam" do
       path "$href?Action=GetPolicy"
     end
   end
+
+  type "instance_profile" do
+    href_templates "/?Action=GetInstanceProfile&InstanceProfileName={{//CreateInstanceProfileResult/InstanceProfile/InstanceProfileName}}","/?Action=GetInstanceProfile&InstanceProfileName={{//GetInstanceProfileResult/InstanceProfile/InstanceProfileName}}"
+
+    provision "provision_instance_profile"
+    delete    "delete_instance_profile"
+
+    field "path" do
+      location "query"
+      type "string"
+    end
+    field "name" do
+      alias_for "InstanceProfileName"
+      location 'query'
+      required true
+      type "string"
+    end
+
+    output_path "//InstanceProfile"
+
+    output "InstanceProfileName","InstanceProfileId","Arn"
+
+    action "create" do
+      verb "POST"
+      path "?Action=CreateInstanceProfile"
+    end
+
+    action "destroy" do
+      verb "POST"
+      path "$href?Action=DeleteInstanceProfile"
+    end
+
+    action "get" do
+      verb "POST"
+      path "$href?Action=GetInstanceProfile"
+    end
+  end
 end
 
 define provision_role(@declaration) return @role do
@@ -175,6 +212,30 @@ define delete_policy(@policy) do
     $delete_count = $delete_count + 1
     call plugin_generics.start_debugging()
       @policy.destroy()
+    call plugin_generics.stop_debugging()
+  end
+end
+
+define provision_instance_profile(@declaration) return @instance_profile do
+  sub on_error: plugin_generics.stop_debugging() do
+    call plugin_generics.start_debugging()
+    $object = to_object(@declaration)
+    $fields = $object["fields"]
+    @instance_profile = rs_aws_iam.instance_profile.create($fields)
+    sub on_error: skip do
+      sleep_until(@instance_profile.InstanceProfileId != null)
+    end
+    @instance_profile = @instance_profile.get()
+    call plugin_generics.stop_debugging()
+  end
+end
+
+define delete_instance_profile(@instance_profile) do
+  $delete_count = 0
+  sub on_error: handle_retries($delete_count) do
+    $delete_count = $delete_count + 1
+    call plugin_generics.start_debugging()
+      @instance_profile.destroy()
     call plugin_generics.stop_debugging()
   end
 end
