@@ -37,4 +37,5 @@ end
 
 resource "my_instance_profile", type:"rs_aws_iam.instance_profile" do
   name "MyInstanceProfile"
+  role_name @my_role.RoleName
 end

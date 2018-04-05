@@ -146,10 +146,19 @@ plugin "rs_aws_iam" do
       required true
       type "string"
     end
+    field "role_name" do
+      required false
+      type "string"
+    end
 
     output_path "//InstanceProfile"
 
     output "InstanceProfileName","InstanceProfileId","Arn"
+
+    output "RoleName" do
+      body_path "Roles/member/RoleName"
+      type "string"
+    end
 
     action "create" do
       verb "POST"
@@ -164,6 +173,33 @@ plugin "rs_aws_iam" do
     action "get" do
       verb "POST"
       path "$href?Action=GetInstanceProfile"
+    end
+
+    action "add_role" do
+      verb "POST"
+      path "$href?Action=AddRoleToInstanceProfile"
+
+      field "role_name" do
+        alias_for "RoleName"
+        location "query"
+      end
+      field "instance_profile" do
+        alias_for "InstanceProfileName"
+        location "query"
+      end
+    end
+
+    action "remove_role" do
+      verb "POST"
+      path "$href?Action=RemoveRoleFromInstanceProfile"
+      field "role_name" do
+        alias_for "RoleName"
+        location "query"
+      end
+      field "instance_profile" do
+        alias_for "InstanceProfileName"
+        location "query"
+      end
     end
   end
 end
@@ -221,7 +257,18 @@ define provision_instance_profile(@declaration) return @instance_profile do
     call plugin_generics.start_debugging()
     $object = to_object(@declaration)
     $fields = $object["fields"]
-    @instance_profile = rs_aws_iam.instance_profile.create($fields)
+    # specify each field to exclude the roles field.
+    @instance_profile = rs_aws_iam.instance_profile.create({
+      name: $fields["name"],
+      path: $fields["path"]
+    })
+    # add roles to the instance profile
+    if $fields["role_name"]
+      rs_aws_iam.instance_profile.add_role({
+        instance_profile: @instance_profile.InstanceProfileName,
+        role_name: $fields["role_name"]
+      })
+    end
     sub on_error: skip do
       sleep_until(@instance_profile.InstanceProfileId != null)
     end
@@ -235,7 +282,13 @@ define delete_instance_profile(@instance_profile) do
   sub on_error: handle_retries($delete_count) do
     $delete_count = $delete_count + 1
     call plugin_generics.start_debugging()
-      @instance_profile.destroy()
+    if @instance_profile.RoleName
+      rs_aws_iam.instance_profile.remove_role({
+        instance_profile: @instance_profile.InstanceProfileName,
+        role_name: @instance_profile.RoleName
+      })
+    end
+    @instance_profile.destroy()
     call plugin_generics.stop_debugging()
   end
 end
