@@ -62,10 +62,14 @@ plugin "rs_aws_iam" do
       required true
       type "string"
     end
+    field "policies" do
+      type "array"
+      required false
+    end
 
     output_path "//Role"
 
-    output "RoleName","RoleID"
+    output "RoleName","RoleId"
 
     action "create" do
       verb "POST"
@@ -81,6 +85,42 @@ plugin "rs_aws_iam" do
       verb "POST"
       path "$href?Action=GetRole"
     end
+    action "attach_policy" do
+      verb "POST"
+      path "$href?Action=AttachRolePolicy"
+
+      field "policy_arn" do
+        alias_for "PolicyArn"
+        location "query"
+      end
+      field "role_name" do
+        alias_for "RoleName"
+        location "query"
+      end
+    end
+    action "detach_policy" do
+      verb "POST"
+      path "$href?Action=DetachRolePolicy"
+
+      field "policy_arn" do
+        alias_for "PolicyArn"
+        location "query"
+      end
+      field "role_name" do
+        alias_for "RoleName"
+        location "query"
+      end
+    end
+    action "list_attached_policies" do
+      verb "POST"
+      path path "$href?Action=ListAttachedRolePolicies"
+
+      field "role_name" do
+        alias_for "RoleName"
+        location "query"
+      end
+    end
+
   end
 
   type "policy" do
@@ -209,10 +249,30 @@ define provision_role(@declaration) return @role do
     call plugin_generics.start_debugging()
     $object = to_object(@declaration)
     $fields = $object["fields"]
-    @role = rs_aws_iam.role.create($fields)
+    # create new fields object to conditionally add non-required fields
+    $new_fields = {}
+    $new_fields["name"]=$fields["name"]
+    $new_fields["assume_role_policy_document"]=$fields["assume_role_policy_document"]
+    if $fields["path"]
+      $new_fields["path"]=$fields["path"]
+    end
+    if $fields["max_session_duration"]
+      $new_fields["max_session_duration"]=$fields["max_session_duration"]
+    end
+    if $fields['description']
+      $new_fields["description"]=$fields["description"]
+    end
+    @role = rs_aws_iam.role.create($new_fields)
     sub on_error: skip do
       sleep_until(@role.RoleId != null)
     end
+    foreach $policy in $fields["policies"] do
+      rs_aws_iam.role.attach_policy({
+        policy_arn: $policy,
+        role_name: @role.RoleName
+      })
+    end
+
     @role = @role.get()
     call plugin_generics.stop_debugging()
   end
@@ -223,6 +283,10 @@ define delete_role(@role) do
   sub on_error: handle_retries($delete_count) do
     $delete_count = $delete_count + 1
     call plugin_generics.start_debugging()
+      rs_aws_iam.role.detach_policy({
+        role_name: @role.RoleName,
+        policy_arn: 'arn:aws:iam::041819229125:policy/MyTestPolicy'
+        })
       @role.destroy()
     call plugin_generics.stop_debugging()
   end
@@ -297,7 +361,7 @@ define handle_retries($attempts) do
   if $attempts <= 6
     sleep(10*to_n($attempts))
     call sys_log.set_task_target(@@deployment)
-    call sys_log.summary("error:"+$_error["type"] + ": " + $_error["message"])
+    call sys_log.summary("error:")
     call sys_log.detail("error:"+$_error["type"] + ": " + $_error["message"])
     log_error($_error["type"] + ": " + $_error["message"])
     $_error_behavior = "retry"

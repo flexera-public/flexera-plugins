@@ -24,7 +24,7 @@ resource "my_role", type: "rs_aws_iam.role" do
   name 'MyTestRole'
   assume_role_policy_document '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"Service":["ec2.amazonaws.com"]},"Action":["sts:AssumeRole"]}]}'
   description "test role description"
-  max_session_duration 3600
+  policies @my_policy.Arn
 end
 
 resource "my_policy", type: "rs_aws_iam.policy" do
