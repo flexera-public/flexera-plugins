@@ -146,12 +146,7 @@ plugin "rs_aws_iam" do
 
     output_path "//Policy"
 
-    output "PolicyName","PolicyId","Arn"
-
-    output "PolicyArn" do
-      body_path "//AttachedPolicies/member/PolicyArn"
-      type "array"
-    end
+    output "PolicyName","PolicyId","Arn","PolicyArn"
 
     action "create" do
       verb "POST"
