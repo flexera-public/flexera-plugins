@@ -87,44 +87,38 @@ plugin "rs_aws_iam" do
     end
     action "attach_policy" do
       verb "POST"
-      path "$href?Action=AttachRolePolicy"
-
+      path "$href?Action=AttachRolePolicy&RoleName=$RoleName"
       field "policy_arn" do
         alias_for "PolicyArn"
         location "query"
       end
-      field "role_name" do
-        alias_for "RoleName"
-        location "query"
-      end
+      # field "role_name" do
+      #   alias_for "RoleName"
+      #   location "query"
+      # end
     end
     action "detach_policy" do
       verb "POST"
-      path "$href?Action=DetachRolePolicy"
-
+      path "$href?Action=DetachRolePolicy&RoleName=$RoleName"
       field "policy_arn" do
         alias_for "PolicyArn"
         location "query"
       end
-      field "role_name" do
-        alias_for "RoleName"
-        location "query"
-      end
+      # field "role_name" do
+      #   alias_for "RoleName"
+      #   location "query"
+      # end
     end
-    action "list_attached_policies" do
+    action "attached_polices" do
       verb "POST"
-      path path "$href?Action=ListAttachedRolePolicies"
-
-      field "role_name" do
-        alias_for "RoleName"
-        location "query"
-      end
+      path "$href?Action=ListAttachedRolePolicies&RoleName=$RoleName"
+      output_path "//ListAttachedRolePoliciesResult/AttachedPolicies/member"
+      type "policy"
     end
-
   end
 
   type "policy" do
-    href_templates "/?Action=GetPolicy&PolicyArn={{//CreatePolicyResult/Policy/Arn}}","/?Action=GetPolicy&PolicyArn={{//GetPolicyResult/Policy/Arn}}"
+    href_templates "/?Action=GetPolicy&PolicyArn={{//CreatePolicyResult/Policy/Arn}}","/?Action=GetPolicy&PolicyArn={{//GetPolicyResult/Policy/Arn}}","/?Action=GetPolicy&PolicyArn={{//AttachedPolicies/member/PolicyArn}}"
 
     provision "provision_policy"
     delete    "delete_policy"
@@ -153,6 +147,11 @@ plugin "rs_aws_iam" do
     output_path "//Policy"
 
     output "PolicyName","PolicyId","Arn"
+
+    output "PolicyArn" do
+      body_path "//AttachedPolicies/member/PolicyArn"
+      type "array"
+    end
 
     action "create" do
       verb "POST"
@@ -266,14 +265,12 @@ define provision_role(@declaration) return @role do
     sub on_error: skip do
       sleep_until(@role.RoleId != null)
     end
-    foreach $policy in $fields["policies"] do
-      rs_aws_iam.role.attach_policy({
-        policy_arn: $policy,
-        role_name: @role.RoleName
-      })
-    end
-
     @role = @role.get()
+    foreach $policy in $fields['policies'] do
+      @role.attach_policy({
+        policy_arn: $policy
+        })
+    end
     call plugin_generics.stop_debugging()
   end
 end
@@ -283,11 +280,18 @@ define delete_role(@role) do
   sub on_error: handle_retries($delete_count) do
     $delete_count = $delete_count + 1
     call plugin_generics.start_debugging()
-      rs_aws_iam.role.detach_policy({
-        role_name: @role.RoleName,
-        policy_arn: 'arn:aws:iam::041819229125:policy/MyTestPolicy'
-        })
-      @role.destroy()
+    call sys_log.set_task_target(@@deployment)
+    call sys_log.summary("role")
+    call sys_log.detail(to_s(to_object(@role)))
+    call sys_log.summary("role_policies")
+    $policies = @role.attached_polices()
+    call sys_log.detail(to_s($polices))
+    foreach $policy in @role.attached_polices() do
+      @role.detach_policy({
+        policy_arn: $policy
+      })
+    end
+    @role.destroy()
     call plugin_generics.stop_debugging()
   end
 end
@@ -352,10 +356,32 @@ define delete_instance_profile(@instance_profile) do
         role_name: @instance_profile.RoleName
       })
     end
-    @instance_profile.destroy()
+    if @instance_profile.get()
+      @instance_profile.destroy()
+    end
     call plugin_generics.stop_debugging()
   end
 end
+
+# define provision_role_policy(@declaration) return @role_policy do
+#   sub on_error: plugin_generics.stop_debugging() do
+#     call plugin_generics.start_debugging()
+#     $object = to_object(@declaration)
+#     $fields = $object["fields"]
+#     @role_policy = rs_aws_iam.role_policy.attach($fields)
+#     call plugin_generics.stop_debugging()
+#   end
+# end
+#
+# define delete_role_policy(@role_policy) do
+#   $delete_count = 0
+#   sub on_error: handle_retries($delete_count) do
+#     $delete_count = $delete_count + 1
+#     call plugin_generics.start_debugging()
+#     @role_policy.detach()
+#     call plugin_generics.stop_debugging()
+#   end
+# end
 
 define handle_retries($attempts) do
   if $attempts <= 6

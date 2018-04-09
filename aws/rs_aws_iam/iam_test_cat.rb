@@ -20,19 +20,19 @@ output "instance_profile_name" do
   default_value @my_instance_profile.InstanceProfileName
 end
 
-resource "my_role", type: "rs_aws_iam.role" do
-  name 'MyTestRole'
-  assume_role_policy_document '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"Service":["ec2.amazonaws.com"]},"Action":["sts:AssumeRole"]}]}'
-  description "test role description"
-  policies @my_policy.Arn
-end
-
 resource "my_policy", type: "rs_aws_iam.policy" do
   name "MyTestPolicy"
   policy_document '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":"s3:ListAllMyBuckets",
 "Resource":"arn:aws:s3:::*"},{"Effect":"Allow","Action":["s3:Get*","s3:List*"],"Resource":
 ["arn:aws:s3:::EXAMPLE-BUCKET","arn:aws:s3:::EXAMPLE-BUCKET/*"]}]}'
   description "test policy description"
+end
+
+resource "my_role", type: "rs_aws_iam.role" do
+  name 'MyTestRole'
+  assume_role_policy_document '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"Service":["ec2.amazonaws.com"]},"Action":["sts:AssumeRole"]}]}'
+  description "test role description"
+  policies @my_policy.Arn
 end
 
 resource "my_instance_profile", type:"rs_aws_iam.instance_profile" do
