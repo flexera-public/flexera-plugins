@@ -146,7 +146,12 @@ plugin "rs_aws_iam" do
 
     output_path "//Policy"
 
-    output "PolicyName","PolicyId","Arn","PolicyArn"
+    output "PolicyName","PolicyId","Arn",'PolicyArn'
+
+    # output "policies" do
+    #   body_path "//AttachedPolicies/member"
+    #   type "array"
+    # end
 
     action "create" do
       verb "POST"
@@ -279,11 +284,10 @@ define delete_role(@role) do
     call sys_log.summary("role")
     call sys_log.detail(to_s(to_object(@role)))
     call sys_log.summary("role_policies")
-    $policies = @role.attached_polices()
-    call sys_log.detail(to_s($polices))
-    foreach $policy in @role.attached_polices() do
+    foreach @policy in @role.attached_polices() do
+      call sys_log.detail(to_s(to_object(@policy)))
       @role.detach_policy({
-        policy_arn: $policy
+        policy_arn: @policy.PolicyArn
       })
     end
     @role.destroy()
