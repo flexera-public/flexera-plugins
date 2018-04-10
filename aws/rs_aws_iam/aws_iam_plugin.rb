@@ -92,10 +92,6 @@ plugin "rs_aws_iam" do
         alias_for "PolicyArn"
         location "query"
       end
-      # field "role_name" do
-      #   alias_for "RoleName"
-      #   location "query"
-      # end
     end
     action "detach_policy" do
       verb "POST"
@@ -104,10 +100,6 @@ plugin "rs_aws_iam" do
         alias_for "PolicyArn"
         location "query"
       end
-      # field "role_name" do
-      #   alias_for "RoleName"
-      #   location "query"
-      # end
     end
     action "attached_polices" do
       verb "POST"
@@ -146,12 +138,7 @@ plugin "rs_aws_iam" do
 
     output_path "//Policy"
 
-    output "PolicyName","PolicyId","Arn",'PolicyArn'
-
-    # output "policies" do
-    #   body_path "//AttachedPolicies/member"
-    #   type "array"
-    # end
+    output "PolicyName","PolicyId","Arn","PolicyArn"
 
     action "create" do
       verb "POST"
@@ -280,17 +267,14 @@ define delete_role(@role) do
   sub on_error: handle_retries($delete_count) do
     $delete_count = $delete_count + 1
     call plugin_generics.start_debugging()
-    call sys_log.set_task_target(@@deployment)
-    call sys_log.summary("role")
-    call sys_log.detail(to_s(to_object(@role)))
-    call sys_log.summary("role_policies")
-    foreach @policy in @role.attached_polices() do
-      call sys_log.detail(to_s(to_object(@policy)))
-      @role.detach_policy({
-        policy_arn: @policy.PolicyArn
-      })
+    if @role
+      foreach @policy in @role.attached_polices() do
+        @role.detach_policy({
+          policy_arn: @policy.Arn
+        })
+      end
+      @role.destroy()
     end
-    @role.destroy()
     call plugin_generics.stop_debugging()
   end
 end
@@ -314,7 +298,7 @@ define delete_policy(@policy) do
   sub on_error: handle_retries($delete_count) do
     $delete_count = $delete_count + 1
     call plugin_generics.start_debugging()
-      @policy.destroy()
+    @policy.destroy()
     call plugin_generics.stop_debugging()
   end
 end
@@ -349,38 +333,18 @@ define delete_instance_profile(@instance_profile) do
   sub on_error: handle_retries($delete_count) do
     $delete_count = $delete_count + 1
     call plugin_generics.start_debugging()
-    if @instance_profile.RoleName
+    @instance_profile = @instance_profile.get()
+    if @instance_profile
       rs_aws_iam.instance_profile.remove_role({
         instance_profile: @instance_profile.InstanceProfileName,
         role_name: @instance_profile.RoleName
       })
-    end
-    if @instance_profile.get()
       @instance_profile.destroy()
     end
     call plugin_generics.stop_debugging()
   end
 end
 
-# define provision_role_policy(@declaration) return @role_policy do
-#   sub on_error: plugin_generics.stop_debugging() do
-#     call plugin_generics.start_debugging()
-#     $object = to_object(@declaration)
-#     $fields = $object["fields"]
-#     @role_policy = rs_aws_iam.role_policy.attach($fields)
-#     call plugin_generics.stop_debugging()
-#   end
-# end
-#
-# define delete_role_policy(@role_policy) do
-#   $delete_count = 0
-#   sub on_error: handle_retries($delete_count) do
-#     $delete_count = $delete_count + 1
-#     call plugin_generics.start_debugging()
-#     @role_policy.detach()
-#     call plugin_generics.stop_debugging()
-#   end
-# end
 
 define handle_retries($attempts) do
   if $attempts <= 6
