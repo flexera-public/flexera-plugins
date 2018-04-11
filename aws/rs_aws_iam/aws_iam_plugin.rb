@@ -40,7 +40,7 @@ plugin "rs_aws_iam" do
     field "assume_role_policy_document" do
       alias_for "AssumeRolePolicyDocument"
       location "query"
-      type "composite"
+      type "string"
       required true
     end
     field "description" do
@@ -118,7 +118,7 @@ plugin "rs_aws_iam" do
     field "policy_document" do
       alias_for "PolicyDocument"
       location "query"
-      type "composite"
+      type "string"
       required true
     end
     field "description" do
