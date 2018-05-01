@@ -1,4 +1,12 @@
-name "CFT Plugin Test"
+# In-line CFT Example.
+# 
+# When launching a CFT from CAT, one can specify the CFT body "in line" in the CAT itself.
+# Or, one can reference the CFT via an S3 bucket URL.
+#
+# This example CAT uses the in-line method.
+
+
+name "CFT In-Line Plugin Test"
 rs_ca_ver 20161221
 short_description  "CFT Test"
 long_description ""
@@ -11,7 +19,7 @@ end
 
 resource "stack", type: "rs_aws_cft.stack" do
   stack_name join(["cft-", last(split(@@deployment.href, "/"))])
-  template_body ""
+  template_body "" # CFT body is inserted below
   description "CFT Test"
 end
 
