@@ -271,6 +271,12 @@ plugin "rs_azure_compute" do
       path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Compute/virtualMachineScaleSets/$name"
     end
 
+    action "destroy" do
+      type "scale_set"
+      path "$href"
+      verb "DELETE"
+    end
+
     action "show" do
       type "scale_set"
       path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Compute/virtualMachineScaleSets/$name"
