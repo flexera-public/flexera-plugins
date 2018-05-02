@@ -21,7 +21,8 @@ plugin "rs_azure_compute" do
     default_host "https://management.azure.com/"
     default_scheme "https"
     query do {
-      'api-version' =>  '2016-04-30-preview'
+      # 'api-version' =>  '2016-04-30-preview'
+      'api-version' =>  '2017-12-01'
     } end
   end
 
@@ -228,6 +229,77 @@ plugin "rs_azure_compute" do
       body_path "properties.provisioningState"
     end
   end
+
+  type "scale_set" do
+    href_templates "{{type=='Microsoft.Compute/virtualMachineScaleSets' && id || null}}"
+    provision "provision_scale_set"
+    delete    "delete_resource"
+
+    field "resource_group" do
+      type "string"
+      location "path"
+    end
+
+    field "name" do
+      type "string"
+      location "path"
+    end
+
+    field "properties" do
+      type "composite"
+      location "body"
+    end
+
+    field "location" do
+      type "string"
+      location "body"
+    end
+
+    field "sku" do
+      type "composite"
+      location "body"
+    end
+
+    field "plan" do
+      type "composite"
+      location "body"
+    end
+
+    action "create" do
+      type "scale_set"
+      verb "PUT"
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Compute/virtualMachineScaleSets/$name"
+    end
+
+    action "show" do
+      type "scale_set"
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Compute/virtualMachineScaleSets/$name"
+      verb "GET"
+
+      field "resource_group" do
+        location "path"
+      end
+
+      field "name" do
+        location "path"
+      end
+    end
+
+    action "get" do
+      type "scale_set"
+      path "$href"
+      verb "GET"
+    end
+
+    output "id","name","location","tags","properties","sku","type","zones","identity"
+    output "provisioningState" do
+      body_path "properties.provisioningState"
+    end
+
+    output "state" do
+      body_path "properties.provisioningState"
+    end
+  end
 end
 
 resource_pool "rs_azure_compute" do
@@ -237,7 +309,7 @@ resource_pool "rs_azure_compute" do
     end
 
     auth "azure_auth", type: "oauth2" do
-      token_url "https://login.microsoftonline.com/TENANT_ID/oauth2/token"
+      token_url "https://login.microsoftonline.com/09b8fec1-4b8d-48dd-8afa-5c1a775ea0f2/oauth2/token"
       grant type: "client_credentials" do
         client_id cred("AZURE_APPLICATION_ID")
         client_secret cred("AZURE_APPLICATION_KEY")
@@ -303,6 +375,40 @@ define provision_extension(@declaration) return @resource do
       if $status == "Failed"
         call stop_debugging()
         raise "Execution Name: "+ $name + ", Status: " + $status + ", VirtualMachine: " + $vm_name
+      end
+      call stop_debugging()
+      call sys_log.detail(join(["Status: ", $status]))
+      call start_debugging()
+      sleep(10)
+    end
+    @resource = @new_resource
+    call sys_log.detail(to_object(@resource))
+    call stop_debugging()
+  end
+end
+
+define provision_scale_set(@declaration) return @resource do
+  sub on_error: stop_debugging() do
+    $object = to_object(@declaration)
+    $fields = $object["fields"]
+    $type = $object["type"]
+    $name = $fields["name"]
+    $resource_group = $fields["resource_group"]
+    call sys_log.set_task_target(@@deployment)
+    call sys_log.summary(join(["Provision ", $type]))
+    call sys_log.detail($object)
+    call start_debugging()
+    @operation = rs_azure_compute.$type.create($fields)
+    call stop_debugging()
+    call sys_log.detail(to_object(@operation))
+    call start_debugging()
+    @new_resource = @operation.get()
+    $status = @new_resource.state
+    while $status != "Succeeded" do
+      $status = @new_resource.state
+      if $status == "Failed"
+        call stop_debugging()
+        raise "Execution Name: "+ $name + ", Status: " + $status
       end
       call stop_debugging()
       call sys_log.detail(join(["Status: ", $status]))
