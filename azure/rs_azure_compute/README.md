@@ -147,6 +147,38 @@ end
 - location
 - properties
 
+## scale_set
+#### Supported Fields
+| Field Name | Required? | Description |
+|------------|-----------|-------------|
+|name|Yes|Specifies name of vm scale set|
+|resource_group|Yes|Name of resource group in which to launch the Deployment|
+|location|Yes|Datacenter to launch in|
+|properties|Yes|Hash of extension options|
+|sku|Yes|The virtual machine scale set sku.|
+|plan|No|Specifies information about the marketplace image used to create the virtual machine. This element is only used for marketplace images. Before you can use a marketplace image from an API, you must enable the image for programmatic use. In the Azure portal, find the marketplace image that you want to use and then click Want to deploy programmatically, Get Started ->. Enter any required information and then click Save.|
+
+#### Supported Actions
+
+| Action | API Implementation | Support Level |
+|--------------|:----:|:-------------:|
+| get | [Get](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachinescalesets/get)| Supported |
+| create | [Put](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachinescalesets/createorupdate)|Supported|
+| delete | [Delete](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachinescalesets/delete)| Supported|
+
+#### Supported Outputs
+- id
+- identity
+- location
+- name
+- type
+- plan
+- properties
+- sku
+- zones
+- tags
+- properties
+
 ## Implementation Notes
 - The Azure Compute Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to an LB resource.) 
 
