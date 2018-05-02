@@ -5,7 +5,6 @@ import "plugins/gce_dm"
 
 parameter "gce_project" do
   like $gce_dm.gce_project
-  default "rightscale.com:services1"
 end
 
 operation "launch" do
