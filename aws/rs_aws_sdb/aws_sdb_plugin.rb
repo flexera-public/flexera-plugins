@@ -104,8 +104,6 @@ plugin "rs_aws_sdb" do
     #delete    'delete_db_instance'
   end 
 
-end
-
 resource_pool "sdb" do
   plugin $rs_aws_sdb
   host "sdb.us-west-2.amazonaws.com"
