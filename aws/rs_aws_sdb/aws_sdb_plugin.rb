@@ -108,11 +108,11 @@ end
 
 resource_pool "sdb" do
   plugin $rs_aws_sdb
-  host "sdb.us-east-1.amazonaws.com"
+  host "sdb.us-west-2.amazonaws.com"
   auth "key", type: "aws" do
     version     4
     service    'sdb'
-    region     'us-east-1'
+    region     'us-west-2'
     access_key cred('AWS_ACCESS_KEY_ID')
     secret_key cred('AWS_SECRET_ACCESS_KEY')
   end
