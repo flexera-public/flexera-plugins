@@ -18,9 +18,9 @@ plugin "rs_aws_sdb" do
     } end
   end
 
-  type "domain" do
-    href_templates "/?Action=CreateDomain&DomainName={{//DomainName}}"
-    end
+  #type "domain" do
+  #  href_templates "/?Action=CreateDomain&DomainName={{//DomainName}}"
+  #  end
 
     # Tushar Started Here
     action "createdomain" do
