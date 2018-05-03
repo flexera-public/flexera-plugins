@@ -97,10 +97,13 @@ plugin "rs_aws_sdb" do
      
       end
     end
+    
+    provision "provision_domain"   
+    delete    "delete_domain"
 
   end
-    #provision 'provision_db_instance'   
-    #delete    'delete_db_instance'
+    #provision "provision_domain"   
+    #delete    "delete_domain"
   end
 
 resource_pool "sdb" do
