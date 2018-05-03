@@ -100,16 +100,8 @@ plugin "rs_aws_sdb" do
       end
     end
  
-    action "select" do
-      verb "GET"
-      path "/?Action=Select"
-      type "string"
-    end
- 
-    ### Tushar Ended here
-    provision 'provision_db_instance'
-    
-    delete    'delete_db_instance'
+    #provision 'provision_db_instance'   
+    #delete    'delete_db_instance'
   end 
 
 end
@@ -126,20 +118,15 @@ resource_pool "sdb" do
   end
 end
 
-define provision_db_instance(@declaration) return @db_instance do
+define provision_domain(@declaration) return @my_domain do
+  $object = to_object(@declaration)
+  $fields = $object["fields"]
   sub on_error: plugin_generics.stop_debugging() do
     call plugin_generics.start_debugging()
-    $object = to_object(@declaration)
-    $fields = $object["fields"]
-    if $fields["db_snapshot_identifier"] != null 
-      @db_instance = rs_aws_sdb.domain.create($fields)
-    else
-      @db_instance = rs_aws_rds.db_instance.create($fields)
-    end
+    @my_domain = rs_aws_sdb.domain.create($fields)
     sub on_error: skip do
-      sleep_until(@db_instance.DBInstanceStatus == "available")
+      #
     end 
-    @db_instance = @db_instance.get()
     call plugin_generics.stop_debugging()
   end
 end
@@ -157,15 +144,10 @@ define handle_retries($attempts) do
   end
 end
 
-define delete_db_instance(@db_instance) do
-  $delete_count = 0
-  sub on_error: handle_retries($delete_count) do
-    $delete_count = $delete_count + 1
+define delete_domain(@my_domain) do
+  sub on_error: handle_retries($my_domain) do
     call plugin_generics.start_debugging()
     rs_aws_sdb.domain.destroy(name: $domain_name)
-    if @db_instance.DBInstanceStatus != "deleting"
-      @db_instance.destroy({ "skip_final_snapshot": "true" })
-    end
     call plugin_generics.stop_debugging()
   end 
 end
