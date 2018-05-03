@@ -18,8 +18,8 @@ plugin "rs_aws_sdb" do
     } end
   end
 
-  type "db_instance" do
-    href_templates "/?Action=DescribeDBInstances&DBInstanceIdentifier={{//CreateDBInstanceResult/DBInstance/DBInstanceIdentifier}}","/?Action=DescribeDBInstances&DBInstanceIdentifier={{//RestoreDBInstanceFromDBSnapshotResult/DBInstance/DBInstanceIdentifier}}","/?Action=DescribeDBInstances&DBInstanceIdentifier={{//DescribeDBInstancesResult/DBInstances/DBInstance/DBInstanceIdentifier}}"
+  type "domain" do
+    href_templates "/?Action=CreateDomain&DomainName={{//DomainName}}"
     end
 
     # Tushar Started Here
@@ -107,159 +107,11 @@ plugin "rs_aws_sdb" do
     end
  
     ### Tushar Ended here
-    action "stop" do
-      verb "POST"
-      path "$href?Action=StopDBInstance"
-
-      field "db_snapshot_identifier" do
-        alias_for "DBSnapshotIdentifier"
-        location "query"
-      end 
-    end 
-
-    action "start" do
-      verb "POST"
-      path "$href?Action=StartDBInstance"
-    end 
-
-    action "reboot" do 
-      verb "POST"
-      path "$href?Action=RebootDBInstance"
-    end 
-
     provision 'provision_db_instance'
     
     delete    'delete_db_instance'
   end 
 
- 
-  type "security_groups" do
-    href_templates "/?Action=DescribeDBSecurityGroups&DBSecurityGroupName={{//DescribeDBSecurityGroupsResult/DBSecurityGroups/DBSecurityGroup/DBSecurityGroupName}}","/?Action=DescribeDBSecurityGroups&DBSecurityGroupName={{//CreateDBSecurityGroupResult/DBSecurityGroup/DBSecurityGroupName}}"
-
-    field "name" do
-      alias_for "DBSecurityGroupName"
-      type      "string"
-      location  "query"
-    end
- 
-    field "description" do
-      alias_for "DBSecurityGroupDescription"
-      type      "string"
-      location  "query"
-    end
- 
-    output_path "//DBSecurityGroup"
- 
-    output 'DBSecurityGroupDescription' do
-      body_path "DBSecurityGroupDescription"
-      type "simple_element"
-    end
-
-    output 'OwnerId' do
-      body_path "OwnerId"
-      type "simple_element"
-    end
-
-    output 'DBSecurityGroupName' do
-      body_path 'DBSecurityGroupName'
-      type "simple_element"
-    end 
-
-    action "create" do
-      verb "POST"
-      path "/?Action=CreateDBSecurityGroup"
-    end
-
-    action "destroy" do
-      verb "POST"
-      path "$href?Action=DeleteDBSecurityGroup"
-    end
- 
-    action "get" do
-      verb "POST"
-      path "/?Action=DescribeDBSecurityGroups"
-    end
- 
-    action "list" do
-      verb "POST"
-      path "/?Action=DescribeDBSecurityGroups"
-    end
-
-    provision "provision_sg"
-
-    delete    "delete_sg"
-
-  end
-
-  type "db_subnet_groups" do
-    href_templates "/?Action=DescribeDBSubnetGroups&DBSubnetGroupName={{//CreateDBSubnetGroupResult/DBSubnetGroup/DBSubnetGroupName}}","/?Action=DescribeDBSubnetGroups&DBSubnetGroupName={{//DescribeDBSubnetGroupsResult/DBSubnetGroups/DBSubnetGroup/DBSubnetGroupName}}"
-
-    field "name" do
-      alias_for "DBSubnetGroupName"
-      type      "string"
-      location  "query"
-    end
-
-    field "description" do
-      alias_for "DBSubnetGroupDescription"
-      type      "string"
-      location  "query"
-    end
-    
-    field "subnet1" do
-      alias_for "SubnetIds.member.1"
-      type "string"
-      location "query"
-    end
-
-    field "subnet2" do
-      alias_for "SubnetIds.member.2"
-      type "string"
-      location "query"
-    end
-
-    output_path "//DBSubnetGroup"
-
-    output "DBSubnetGroupDescription" do
-      body_path "DBSubnetGroupDescription"
-      type "simple_element"
-    end
-
-    output "DBSubnetGroupName" do
-      body_path "DBSubnetGroupName"
-      type "simple_element"
-    end
-
-    output "name" do
-      body_path "DBSubnetGroupName"
-      type "simple_element"
-    end
-
-    action "create" do
-      verb "POST"
-      path "/?Action=CreateDBSubnetGroup"
-    end
-
-    action "destroy" do
-      verb "POST"
-      path "$href?Action=DeleteDBSubnetGroup"
-    end
-
-    action "get" do
-      verb "POST"
-      path "/?Action=DescribeDBSubnetGroups"
-    end
-
-    action "list" do
-      verb "POST"
-      path "/?Action=DescribeDBSubnetGroups"
-    end
-
-    provision "provision_db_subnet_group"
-
-    delete    "delete_db_subnet_group"
-
-  end
 end
 
 resource_pool "sdb" do
