@@ -18,28 +18,26 @@ plugin "rs_aws_sdb" do
     } end
   end
 
-  #type "domain" do
-  #  href_templates "/?Action=CreateDomain&DomainName={{//DomainName}}"
-  #  end
-
+  type "domain" do
+    href_templates "/?Action=CreateDomain&DomainName={{//DomainName}}"
+   #end
     # Tushar Started Here
-    action "createdomain" do
-      verb "POST"
-      path "/?Action=CreateDomain"
-      type "string"
+    #action "createdomain" do
+    #  verb "POST"
+    #  path "/?Action=CreateDomain"
+    #  type "string"
 
       field "domainname" do
         alias_for "DomainName"
+        location "query"
         type "string"
       end
-    end
 
-    action "deletedomain" do
-      verb "GET"
-      path "/?Action=DeleteDomain"
-      type "string"
-    end
-
+      action "deletedomain" do
+        verb "GET"
+        path "/?Action=DeleteDomain"
+        type "string"
+      end   
 
     action "domainmetadata" do
       verb "GET"
@@ -51,20 +49,20 @@ plugin "rs_aws_sdb" do
     action "getattributes" do
       verb "GET"
       path "/?Action=GETAttributes"
-      type "string"
 
-      field "item.name" do
+
+      field "item_name" do
         alias_for "ItemName"
         location "query"
+
       end
  
       field "domainname" do
         alias_for "DomainName"
         location "query"
-        type "string"
+ 
       end
     end
-
 
     action "listdomains" do
       verb "GET"
@@ -73,36 +71,37 @@ plugin "rs_aws_sdb" do
       field "maxnumberofdomains" do
        alias_for "MaxNumberOfDomains"
        location "query"
+ 
       end
-
     end
 
     action "putattributes" do
       verb "POST"
       path "/?Action=PutAttributes"
       type "string"
-      field "attribute.1.name" do
+
+      field "attribute_1_name" do
         alias_for "Attribute.1.Name"
         location "query"
-        type "string"
       end
 
-      field "attribute.x.value" do
+      field "attribute_x_value" do
        alias_for "Attribute.1.Value"
        location "query"
-       type "string"
+    
       end 
  
       field "domainname" do
         alias_for "DomainName"
         location "query"
-        type "string"
+     
       end
     end
- 
+
+  end
     #provision 'provision_db_instance'   
     #delete    'delete_db_instance'
-  end 
+  end
 
 resource_pool "sdb" do
   plugin $rs_aws_sdb
