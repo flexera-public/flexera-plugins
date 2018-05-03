@@ -6,7 +6,7 @@ import "plugins/rs_azure_cosmosdb"
 
 parameter "subscription_id" do
   like $rs_azure_cosmosdb.subscription_id
-  default "8beb7791-9302-4ae4-97b4-afd482aadc59"
+  default "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 end
 
 resource "rg", type: "rs_cm.resource_group" do
@@ -21,13 +21,6 @@ resource "cosmosdb", type: "rs_azure_cosmosdb.db_account" do
   kind "GlobalDocumentDB"
   properties do {
     "databaseAccountOfferType" => "Standard",
-    #"ipRangeFilter" => "10.10.10.10",
-    #"isVirtualNetworkFilterEnabled" => "true",
-    #"virtualNetworkRules" => [
-    #  {
-    #    "id" => join(["/subscriptions/",$subscription_id,"/resourceGroups/rs-default-centralus/providers/Microsoft.Network/virtualNetworks/ARM-CentralUS/subnets/default"])
-    #  }
-    #],
     "locations" => [
       {
         "failoverPriority" => "0",
