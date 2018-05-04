@@ -123,7 +123,7 @@ define launch_handler(@my_availability_group,@server1,@my_vm_extension,@deployme
   $vm_fields["properties"]["diagnosticsProfile"]={}
   $vm_fields["properties"]["diagnosticsProfile"]["bootDiagnostics"]={}
   $vm_fields["properties"]["diagnosticsProfile"]["bootDiagnostics"]["enabled"] = true
-  $vm_fields["properties"]["diagnosticsProfile"]["bootDiagnostics"]["storageUri"] = "https://dftestingdiag134.blob.core.windows.net"
+  $vm_fields["properties"]["diagnosticsProfile"]["bootDiagnostics"]["storageUri"] = "https://rsimagesncus.blob.core.windows.net"
   @vm.update($vm_fields)
   call stop_debugging()
 end
