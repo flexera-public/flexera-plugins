@@ -28,6 +28,7 @@ This repo contains a library of open source RightScale plugins.
 - [Azure Key Vault](./azure/rs_azure_key_vault/)
 - [Azure Service Diagnostic Settings](./azure/rs_azure_diagnostic_settings/)
 - [Azure Resources](./azure/rs_azure_resources/)
+- [Azure CosmosDB](./azure/rs_azure_cosmosdb/)
 
 ### Google Cloud Platform
 - [GCP Google Compute Engine](./google/gce/)
