@@ -25,12 +25,6 @@ plugin "rs_aws_route53" do
       location "body"
     end
 
-    field "action" do
-      type "string"
-      required true
-      location "body"
-    end
-
     output_path "//HostedZone"
     output "Id", "Name"
 

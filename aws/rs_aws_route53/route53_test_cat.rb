@@ -22,7 +22,6 @@ end
 
 resource "record", type: "rs_aws_route53.resource_recordset" do
   hosted_zone_id @hostedzone.Id
-  action "UPSERT"
   change_resource_record_sets_request do {
     "xmlns" => "https://route53.amazonaws.com/doc/2013-04-01/",
     "ChangeBatch"=>[
