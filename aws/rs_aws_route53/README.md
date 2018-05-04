@@ -70,15 +70,16 @@ end
 | get | [GetHostedZone](https://docs.aws.amazon.com/Route53/latest/APIReference/API_GetHostedZone.html) | Supported |
 | list | [ListHostedZones](https://docs.aws.amazon.com/Route53/latest/APIReference/API_ListHostedZones.html) | Supported |
 
-### resource_recordset
+### recordset
 
 #### Supported Fields
-**Note:** There are many possible configurations when defining a `resource_recordset` resource.  While some fields below are not listed as "Required", they may actually be required for your resource,  depending on the value(s) of other field(s). More detailed API documentation is available [here](http://docs.aws.amazon.com/efs/latest/ug/api-reference.html).
+**Note:** There are many possible configurations when defining a `recordset` resource.  While some fields below are not listed as "Required", they may actually be required for your resource,  depending on the value(s) of other field(s). More detailed API documentation is available [here](http://docs.aws.amazon.com/efs/latest/ug/api-reference.html).
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 | hosted_zone_id | yes | id from the hosted_zone resource |  
 | change_resource_record_sets_request | yes | an object describing the records to change.  see example  |  
+| action | no | the action for the record set. 'CREATE', 'UPSERT','DELETE'.  defaults to 'UPSERT' |
 
 #### Supported Outputs
 -  Id
@@ -92,10 +93,12 @@ AWS Route53 resources can now be created by specifying a resource declaration wi
 The resulting resource can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
 
 ```
-#ChangeResourceRecordSets
+#ResourceRecordSets
 resource "record", type: "rs_aws_route53.resource_recordset" do
   hosted_zone_id @hostedzone.Id
-  change_resource_record_sets_request do {
+  action 'UPSERT'
+  comment 'some comment about the record'
+  resource_record_sets do {
     "xmlns" => "https://route53.amazonaws.com/doc/2013-04-01/",
     "ChangeBatch"=>[
       "Changes"=>[
