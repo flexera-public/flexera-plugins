@@ -14,7 +14,7 @@ The GCP Cloud SQL Plugin consumes the Google Cloud SQL API and exposes the suppo
   - `GOOGLE_SQL_PLUGIN_ACCOUNT`
   - `GOOGLE_SQL_PLUGIN_PRIVATE_KEY`
 - The following packages are also required (See the Installation section for details):
-  - [sys_log](sys_log.rb)
+  - [sys_log](../../libraries/sys_log.rb)
 - Enable the Google Cloud SQL API on your Project. Refer to [Google Documentation](https://cloud.google.com/sql/docs/mysql/admin-api/#activating_the_api) for more information.
 
 ## Getting Started

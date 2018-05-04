@@ -12,7 +12,7 @@ The Azure Compute Plugin integrates RightScale Self-Service with the basic funct
   - `AZURE_APPLICATION_ID`
   - `AZURE_APPLICATION_KEY`
 - The following packages are also required (See the Installation section for details):
-  - [sys_log](sys_log.rb)
+  - [sys_log](../../libraries/sys_log.rb)
 
 ## Installation
 1. Be sure your RightScale account has Self-Service enabled
@@ -145,6 +145,38 @@ end
 - name
 - type
 - location
+- properties
+
+## scale_set
+#### Supported Fields
+| Field Name | Required? | Description |
+|------------|-----------|-------------|
+|name|Yes|Specifies name of vm scale set|
+|resource_group|Yes|Name of resource group in which to launch the Deployment|
+|location|Yes|Datacenter to launch in|
+|properties|Yes|Hash of extension options|
+|sku|Yes|The virtual machine scale set sku.|
+|plan|No|Specifies information about the marketplace image used to create the virtual machine. This element is only used for marketplace images. Before you can use a marketplace image from an API, you must enable the image for programmatic use. In the Azure portal, find the marketplace image that you want to use and then click Want to deploy programmatically, Get Started ->. Enter any required information and then click Save.|
+
+#### Supported Actions
+
+| Action | API Implementation | Support Level |
+|--------------|:----:|:-------------:|
+| get | [Get](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachinescalesets/get)| Supported |
+| create | [Put](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachinescalesets/createorupdate)|Supported|
+| delete | [Delete](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachinescalesets/delete)| Supported|
+
+#### Supported Outputs
+- id
+- identity
+- location
+- name
+- type
+- plan
+- properties
+- sku
+- zones
+- tags
 - properties
 
 ## Implementation Notes

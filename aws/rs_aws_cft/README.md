@@ -12,7 +12,7 @@ The AWS CFT Plugin integrates RightScale Self-Service with the basic functionali
   - `AWS_ACCESS_KEY_ID`
   - `AWS_SECRET_ACCESS_KEY`
 - The following packages are also required (See the Installation section for details):
-  - [sys_log](sys_log.rb)
+  - [sys_log](../../libraries/sys_log.rb)
 
 ## Getting Started
 
@@ -48,8 +48,8 @@ For more information on using packages, please refer to the RightScale online do
 | disable_rollback | no | Set to `true` to disable rollback of the stack if stack creation failed. Default value is `false`. You can specify either `on_failure` or `disable_rollback`, but not both. | 
 | notification_arn_n | no | The Simple Notification Service (SNS) topic ARNs to publish stack related events.  Where `n` equals 1-3 (ie. `notification_arn_1`) |
 | on_failure | no | Determines what action will be taken if stack creation fails.  Allowed Values: `DO_NOTHING`, `ROLLBACK`, or `DELETE`. You can specify either `on_failure` or `disable_rollback`, but not both. | 
-| parameter_n_name | no | The key associated with the parameter. If you don't specify a key and value for a particular parameter, AWS CloudFormation uses the default value that is specified in your template. Where `n` equals 1-10 (ie. `parameter_1_name`). `parameter_1_name` and `parameter_1_value` create a hash of a single CFT parameter, etc. | | 
-| parameter_n_value | no | The value associated with the parameter. Where `n` equals 1-10 (ie. `parameter_1_value`).  `parameter_1_name` and `parameter_1_value` create a hash of a single CFT parameter, etc. |
+| parameter_n_name | no | The key associated with the parameter. If you don't specify a key and value for a particular parameter, AWS CloudFormation uses the default value that is specified in your template. Where `n` equals 1-30 (ie. `parameter_1_name`). `parameter_1_name` and `parameter_1_value` create a hash of a single CFT parameter, etc. | | 
+| parameter_n_value | no | The value associated with the parameter. Where `n` equals 1-30 (ie. `parameter_1_value`).  `parameter_1_name` and `parameter_1_value` create a hash of a single CFT parameter, etc. |
 | resource_type_n | no * | The template resource types that you have permissions to work with for this create stack action. By default, AWS CloudFormation grants permissions to all resource types. AWS Identity and Access Management (IAM) uses this parameter for AWS CloudFormation-specific condition keys in IAM policies. Where `n` equals 1-3 (ie. `resource_type_1`) |
 | role_arn | no | The Amazon Resource Name (ARN) of an AWS Identity and Access Management (IAM) role that AWS CloudFormation assumes to create the stack. AWS CloudFormation uses the role's credentials to make calls on your behalf. AWS CloudFormation always uses this role for all future operations on the stack. | 
 | stack_name | yes | The name that is associated with the stack. The name must be unique in the region in which you are creating the stack. | 

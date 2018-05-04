@@ -2,20 +2,22 @@ name 'aws_elb_plugin'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Amazon Web Services - Elastic Load Balancer"
-long_description "Version: 1.0"
-package "plugin/rs_aws_elb"
+long_description "Version: 1.2"
+package "plugins/rs_aws_elb"
 import "sys_log"
 
 plugin "rs_aws_elb" do
   endpoint do
-    default_host "elasticloadbalancing.amazonaws.com"
     default_scheme "https"
     path "/"
+    headers do {
+      "content-type" => "application/xml"
+    } end
     query do {
       "Version" => "2012-06-01"
     } end
   end
-  
+
   type "elb" do
     # HREF is set to the correct template in the provision definition due to a lack of usable fields in the response to build the href
     href_templates "/?Action=DescribeLoadBalancers&LoadBalancerNames.member.1={{//LoadBalancerDescriptions/member/LoadBalancerName}}","/?Action=DescribeLoadBalancers&LoadBalancerNames.member.1={{//CreateLoadBalancerResult/DNSName}}", "/?Action=DescribeLoadBalancers&LoadBalancerNames.member.1={{/LoadBalancerName}}"
@@ -112,13 +114,13 @@ plugin "rs_aws_elb" do
       alias_for "LoadBalancerPort"
       location "query"
       type "number"
-    end 
+    end
 
     field "ssl_certificate_id" do
       alias_for "SSLCertificateId"
       location "query"
       type "string"
-    end 
+    end
 
     output 'LoadBalancerName' do
       body_path '//LoadBalancerDescriptions/member/LoadBalancerName'
@@ -134,16 +136,26 @@ plugin "rs_aws_elb" do
       verb "POST"
       path "/?Action=CreateLoadBalancer"
     end
-    
+
     action "destroy" do
       verb "POST"
       path "/?Action=DeleteLoadBalancer&LoadBalancerName=$LoadBalancerName"
     end
- 
+
     action "get" do
       verb "POST"
     end
- 
+
+    action "show" do
+      verb "POST"
+      path "/?Action=DescribeLoadBalancers"
+
+      field "name" do
+        location "query"
+        alias_for "LoadBalancerNames.member.1"
+      end 
+    end 
+
     action "list" do
       verb "POST"
       path "/?Action=DescribeLoadBalancers"
@@ -152,17 +164,17 @@ plugin "rs_aws_elb" do
 
     action "register_instance" do
       verb "POST"
-      path "/?Action=RegisterInstancesWithLoadBalancer/&LoadBalancerName=$LoadBalancerName"
+      path "/?Action=RegisterInstancesWithLoadBalancer&LoadBalancerName=$LoadBalancerName"
 
       field "instance" do
         alias_for "Instances.member.1.InstanceId"
         location "query"
       end
     end
-    
+
     action "deregister_instance" do
       verb "POST"
-      path "/?Action=DeregisterInstancesFromLoadBalancer/&LoadBalancerName=$LoadBalancerName"
+      path "/?Action=DeregisterInstancesFromLoadBalancer&LoadBalancerName=$LoadBalancerName"
 
       field "instance" do
         alias_for "Instances.member.1.InstanceId"
@@ -183,12 +195,13 @@ plugin "rs_aws_elb" do
         alias_for "SSLCertificateId"
         location "query"
       end
-    end 
+    end
   end
 end
 
 resource_pool "elb_pool" do
   plugin $rs_aws_elb
+  host "elasticloadbalancing.us-east-1.amazonaws.com"
   auth "key", type: "aws" do
     version     4
     service    'elasticloadbalancing'
@@ -198,87 +211,31 @@ resource_pool "elb_pool" do
   end
 end
 
-parameter "lb_name" do
-  label "ELB Name"
-  description "ELB Name"
-  default "myelb-1"
-  type "string"
-end
-
-output "list_elb" do
-  label 'list action'
-end
-
-resource "my_elb", type: "rs_aws_elb.elb" do
-  name $lb_name
-  list_lbport "80"
-  list_instport "80"
-  list_proto "http"
-  list_instproto "http"
-  #subnet1 "subnet-7c295240"
-  #security_group1 "sg-a9b9e8d6"
-  az1 "us-east-1a"
-  az2 "us-east-1d"
-  description "a simple elb"
-end
-
-operation 'list_elb' do
-  definition 'list_elbs'
-  output_mappings do{
-    $list_elb => $object
-  } end
-end
-
 define provision_elb(@declaration) return @elb do
   sub on_error: stop_debugging() do
     $object = to_object(@declaration)
     $fields = $object["fields"]
     $name = $fields['name']
-    # call sys_log.set_task_target(@@deployment)
-    # call sys_log.summary("ELB Object")
-    # call sys_log.detail($fields)
-    
-    # call sys_log.set_task_target(@@deployment)
-    # call sys_log.summary("Create ELB")
-    # call start_debugging()
+    call sys_log.set_task_target(@@deployment)
+    call sys_log.summary("ELB Object")
+    call sys_log.detail($fields)
+
+    call start_debugging()
     @elb = rs_aws_elb.elb.create($fields)
-   #  call stop_debugging()
+    call stop_debugging()
 
-   # call sys_log.set_task_target(@@deployment)
-   # call sys_log.summary("ELB Object")
-    $elb = to_object(@elb)
-   # call sys_log.detail(join(["Original: ",to_object(@elb)]))
-    $elb["hrefs"][0] = join(["?Action=DescribeLoadBalancers&LoadBalancerNames.member.1=",$name])
-    @elb = $elb
-   # call sys_log.detail(join(["Modified: ",to_object(@elb)]))
-    
-   # call sys_log.set_task_target(@@deployment)
-   # call sys_log.summary("Get ELB")
-   # call start_debugging()
+    @elb = rs_aws_elb.elb.show(name: $name)
+    call start_debugging()
     @elb = @elb.get()
-   # call stop_debugging()
-   # call sys_log.detail(join(["After Get: ",to_object(@elb)]))
+    call stop_debugging()
   end
-end
-
-define list_elbs() return $object do
-#  call sys_log.set_task_target(@@deployment)
-#  call sys_log.summary("List ELB")
-#  call start_debugging()
-  @elbs = rs_aws_elb.elb.list()
-#  call stop_debugging()
-  $object = to_object(first(@elbs))
-  $object = to_s($object)
 end
 
 define delete_elb(@elb) do
   sub on_error: stop_debugging() do
-#    call sys_log.set_task_target(@@deployment)
-#    call sys_log.summary("Destroy ELB")
-#    call sys_log.detail(to_object(@elb))
-#    call start_debugging()
+    call start_debugging()
     @elb.destroy()
-#    call stop_debugging()
+    call stop_debugging()
   end
 end
 

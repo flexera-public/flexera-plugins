@@ -19,7 +19,7 @@ The VMWare NSX Plugin integrates RightScale Self-Service with the VMWare NSX add
 This is a JSON to XML payload conversion service. It's required to workaround a limitation in Self-Service Plugins which doesn't support sending an XML body which NSX expects.
   - https://github.com/flaccid/j2xrp
 - The following packages are also required (See the Installation section for details):
-  - [sys_log](sys_log.rb)
+  - [sys_log](../../libraries/sys_log.rb)
 
 ## Installation
 1. Be sure your RightScale account has Self-Service enabled

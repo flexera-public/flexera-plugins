@@ -2,7 +2,7 @@ name 'rs_azure_mysql'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Azure MySQL Plugin"
-long_description "Version: 1.0"
+long_description "Version: 1.1"
 package "plugins/rs_azure_mysql"
 import "sys_log"
 
@@ -58,7 +58,7 @@ plugin "rs_azure_mysql" do
     field "resource_group" do
       type "string"
       location "path"
-    end 
+    end
 
     field "name" do
       type "string"
@@ -75,10 +75,10 @@ plugin "rs_azure_mysql" do
       type "mysql_server"
       path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.DBforMySQL/servers/$name"
       verb "GET"
-      
+
       field "resource_group" do
         location "path"
-      end 
+      end
 
       field "name" do
         location "path"
@@ -154,7 +154,7 @@ plugin "rs_azure_mysql" do
     field "resource_group" do
       type "string"
       location "path"
-    end 
+    end
 
     field "name" do
       type "string"
@@ -197,7 +197,7 @@ plugin "rs_azure_mysql" do
 
       field "resource_group" do
         location "path"
-      end 
+      end
 
       field "name" do
         location "path"
@@ -222,7 +222,7 @@ plugin "rs_azure_mysql" do
 
   type "firewall_rule" do
     href_templates "{{type=='Microsoft.DBforMySQL/servers/firewallRules' && id || null}}","{{value[0].type=='Microsoft.DBforMySQL/servers/firewallRules' && id || null}}"
-    provision "provision_resource"
+    provision "provision_firewall_rule"
     delete    "delete_resource"
 
     field "properties" do
@@ -233,7 +233,7 @@ plugin "rs_azure_mysql" do
     field "resource_group" do
       type "string"
       location "path"
-    end 
+    end
 
     field "name" do
       type "string"
@@ -267,7 +267,7 @@ plugin "rs_azure_mysql" do
       path "$href"
       verb "DELETE"
     end
-    
+
     action "list" do
       type "firewall_rule"
       path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.DBforMySQL/servers/$server_name/firewallRules"
@@ -280,7 +280,7 @@ plugin "rs_azure_mysql" do
     output "startIpAddress" do
       body_path "properties.startIpAddress"
     end
-    
+
     output "endIpAddres" do
       body_path "properties.endIpAddress"
     end
@@ -299,7 +299,7 @@ resource_pool "rs_azure_mysql" do
         client_id cred("AZURE_APPLICATION_ID")
         client_secret cred("AZURE_APPLICATION_KEY")
         additional_params do {
-          "resource" => "https://management.azure.com/"     
+          "resource" => "https://management.azure.com/"
         } end
       end
     end
@@ -335,7 +335,7 @@ define provision_resource(@declaration) return @resource do
         call sys_log.detail(join(["Status: ", $status]))
         sleep(10)
       end
-    end 
+    end
     call sys_log.detail(to_object(@resource))
     call stop_debugging()
   end

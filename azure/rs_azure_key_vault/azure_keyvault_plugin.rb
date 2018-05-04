@@ -128,7 +128,7 @@ plugin "rs_azure_keyvault" do
     end 
 
     output "vault_uri" do
-      body_path "properties.vault_uri"
+      body_path "properties.vaultUri"
     end 
   end
 end

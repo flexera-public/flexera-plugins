@@ -14,7 +14,7 @@ This example uses the `gce_plugin` to configure an [External Network LoadBalance
   - `GCE_PLUGIN_ACCOUNT`
   - `GCE_PLUGIN_PKJSON`
 - The following packages are also required (See the Installation section for details):
-  - `[sys_log](sys_log.rb)`
+  - [sys_log](../../../../libraries/sys_log.rb)
 
 ## Getting Started
 ### Uploading the RightLink_10_6_0_GCE_Ubuntu_16 Template

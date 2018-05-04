@@ -6,7 +6,6 @@ import "plugins/rs_azure_storage"
 
 parameter "subscription_id" do
   like $rs_azure_storage.subscription_id
-  default "8beb7791-9302-4ae4-97b4-afd482aadc59"
 end
 
 permission "read_creds" do

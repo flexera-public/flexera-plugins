@@ -2,7 +2,7 @@ name 'rs_azure_storage'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Azure Storage Plugin"
-long_description "Version: 1.0"
+long_description "Version: 1.1"
 package "plugins/rs_azure_storage"
 import "sys_log"
 
@@ -21,7 +21,7 @@ plugin "rs_azure_storage" do
     default_host "https://management.azure.com/"
     default_scheme "https"
     query do {
-      'api-version' =>  '2016-12-01'
+      'api-version' =>  '2017-06-01'
     } end
   end
 
@@ -74,6 +74,12 @@ plugin "rs_azure_storage" do
       type "storage_account"
       path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Storage/storageAccounts/$name"
       verb "PUT"
+    end
+
+    action "update" do
+      type "storage_account"
+      path "$href"
+      verb "PATCH"
     end
 
     action "list_keys" do

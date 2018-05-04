@@ -110,6 +110,8 @@ Full list of possible actions can be found on the [AWS Lambda API Documentation]
 
 ## Examples
 Please review [lambda_test_cat.rb](./lambda_test_cat.rb) for a basic example implementation.
+
+See the [lambda-optima-markups](https://github.com/rs-services/lambda-optima-markups) repo for a more complex example implementation.
 	
 ## Known Issues / Limitations
 - - Currently only supports a single region.  To support a different region, edit the `host` & `region` fields of the `resource_pool` declaration in the Plugin:

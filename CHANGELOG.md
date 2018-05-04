@@ -1,5 +1,89 @@
 # Change Log
 
+## [Week-of-02-12-2018](https://github.com/rightscale/rightscale-plugins/tree/Week-of-02-12-2018) (2018-02-15)
+[Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-02-05-2018...Week-of-02-12-2018)
+
+**Closed issues:**
+
+- AWS ElasticCache Plugin - com.amazon.coral.service\#UnknownOperationException [\#138](https://github.com/rightscale/rightscale-plugins/issues/138)
+
+**Merged pull requests:**
+
+- rs\_azure\_networking: added list\_all action to network type [\#142](https://github.com/rightscale/rightscale-plugins/pull/142) ([srpomeroy](https://github.com/srpomeroy))
+- AWS ElastiCache: adding header for content\_type=application/xml, fixes \#138 [\#139](https://github.com/rightscale/rightscale-plugins/pull/139) ([rshade](https://github.com/rshade))
+
+## [Week-of-02-05-2018](https://github.com/rightscale/rightscale-plugins/tree/Week-of-02-05-2018) (2018-02-08)
+[Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-01-29-2018...Week-of-02-05-2018)
+
+**Fixed bugs:**
+
+- Incorrect regex condition to match the nic name  [\#129](https://github.com/rightscale/rightscale-plugins/issues/129)
+
+**Closed issues:**
+
+- rs\_azure\_storage: Add "update" action [\#135](https://github.com/rightscale/rightscale-plugins/issues/135)
+- rs\_azure\_networking test cat does not successfully terminate. [\#132](https://github.com/rightscale/rightscale-plugins/issues/132)
+- READMEs have wrong link to sys\_log as part of the Installation instructions [\#116](https://github.com/rightscale/rightscale-plugins/issues/116)
+
+**Merged pull requests:**
+
+- Azure Storage Plugin: Adds the update\(patch\) action to the plugin. [\#136](https://github.com/rightscale/rightscale-plugins/pull/136) ([srpomeroy](https://github.com/srpomeroy))
+- Azure Networking Plugin: custom terminate on lb test cat [\#133](https://github.com/rightscale/rightscale-plugins/pull/133) ([srpomeroy](https://github.com/srpomeroy))
+- Azure Networking Plugin: Test Cat Fix [\#131](https://github.com/rightscale/rightscale-plugins/pull/131) ([srpomeroy](https://github.com/srpomeroy))
+
+## [Week-of-01-29-2018](https://github.com/rightscale/rightscale-plugins/tree/Week-of-01-29-2018) (2018-01-29)
+[Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-01-22-2018...Week-of-01-29-2018)
+
+**Fixed bugs:**
+
+- Azure MySQL: firewall\_rules provisioning loop [\#127](https://github.com/rightscale/rightscale-plugins/issues/127)
+- AWS ELB: Provision function gets DNSName instead of Name  [\#125](https://github.com/rightscale/rightscale-plugins/issues/125)
+
+**Merged pull requests:**
+
+- Azure MySQL: Firewall\_Rules Provision\(\) Bug Fix [\#128](https://github.com/rightscale/rightscale-plugins/pull/128) ([dfrankel33](https://github.com/dfrankel33))
+- AWS ELB: Bug Fixes  [\#126](https://github.com/rightscale/rightscale-plugins/pull/126) ([dfrankel33](https://github.com/dfrankel33))
+
+## [Week-of-01-22-2018](https://github.com/rightscale/rightscale-plugins/tree/Week-of-01-22-2018) (2018-01-22)
+[Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-01-15-2018...Week-of-01-22-2018)
+
+**Fixed bugs:**
+
+- AWS ELB & ALB - Serialization Exception [\#106](https://github.com/rightscale/rightscale-plugins/issues/106)
+
+**Merged pull requests:**
+
+- AWS ELB Plugin - Setting Content-Type header and removing description.  [\#123](https://github.com/rightscale/rightscale-plugins/pull/123) ([rshade](https://github.com/rshade))
+- AWS ALB Plugin: Updating header to fix serialization exception.  [\#122](https://github.com/rightscale/rightscale-plugins/pull/122) ([rshade](https://github.com/rshade))
+
+## [Week-of-01-15-2018](https://github.com/rightscale/rightscale-plugins/tree/Week-of-01-15-2018) (2018-01-18)
+[Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-12-11-2017...Week-of-01-15-2018)
+
+**Merged pull requests:**
+
+- Google GKE Plugin: minor corrections to the CAT \(version used\) and README. [\#119](https://github.com/rightscale/rightscale-plugins/pull/119) ([MitchellGerdisch](https://github.com/MitchellGerdisch))
+- Azure Service Diagnostic Settings plugin - Initial Release [\#117](https://github.com/rightscale/rightscale-plugins/pull/117) ([srpomeroy](https://github.com/srpomeroy))
+- AWS CloudFormation Plugin: Increased number of allowed CFT parameters from 10 to 30. [\#115](https://github.com/rightscale/rightscale-plugins/pull/115) ([MitchellGerdisch](https://github.com/MitchellGerdisch))
+
+## [Week-of-12-11-2017](https://github.com/rightscale/rightscale-plugins/tree/Week-of-12-11-2017) (2017-12-14)
+[Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-11-27-2017...Week-of-12-11-2017)
+
+**Fixed bugs:**
+
+- RDS Plugin: fix stop\_debugging  [\#112](https://github.com/rightscale/rightscale-plugins/issues/112)
+
+**Merged pull requests:**
+
+- AWS RDS Plugin - updating to use generics, fix stop\_debugging.  [\#113](https://github.com/rightscale/rightscale-plugins/pull/113) ([rshade](https://github.com/rshade))
+- Add Azure virtual network and subnet types [\#110](https://github.com/rightscale/rightscale-plugins/pull/110) ([srpomeroy](https://github.com/srpomeroy))
+
+## [Week-of-11-27-2017](https://github.com/rightscale/rightscale-plugins/tree/Week-of-11-27-2017) (2017-11-30)
+[Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-11-05-2017...Week-of-11-27-2017)
+
+**Merged pull requests:**
+
+- AWS MQ & AWS PrivateLink - Initial Releases  [\#108](https://github.com/rightscale/rightscale-plugins/pull/108) ([dfrankel33](https://github.com/dfrankel33))
+
 ## [Week-of-11-05-2017](https://github.com/rightscale/rightscale-plugins/tree/Week-of-11-05-2017) (2017-11-06)
 [Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-10-30-2017...Week-of-11-05-2017)
 

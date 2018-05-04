@@ -1,7 +1,7 @@
-name 'EFS Test CAT'
+name 'ALB Test CAT'
 rs_ca_ver 20161221
-short_description "Amazon Web Services - Elastic File System - Test CAT"
-import "plugins/rs_aws_efs"
+short_description "Amazon Web Services - Application Load Balancer - Test CAT"
+import "plugins/rs_aws_alb"
 
 parameter "lb_name" do
   label "ALB Name"
@@ -11,7 +11,7 @@ parameter "lb_name" do
 end
 
 resource "my_alb", type: "rs_aws_alb.load_balancer" do
-  name $lb_name
+  name join([$lb_name, last(split(@@deployment.href,'/'))])
   scheme "internet-facing"
   ip_address_type "ipv4"
   subnet1 "subnet-843314b8"

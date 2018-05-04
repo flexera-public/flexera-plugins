@@ -51,7 +51,7 @@ resource "my_rds", type: "rs_aws_rds.db_instance" do
   db_name join(["mydb", last(split(@@deployment.href, "/"))])
   db_subnet_group_name "db-sub-grp-8172a6f8"
   engine "mysql"
-  engine_version "5.7.11" 
+  engine_version "5.7" 
   master_username "my_user"
   master_user_password "pa$$w0rd1"
   storage_encrypted "false"

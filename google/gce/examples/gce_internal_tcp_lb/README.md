@@ -10,7 +10,7 @@ It's highly recommended you read the GCE documentation linked above while going 
 ## Requirements
 - Installation of the `gce_plugin` plugin. For details see the gce_plugin [README.md](../../README.md)
 - The following packages are also required (See the Installation section for details):
-  - `[sys_log](sys_log.rb)`
+  - [sys_log](../../../../libraries/sys_log.rb)
 
 ## Getting Started
 This CAT creates everything needed to launch this example.

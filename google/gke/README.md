@@ -14,7 +14,7 @@ The GKE Plugin consumes the Google Container Engine API and exposes the supporte
   - `GOOGLE_CONTAINER_ENGINE_ACCOUNT`
   - `GOOGLE_CONTAINER_ENGINE_KEY`
 - The following packages are also required (See the Installation section for details):
-  - [sys_log](sys_log.rb)
+  - [sys_log](../../libraries/sys_log.rb)
 
 ## Getting Started
 ### Creating a GCP Service Account
@@ -22,8 +22,8 @@ This procedure will create a GCE Service account with the appropriate permission
 1. Review the [Using OAuth 2.0 for Server to Server Applications](https://developers.google.com/identity/protocols/OAuth2ServiceAccount) documentation.
 1. Follow the section named _Creating a service account_
     - Roles needs to include:
-      - `Container Engine Admin`
-      - `Service Account Actor`
+      - `Kubernetes Engine Admin`
+      - `Service Account User`
     - Permissions can be restricted but may effect the permissions required to interact with certain resources with this plugin. Doing so is unsupported
    - Enabling G Suite Domain-wide Delegation is not required
    - Furnish a new private key selecting the JSON option
@@ -45,7 +45,7 @@ This procedure will setup the Credentials required for the Bigtable Plugin to in
    - For more details on using the portal review the [SS User Interface Guide](http://docs.rightscale.com/ss/guides/ss_user_interface_guide.html)
 1. In the Design section, use the `Upload CAT` interface to complete the following:
    1. Upload each of packages listed in the Requirements Section
-   1. Upload the `gcp_bigtable_plugin.rb` file located in this repository
+   1. Upload the `gke_plugin.rb` file located in this repository
  
 ## How to Use
 The GKE Plugin has been packaged as `plugins/gke`. In order to use this plugin you must import this plugin into a CAT.
