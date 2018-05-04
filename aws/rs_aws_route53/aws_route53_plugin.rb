@@ -9,15 +9,15 @@ import "sys_log"
 plugin "rs_aws_route53" do
   endpoint do
     default_scheme "https"
-    path "/2013-04-01"
+    path "/2013-04-01/"
     request_content_type "application/xml"
   end
-  
+
   type "hosted_zone" do
-    href_templates "{{//CreateHostedZoneResponse/HostedZone/Id}}", "{{//GetHostedZoneResponse/HostedZone/Id}}"
+    href_templates "{{//HostedZone/Id}}"
     provision "provision_resource"
     delete "delete_resource"
-    
+
     field "create_hosted_zone_request" do
       alias_for "CreateHostedZoneRequest"
       type "composite"
@@ -25,12 +25,19 @@ plugin "rs_aws_route53" do
       location "body"
     end
 
-    output "Id"
+    field "action" do
+      type "string"
+      required true
+      location "body"
+    end
+
+    output_path "//HostedZone"
+    output "Id", "Name"
 
     action "create" do
       verb "POST"
       path "/hostedzone"
-      output_path "//CreateHostedZoneResponse/HostedZone"
+      #output_path "//CreateHostedZoneResponse/HostedZone"
     end
 
     action "delete" do
@@ -41,21 +48,21 @@ plugin "rs_aws_route53" do
     action "get" do
       verb "GET"
       path "$Id"
-      output_path "//GetHostedZoneResponse/HostedZone"
+      #output_path "//GetHostedZoneResponse/HostedZone"
     end
   end
 
   type "resource_recordset" do
-    href_templates "{{//ChangeResourceRecordSetsRequest/ChangeInfo/Id}}", "{{//GetChangeResponse/ChangeInfo/Id}}"
+    href_templates "{{//ChangeInfo/Id}}", "{{//ChangeInfo/Id}}"
     provision "provision_resource"
     delete "delete_resource"
-    
+
     field "hosted_zone_id" do
       type "string"
       location "path"
       required true
     end
-    
+
     field "change_resource_record_sets_request" do
       alias_for "ChangeResourceRecordSetsRequest"
       type "composite"
@@ -67,20 +74,20 @@ plugin "rs_aws_route53" do
 
     action "create" do
       verb "POST"
-      path "/2013-04-01/hostedzone/$hosted_zone_id/rrset/"
-      output_path "//ChangeResourceRecordSetsResponse/ChangeInfo}}"
+      path "$hosted_zone_id/rrset/"
+      #output_path "//ChangeInfo"
     end
 
     action "delete" do
       verb "POST"
-      path "/2013-04-01/hostedzone/$hosted_zone_id/rrset/"
-      output_path "//ChangeResourceRecordSetsResponse/ChangeInfo}}"
+      path "$hosted_zone_id/rrset/"
+      #output_path "//ChangeInfo"
     end
 
     action "get" do
       verb "GET"
       path "/2013-04-01/change/$Id"
-      output_path "//GetChangeResponse/ChangeInfo"
+      #output_path "//ChangeInfo"
     end
   end
 end
@@ -102,7 +109,7 @@ define provision_resource(@declaration) return @resource do
    call start_debugging()
     $object = to_object(@declaration)
     call stop_debugging()
-    call sys_log.detail("object:"+ to_s($object)) 
+    call sys_log.detail("object:"+ to_s($object))
     $fields = $object["fields"]
     call sys_log.detail("existing_fields:" + to_s($fields))
     call start_debugging()
