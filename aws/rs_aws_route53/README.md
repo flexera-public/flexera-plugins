@@ -128,15 +128,17 @@ end
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
 | Create | [ChangeResourceRecordSets](https://docs.aws.amazon.com/Route53/latest/APIReference/API_ChangeResourceRecordSets.html) | Supported |
-| destroy | [ChangeResourceRecordSets](https://docs.aws.amazon.com/Route53/latest/APIReference/API_ChangeResourceRecordSets.html) | Supported |
-| get | [ChangeResourceRecordSets](https://docs.aws.amazon.com/Route53/latest/APIReference/API_ChangeResourceRecordSets.html) | Supported |
+| destroy | must use terminate operation.  See Limitations below. | Not Supported |
+| get |  | Not Supported |
 
 
 ## Examples
 Please review [route53_test_cat.rb](./route53_test_cat.rb) for a basic example implementation.
 
 ## Known Issues / Limitations
-- This plugin is missing many actions to fully managed Route53.  
+- This plugin is missing many actions to fully managed Route53.
+- The auto-terminate operation of the CAT can not delete the resource_recordset.  There for you need to
+use a terminate operation to remove the resource_record_set.  See example CAT [route53_test_cat.rb](./route53_test_cat.rb)
 
 ## Resource Pool
 ```

@@ -84,12 +84,12 @@ plugin "rs_aws_route53" do
       #output_path "//ChangeInfo"
     end
 
-    action "delete" do
+    action "destroy" do
       verb "POST"
-      path "$hosted_zone_id/rrset/"
+      path "$href/$hosted_zone_id/rrset/"
       #output_path "//ChangeInfo"
       # this field contains all the ChangeResourceRecordSetsRequest
-      # document to be sent.  
+      # document to be sent.
       field "change_resource_record_sets_request" do
         alias_for "ChangeResourceRecordSetsRequest"
         location "body"
@@ -175,28 +175,28 @@ define provision_resource_recordset(@declaration) return @resource do
   end
 end
 define delete_resource_recordset(@declaration) do
- sub on_error: stop_debugging() do
-   call start_debugging()
-   $object = to_object(@declaration)
-   $fields = $object["fields"]
-   call sys_log.detail("existing_fields:" + to_s($fields))
-   $change_resource_record_sets_request =  {
-       "xmlns": "https://route53.amazonaws.com/doc/2013-04-01/",
-       "ChangeBatch": [{
-         "Changes": [{
-           "Change": [{
-             "Action": ['DELETE'],
-             "ResourceRecordSet": [ $object['fields']['record_sets']]
-           }]
-         }],
-         "Comment": [$object['fields']['comment']]
-       }]
-   }
-   $fields['ChangeResourceRecordSetsRequest']=$change_resource_record_sets_request
-
-   rs_aws_route53.resource_recordset.delete($fields)
-   call stop_debugging()
- end
+ # sub on_error: stop_debugging() do
+ #   call start_debugging()
+ #   $object = to_object(@declaration)
+ #   $fields = $object["fields"]
+ #   call sys_log.detail("existing_fields:" + to_s($fields))
+ #   $change_resource_record_sets_request =  {
+ #       "xmlns": "https://route53.amazonaws.com/doc/2013-04-01/",
+ #       "ChangeBatch": [{
+ #         "Changes": [{
+ #           "Change": [{
+ #             "Action": ['DELETE'],
+ #             "ResourceRecordSet": [ $object['fields']['record_sets']]
+ #           }]
+ #         }],
+ #         "Comment": [$object['fields']['comment']]
+ #       }]
+ #   }
+ #   $fields['ChangeResourceRecordSetsRequest']=$change_resource_record_sets_request
+ #
+ #   rs_aws_route53.resource_recordset.delete($fields)
+ #   call stop_debugging()
+ # end
 end
 
 define start_debugging() do
