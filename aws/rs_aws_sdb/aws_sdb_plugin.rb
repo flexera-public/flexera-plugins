@@ -12,14 +12,11 @@ plugin "rs_aws_sdb" do
     default_scheme "https"
     path "/"
     query do {
-      #"SignatureVersion" =>"2",
       "Version" => "2009-04-15"
     } end
   end
 
   type "domain" do
-    #href_templates "/?Action=CreateDomain&DomainName={{//DomainName}}"
-
     field "domainname" do
       alias_for "DomainName"
       location "query"
@@ -29,12 +26,10 @@ plugin "rs_aws_sdb" do
     action "create" do
       verb "POST"
       path "/?Action=CreateDomain"
-      #type "string"
 
       field "domainname" do
         alias_for "DomainName"
         location "query"
-        #type "string"
       end
     end
 
@@ -48,21 +43,6 @@ plugin "rs_aws_sdb" do
       path "/?Action=DomainMetadata"
     end
 
-   # action "getattributes" do
-   #   verb "GET"
-   #   path "/?Action=GETAttributes"
-
-   #   field "item_name" do
-   #     alias_for "ItemName"
-   #     location "query"
-   #   end
- 
-   #   field "domainname" do
-   #     alias_for "DomainName"
-   #     location "query"
-   #   end
-   # end
-
     action "listdomains" do
       verb "GET"
       path "/?Action=ListDomains"
@@ -72,29 +52,6 @@ plugin "rs_aws_sdb" do
         location "query"
       end
     end
-
-  #  action "putattributes" do
-  #    verb "POST"
-  #    path "/?Action=PutAttributes"
-  #    type "string"
-
-  #    field "attribute_1_name" do
-  #      alias_for "Attribute.1.Name"
-  #      location "query"
-  #    end
-
-  #    field "attribute_x_value" do
-  #     alias_for "Attribute.1.Value"
-  #     location "query"
-  #  
-  #    end 
- 
-  #    field "domainname" do
-  #      alias_for "DomainName"
-  #      location "query"
-  #   
-  #    end
-  #  end
     
     provision "provision_domain"   
     delete    "delete_domain"
@@ -104,12 +61,10 @@ end
 
 resource_pool "sdb" do
   plugin $rs_aws_sdb
-  #host "sdb.us-west-2.amazonaws.com"
   host "sdb.amazonaws.com"
   auth "key", type: "aws" do
     version     4
     service    'sdb'
-    #region     'us-west-2'
     region     'us-east-1'
     access_key cred('AWS_ACCESS_KEY_ID')
     secret_key cred('AWS_SECRET_ACCESS_KEY')
