@@ -2,7 +2,7 @@ name 'aws_sdb_plugin'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Amazon Web Services - SimpleDB"
-long_description "Version: 1.4"
+long_description "Version: 1.0"
 package "plugins/rs_aws_sdb"
 import "sys_log"
 import "plugin_generics"
@@ -20,15 +20,14 @@ plugin "rs_aws_sdb" do
 
   type "domain" do
     #href_templates "/?Action=CreateDomain&DomainName={{//DomainName}}"
-   #end
-    # Tushar Started Here
+
     field "domainname" do
       alias_for "DomainName"
       location "query"
       type "string"
     end
 
-    action "createdomain" do
+    action "create" do
       verb "POST"
       path "/?Action=CreateDomain"
       #type "string"
@@ -41,15 +40,13 @@ plugin "rs_aws_sdb" do
     end
 
     action "deletedomain" do
-        verb "GET"
-        path "/?Action=DeleteDomain"
-        #type "string"
+      verb "GET"
+      path "/?Action=DeleteDomain"
     end   
 
     action "domainmetadata" do
       verb "GET"
       path "/?Action=DomainMetadata"
-      #type "string"
     end
 
    # action "getattributes" do
@@ -72,9 +69,8 @@ plugin "rs_aws_sdb" do
       path "/?Action=ListDomains"
 
       field "maxnumberofdomains" do
-       alias_for "MaxNumberOfDomains"
-       location "query"
-       #type "string"
+        alias_for "MaxNumberOfDomains"
+        location "query"
       end
     end
 
@@ -105,9 +101,7 @@ plugin "rs_aws_sdb" do
     delete    "delete_domain"
 
   end
-    #provision "provision_domain"   
-    #delete    "delete_domain"
-  end
+end
 
 resource_pool "sdb" do
   plugin $rs_aws_sdb
