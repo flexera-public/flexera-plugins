@@ -19,84 +19,87 @@ plugin "rs_aws_sdb" do
   end
 
   type "domain" do
-    href_templates "/?Action=CreateDomain&DomainName={{//DomainName}}"
+    #href_templates "/?Action=CreateDomain&DomainName={{//DomainName}}"
    #end
     # Tushar Started Here
-    #action "createdomain" do
-    #  verb "POST"
-    #  path "/?Action=CreateDomain"
-    #  type "string"
+    field "domainname" do
+      alias_for "DomainName"
+      location "query"
+      type "string"
+    end
+
+    action "createdomain" do
+      verb "POST"
+      path "/?Action=CreateDomain"
+      #type "string"
 
       field "domainname" do
         alias_for "DomainName"
         location "query"
-        type "string"
+        #type "string"
       end
+    end
 
-      action "deletedomain" do
+    action "deletedomain" do
         verb "GET"
         path "/?Action=DeleteDomain"
-        type "string"
-      end   
+        #type "string"
+    end   
 
     action "domainmetadata" do
       verb "GET"
       path "/?Action=DomainMetadata"
-      type "string"
+      #type "string"
     end
 
+   # action "getattributes" do
+   #   verb "GET"
+   #   path "/?Action=GETAttributes"
 
-    action "getattributes" do
-      verb "GET"
-      path "/?Action=GETAttributes"
-
-
-      field "item_name" do
-        alias_for "ItemName"
-        location "query"
-
-      end
+   #   field "item_name" do
+   #     alias_for "ItemName"
+   #     location "query"
+   #   end
  
-      field "domainname" do
-        alias_for "DomainName"
-        location "query"
- 
-      end
-    end
+   #   field "domainname" do
+   #     alias_for "DomainName"
+   #     location "query"
+   #   end
+   # end
 
     action "listdomains" do
       verb "GET"
-      path "href?Action=ListDomains"
+      path "/?Action=ListDomains"
 
       field "maxnumberofdomains" do
        alias_for "MaxNumberOfDomains"
        location "query"
- 
+       #type "string"
       end
     end
 
-    action "putattributes" do
-      verb "POST"
-      path "/?Action=PutAttributes"
-      type "string"
+  #  action "putattributes" do
+  #    verb "POST"
+  #    path "/?Action=PutAttributes"
+  #    type "string"
 
-      field "attribute_1_name" do
-        alias_for "Attribute.1.Name"
-        location "query"
-      end
+  #    field "attribute_1_name" do
+  #      alias_for "Attribute.1.Name"
+  #      location "query"
+  #    end
 
-      field "attribute_x_value" do
-       alias_for "Attribute.1.Value"
-       location "query"
-    
-      end 
+  #    field "attribute_x_value" do
+  #     alias_for "Attribute.1.Value"
+  #     location "query"
+  #  
+  #    end 
  
-      field "domainname" do
-        alias_for "DomainName"
-        location "query"
-     
-      end
-    end
+  #    field "domainname" do
+  #      alias_for "DomainName"
+  #      location "query"
+  #   
+  #    end
+  #  end
     
     provision "provision_domain"   
     delete    "delete_domain"
