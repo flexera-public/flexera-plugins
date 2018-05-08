@@ -41,6 +41,7 @@ plugin "rs_aws_route53" do
     action "get" do
       verb "GET"
       path "$Id"
+      output_path "//HostedZone"
     end
   end
 
@@ -77,7 +78,7 @@ plugin "rs_aws_route53" do
 
     action "create" do
       verb "POST"
-      path "hostedzone/$hosted_zone_id/rrset/"
+      path "$hosted_zone_id/rrset/"
     end
 
     action "remove" do
@@ -144,9 +145,7 @@ end
 define provision_resource_recordset(@declaration) return @resource do
   sub on_error: stop_debugging() do
     $object = to_object(@declaration)
-    call sys_log.detail("object:"+ to_s($object))
     $fields = $object["fields"]
-    call sys_log.detail("existing_fields:" + to_s($fields))
     $change_resource_record_sets_request =  {
         "xmlns": "https://route53.amazonaws.com/doc/2013-04-01/",
         "ChangeBatch": [{

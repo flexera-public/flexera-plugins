@@ -22,11 +22,11 @@ resource 'hostedzone', type: 'rs_aws_route53.hosted_zone' do
 end
 
 resource 'record', type: 'rs_aws_route53.resource_recordset' do
-  hosted_zone_id 'Z3LZVW3M90M8BQ'
+  hosted_zone_id @hostedzone.Id
   action 'upsert'
   comment 'some change about my recordset'
   record_sets do {
-    'Name'=>[join(['myname','.','a46700e0.rsps.com'])],
+    'Name'=>[join(['myname','.',@hostedzone.Name])],
     'Type'=>['A'],
     'TTL'=>['300'],
     'ResourceRecords'=>[
@@ -43,8 +43,8 @@ operation 'terminate' do
   definition 'terminate'
 end
 
-define terminate(@record) do
-  call delete_resource_recordset()
+define terminate(@hostedzone) do
+  call delete_resource_recordset(@hostedzone)
 end
 
 #
@@ -53,11 +53,11 @@ end
 # instead of using auto-terminate us the definition below and call it in a
 # terminate operation.  See above operation and definition
 #
-define delete_resource_recordset() do
+define delete_resource_recordset(@hostedzone) do
   sub on_error: stop_debugging() do
     $fields = {}
     $record_set = {
-      'Name':[join(['myname','.','a46700e0.rsps.com'])],
+      'Name':[join(['myname','.',@hostedzone.Name])],
       'Type':['A'],
       'TTL':['300'],
       'ResourceRecords':[{
@@ -77,7 +77,6 @@ define delete_resource_recordset() do
           }]
         }]
     }
-    call sys_log.detail("change_resource_record_sets_request: "+to_s($change_resource_record_sets_request))
     call start_debugging()
     rs_aws_route53.resource_recordset.remove(ChangeResourceRecordSetsRequest: $change_resource_record_sets_request,
       hosted_zone_id: @hostedzone.Id)
