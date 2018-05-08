@@ -80,17 +80,20 @@ plugin "rs_aws_route53" do
 
     action "create" do
       verb "POST"
-      path "$hosted_zone_id/rrset/"
+      path "hostedzone/$hosted_zone_id/rrset/"
       #output_path "//ChangeInfo"
     end
 
-    action "destroy" do
+    action "remove" do
       verb "POST"
-      path "$href/$hosted_zone_id/rrset/"
+      path "hostedzone/$hosted_zone_id/rrset/"
       #output_path "//ChangeInfo"
       # this field contains all the ChangeResourceRecordSetsRequest
       # document to be sent.
-      field "change_resource_record_sets_request" do
+      field "hosted_zone_id" do
+        location "path"
+      end
+      field "ChangeResourceRecordSetsRequest" do
         alias_for "ChangeResourceRecordSetsRequest"
         location "body"
       end
@@ -98,7 +101,7 @@ plugin "rs_aws_route53" do
 
     action "get" do
       verb "GET"
-      path "/2013-04-01/change/$Id"
+      path "change/$Id"
       output_path "//ChangeInfo"
     end
   end
@@ -118,15 +121,11 @@ end
 
 define provision_resource(@declaration) return @resource do
   sub on_error: stop_debugging() do
-   call start_debugging()
     $object = to_object(@declaration)
-    call stop_debugging()
     call sys_log.detail("object:"+ to_s($object))
     $fields = $object["fields"]
     call sys_log.detail("existing_fields:" + to_s($fields))
-    call start_debugging()
     $type = $object["type"]
-    call stop_debugging()
     call sys_log.detail("fields:" + to_s($fields))
     call start_debugging()
     @operation = rs_aws_route53.$type.create($fields)
@@ -137,10 +136,10 @@ end
 
 define delete_resource(@declaration)  do
   sub on_error: stop_debugging() do
-    call start_debugging()
     $object = to_object(@declaration)
     $fields = $object["fields"]
     $type = $object["type"]
+    call start_debugging()
     rs_aws_route53.$type.delete()
     call stop_debugging()
   end
@@ -148,23 +147,21 @@ end
 
 define provision_resource_recordset(@declaration) return @resource do
   sub on_error: stop_debugging() do
-    call start_debugging()
     $object = to_object(@declaration)
-    call stop_debugging()
     call sys_log.detail("object:"+ to_s($object))
     $fields = $object["fields"]
     call sys_log.detail("existing_fields:" + to_s($fields))
     $change_resource_record_sets_request =  {
-    		"xmlns": "https://route53.amazonaws.com/doc/2013-04-01/",
-    		"ChangeBatch": [{
-    			"Changes": [{
-    				"Change": [{
-    					"Action": [upcase($object['fields']['action'])],
-    					"ResourceRecordSet": [ $object['fields']['record_sets'] ]
-    				}]
-    			}],
-    			"Comment": [$object['fields']['comment']]
-    		}]
+        "xmlns": "https://route53.amazonaws.com/doc/2013-04-01/",
+        "ChangeBatch": [{
+          "Changes": [{
+            "Change": [{
+              "Action": [upcase($object['fields']['action'])],
+              "ResourceRecordSet": [ $object['fields']['record_sets'] ]
+            }]
+          }],
+          "Comment": [$object['fields']['comment']]
+        }]
     }
     $fields['ChangeResourceRecordSetsRequest']=$change_resource_record_sets_request
 
