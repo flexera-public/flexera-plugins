@@ -1,4 +1,4 @@
-name "rs_do"
+name "rs_do_plugin"
 type "plugin"
 rs_ca_ver 20161221
 short_description "Digital Ocean Plugin"
