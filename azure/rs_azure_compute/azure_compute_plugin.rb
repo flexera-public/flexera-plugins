@@ -2,7 +2,7 @@ name 'rs_azure_compute'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Azure Compute Plugin"
-long_description "Version: 1.4"
+long_description "Version: 1.5"
 package "plugins/rs_azure_compute"
 import "sys_log"
 
@@ -32,7 +32,7 @@ plugin "rs_azure_compute" do
   end
 
   type "availability_set" do
-    href_templates "{{id}}"
+    href_templates "{{contains(id, 'availabilitySets') && id || null}}"
     provision "provision_resource"
     delete    "delete_resource"
 
@@ -49,7 +49,7 @@ plugin "rs_azure_compute" do
     field "resource_group" do
       type "string"
       location "path"
-    end 
+    end
 
     field "name" do
       type "string"
@@ -97,7 +97,7 @@ plugin "rs_azure_compute" do
       path "$href"
       verb "DELETE"
     end
-    
+
     output "virtualmachines" do
       body_path "properties.virtualMachines[*].id"
     end
@@ -118,7 +118,7 @@ plugin "rs_azure_compute" do
     field "virtualMachineName" do
       type "string"
       location "path"
-    end 
+    end
 
     action "show" do
       type "virtualmachine"
@@ -131,13 +131,37 @@ plugin "rs_azure_compute" do
 
       field "virtualMachineName" do
         location "path"
-      end 
+      end
     end
 
     action "get" do
       type "virtualmachine"
       path "$href"
       verb "GET"
+    end
+
+    action "list" do
+      type "virtualmachine"
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Compute/virtualMachines"
+      verb "GET"
+    end
+
+    action "list_all" do
+      type "virtualmachine"
+      path "/subscriptions/$subscription_id/providers/Microsoft.Compute/virtualMachines"
+      verb "GET"
+    end
+
+    action "stop" do
+      type "virtualmachine"
+      path "$href/deallocate"
+      verb "POST"
+    end
+
+    action "start" do
+      type "virtualmachine"
+      path "$href/start"
+      verb "POST"
     end
 
     action "update" do
@@ -152,7 +176,12 @@ plugin "rs_azure_compute" do
       output_path "value[*]"
     end
 
-    output "id","name","location","tags","properties"
+    action "instance_view" do
+      verb "GET"
+      path "$href/instanceView"
+    end
+
+    output "id","name","location","tags","properties","nextLink"
   end
 
   type "extensions" do
@@ -320,7 +349,7 @@ resource_pool "rs_azure_compute" do
         client_id cred("AZURE_APPLICATION_ID")
         client_secret cred("AZURE_APPLICATION_KEY")
         additional_params do {
-          "resource" => "https://management.azure.com/"     
+          "resource" => "https://management.azure.com/"
         } end
       end
     end
