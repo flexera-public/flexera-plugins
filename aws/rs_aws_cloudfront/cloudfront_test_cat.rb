@@ -114,15 +114,15 @@ resource "my_distribution", type: "rs_aws_cloudfront.distribution" do
   } end
 end
 
-operation "terminate" do
-  definition "terminate"
-end
+#operation "terminate" do
+#  definition "terminate"
+#end
 
 define get_config($distribution_id) return $config,$etag do
   call rs_aws_cloudfront.start_debugging()
   sub on_error: rs_aws_cloudfront.stop_debugging() do
     $response = http_get(
-      url: 'https://cloudfront.amazonaws.com/2017-10-30/distribution/'+$distribution_id,
+      url: 'https://cloudfront.amazonaws.com/2017-10-30/distribution/'+$distribution_id+"/config",
       signature: { type: "aws" }
     )
     $etag = $response["headers"]["Etag"]
@@ -133,8 +133,14 @@ define get_config($distribution_id) return $config,$etag do
 end
 
 define disable_distribution(@my_distribution,$config,$etag) return @my_distribution do
-  $config["Enabled"] = "false"
-  @my_distribution.update(if_match: $etag, distribution_config: $config)
+  # EDIT -- need to update entire hash to support required XML format for plugins
+  call rs_aws_cloudfront.start_debugging()
+  sub on_error: rs_aws_cloudfront.stop_debugging() do
+    $config["Enabled"] = "false"
+    call sys_log.detail("Modified Config: "+to_s($config))
+    @my_distribution.update(if_match: $etag, distribution_config: $config)
+  end
+  call rs_aws_cloudfront.stop_debugging()
 end
 
 define delete_distribution(@my_distribution,$etag) do
@@ -144,6 +150,7 @@ end
 define terminate(@my_distribution) do
   $id = @my_distribution.Id
   call get_config($id) retrieve $config,$etag
+  call sys_log.detail("Retrieved Config: "+to_s($config))
   call disable_distribution(@my_distribution,$config,$etag) retrieve @my_distribution
   $status = @my_distribution.Status
   while $status != "Deployed" do
