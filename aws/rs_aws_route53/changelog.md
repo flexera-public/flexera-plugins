@@ -1,4 +1,4 @@
-EFS Plugin changelog
+AWS Route53 Plugin changelog
 
 v1.0
 -----
