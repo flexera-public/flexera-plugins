@@ -36,7 +36,7 @@ For more information on using packages, please refer to the RightScale online do
 ## Supported Resources
 ###  hosted_zone - create a new public or private hosted zone
 #### Supported Fields
-**Note:** There are many possible configurations when defining a `hosted_zone` resource.  While some fields below are not listed as "Required", they may actually be required for your resource,  depending on the value(s) of other field(s). More detailed API documentation is available [here](http://docs.aws.amazon.com/efs/latest/ug/api-reference.html).
+**Note:** There are many possible configurations when defining a `hosted_zone` resource.  While some fields below are not listed as "Required", they may actually be required for your resource,  depending on the value(s) of other field(s). More detailed API documentation is available [here](https://docs.aws.amazon.com/Route53/latest/APIReference/API_Operations_Amazon_Route_53.html).
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
@@ -73,16 +73,16 @@ end
 ### recordset
 
 #### Supported Fields
-**Note:** There are many possible configurations when defining a `recordset` resource.  While some fields below are not listed as "Required", they may actually be required for your resource,  depending on the value(s) of other field(s). More detailed API documentation is available [here](http://docs.aws.amazon.com/efs/latest/ug/api-reference.html).
+**Note:** There are many possible configurations when defining a `recordset` resource.  While some fields below are not listed as "Required", they may actually be required for your resource,  depending on the value(s) of other field(s). More detailed API documentation is available [here](https://docs.aws.amazon.com/Route53/latest/APIReference/API_Operations_Amazon_Route_53.html).
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 | hosted_zone_id | yes | id from the hosted_zone resource |  
 | change_resource_record_sets_request | yes | an object describing the records to change.  see example  |  
-| action | no | the action for the record set. 'CREATE', 'UPSERT','DELETE'.  defaults to 'UPSERT' |
+| action | no | the action for the record set. 'CREATE', 'UPSERT','DELETE'.  Defaults to 'UPSERT' |
 
 #### Supported Outputs
--  Id
+- Id
 - Status
 - Comment
 - SubmittedAt
@@ -160,4 +160,4 @@ Support for this plugin will be provided though GitHub Issues and the RightScale
 Visit http://chat.rightscale.com/ to join!
 
 ## License
-The AWS EFS Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.
+The AWS Route53 Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.
