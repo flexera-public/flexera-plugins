@@ -9,15 +9,15 @@ import "sys_log"
 plugin "rs_aws_route53" do
   endpoint do
     default_scheme "https"
-    path "/2013-04-01/"
+    path "/2013-04-01"
     request_content_type "application/xml"
   end
 
   type "hosted_zone" do
-    href_templates "{{//HostedZone/Id}}"
+    href_templates "$Id","{{Id}}","{{//CreateHostedZoneResponse/HostedZone/Id}}", "{{//GetHostedZoneResponse/HostedZone/Id}}"
     provision "provision_resource"
     delete "delete_resource"
-
+    
     field "create_hosted_zone_request" do
       alias_for "CreateHostedZoneRequest"
       type "composite"
@@ -25,23 +25,23 @@ plugin "rs_aws_route53" do
       location "body"
     end
 
-    output_path "//HostedZone"
-    output "Id", "Name"
+    output "Id","Name"
 
     action "create" do
       verb "POST"
       path "/hostedzone"
+      output_path "//CreateHostedZoneResponse/HostedZone"
     end
 
-    action "delete" do
+    action "destroy" do
       verb "DELETE"
-      path "$Id"
+      path "$href"
     end
 
     action "get" do
       verb "GET"
-      path "$Id"
-      output_path "//HostedZone"
+      path "$href"
+      output_path "//GetHostedZoneResponse/HostedZone"
     end
   end
 
@@ -131,13 +131,10 @@ define provision_resource(@declaration) return @resource do
   end
 end
 
-define delete_resource(@declaration)  do
+define delete_resource(@resource) do
   sub on_error: stop_debugging() do
-    $object = to_object(@declaration)
-    $fields = $object["fields"]
-    $type = $object["type"]
     call start_debugging()
-    rs_aws_route53.$type.delete()
+    @resource.destroy()
     call stop_debugging()
   end
 end

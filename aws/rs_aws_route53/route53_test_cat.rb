@@ -43,7 +43,7 @@ operation 'terminate' do
   definition 'terminate'
 end
 
-define terminate(@hostedzone) do
+define terminate(@hostedzone) return @hostedzone do
   call delete_resource_recordset(@hostedzone)
 end
 
@@ -53,7 +53,7 @@ end
 # instead of using auto-terminate us the definition below and call it in a
 # terminate operation.  See above operation and definition
 #
-define delete_resource_recordset(@hostedzone) do
+define delete_resource_recordset(@hostedzone) return @hostedzone do
   sub on_error: stop_debugging() do
     $fields = {}
     $record_set = {
