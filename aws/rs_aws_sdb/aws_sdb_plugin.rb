@@ -12,6 +12,8 @@ plugin "rs_aws_sdb" do
     default_scheme "https"
     path "/"
     query do {
+      #"SignatureVersion"=> "2",
+      #"SignatureMethod"=>"HmacSHA256",
       "Version" => "2009-04-15"
     } end
   end
@@ -63,7 +65,7 @@ resource_pool "sdb" do
   plugin $rs_aws_sdb
   host "sdb.amazonaws.com"
   auth "key", type: "aws" do
-    version     4
+    version     2
     service    'sdb'
     region     'us-east-1'
     access_key cred('AWS_ACCESS_KEY_ID')
