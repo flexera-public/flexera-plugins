@@ -13,6 +13,7 @@ This repo contains a library of open source RightScale plugins.
 - [AWS Lambda](./aws/rs_aws_lambda)
 - [AWS MQ](./aws/rs_aws_mq)
 - [AWS IAM](./aws/rs_aws_iam)
+- [AWS CloudFront](./aws/rs_aws_cloudfront)
 - [AWS Route53](./aws/rs_aws_route53)
 
 ### Azure
