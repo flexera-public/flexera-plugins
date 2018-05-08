@@ -47,6 +47,9 @@ This repo contains a library of open source RightScale plugins.
 ### VMWare
 - [VMWare NSX](./vmware/nsx)
 
+### Other Clouds
+- [Digital Ocean](./digital_ocean)
+
 ## RightScale Plugin Documentation
 - [Guide](http://docs.rightscale.com/ss/guides/ss_plugins.html)
 - [Reference Documentation](http://docs.rightscale.com/ss/reference/cat/v20161221/ss_plugins.html)
