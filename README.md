@@ -46,6 +46,9 @@ This repo contains a library of open source RightScale plugins.
 ### VMWare
 - [VMWare NSX](./vmware/nsx)
 
+### Other Clouds
+- [Digital Ocean](./digital_ocean)
+
 ## RightScale Plugin Documentation
 - [Guide](http://docs.rightscale.com/ss/guides/ss_plugins.html)
 - [Reference Documentation](http://docs.rightscale.com/ss/reference/cat/v20161221/ss_plugins.html)
@@ -58,5 +61,5 @@ Visit http://chat.rightscale.com/ to join!
 Github issues contain a template for three types of requests(Bugs, New Features to an existing Plugin, New Plugin Request)
 
 - Bugs: Any issue you are having with an existing plugin not functioning correctly, this does not include missing features, or actions.
-- New Feature Request: Any feature(Field, Action, Link, Output, etc) that are to be added to an existing plugin. 
-- New Plugin Request: Request for a new plugin based off of a new Resource(i.e Cloud Resource Type(`rds`,`elb`), Third Party Service(`riverbed`,`f5`,`cisco`), etc. 
+- New Feature Request: Any feature(Field, Action, Link, Output, etc) that are to be added to an existing plugin.
+- New Plugin Request: Request for a new plugin based off of a new Resource(i.e Cloud Resource Type(`rds`,`elb`), Third Party Service(`riverbed`,`f5`,`cisco`), etc.
