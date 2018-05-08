@@ -126,12 +126,37 @@ end
 
 define delete_distribution(@declaration) do
   call start_debugging()
-  # Get Config
-
-  # Update (disable)
-
-  # Delete
+  sub on_error: stop_debugging() do
+    # Get Config
+    $id = @declaration.Id
+    call get_config($id) retrieve $config1,$etag1
+    # Update (disable)
+    $config1["Enabled"] = "false"
+    @declaration.update(if_match: $etag1, distribution_config: $config1)
+    $status = @my_distribution.Status
+    while $status != "Deployed" do
+      $status = @my_distribution.Status
+      sleep(10)
+    end
+    # Delete
+    call get_config($id) retrieve $config2,$etag2
+    @declaration.destroy(if_match: $etag2)
+  end
   call stop_debugging()
+end
+
+define get_config($distribution_id) return $config,$etag do
+  call rs_aws_cloudfront.start_debugging()
+  sub on_error: rs_aws_cloudfront.stop_debugging() do
+    $response = http_get(
+      url: 'https://cloudfront.amazonaws.com/2017-10-30/distribution/'+$distribution_id,
+      signature: { type: "aws" }
+    )
+    $etag = $response["headers"]["Etag"]
+    call sys_log.detail("ETAG: "+ to_s($etag))
+    $config = $response["body"]["Distribution"]
+  end
+  call rs_aws_cloudfront.stop_debugging()
 end
 
 define start_debugging() do
