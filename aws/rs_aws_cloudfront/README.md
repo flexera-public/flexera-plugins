@@ -14,8 +14,6 @@ The AWS CloudFront Plugin integrates RightScale Self-Service with the basic func
 - The following packages are also required (See the Installation section for details):
   - [sys_log](../../libraries/sys_log.rb)
 
-## Getting Started
-**Coming Soon**
 
 ## Installation
 1. Be sure your RightScale account has Self-Service enabled
@@ -34,26 +32,34 @@ import "plugin/rs_aws_cloudfront"
 For more information on using packages, please refer to the RightScale online documenataion. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 ## Supported Resources
-### file_systems
+### distribution
 
 #### Supported Fields
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
+|distribution_config| yes | [See Documentation](https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_CreateDistribution.html#cloudfront-CreateDistribution-request-DistributionConfig)
 
 #### Supported Outputs
-
-#### Usage
-AWS cloudfront resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
-The resulting resrouce can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
-```
-
-```
+- ActiveTrustedSigners
+- ARN
+- DistributionConfig
+- DomainName
+- Id
+- InProgressInvalidationBatches
+- LastModifiedTime
+- Status
 
 #### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
+| create() | [CreateDistribution](https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_CreateDistribution.html) | supported
+| get() | [GetDistribution](https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_GetDistribution.html) | supported
+| list() | [ListDistribution](https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_ListDistributions.html) | not tested
+| show() | [GetDistribution](https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_GetDistribution.html) | supported
+| destroy() | [DeleteDistribution](https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_DeleteDistribution.html) | supported
+| update() | [UpdateDistribution](https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_UpdateDistribution.html) | supported
 
 ## Examples
 Please review [cloudfront_test_cat.rb](./cloudfront_test_cat.rb) for a basic example implementation.
