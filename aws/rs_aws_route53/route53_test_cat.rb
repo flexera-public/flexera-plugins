@@ -3,22 +3,23 @@ rs_ca_ver 20161221
 short_description 'Amazon Web Services - Route 53 - Test CAT'
 import 'plugins/rs_aws_route53'
 import 'sys_log'
-# output 'zone_name' do
-#   label 'Hosted Zone Name'
-#   default_value @hostedzone.Name
-# end
-# output 'zone_id' do
-#   label 'Hosted Zone Id'
-#   default_value @hostedzone.Id
-# end
 
-# resource 'hostedzone', type: 'rs_aws_route53.hosted_zone' do
-#   create_hosted_zone_request do {
-#     'xmlns' => 'https://route53.amazonaws.com/doc/2013-04-01/',
-#     'Name' => [ join([first(split(uuid(),'-')), '.rsps.com']) ],
-#     'CallerReference' => [ uuid() ]
-#   } end
-# end
+output 'zone_name' do
+  label 'Hosted Zone Name'
+  default_value @hostedzone.Name
+end
+output 'zone_id' do
+  label 'Hosted Zone Id'
+  default_value @hostedzone.Id
+end
+
+resource 'hostedzone', type: 'rs_aws_route53.hosted_zone' do
+  create_hosted_zone_request do {
+    'xmlns' => 'https://route53.amazonaws.com/doc/2013-04-01/',
+    'Name' => [ join([first(split(uuid(),'-')), '.rsps.com']) ],
+    'CallerReference' => [ uuid() ]
+  } end
+end
 
 resource 'record', type: 'rs_aws_route53.resource_recordset' do
   hosted_zone_id 'Z3LZVW3M90M8BQ'
@@ -46,6 +47,12 @@ define terminate(@record) do
   call delete_resource_recordset()
 end
 
+#
+# There is a limitation to the Route 53 API that does not allow
+# deleting the resourse using the auto-terminate operation.
+# instead of using auto-terminate us the definition below and call it in a
+# terminate operation.  See above operation and definition
+#
 define delete_resource_recordset() do
   sub on_error: stop_debugging() do
     $fields = {}
@@ -70,10 +77,10 @@ define delete_resource_recordset() do
           }]
         }]
     }
-    $hosted_zone_id='Z3LZVW3M90M8BQ'
     call sys_log.detail("change_resource_record_sets_request: "+to_s($change_resource_record_sets_request))
     call start_debugging()
-    rs_aws_route53.resource_recordset.remove(ChangeResourceRecordSetsRequest: $change_resource_record_sets_request, hosted_zone_id: $hosted_zone_id)
+    rs_aws_route53.resource_recordset.remove(ChangeResourceRecordSetsRequest: $change_resource_record_sets_request,
+      hosted_zone_id: @hostedzone.Id)
     call stop_debugging()
   end
 end
