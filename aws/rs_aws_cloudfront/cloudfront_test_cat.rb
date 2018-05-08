@@ -160,5 +160,3 @@ define terminate(@my_distribution) do
   call get_config($id) retrieve $config2,$etag2
   call delete_distribution(@my_distribution,$etag2)
 end
-
-
