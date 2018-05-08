@@ -1,0 +1,524 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Managed stack. Use AWS OpsWorks for Puppet Enterprise to change or delete.
+Parameters:
+  ReleaseVer:
+    Default: '2017.09'
+    Description: The release to lock the yum repo to Amazon Linux 1.
+    Type: String
+  AMIId:
+    Default: ''
+    Description: Image ID for EC2 instance
+    Type: String
+  AssociatePublicIpAddress:
+    AllowedValues:
+    - 'true'
+    - 'false'
+    Default: 'true'
+    Description: Associate public IP to EC2 instance
+    Type: String
+  CfInitConfigSet:
+    AllowedValues:
+    - noop
+    - install
+    - restore
+    Default: install
+    Description: The CfInit configSet to run
+    Type: String
+  EIPAllocationId:
+    Default: ''
+    Description: EIP AllocationId to associate to the instance
+    Type: String
+  HttpsCACertificate:
+    Default: ''
+    Description: Intermediate CA certificate
+    Type: String
+  HttpsCertificate:
+    Default: ''
+    Description: Server certificiate
+    Type: String
+  HttpsPrivateKey:
+    Default: ''
+    Description: PEM encoded private key.
+    NoEcho: true
+    Type: String
+  HttpsRootCACertificate:
+    Default: |
+      -----BEGIN CERTIFICATE-----
+      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
+      R2CExeYjWik=
+      -----END CERTIFICATE-----
+    Description: Root CA certificate
+    Type: String
+  InstanceProfile:
+    Description: The EC2 instance profile to use
+    Type: String
+  InstanceType:
+    Default: c4.large
+    Description: EC2 instance type
+    Type: String
+  KeyName:
+    Default: ''
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instances
+    Type: String
+  MasterUserPassword:
+    Default: ''
+    Description: Password for the 'admin' user of Puppet Enterprise server. Base64
+      encoded.
+    NoEcho: true
+    Type: String
+  ReleaseBucketEndpoint:
+    Default: s3-eu-west-1.amazonaws.com/opsworks-cm-eu-west-1-default-assets
+    Description: Bucket endpoint for the tooling release
+    Type: String
+  RestoreBackupDigest:
+    Default: ''
+    Description: SHA256 digest to verify backup
+    Type: String
+  RestoreBackupPuppetDBDigest:
+    Default: ''
+    Description: PuppetDB SHA256 digest to verify puppetdb
+    Type: String
+  RestoreBackupName:
+    Default: ''
+    Description: Restore backup name
+    Type: String
+  RestoreResetCredentials:
+    AllowedValues:
+    - 'true'
+    - 'false'
+    Default: 'true'
+    Description: Whether to reset credentials during restore
+    Type: String
+  RestoreS3BasePath:
+    Default: ''
+    Description: Restore backup S3 base path
+    Type: String
+  RestoreS3BucketName:
+    Default: ''
+    Description: Restore backup S3 bucket name
+    Type: String
+  ServerId:
+    Default: ''
+    Description: Server Id
+    Type: String
+  SecurityGroupIds:
+    Description: Security Group used by the server
+    Type: CommaDelimitedList
+  ServerEndpoint:
+    Description: FQDN of the server
+    Type: String
+  ServerName:
+    Description: Name of the server
+    Type: String
+  SkyKitchenVersion:
+    Description: SkyKitchen version to be installed. Will use the latest version if
+      not set.
+    Type: String
+  SubnetId:
+    Default: ''
+    Description: Subnet Id of the server
+    Type: String
+  ReportUrl:
+    Default: 'none'
+    Description: URL used to report results
+    Type: String
+    NoEcho: true
+  R10KRemote:
+    Default: ''
+    Description: Puppet R10K control repo remote url
+    Type: String
+  R10KPrivateKey:
+    Default: ''
+    Description: Private key to access Puppet R10K control repo
+    Type: String
+    NoEcho: true
+Conditions:
+  AMIIdPresent:
+    Fn::Not:
+    - Fn::Equals:
+      - Ref: AMIId
+      - ''
+  AssociateEIP:
+    Fn::Not:
+    - Fn::Equals:
+      - Ref: EIPAllocationId
+      - ''
+  AssociatePublicIpAddress:
+    Fn::Equals:
+    - Ref: AssociatePublicIpAddress
+    - 'true'
+  AmazonLinux2SkMajorVersion:
+    Fn::Not:
+    - !Equals [ !Select [0, !Split [".", !Ref SkyKitchenVersion]], '0']
+  AmazonLinux2BlackListedSkVersion:
+    Fn::Not:
+    - Fn::And:
+      - !Equals [ !Select [0, !Split [".", !Ref SkyKitchenVersion]], '1']
+      - !Equals [ !Select [1, !Split [".", !Ref SkyKitchenVersion]], '1']
+  UseAmazonLinux2:
+    Fn::And:
+    - !Condition AmazonLinux2SkMajorVersion
+    - !Condition AmazonLinux2BlackListedSkVersion
+  KeyNamePresent:
+    Fn::Not:
+    - Fn::Equals:
+      - Ref: KeyName
+      - ''
+  RestoreResetCredentialsActive:
+    Fn::Equals:
+    - Ref: RestoreResetCredentials
+    - 'true'
+  SubnetIdPresent:
+    Fn::Not:
+    - Fn::Equals:
+      - Ref: SubnetId
+      - ''
+  ConfigR10KRemote:
+    Fn::Not:
+    - Fn::Equals:
+      - Ref: R10KRemote
+      - ''
+  ConfigR10KPrivateKey:
+    Fn::Not:
+    - Fn::Equals:
+      - Ref: R10KPrivateKey
+      - ''
+Mappings:
+  ImageIds:
+    ap-northeast-1:
+      hvm: ami-2803ac4e
+      al2: ami-8fbab2f3
+    ap-southeast-1:
+      hvm: ami-dd7935be
+      al2: ami-3eb0e942
+    ap-southeast-2:
+      hvm: ami-1a668878
+      al2: ami-8267abe0
+    eu-central-1:
+      hvm: ami-e28d098d
+      al2: ami-b144195a
+    eu-west-1:
+      hvm: ami-760aaa0f
+      al2: ami-38c09341
+    us-east-1:
+      hvm: ami-6057e21a
+      al2: ami-f973ab84
+    us-east-2:
+      hvm: ami-aa1b34cf
+      al2: ami-31c7f654
+    us-west-1:
+      hvm: ami-1a033c7a
+      al2: ami-be4051de
+    us-west-2:
+      hvm: ami-32d8124a
+      al2: ami-07eb707f
+Resources:
+  EC2Instance:
+    CreationPolicy:
+      ResourceSignal:
+        Timeout: PT30M
+    Metadata:
+      AWS::CloudFormation::Init:
+        cm_prepare: {}
+        cm_release_install:
+          commands:
+            00_log_opsworks_cm_release:
+              command:
+                Fn::Sub: echo Using https://${ReleaseBucketEndpoint}/main/amazon-linux/opsworks-cm-puppet-release-${SkyKitchenVersion}-1.noarch.rpm
+            01_install_opsworks_cm_release:
+              command:
+                Fn::Sub: /tmp/retry rpm -i --replacepkgs https://${ReleaseBucketEndpoint}/main/amazon-linux/opsworks-cm-puppet-release-${SkyKitchenVersion}-1.noarch.rpm
+            02_update_yum_cache_with_retries:
+              command: /tmp/retry yum makecache
+        cm_ruby_install:
+          commands:
+            01_install_ruby:
+              command: /tmp/retry amazon-linux-extras install ruby2.4
+        cm_base_install:
+          commands:
+            01_install_opsworks_cm_puppet:
+              command: /tmp/retry yum -y install opsworks-cm-puppet
+            02_start_ssm:
+              command: /sbin/start amazon-ssm-agent || true
+        cm_vendor_install:
+          commands:
+            01_install_opsworks_cm_puppet_enterprise:
+              command: /tmp/retry yum -y install opsworks-cm-puppet-enterprise
+        cm_opsworks_prepare:
+          commands:
+            01_certificate_copy_rootca:
+              command:
+                Fn::Join:
+                - ''
+                - - "echo -e '"
+                  - Ref: HttpsRootCACertificate
+                  - "' >/tmp/rootca.pem"
+            02_certificate_copy_ca:
+              command:
+                Fn::Join:
+                - ''
+                - - "echo -e '"
+                  - Ref: HttpsCACertificate
+                  - "' >/tmp/ca.pem"
+            03_certificate_copy_certificate:
+              command:
+                Fn::Join:
+                - ''
+                - - "echo -e '"
+                  - Ref: HttpsCertificate
+                  - "' >/tmp/certificate.pem"
+            04_certificate_copy_key:
+              command:
+                Fn::Join:
+                - ''
+                - - "umask 077 & echo -e '"
+                  - Ref: HttpsPrivateKey
+                  - "' >/tmp/key.pem"
+            05_r10k_private_key:
+              command:
+                Fn::If:
+                - ConfigR10KPrivateKey
+                - Fn::Join:
+                  - ''
+                  - - "echo -e '"
+                    - Ref: R10KPrivateKey
+                    - "' >/tmp/r10k.pem"
+                - ""
+        cm_opsworks_install:
+          commands:
+            01_install_puppet_enterprise:
+              command:
+                Fn::Join:
+                - ' '
+                - - "/opt/aws/opsworks-cm/bin/bootstrap.rb"
+                  - Fn::Sub: --report-url '${ReportUrl}'
+                  - Fn::Sub: --server-name '${ServerName}'
+                  - Fn::Sub: --region '${AWS::Region}'
+                  - "-- install"
+                  - Fn::Sub: --server-endpoint='${ServerEndpoint}'
+                  - Fn::Sub: --encoded-password='${MasterUserPassword}'
+                  - "--console-root-ca-certificate=/tmp/rootca.pem"
+                  - "--console-ca-certificate=/tmp/ca.pem"
+                  - "--console-certificate=/tmp/certificate.pem"
+                  - "--console-private-key=/tmp/key.pem"
+                  - Fn::If:
+                    - ConfigR10KRemote
+                    - Fn::Sub: --r10k-remote='${R10KRemote}'
+                    - ""
+                  - Fn::If:
+                    - ConfigR10KPrivateKey
+                    - "--r10k-private-key=/tmp/r10k.pem"
+                    - ""
+        cm_opsworks_restore:
+          commands:
+            01_restore_puppet_enterprise:
+              command:
+                Fn::Join:
+                - ' '
+                - - "/opt/aws/opsworks-cm/bin/restore.rb"
+                  - Fn::Sub: --report-url '${ReportUrl}'
+                  - Fn::Sub: --server-name '${ServerName}'
+                  - Fn::Sub: --region '${AWS::Region}'
+                  - Fn::If:
+                    - RestoreResetCredentialsActive
+                    - Fn::Sub: "--encoded-password '${MasterUserPassword}'"
+                    - ""
+                  - "--"
+                  - "restore-backup"
+                  - Fn::Sub: "--server-endpoint='${ServerEndpoint}'"
+                  - "--console-root-ca-certificate=/tmp/rootca.pem"
+                  - "--console-ca-certificate=/tmp/ca.pem"
+                  - "--console-certificate=/tmp/certificate.pem"
+                  - "--console-private-key=/tmp/key.pem"
+                  - Fn::Sub: "--s3-region='${AWS::Region}'"
+                  - Fn::Sub: "--s3-bucket-name='${RestoreS3BucketName}'"
+                  - Fn::Sub: "--s3-base-path='${RestoreS3BasePath}'"
+                  - Fn::Sub: "--backup-name='${RestoreBackupName}'"
+                  - Fn::Sub: "--backup-digest='${RestoreBackupDigest}'"
+                  - Fn::Sub: "--puppetdb-backup-digest='${RestoreBackupPuppetDBDigest}'"
+                  - Fn::If:
+                    - ConfigR10KRemote
+                    - Fn::Sub: --r10k-remote='${R10KRemote}'
+                    - ""
+                  - Fn::If:
+                    - ConfigR10KPrivateKey
+                    - "--r10k-private-key=/tmp/r10k.pem"
+                    - ""
+        cm_apply_security_updates:
+          commands:
+            01_update_os_security:
+              command: /opt/aws/opsworks-cm/bin/update_os.rb
+        cm_cleanup:
+          commands:
+            01_clean_files:
+              command: rm -f /tmp/rootca.pem /tmp/ca.pem /tmp/certificate.pem /tmp/key.pem /tmp/r10k.pem /tmp/retry
+        cm_restore: {}
+        configSets:
+          noop: []
+          install:
+          - cm_prepare
+          - cm_release_install
+          - !If [UseAmazonLinux2, 'cm_ruby_install', !Ref "AWS::NoValue"]
+          - cm_base_install
+          - cm_vendor_install
+          - cm_opsworks_prepare
+          - cm_opsworks_install
+          - cm_apply_security_updates
+          - cm_cleanup
+          restore:
+          - cm_prepare
+          - cm_release_install
+          - !If [UseAmazonLinux2, 'cm_ruby_install', !Ref "AWS::NoValue"]
+          - cm_base_install
+          - cm_vendor_install
+          - cm_opsworks_prepare
+          - cm_opsworks_restore
+          - cm_apply_security_updates
+          - cm_cleanup
+    Properties:
+      BlockDeviceMappings:
+      - DeviceName: /dev/xvda
+        Ebs:
+          VolumeSize: '120'
+          VolumeType: gp2
+      EbsOptimized: 'true'
+      IamInstanceProfile:
+        Ref: InstanceProfile
+      ImageId: !If [AMIIdPresent, !Ref "AMIId", !If [UseAmazonLinux2, !FindInMap [ ImageIds, !Ref "AWS::Region", "al2"], !FindInMap [ ImageIds, !Ref "AWS::Region", 'hvm']]]
+      InstanceType:
+        Ref: InstanceType
+      KeyName:
+        Fn::If:
+        - KeyNamePresent
+        - Ref: KeyName
+        - Ref: AWS::NoValue
+      NetworkInterfaces:
+      - AssociatePublicIpAddress:
+          Fn::If:
+          - AssociatePublicIpAddress
+          - true
+          - false
+        DeviceIndex: 0
+        GroupSet:
+          Ref: SecurityGroupIds
+        SubnetId:
+          Fn::If:
+          - SubnetIdPresent
+          - Ref: SubnetId
+          - Ref: AWS::NoValue
+      Tags:
+      - Key: Name
+        Value:
+          Ref: AWS::StackName
+      UserData:
+        Fn::Base64:
+          Fn::Sub: 
+          -  |
+              Content-Type: multipart/mixed; boundary="===============4438536640402545298=="
+              MIME-Version: 1.0
+              
+              --===============4438536640402545298==
+              MIME-Version: 1.0
+              Content-Type: text/cloud-config; charset="us-ascii"
+              Content-Transfer-Encoding: 7bit
+              Content-Disposition: attachment; filename="01_drop_files"
+              
+              #cloud-config
+              write_files:
+                - path: /tmp/retry
+                  permissions: '0755'
+                  content: |
+                    #! /bin/bash
+                    RETRY_COUNT=2
+                    RETRY_SLEEP=10
+                    n="$RETRY_COUNT"
+                    while true; do
+                      "$@"
+                      rc="$?"
+                      let n=n-1
+                      if [ $rc -eq 0 ]; then break; fi
+                      if [ $n -lt 0 ]; then break; fi
+                      echo "Command failed ($rc). Will retry in $RETRY_SLEEP seconds... (cmd: $@)"
+                      sleep "$RETRY_SLEEP"
+                    done
+                    exit "$rc"
+              
+              --===============4438536640402545298==
+              MIME-Version: 1.0
+              Content-Type: text/cloud-config; charset="us-ascii"
+              Content-Transfer-Encoding: 7bit
+              Content-Disposition: attachment; filename="05_cloud_config"
+              
+              #cloud-config
+              repo_releasever: "${ComputedReleaseVer}"
+              manage_etc_hosts: "localhost"
+              preserve_hostname: true
+              fqdn: "${ServerEndpoint}"
+              
+              --===============4438536640402545298==
+              MIME-Version: 1.0
+              Content-Type: text/x-shellscript; charset="us-ascii"
+              Content-Transfer-Encoding: 7bit
+              Content-Disposition: attachment; filename="10_kick_cfn"
+              
+              #!/bin/bash -x
+              /opt/aws/bin/cfn-init -v        --stack '${AWS::StackName}' --resource EC2Instance --region '${AWS::Region}' --configsets '${CfInitConfigSet}'
+              /opt/aws/bin/cfn-signal -e "$?" --stack '${AWS::StackName}' --resource EC2Instance --region '${AWS::Region}'
+              
+              --===============4438536640402545298==--
+          - { ComputedReleaseVer: !If [UseAmazonLinux2, "",  !Ref ReleaseVer] }
+    Type: AWS::EC2::Instance
+  EIPAssociation:
+    Condition: AssociateEIP
+    Properties:
+      AllocationId:
+        Ref: EIPAllocationId
+      InstanceId:
+        Ref: EC2Instance
+    Type: AWS::EC2::EIPAssociation
+Outputs:
+  Version:
+    Description: Template version
+    Value: "1.2.0"
+  InstanceId:
+    Description: EC2 instance ID
+    Value:
+      Ref: EC2Instance
+  ServerAddress:
+    Condition: AssociatePublicIpAddress
+    Description: Server address
+    Value:
+      Fn::GetAtt:
+      - EC2Instance
+      - PublicDnsName
