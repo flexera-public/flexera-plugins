@@ -22,7 +22,7 @@ The AWS CloudFront Plugin integrates RightScale Self-Service with the basic func
    - For more details on using the portal review the [SS User Interface Guide](http://docs.rightscale.com/ss/guides/ss_user_interface_guide.html)
 1. In the Design section, use the `Upload CAT` interface to complete the following:
    1. Upload each of packages listed in the Requirements Section
-   1. Upload the `aws_CloudFront_plugin.rb` file located in this repository
+   1. Upload the `aws_cloudfront_plugin.rb` file located in this repository
 
 ## How to Use
 The CloudFront Plugin has been packaged as `plugin/rs_aws_cloudfront`. In order to use this plugin you must import this plugin into a CAT.
