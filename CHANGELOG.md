@@ -1,5 +1,23 @@
 # Change Log
 
+## [Week-of-05-07-2018](https://github.com/rightscale/rightscale-plugins/tree/Week-of-05-07-2018) (2018-05-08)
+[Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-02-12-2018...Week-of-05-07-2018)
+
+**Implemented enhancements:**
+
+- Azure Compute - Add new methods for virtualmachine resource [\#152](https://github.com/rightscale/rightscale-plugins/pull/152) ([dfrankel33](https://github.com/dfrankel33))
+
+**Merged pull requests:**
+
+- Digital Ocean - Initial Release [\#160](https://github.com/rightscale/rightscale-plugins/pull/160) ([dfrankel33](https://github.com/dfrankel33))
+- AWS CloudFront Plugin - Initial Release [\#158](https://github.com/rightscale/rightscale-plugins/pull/158) ([dfrankel33](https://github.com/dfrankel33))
+- Azure CosmosDB Plugin - Initial Release [\#155](https://github.com/rightscale/rightscale-plugins/pull/155) ([srpomeroy](https://github.com/srpomeroy))
+- Azure Compute - Adding Support for Scale Sets [\#154](https://github.com/rightscale/rightscale-plugins/pull/154) ([rshade](https://github.com/rshade))
+- AWS IAM - Initial Release [\#150](https://github.com/rightscale/rightscale-plugins/pull/150) ([cdwilhelm](https://github.com/cdwilhelm))
+- Azure Resource - Initial Release [\#145](https://github.com/rightscale/rightscale-plugins/pull/145) ([srpomeroy](https://github.com/srpomeroy))
+- AWS RDS Plugin - updating mysql version in Test CAT [\#144](https://github.com/rightscale/rightscale-plugins/pull/144) ([gonzalez](https://github.com/gonzalez))
+- Route 53 - Initial Release [\#107](https://github.com/rightscale/rightscale-plugins/pull/107) ([rshade](https://github.com/rshade))
+
 ## [Week-of-02-12-2018](https://github.com/rightscale/rightscale-plugins/tree/Week-of-02-12-2018) (2018-02-15)
 [Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-02-05-2018...Week-of-02-12-2018)
 
