@@ -1,5 +1,9 @@
 RDS Plugin changelog
 
+v1.5 (05-12-2018)
+-----
+- bugfix: changed summary to "RDS Plugin" instead of inserting 255+ characters in the error msg.
+
 v1.4 (12-13-2017)
 -----
 - updating start_debugging,stop_debugging to use the proper context
