@@ -731,7 +731,7 @@ define handle_retries($attempts) do
   if $attempts <= 6
     sleep(10*to_n($attempts))
     call sys_log.set_task_target(@@deployment)
-    call sys_log.summary("RDS Plugin"])
+    call sys_log.summary("RDS Plugin")
     call sys_log.detail("error:"+$_error["type"] + ": " + $_error["message"])
     log_error($_error["type"] + ": " + $_error["message"])
     $_error_behavior = "retry"
