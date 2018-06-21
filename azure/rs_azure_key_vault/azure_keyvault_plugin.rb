@@ -2,7 +2,7 @@ name 'rs_azure_keyvault'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Azure Key Vault Plugin"
-long_description "Version: 1.0"
+long_description "Version: 1.1"
 package "plugins/rs_azure_keyvault"
 import "sys_log"
 
@@ -31,7 +31,7 @@ plugin "rs_azure_keyvault" do
   end
 
   type "vaults" do
-    href_templates "{{id}}"
+    href_templates "{{type(id)=='string' && id || null}}","{{type(value)=='array' && value[].id || null}}"
     provision "provision_resource"
     delete    "delete_resource"
 
@@ -78,6 +78,17 @@ plugin "rs_azure_keyvault" do
       field "name" do
         location "path"
       end
+    end
+
+    action "listbyresourcegroup" do
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.KeyVault/vaults"
+      verb "GET"
+
+      field "resource_group" do
+        location "path"
+      end
+
+      output_path "value[*]"
     end
 
     action "get" do
