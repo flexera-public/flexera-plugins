@@ -20,6 +20,11 @@ parameter "db_name" do
     default "my-database"
 end
 
+operation "backup_primary_db" do
+  label "Backup Primary Database"
+  description "Creates a backup of the primary database"
+  definition "create_database_backup"
+end
 
 resource "gsql_instance", type: "cloud_sql.instances" do
   name join([$db_instance_prefix,"-",last(split(@@deployment.href, "/"))])
@@ -44,4 +49,12 @@ resource "gsql_user", type: "cloud_sql.users" do
   name "frankel"
   instance_name @gsql_instance.name
   password "RightScale2017"
-end 
+end
+
+resource "gsql_backup", type: "cloud_sql.backup_runs" do
+  instance_name @gsql_instance.name
+end
+
+define create_database_backup(@gsql_instance) do
+  cloud_sql.backup_runs.create(instance_name: @gsql_instance.name)
+end

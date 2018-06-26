@@ -1,7 +1,7 @@
 name "Google Cloud SQL Plugin"
 rs_ca_ver 20161221
 short_description "Google Cloud SQL"
-long_description "Version: 1.0"
+long_description "Version: 1.1"
 type 'plugin'
 package "plugins/google_sql"
 import "sys_log"
@@ -27,6 +27,8 @@ plugin "cloud_sql" do
 
   type "instances" do
     href_templates "/projects/$project/instances/{{name}}","/projects/$project/instances/{{items[*].name}}"
+    provision "provision_resource"
+    delete "delete_resource"
 
     field "name" do
       required true
@@ -202,16 +204,13 @@ plugin "cloud_sql" do
       path "$href/users"
       type "users"
     end
-
-    provision "provision_resource"
-
-    delete "delete_resource"
-
   end
 
   type "databases" do
     href_templates "/projects/$project/instances/{{instance}}/databases/{{name}}","/projects/$project/instances/{{items[*].instance}}/databases/{{items[*].name}}"
-    
+    provision "provision_resource"
+    delete "delete_resource"
+
     field "instance_name" do
       location "path"
       type "string"
@@ -274,16 +273,12 @@ plugin "cloud_sql" do
     end 
 
     output "charset","collation","etag","instance","kind","name","project","selfLink"
-
-    provision "provision_resource"
-    
-    delete "delete_resource"
-
-
   end
 
   type "users" do
     href_templates "/projects/$project/instances/{{instance}}/users","/projects/$project/instances/{{items[*].instance}}/users"
+    provision "provision_resource"
+    delete "no_operation"
     
     field "instance_name" do
       location "path"
@@ -359,17 +354,56 @@ plugin "cloud_sql" do
     end 
 
     output "etag","host","instance","kind","name","project","password"
-
-    provision "provision_resource"
-    
-    delete "no_operation"
-
-
   end
 
+  type "backup_runs" do
+    href_templates "/projects/$project/instances/{{instance}}/backupRuns","/projects/$project/instances/{{items[*].instance}}/backupRuns"
+    provision "provision_resource"
+    delete "no_operation"
+    
+    field "instance_name" do
+      location "path"
+      type "string"
+      required true
+    end
+
+    action "create" do
+      verb "POST"
+      path "/projects/$project/instances/$instance_name/backupRuns"
+      type "operation"
+    end 
+
+    action "delete" do
+      verb "DELETE"
+      path "/projects/$project/instances/$instance_name/backupRuns/$id"
+      type "operation"
+
+      field "id" do
+        location "path"
+      end
+
+      field "instance_name" do
+        location "path"
+      end 
+    end 
+
+    action "list" do
+      verb "GET"
+      path "/projects/$project/instances/$instance_name/backupRuns"
+      type "users"
+      output_path "items[]"
+      
+      field "instance_name" do
+        location "path"
+      end 
+    end
+    output "kind","id","selfLink","instance","description","windowStartTime","status","type","enqueuedTime","startTime","endTime","error"
+  end
 
   type "operation" do
     href_templates "{{selfLink}}"
+    provision "no_operation"
+    delete "no_operation"
 
     output "kind","selfLink","targetProject","targetId","targetLink","name","operationType","status","user","insertTime","startTime","endTime"
 
@@ -382,11 +416,6 @@ plugin "cloud_sql" do
     link "targetLink" do
       url "$targetLink"
     end
-
-    provision "no_operation"
-
-    delete "no_operation"
-
   end
 end 
 
@@ -412,26 +441,38 @@ define no_operation() do
 end
 
 define provision_resource(@raw) return @resource on_error: stop_debugging() do
-  call start_debugging()
   $raw = to_object(@raw)
   $fields = $raw["fields"]
   $type = $raw["type"]
   call sys_log.set_task_target(@@deployment)
   call sys_log.summary(join(["Provision ",$type]))
   call sys_log.detail($raw)
+  call start_debugging()
   @operation = cloud_sql.$type.create($fields)
+  call stop_debugging()
   call sys_log.detail(to_object(@operation))
+  call start_debugging()
   sub timeout: 5m, on_timeout: skip do
     sleep_until @operation.status == "DONE"
-  end 
+  end
+  call stop_debugging()
+  call sys_log.detail("Outside of Loop")
   if $type == "users"
+    call start_debugging()
     $instance_name = $fields["instance_name"]
     @resource = cloud_sql.users.empty()
-  else 
+    call stop_debugging()
+  elsif $type == "backup_runs"
+    call start_debugging()
+    $instance_name = $fields["instance_name"]
+    @resource = cloud_sql.backup_runs.empty()
+    call stop_debugging()
+  else
+    call start_debugging()
     @resource = @operation.targetLink()
+    call stop_debugging()
   end 
   call sys_log.detail(to_object(@resource))
-  call stop_debugging()
 end
 
 define delete_resource(@resource) on_error: skip do
