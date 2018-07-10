@@ -20,7 +20,7 @@ The AWS EKS Plugin integrates RightScale Self-Service with the basic functionali
    - For more details on using the portal review the [SS User Interface Guide](http://docs.rightscale.com/ss/guides/ss_user_interface_guide.html)
 1. In the Design section, use the `Upload CAT` interface to complete the following:
    1. Upload each of packages listed in the Requirements Section
-   1. Upload the `aws_lambda_plugin.rb` file located in this repository
+   1. Upload the `aws_eks_plugin.rb` file located in this repository
 
 ## How to Use
 The EKS Plugin has been packaged as `plugins/rs_aws_eks`. In order to use this plugin you must import this plugin into a CAT.
