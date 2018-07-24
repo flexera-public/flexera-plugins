@@ -21,7 +21,7 @@ plugin "rs_azure_aks" do
     default_host "https://management.azure.com/"
     default_scheme "https"
     query do {
-      'api-version' =>  '2017-01-31'
+      'api-version' =>  '2018-03-31'
     } end
   end
 
@@ -61,8 +61,8 @@ plugin "rs_azure_aks" do
     end
 
     action "create" do
-      type "containerservice"
-      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.ContainerService/containerServices/$name"
+      type "aks"
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.ContainerService/managedClusters/$name"
       verb "PUT"
     end
 
@@ -72,7 +72,7 @@ plugin "rs_azure_aks" do
     end
 
     action "show" do
-      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.ContainerService/containerServices/$name"
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.ContainerService/managedClusters/$name"
       verb "GET"
 
       field "resource_group" do
@@ -85,25 +85,25 @@ plugin "rs_azure_aks" do
     end
 
     action "get" do
-      type "containerservice"
+      type "aks"
       path "$href"
       verb "GET"
     end
 
     action "update" do
-      type "containerservice"
+      type "aks"
       path "$href"
       verb "PUT"
     end
 
     action "list" do
-      type "containerservice"
-      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.ContainerService/containerServices"
+      type "aks"
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.ContainerService/managedClusters"
       verb "GET"
     end
 
     action "destroy" do
-      type "containerservice"
+      type "aks"
       path "$href"
       verb "DELETE"
     end
