@@ -164,7 +164,7 @@ define provision_resource(@declaration) return @resource do
     $name = $fields["name"]
     $resource_group = $fields["resource_group"]
     call sys_log.detail("entering check for aks created")
-    sub on_error: retry, timeout: 10m do
+    sub on_error: retry, timeout: 30m do
       call sys_log.detail("sleeping 10")
       sleep(10)
       call start_debugging()
@@ -176,7 +176,7 @@ define provision_resource(@declaration) return @resource do
     @new_resource = @operation.show(name: $name, resource_group: $resource_group )
     $status = @new_resource.state
     call sys_log.detail(join(["Status: ", $status]))
-    sub on_error: skip, timeout: 10m do
+    sub on_error: skip, timeout: 30m do
       while $status != "Succeeded" do
         $status = @operation.show(name: $name, resource_group: $resource_group).state
         call stop_debugging()

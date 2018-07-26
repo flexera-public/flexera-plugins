@@ -16,13 +16,13 @@ end
 
 resource "my_resource_group", type: "rs_cm.resource_group" do
   cloud_href "/api/clouds/3526"
-  name @@deployment.name
+  name join(["aks-rg-", last(split(@@deployment.href, "/"))])
   description join(["container resource group for ", @@deployment.name])
 end
 
  
 resource "my_k8s", type: "rs_azure_aks.aks" do
-  name join(["myc", last(split(@@deployment.href, "/"))])
+  name join(["aks", last(split(@@deployment.href, "/"))])
   resource_group @my_resource_group.name
   location "Central US"
   properties do {
