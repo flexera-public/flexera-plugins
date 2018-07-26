@@ -20,14 +20,13 @@ resource "my_resource_group", type: "rs_cm.resource_group" do
   description join(["container resource group for ", @@deployment.name])
 end
 
-# https://github.com/Azure/azure-quickstart-templates/tree/master/101-acs-dcos
-# https://github.com/Azure/azure-quickstart-templates/blob/master/101-acs-dcos/azuredeploy.parameters.json
+ 
 resource "my_k8s", type: "rs_azure_aks.aks" do
   name join(["myc", last(split(@@deployment.href, "/"))])
   resource_group @my_resource_group.name
   location "Central US"
   properties do {
-  "dnsPrefix" => 'asdfasdfasdfasd33MMM1111MA',
+  "dnsPrefix" => join(["dnsprefix-", last(split(@@deployment.href, "/"))]),
    "orchestratorProfile" => {
       "orchestratorType" =>  "Kubernetes"
     },
@@ -41,7 +40,7 @@ resource "my_k8s", type: "rs_azure_aks.aks" do
         "name" =>  "agentpools",
         "count" =>  2,
         "vmSize" =>  "Standard_DS2",
-        "dnsPrefix" => 'asdfasdfasdfasd33MMM1111MA',
+        "dnsPrefix" => join(["dnsprefix-", last(split(@@deployment.href, "/"))]),
         "storageProfile" => 'ManagedDisks',
         "osType" => 'Linux'
       }

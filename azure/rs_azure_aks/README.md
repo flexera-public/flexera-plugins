@@ -1,7 +1,7 @@
-# Azure Container Services Plugin
+# Azure Kubernetes Service Plugin
 
 ## Overview
-The Azure Container Services Plugin integrates RightScale Self-Service with the basic functionality of the Azure Storage Account
+The Azure Kubernetes Service Plugin integrates RightScale Self-Service with the basic functionality of the Azure Kubernetes Service
 **WARNING: Do not use the enclosed ssh key for production **
 
 ## Requirements
@@ -32,13 +32,13 @@ The Azure Container Services Plugin integrates RightScale Self-Service with the 
    1. Upload the `azure_containerservices_plugin.rb` file located in this repository
  
 ## How to Use
-The Azure Container Services Plugin has been packaged as `plugins/rs_azure_containerservices`. In order to use this plugin you must import this plugin into a CAT.
+The Azure Kubernetes Service Plugin has been packaged as `plugins/rs_azure_aks`. In order to use this plugin you must import this plugin into a CAT.
 ```
-import "plugins/rs_azure_containerservices"
+import "plugins/rs_azure_aks"
 ```
 For more information on using packages, please refer to the RightScale online documentation. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
-Azure Container Servicesresources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
+Azure Kubernetes Service resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
 The resulting resource can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
 
 ## Supported Resources
@@ -48,7 +48,7 @@ The resulting resource can be manipulated just like the native RightScale resour
 ```
 
 parameter "subscription_id" do
-  like $rs_azure_containerservices.subscription_id
+  like $rs_azure_aks.subscription_id
 end
 
 permission "read_creds" do
@@ -64,24 +64,28 @@ end
 
 # https://github.com/Azure/azure-quickstart-templates/tree/master/101-acs-dcos
 # https://github.com/Azure/azure-quickstart-templates/blob/master/101-acs-dcos/azuredeploy.parameters.json
-resource "my_container", type: "rs_azure_containerservices.containerservice" do
+resource "my_k8s", type: "rs_azure_aks.aks" do
   name join(["myc", last(split(@@deployment.href, "/"))])
   resource_group @my_resource_group.name
   location "Central US"
   properties do {
+  "dnsPrefix" => join(["dnsprefix-", last(split(@@deployment.href, "/"))]),
    "orchestratorProfile" => {
-      "orchestratorType" =>  "DCOS"
+      "orchestratorType" =>  "Kubernetes"
     },
-    "masterProfile" => {
-      "count" =>  "1",
-      "dnsPrefix" =>  join([@@deployment.name, "-master"])
+    "servicePrincipalProfile" => {
+      "clientId" => cred("AZURE_APPLICATION_ID"),
+      "secret" => cred("AZURE_APPLICATION_KEY")
     },
+ 
     "agentPoolProfiles" =>  [
       {
         "name" =>  "agentpools",
-        "count" =>  "2",
+        "count" =>  2,
         "vmSize" =>  "Standard_DS2",
-        "dnsPrefix" =>  join([@@deployment.name, "-agent"])
+        "dnsPrefix" => join(["dnsprefix-", last(split(@@deployment.href, "/"))]),
+        "storageProfile" => 'ManagedDisks',
+        "osType" => 'Linux'
       }
     ],
     "diagnosticsProfile" => {
@@ -94,7 +98,7 @@ resource "my_container", type: "rs_azure_containerservices.containerservice" do
       "ssh" => {
         "publicKeys" =>  [
           {
-            "keyData" =>  "CHANGEME"
+            "keyData" =>  "change me"
           }
         ]
       }
@@ -107,10 +111,10 @@ operation "launch" do
  definition "launch_handler"
 end
 
-define launch_handler(@my_resource_group,@my_container) return @my_resource_group,@my_container do
+define launch_handler(@my_resource_group,@my_k8s) return @my_resource_group,@my_k8s do
   call start_debugging()
   provision(@my_resource_group)
-  provision(@my_container)
+  provision(@my_k8s)
   call stop_debugging()
 end
 ```
