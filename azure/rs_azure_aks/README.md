@@ -62,8 +62,8 @@ resource "my_resource_group", type: "rs_cm.resource_group" do
   description join(["aks resource group for ", @@deployment.name])
 end
 
-# https://github.com/Azure/azure-quickstart-templates/tree/master/101-acs-dcos
-# https://github.com/Azure/azure-quickstart-templates/blob/master/101-acs-dcos/azuredeploy.parameters.json
+# https://github.com/Azure/azure-quickstart-templates/tree/master/101-aks
+# https://github.com/Azure/azure-quickstart-templates/blob/master/101-aks/azuredeploy.parameters.json
 resource "my_k8s", type: "rs_azure_aks.aks" do
   name join(["myc", last(split(@@deployment.href, "/"))])
   resource_group @my_resource_group.name
