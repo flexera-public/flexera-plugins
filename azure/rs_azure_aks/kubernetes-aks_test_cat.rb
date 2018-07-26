@@ -22,11 +22,12 @@ end
 
 # https://github.com/Azure/azure-quickstart-templates/tree/master/101-acs-dcos
 # https://github.com/Azure/azure-quickstart-templates/blob/master/101-acs-dcos/azuredeploy.parameters.json
-resource "my_container", type: "rs_azure_containerservices.containerservice" do
+resource "my_k8s", type: "rs_azure_aks.aks" do
   name join(["myc", last(split(@@deployment.href, "/"))])
   resource_group @my_resource_group.name
   location "Central US"
   properties do {
+  "dnsPrefix" => 'asdfasdfasdfasd33MMM1111MA',
    "orchestratorProfile" => {
       "orchestratorType" =>  "Kubernetes"
     },
@@ -34,16 +35,15 @@ resource "my_container", type: "rs_azure_containerservices.containerservice" do
       "clientId" => cred("AZURE_APPLICATION_ID"),
       "secret" => cred("AZURE_APPLICATION_KEY")
     },
-    "masterProfile" => {
-      "count" =>  "1",
-      "dnsPrefix" =>  join([@@deployment.name, "-master"])
-    },
+ 
     "agentPoolProfiles" =>  [
       {
         "name" =>  "agentpools",
-        "count" =>  "2",
+        "count" =>  2,
         "vmSize" =>  "Standard_DS2",
-        "dnsPrefix" =>  join([@@deployment.name, "-agent"])
+        "dnsPrefix" => 'asdfasdfasdfasd33MMM1111MA',
+        "storageProfile" => 'ManagedDisks',
+        "osType" => 'Linux'
       }
     ],
     "diagnosticsProfile" => {
@@ -69,10 +69,10 @@ operation "launch" do
  definition "launch_handler"
 end
 
-define launch_handler(@my_resource_group,@my_container) return @my_resource_group,@my_container do
+define launch_handler(@my_resource_group,@my_k8s) return @my_resource_group,@my_k8s do
   call start_debugging()
   provision(@my_resource_group)
-  provision(@my_container)
+  provision(@my_k8s)
   call stop_debugging()
 end
 

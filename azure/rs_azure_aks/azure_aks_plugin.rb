@@ -120,14 +120,14 @@ plugin "rs_azure_aks" do
   end
 end
 
-resource_pool "rs_azure_containerservices" do
-    plugin $rs_azure_containerservices
+resource_pool "rs_azure_aks" do
+    plugin $rs_azure_aks
     parameter_values do
       subscription_id $subscription_id
     end
 
     auth "azure_auth", type: "oauth2" do
-      token_url "https://login.microsoftonline.com/TENANT_ID/oauth2/token"
+      token_url "https://login.microsoftonline.com/09b8fec1-4b8d-48dd-8afa-5c1a775ea0f2/oauth2/token"
       grant type: "client_credentials" do
         client_id cred("AZURE_APPLICATION_ID")
         client_secret cred("AZURE_APPLICATION_KEY")
@@ -159,11 +159,11 @@ define provision_resource(@declaration) return @resource do
     call sys_log.summary(join(["Provision ", $type]))
     call sys_log.detail($object)
     call start_debugging()
-    @operation = rs_azure_containerservices.$type.create($fields)
+    @operation = rs_azure_aks.$type.create($fields)
     call stop_debugging()
     $name = $fields["name"]
     $resource_group = $fields["resource_group"]
-    call sys_log.detail("entering check for containerservices created")
+    call sys_log.detail("entering check for aks created")
     sub on_error: retry, timeout: 10m do
       call sys_log.detail("sleeping 10")
       sleep(10)
@@ -171,7 +171,7 @@ define provision_resource(@declaration) return @resource do
       @new_resource = @operation.show(name: $name, resource_group: $resource_group )
       call stop_debugging()
     end
-    call sys_log.detail("Checking that containerservices state is online")
+    call sys_log.detail("Checking that aks state is online")
     call start_debugging()
     @new_resource = @operation.show(name: $name, resource_group: $resource_group )
     $status = @new_resource.state
