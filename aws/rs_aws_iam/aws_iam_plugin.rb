@@ -69,7 +69,7 @@ plugin "rs_aws_iam" do
 
     output_path "//Role"
 
-    output "RoleName","RoleId"
+    output "RoleName","RoleId","Arn"
 
     action "create" do
       verb "POST"
