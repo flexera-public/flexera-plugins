@@ -194,6 +194,100 @@ plugin "gce" do
 
   end
 
+  type "regionalAutoscaler" do
+    href_templates "{{selfLink}}","{{items[*].selfLink}}","{{items.*.autoscalers[].selfLink}}"
+
+    field "region" do
+      location "path"
+      required true
+      type "string"
+    end
+
+    field "autoscalingPolicy" do
+      type "object"
+    end
+
+    field "description" do
+      type "string"
+    end
+
+    field "name" do
+      type "string"
+    end
+
+    field "target" do
+      type "string"
+    end
+
+    output "autoscalingPolicy","creationTimestamp","description","id","kind","name","region","selfLink","target"
+
+    # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/autoscalers/aggregatedList.
+    action "aggregatedList" do 
+      verb "GET"
+      path "/projects/$project/aggregated/autoscalers"
+      type "autoscaler"
+      output_path "items.*.autoscalers[]"
+    end
+
+    # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/autoscalers/delete.
+    action "delete" do 
+      verb "DELETE"
+      path "$href"
+      type "operation"
+    end
+
+    # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/autoscalers/get.
+    action "get" do 
+      verb "GET"
+      path "$href"
+      type "autoscaler"
+    end
+
+    # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/autoscalers/insert.
+    action "insert" do 
+      verb "POST"
+      path "/projects/$project/regions/$region/autoscalers"
+      type "operation"
+    end
+
+    # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/autoscalers/list.
+    action "list" do 
+      verb "GET"
+      path "/projects/$project/regions/$region/autoscalers"
+      type "autoscaler"
+      output_path "items"
+    end
+
+    # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/autoscalers/patch.
+    action "patch" do 
+      verb "PATCH"
+      path "/projects/$project/regions/$region/autoscalers"
+      type "operation"
+    end
+
+    # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/autoscalers/update.
+    action "update" do 
+      verb "PUT"
+      path "/projects/$project/regions/$region/autoscalers"
+      type "operation"
+    end
+
+    link "region" do
+      url "$region"
+      type "region"
+    end
+
+    link "zone" do
+      url "$zone"
+      type "zone"
+    end
+
+    provision "provision_resource"
+
+    delete "delete_resource"
+
+  end
+
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/backendBuckets.
   type "backendBucket" do
     href_templates "{{selfLink}}","{{items[*].selfLink}}"
@@ -1424,6 +1518,158 @@ plugin "gce" do
     action "list" do 
       verb "GET"
       path "/projects/$project/zones/$zone/instanceGroupManagers"
+      type "instanceGroupManager"
+      output_path "items"
+    end
+
+    # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instanceGroupManagers/recreateInstances.
+    action "recreateInstances" do 
+      verb "POST"
+      path "$href/recreateInstances"
+      type "operation"
+    end
+
+    # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instanceGroupManagers/resize.
+    action "resize" do 
+      verb "POST"
+      path "$href/resize"
+      type "operation"
+    end
+
+    # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instanceGroupManagers/setInstanceTemplate.
+    action "setInstanceTemplate" do 
+      verb "POST"
+      path "$href/setInstanceTemplate"
+      type "operation"
+    end
+
+    # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instanceGroupManagers/setTargetPools.
+    action "setTargetPools" do 
+      verb "POST"
+      path "$href/setTargetPools"
+      type "operation"
+    end
+
+    link "instanceGroup" do
+      url "$instanceGroup"
+      type "instanceGroup"
+    end
+
+    link "instanceTemplate" do
+      url "$instanceTemplate"
+      type "instanceTemplate"
+    end
+
+    link "region" do
+      url "$region"
+      type "region"
+    end
+
+    link "zone" do
+      url "$zone"
+      type "zone"
+    end
+
+    provision "provision_resource"
+
+    delete "delete_resource"
+
+  end
+
+  # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instanceGroupManagers.
+  type "regionalInstanceGroupManager" do
+    href_templates "{{selfLink}}","{{items[*].selfLink}}","{{items.*.instanceGroupManagers[].selfLink}}"
+
+    field "region" do
+      location "path"
+      required true
+      type "string"
+    end
+
+    field "baseInstanceName" do
+      required true
+      type "string"
+    end
+
+    field "description" do
+      type "string"
+    end
+
+    field "instanceTemplate" do
+      type "string"
+    end
+
+    field "name" do
+      required true
+      type "string"
+    end
+
+    field "namedPorts" do
+      type "array"
+    end
+
+    field "targetPools" do
+      type "array"
+    end
+
+    field "targetSize" do
+      required true
+      type "number"
+    end
+
+    field "distributionPolicy" do
+      type "object"
+    end
+
+    output "baseInstanceName","creationTimestamp","currentActions","description","fingerprint","id","instanceGroup","instanceTemplate","kind","name","namedPorts","region","selfLink","targetPools","targetSize","zone"
+
+    # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instanceGroupManagers/abandonInstances.
+    action "abandonInstances" do 
+      verb "POST"
+      path "$href/abandonInstances"
+      type "operation"
+    end
+
+    # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instanceGroupManagers/aggregatedList.
+    action "aggregatedList" do 
+      verb "GET"
+      path "/projects/$project/aggregated/instanceGroupManagers"
+      type "instanceGroupManager"
+      output_path "items.*.instanceGroupManagers[]"
+    end
+
+    # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instanceGroupManagers/delete.
+    action "delete" do 
+      verb "DELETE"
+      path "$href"
+      type "operation"
+    end
+
+    # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instanceGroupManagers/deleteInstances.
+    action "deleteInstances" do 
+      verb "POST"
+      path "$href/deleteInstances"
+      type "operation"
+    end
+
+    # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instanceGroupManagers/get.
+    action "get" do 
+      verb "GET"
+      path "$href"
+      type "instanceGroupManager"
+    end
+
+    # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instanceGroupManagers/insert.
+    action "insert" do 
+      verb "POST"
+      path "/projects/$project/regions/$region/instanceGroupManagers"
+      type "operation"
+    end
+
+    # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instanceGroupManagers/list.
+    action "list" do 
+      verb "GET"
+      path "/projects/$project/regions/$region/instanceGroupManagers"
       type "instanceGroupManager"
       output_path "items"
     end
@@ -3595,21 +3841,24 @@ define no_operation() do
 end
 
 define provision_resource(@raw) return @resource on_error: stop_debugging() do
-  call start_debugging()
   $raw = to_object(@raw)
   $fields = $raw["fields"]
   $type = $raw["type"]
   call sys_log.set_task_target(@@deployment)
   call sys_log.summary(join(["Provision ",$type]))
   call sys_log.detail($raw)
+  call start_debugging()
   @operation = gce.$type.insert($fields)
+  call stop_debugging()
   call sys_log.detail(to_object(@operation))
+  call start_debugging()
   sub timeout: 2m, on_timeout: skip do
     sleep_until @operation.status == "DONE"
   end
+  call stop_debugging() 
   call sys_log.detail(to_object(@resource))
+  call start_debugging()
   @resource = @operation.targetLink()
-  call stop_debugging()
 end
 
 define delete_resource(@resource) on_error: stop_debugging() do
