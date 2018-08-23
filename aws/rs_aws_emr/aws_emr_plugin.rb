@@ -5,6 +5,12 @@ short_description "Amazon Web Services - EMR"
 long_description "Version: 1.0"
 package "plugins/rs_aws_emr"
 import "sys_log"
+#https://docs.aws.amazon.com/emr/latest/APIReference/API_Operations.html
+
+#don't destroy once finished with steps.
+#https://docs.aws.amazon.com/emr/latest/APIReference/API_JobFlowInstancesConfig.html
+
+#LogUri api bucket for emr cluster logs
 
 plugin "rs_aws_emr" do
   endpoint do
@@ -12,7 +18,7 @@ plugin "rs_aws_emr" do
   end
 
   type "clusters" do
-    href_templates "/clusters/{{cluster.name}}"
+    href_templates "/DescribeCluster/{{cluster.name}}"
     provision "provision_cluster"
     delete    "delete_resource"
 
@@ -48,6 +54,11 @@ plugin "rs_aws_emr" do
       location "query"
     end
 
+    action "BootstrapActions" do
+      verb "POST"
+      path "/"
+    end
+
     action "create" do
       verb "POST"
       path "/clusters"
@@ -80,7 +91,7 @@ end
 
 resource_pool "rs_aws_emr" do
   plugin $rs_aws_emr
-  host "eks.us-east-1.amazonaws.com"
+  host "us-east-1.elasticmapreduce.amazonaws.com"
   auth "key", type: "aws" do
     version     4
     service    'emr'
@@ -105,6 +116,7 @@ define provision_cluster(@declaration) return @resource do
     @operation = rs_aws_emr.$type.create($fields)
     call sys_log.detail(to_object(@operation))
     sub timeout: 20m, on_timeout: skip do
+      #Valid Values: STARTING | BOOTSTRAPPING | RUNNING | WAITING | TERMINATING | TERMINATED | TERMINATED_WITH_ERRORS
       sleep_until(@operation.status =~ "^(ACTIVE|DELETING|FAILED)")
     end
     if @operation.status != "ACTIVE"
