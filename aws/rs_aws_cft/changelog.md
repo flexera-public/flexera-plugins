@@ -1,7 +1,7 @@
 CFT Plugin changelog
 v1.4
 ----
-- Added support for stack_events
+- Added support for get_stack_events action
 
 v1.3
 ----
