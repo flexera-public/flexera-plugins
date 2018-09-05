@@ -48,7 +48,7 @@ This procedure will setup the Credentials required for the GCE Plugin to interac
    1. Upload the `gce_dm_plugin.rb` file located in this repository
  
 ## How to Use
-The Cloud SQL Plugin has been packaged as `plugins/google_sql`. In order to use this plugin you must import this plugin into a CAT.
+The Google Deployment Manager has been packaged as `plugins/gce_dm`. In order to use this plugin you must import this plugin into a CAT.
 ```
 import "plugins/gce_dm"
 ```
