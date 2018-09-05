@@ -579,14 +579,12 @@ plugin "rs_aws_cft" do
     action "destroy" do
       verb "POST"
       path "/?Action=DeleteStack&StackName=$StackName"
-
     end
 
     # http://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_DescribeStacks.html
     action "get" do
       verb "POST"
       path "/?Action=DescribeStacks&StackName=$StackName"
-
       output_path "//DescribeStacksResult/Stacks/member"
     end 
     
@@ -1045,6 +1043,18 @@ plugin "rs_aws_cft" do
 
     end 
 
+    action "get_stack_events" do
+      verb "GET"
+      path "/?Action=DescribeStackEvents&StackName=$StackName"
+
+      field "stack_name" do
+        alias_for "StackName"
+        location "query"
+      end  
+
+      output_path "//DescribeStackEventsResult"
+    end
+
     # http://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_DescribeStackResources.html
     link "resources" do
       path "/?Action=DescribeStackResources&StackName=$StackName"
@@ -1052,7 +1062,7 @@ plugin "rs_aws_cft" do
       output_path "//DescribeStackResourcesResult/StackResources/member"
     end
 
-    output "StackName","StackId","CreationTime","StackStatus","DisableRollback"
+    output "StackName","StackId","CreationTime","StackStatus","DisableRollback","StackEvents"
 
     output "OutputKey" do
       body_path "//DescribeStacksResult/Stacks/member/Outputs/member/OutputKey"
@@ -1136,12 +1146,10 @@ plugin "rs_aws_cft" do
     end 
 
     output "StackName","StackId","Timestamp","LogicalResourceId","PhysicalResourceId","ResourceType","ResourceStatus"
-
     provision "no_operation"
-
     delete "no_operation"
   end
-    
+
 end
 
 resource_pool "rs_aws_cft" do
@@ -1178,8 +1186,13 @@ define create_stack(@declaration) return @resource do
         call sys_log.detail(join(["Status: ", $status]))
         sleep(10)
       end
-    end 
+    end
+    if $status != "CREATE_COMPLETE"
+      call sys_log.detail(@operation.get_stack_events())
+      raise "Did not complete provision, check audit entry for details"
+    end
     @resource = @operation.get()
+    call sys_log.detail(@resource.get_stack_events())
     call sys_log.detail(to_object(@resource))
     call stop_debugging()
   end
