@@ -1,0 +1,137 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Managed stack. Use AWS OpsWorks for Puppet Enterprise to change or delete.
+Parameters:
+  AssociatePublicIpAddress:
+    AllowedValues:
+    - 'true'
+    - 'false'
+    Default: 'true'
+    Description: Create EIP or not
+    Type: String
+  SSHAccess:
+    AllowedValues:
+    - 'true'
+    - 'false'
+    Default: 'false'
+    Description: Enable SSH access to the instances
+    Type: String
+  CodeManagerAccess:
+    AllowedValues:
+    - 'true'
+    - 'false'
+    Default: 'false'
+    Description: Enable CodeManager access to the instance
+    Type: String
+  SecurityGroupIds:
+    Default: ''
+    Description: Security Group used by the server
+    Type: CommaDelimitedList
+  VpcId:
+    Default: ''
+    Description: VPC Id of the server
+    Type: String
+Conditions:
+  AddSSHAccess:
+    Fn::Equals:
+    - Ref: SSHAccess
+    - 'true'
+  AddCodeManagerAccess:
+    Fn::Equals:
+    - Ref: CodeManagerAccess
+    - 'true'
+  AssociatePublicIpAddress:
+    Fn::Equals:
+    - Ref: AssociatePublicIpAddress
+    - 'true'
+  CreateSecurityGroup:
+    Fn::And:
+    - Condition: VpcIdPresent
+    - Fn::Not:
+      - Condition: SecurityGroupIdsPresent
+  SecurityGroupIdsPresent:
+    Fn::Not:
+    - Fn::Equals:
+      - Fn::Select:
+        - 0
+        - Ref: SecurityGroupIds
+      - ''
+  VpcIdPresent:
+    Fn::Not:
+    - Fn::Equals:
+      - Ref: VpcId
+      - ''
+Resources:
+  EIP:
+    Type: AWS::EC2::EIP
+    Condition: AssociatePublicIpAddress
+    Properties:
+      Domain: vpc
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Condition: CreateSecurityGroup
+    Properties:
+      GroupDescription: Server security group. Managed by OpsWorks. Please do not
+        edit/update/delete.
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: tcp
+          FromPort: '443'
+          ToPort: '443'
+          Description: 'PE Console HTTPS'
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: tcp
+          FromPort: '4433'
+          ToPort: '4433'
+          Description: 'PE Console API endpoint'
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: tcp
+          FromPort: '8140'
+          ToPort: '8140'
+          Description: 'PE Master API'
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: tcp
+          FromPort: '8142'
+          ToPort: '8143'
+          Description: 'PE Orchestrator'
+        - Fn::If:
+          - AddCodeManagerAccess
+          - CidrIp: 0.0.0.0/0
+            IpProtocol: tcp
+            FromPort: '8170'
+            ToPort: '8170'
+            Description: 'Code Manager'
+          - !Ref "AWS::NoValue"
+        - Fn::If:
+          - AddSSHAccess
+          - CidrIp: 0.0.0.0/0
+            IpProtocol: tcp
+            FromPort: '22'
+            ToPort: '22'
+            Description: 'SSH'
+          - !Ref "AWS::NoValue"
+      VpcId:
+        Ref: VpcId
+      Tags:
+      - Key: Name
+        Value:
+          Ref: AWS::StackName
+Outputs:
+  Version:
+    Description: Template version
+    Value: "1.1.0"
+  EIPAllocationId:
+    Condition: AssociatePublicIpAddress
+    Description: EIP Allocation Id
+    Value:
+      Fn::GetAtt:
+      - EIP
+      - AllocationId
+  SecurityGroup:
+    Description: SecurityGroup
+    Value:
+      Fn::If:
+      - CreateSecurityGroup
+      - Ref: SecurityGroup
+      - Fn::Join:
+        - ','
+        - Ref: SecurityGroupIds
