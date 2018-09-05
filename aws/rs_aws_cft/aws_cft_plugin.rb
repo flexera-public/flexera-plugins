@@ -2,7 +2,7 @@ name 'rs_aws_cft'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Amazon Web Services - Cloud Formation"
-long_description "Version: 1.3"
+long_description "Version: 1.4"
 package "plugins/rs_aws_cft"
 import "sys_log"
 
