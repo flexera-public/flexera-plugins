@@ -22,14 +22,14 @@ The Azure Compute Plugin integrates RightScale Self-Service with the basic funct
 1. [Retrieve the Application ID & Authentication Key](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal#get-application-id-and-authentication-key)
 1. Create RightScale Credentials with values that match the Application ID (Credential name: `AZURE_APPLICATION_ID`) & Authentication Key (Credential name: `AZURE_APPLICATION_KEY`)
 1. [Retrieve your Tenant ID](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal#get-tenant-id)
-1. Update `azure_lb_plugin.rb` Plugin with your Tenant ID. 
+1. Update `azure_compute_plugin.rb` Plugin with your Tenant ID.
    - Replace "TENANT_ID" in `token_url "https://login.microsoftonline.com/TENANT_ID/oauth2/token"` with your Tenant ID
 1. Navigate to the appropriate Self-Service portal
    - For more details on using the portal review the [SS User Interface Guide](http://docs.rightscale.com/ss/guides/ss_user_interface_guide.html)
 1. In the Design section, use the `Upload CAT` interface to complete the following:
    1. Upload each of packages listed in the Requirements Section
-   1. Upload the `azure_lb_plugin.rb` file located in this repository
- 
+   1. Upload the `azure_compute_plugin.rb` file located in this repository
+
 ## How to Use
 The Azure Compute Plugin has been packaged as `plugins/rs_azure_compute`. In order to use this plugin you must import this plugin into a CAT.
 ```
@@ -112,6 +112,11 @@ end
 | get | [Get](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachines/virtualmachines-get)| Supported |
 | update| [Update](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachines/virtualmachines-create-or-update)| Supported |
 | vmSizes | [vmSizes](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachines/virtualmachines-list-sizes-for-resizing)| Supported |
+| list | [List](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachines/list)| Supported |
+| list_all | [List All](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachines/listall) | Supported |
+| stop | [Deallocate](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachines/deallocate) | Supported |
+| start | [Start](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachines/start) | Supported |
+| instance_view | [Instance View](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachines/instanceview) | Supported |
 
 #### Supported Outputs
 - id
@@ -147,14 +152,46 @@ end
 - location
 - properties
 
-## Implementation Notes
-- The Azure Compute Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to an LB resource.) 
+## scale_set
+#### Supported Fields
+| Field Name | Required? | Description |
+|------------|-----------|-------------|
+|name|Yes|Specifies name of vm scale set|
+|resource_group|Yes|Name of resource group in which to launch the Deployment|
+|location|Yes|Datacenter to launch in|
+|properties|Yes|Hash of extension options|
+|sku|Yes|The virtual machine scale set sku.|
+|plan|No|Specifies information about the marketplace image used to create the virtual machine. This element is only used for marketplace images. Before you can use a marketplace image from an API, you must enable the image for programmatic use. In the Azure portal, find the marketplace image that you want to use and then click Want to deploy programmatically, Get Started ->. Enter any required information and then click Save.|
 
- 
+#### Supported Actions
+
+| Action | API Implementation | Support Level |
+|--------------|:----:|:-------------:|
+| get | [Get](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachinescalesets/get)| Supported |
+| create | [Put](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachinescalesets/createorupdate)|Supported|
+| delete | [Delete](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachinescalesets/delete)| Supported|
+
+#### Supported Outputs
+- id
+- identity
+- location
+- name
+- type
+- plan
+- properties
+- sku
+- zones
+- tags
+- properties
+
+## Implementation Notes
+- The Azure Compute Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to an LB resource.)
+
+
 Full list of possible actions can be found on the [Azure Compute API Documentation](https://docs.microsoft.com/en-us/rest/api/network/loadbalancer/)
 ## Examples
 Please review [compute_test_cat.rb](./compute_test_cat.rb) for a basic example implementation.
-	
+
 ## Known Issues / Limitations
 
 ## Getting Help

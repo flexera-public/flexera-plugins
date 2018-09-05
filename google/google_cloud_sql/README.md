@@ -237,6 +237,51 @@ end
 | list | [list](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/users/list) | Supported
 | update | [update](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/users/update) | Untested
 
+### backup_runs
+#### Supported Fields
+| Field Name | Required? | Description |
+|------------|-----------|-------------|
+| instance_name | yes | SQL Instance name |
+
+#### Supported Outputs
+- kind
+- id
+- selfLink
+- instance
+- description
+- windowStartTime
+- status
+- type
+- enqueuedTime
+- startTime
+- endTime
+- error
+
+#### Usage
+
+```
+# Backup as a resource
+resource "gsql_backup", type: "cloud_sql.backup_runs" do
+  instance_name @gsql_instance.name
+end
+
+# Backup as a definition
+define create_database_backup(@gsql_instance) do
+  cloud_sql.backup_runs.create(instance_name: @gsql_instance.name)
+end
+```
+
+**NOTE:** Due to an API limitation for this resource type, you will not be able to manipulate **backup** resources via an RCL Resource Collection (ie. `@backup.output`).
+ For this resource type, the best practice is to get **backup** resources and then convert to an object, within a variable (ie. `$backup`), and then parse the hash to retrieve outputs.
+
+#### Supported Actions
+
+| Action | API Implementation | Support Level |
+|--------------|:----:|:-------------:|
+| create | [insert](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/backupRuns/insert) | Supported
+| delete | [delete](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/backupRuns/delete) | Supported
+| list | [list](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/backupRuns/list) | Supported
+
 ## Examples
 - [cloud_sql_test_cat.rb](./cloud_sql_test_cat.rb)
 	

@@ -2,7 +2,7 @@ name 'aws_rds_plugin'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Amazon Web Services - Relational Database Service"
-long_description "Version: 1.4"
+long_description "Version: 1.5"
 package "plugins/rs_aws_rds"
 import "sys_log"
 import "plugin_generics"
@@ -731,7 +731,7 @@ define handle_retries($attempts) do
   if $attempts <= 6
     sleep(10*to_n($attempts))
     call sys_log.set_task_target(@@deployment)
-    call sys_log.summary("error:"+$_error["type"] + ": " + $_error["message"])
+    call sys_log.summary("RDS Plugin")
     call sys_log.detail("error:"+$_error["type"] + ": " + $_error["message"])
     log_error($_error["type"] + ": " + $_error["message"])
     $_error_behavior = "retry"

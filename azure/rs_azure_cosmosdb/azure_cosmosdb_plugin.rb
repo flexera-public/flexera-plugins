@@ -1,9 +1,9 @@
-name 'rs_azure_keyvault'
+name 'rs_azure_cosmosdb'
 type 'plugin'
 rs_ca_ver 20161221
-short_description "Azure Key Vault Plugin"
-long_description "Version: 1.1"
-package "plugins/rs_azure_keyvault"
+short_description "Azure CosmosDB Plugin"
+long_description "Version: 1.0"
+package "plugins/rs_azure_cosmosdb"
 import "sys_log"
 
 parameter "subscription_id" do
@@ -16,12 +16,12 @@ permission "read_creds" do
   resources "rs_cm.credentials"
 end
 
-plugin "rs_azure_keyvault" do
+plugin "rs_azure_cosmosdb" do
   endpoint do
     default_host "https://management.azure.com/"
     default_scheme "https"
     query do {
-      'api-version' =>  '2016-10-01'
+      'api-version' =>  '2015-04-08'
     } end
   end
 
@@ -30,8 +30,8 @@ plugin "rs_azure_keyvault" do
     label "subscription_id"
   end
 
-  type "vaults" do
-    href_templates "{{type(id)=='string' && id || null}}","{{type(value)=='array' && value[].id || null}}"
+  type "db_account" do
+    href_templates "{{id}}"
     provision "provision_resource"
     delete    "delete_resource"
 
@@ -55,20 +55,25 @@ plugin "rs_azure_keyvault" do
       location "body"
     end
 
+    field "kind" do
+      type "string"
+      location "body"
+    end
+
     field "tags" do
       type "composite"
       location "body"
     end
 
     action "create" do
-      type "vaults"
-      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.KeyVault/vaults/$name"
+      type "db_account"
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.DocumentDB/databaseAccounts/$name"
       verb "PUT"
     end
 
     action "show" do
-      type "vaults"
-      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.KeyVault/vaults/$name"
+      type "db_account"
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.DocumentDB/databaseAccounts/$name"
       verb "GET"
 
       field "resource_group" do
@@ -80,25 +85,14 @@ plugin "rs_azure_keyvault" do
       end
     end
 
-    action "listbyresourcegroup" do
-      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.KeyVault/vaults"
-      verb "GET"
-
-      field "resource_group" do
-        location "path"
-      end
-
-      output_path "value[*]"
-    end
-
     action "get" do
-      type "vaults"
+      type "db_account"
       path "$href"
       verb "GET"
     end
 
     action "update" do
-      type "vaults"
+      type "db_account"
       path "$href"
       verb "PUT"
     end
@@ -108,44 +102,52 @@ plugin "rs_azure_keyvault" do
       verb "DELETE"
     end
 
-    output "id","name","location","tags","properties","type"
+    output "id","name","location","tags","properties","type","kind"
 
-    output "access_policies" do
-      body_path "properties.accessPolicies"
+    output "provisioningState" do
+      body_path "properties.provisioningState"
     end
 
-    output "create_mode" do
-      body_path "properties.createMode"
+    output "state" do
+      body_path "properties.provisioningState"
     end
 
-    output "enable_soft_delete" do
-      body_path "properties.enableSoftDelete"
+    output "ipRangeFilter" do
+      body_path "properties.ipRangeFilter"
+    end
+
+    output "isVirtualNetworkFilterEnabled" do
+      body_path "properties.isVirtualNetworkFilterEnabled"
     end 
 
-    output "enabled_for_deployment" do
-      body_path "properties.enabledForDeployment"
+    output "databaseAccountOfferType" do
+      body_path "properties.databaseAccountOfferType"
     end 
 
-    output "enabled_for_disk_encryption" do
-      body_path "properties.enabledForDiskEncryption"
+    output "consistencyPolicy" do
+      body_path "properties.consistencyPolicy"
     end 
 
-    output "enabled_for_template_deployment" do
-      body_path "properties.enabledForTemplateDeployment"
+    output "writeLocations" do
+      body_path "properties.writeLocations"
     end 
 
-    output "sku" do
-      body_path "properties.sku"
+    output "readLocations" do
+      body_path "properties.readLocations"
     end 
 
-    output "vault_uri" do
-      body_path "properties.vaultUri"
+    output "failoverPolicies" do
+      body_path "properties.failoverPolicies"
+    end
+
+    output "virtualNetworkRules" do
+      body_path "properties.virtualNetworkRules"
     end 
   end
 end
 
-resource_pool "rs_azure_keyvault" do
-    plugin $rs_azure_keyvault
+resource_pool "rs_azure_cosmosdb" do
+    plugin $rs_azure_cosmosdb
     parameter_values do
       subscription_id $subscription_id
     end
@@ -177,25 +179,33 @@ define provision_resource(@declaration) return @resource do
   sub on_error: stop_debugging() do
     $object = to_object(@declaration)
     $fields = $object["fields"]
-    call sys_log.detail(join(["fields", $fields]))
     $type = $object["type"]
+    $name = $fields["name"]
+    $resource_group = $fields["resource_group"]
     call sys_log.set_task_target(@@deployment)
     call sys_log.summary(join(["Provision ", $type]))
     call sys_log.detail($object)
     call start_debugging()
-    @operation = rs_azure_keyvault.$type.create($fields)
-    $name = $fields["name"]
-    $resource_group = $fields["resource_group"]
-    sub on_error: retry, timeout: 10m do
-      call sys_log.detail("sleeping 10")
-      sleep(10)
-      @new_resource = @operation.show(name: $name, resource_group: $resource_group )
-    end
-    @new_resource = @operation.show(name: $name, resource_group: $resource_group )
-    call sys_log.detail(to_object(@operation))
-    @resource = @new_resource.get()
+    @operation = rs_azure_cosmosdb.$type.create($fields)
     call stop_debugging()
+    call sys_log.detail(to_object(@operation))
+    call start_debugging()
+    @new_resource = @operation.get()
+    $status = @new_resource.state
+    while $status != "Succeeded" do
+      $status = @new_resource.state
+      if $status == "Failed"
+        call stop_debugging()
+        raise "Execution Name: "+ $name + ", Status: " + $status
+      end
+      call stop_debugging()
+      call sys_log.detail(join(["Status: ", $status]))
+      call start_debugging()
+      sleep(10)
+    end
+    @resource = @new_resource
     call sys_log.detail(to_object(@resource))
+    call stop_debugging()
   end
 end
 
