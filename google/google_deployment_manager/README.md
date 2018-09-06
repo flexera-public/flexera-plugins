@@ -153,7 +153,7 @@ end
 | show | [show](https://cloud.google.com/deployment-manager/docs/reference/latest/deployments/get) | Untested |
 
 ## Examples
-- [GDM_dm_test_cat.rb](./GDM_dm_test_cat.rb)
+- [gce_dm_test_cat.rb](./gce_dm_test_cat.rb)
 	
 ## Known Issues / Limitations
 
