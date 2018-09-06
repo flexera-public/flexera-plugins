@@ -8,7 +8,7 @@ The Google Cloud Deployment plugin consumes the Google Deployment Manager API an
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
 - `admin`, `ss_enduser`, & `ss_designer` roles on a RightScale account with Self-Service enabled
   - the `admin` role is needed to set/retrieve the RightScale Credentials for the Google Deployment Manager API.
-- GCP Service Account credentials
+- GDM Service Account credentials
   - Refer to the Getting Started section for details on creating this account.
 - The following RightScale Credentials must exist with the appropriate values
   - `GCE_PLUGIN_ACCOUNT`
@@ -18,12 +18,13 @@ The Google Cloud Deployment plugin consumes the Google Deployment Manager API an
 - Enable the Google Deployment Manager API on your Project. Refer to [Google Documentation](https://console.developers.google.com/apis/library/deploymentmanager.googleapis.com) for more information.
 
 ## Getting Started
-### Creating a GCP Service Account
+### Creating a GDM Service Account
 This procedure will create a GCE Service account with the appropriate permissions to use this plugin.
 1. Review the [Using OAuth 2.0 for Server to Server Applications](https://developers.google.com/identity/protocols/OAuth2ServiceAccount) documentation.
 1. Follow the section named _Creating a service account_
     - Roles needs to include:
-      - `Cloud SQL Admin`
+      - `Deployment Manager Editor`
+      - `Deployment Manager Type Editor`
     - Permissions can be restricted but may effect the permissions required to interact with certain resources with this plugin. Doing so is unsupported
    - Enabling G Suite Domain-wide Delegation is not required
    - Furnish a new private key selecting the JSON option
@@ -48,9 +49,9 @@ This procedure will setup the Credentials required for the GCE Plugin to interac
    1. Upload the `gce_dm_plugin.rb` file located in this repository
  
 ## How to Use
-The Google Deployment Manager has been packaged as `plugins/gce_dm`. In order to use this plugin you must import this plugin into a CAT.
+The Google Deployment Manager has been packaged as `plugins/GDM_dm`. In order to use this plugin you must import this plugin into a CAT.
 ```
-import "plugins/gce_dm"
+import "plugins/GDM_dm"
 ```
 For more information on using packages, please refer to the RightScale online documenataion. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
@@ -96,7 +97,7 @@ A Google Deployment can now be created by specifying a resource declaration with
 The resulting resrouce can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
 ```
 #Creates a new Google Deployment
-resource "gce_dm_deployment", type: "gce_dm.deployment" do
+resource "GDM_dm_deployment", type: "GDM_dm.deployment" do
   name join(["beyondtrust-",last(split(@@deployment.href, "/"))])
   target do {
     "config" => {
@@ -152,7 +153,7 @@ end
 | show | [show](https://cloud.google.com/deployment-manager/docs/reference/latest/deployments/get) | Untested |
 
 ## Examples
-- [gce_dm_test_cat.rb](./gce_dm_test_cat.rb)
+- [GDM_dm_test_cat.rb](./GDM_dm_test_cat.rb)
 	
 ## Known Issues / Limitations
 
@@ -161,4 +162,4 @@ Support for this plugin will be provided though GitHub Issues and the RightScale
 Visit http://chat.rightscale.com/ to join!
 
 ## License
-The GCE Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.
+The GDM Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.
