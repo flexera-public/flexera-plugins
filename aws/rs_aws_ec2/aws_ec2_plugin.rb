@@ -1,4 +1,4 @@
-name 'aws_vpc_plugin'
+name 'aws_ec2_plugin'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Amazon Web Services - EC2 Plugin"
@@ -6,7 +6,7 @@ long_description "Version 1.4"
 package "plugin/rs_aws_ec2"
 import "sys_log"
 
-plugin "rs_aws_vpc" do
+plugin "rs_aws_ec2" do
   endpoint do
     default_host "ec2.amazonaws.com"
     default_scheme "https"
@@ -673,8 +673,8 @@ plugin "rs_aws_vpc" do
   end
 end
 
-resource_pool "vpc_pool" do
-  plugin $rs_aws_vpc
+resource_pool "ec2_pool" do
+  plugin $rs_aws_ec2
   auth "key", type: "aws" do
     version     4
     service    'ec2'
@@ -690,7 +690,7 @@ define provision_vpc(@declaration) return @vpc do
     $fields = $object["fields"]
     $name = $fields['name']
     call start_debugging()
-    @vpc = rs_aws_vpc.vpc.create($fields)
+    @vpc = rs_aws_ec2.vpc.create($fields)
     call stop_debugging()
     $vpc = to_object(@vpc)
     call sys_log.detail(join(["vpc:", to_s($vpc)]))
@@ -713,7 +713,7 @@ define provision_endpoint(@declaration) return @vpcendpoint do
     $fields = $object["fields"]
     $name = $fields['name']
     call start_debugging()
-    @vpcendpoint = rs_aws_vpc.endpoint.create($fields)
+    @vpcendpoint = rs_aws_ec2.endpoint.create($fields)
     call stop_debugging()
     $vpc = to_object(@vpcendpoint)
     call sys_log.detail(join(["vpcendpoint:", to_s($vpc)]))
@@ -736,7 +736,7 @@ define provision_route_table(@declaration) return @resource do
     $fields = $object["fields"]
     $name = $fields['name']
     call start_debugging()
-    @resource = rs_aws_vpc.route_table.create($fields)
+    @resource = rs_aws_ec2.route_table.create($fields)
     call stop_debugging()
     $vpc = to_object(@resource)
     call sys_log.detail(join(["vpcendpoint:", to_s($vpc)]))
@@ -759,7 +759,7 @@ define provision_nat_gateway(@declaration) return @resource do
     $fields = $object["fields"]
     $name = $fields['name']
     call start_debugging()
-    @resource = rs_aws_vpc.nat_gateway.create($fields)
+    @resource = rs_aws_ec2.nat_gateway.create($fields)
     call stop_debugging()
     $vpc = to_object(@resource)
     call sys_log.detail(join(["natgateway:", to_s($vpc)]))
@@ -782,7 +782,7 @@ define provision_tags(@declaration) return @resource do
     $fields = $object["fields"]
     $name = $fields['name']
     call start_debugging()
-    @resource = rs_aws_vpc.tags.create($fields)
+    @resource = rs_aws_ec2.tags.create($fields)
     call stop_debugging()
     $vpc = to_object(@resource)
     call sys_log.detail(join(["tags:", to_s($vpc)]))
@@ -795,7 +795,7 @@ define provision_volume(@declaration) return @resource do
     $fields = $object["fields"]
     $name = $fields['name']
     call start_debugging()
-    @resource = rs_aws_vpc.volume.create($fields)
+    @resource = rs_aws_ec2.volume.create($fields)
     call stop_debugging()
     $volume = to_object(@resource)
     call sys_log.detail(join(["volume:", to_s($volume)]))
@@ -818,7 +818,7 @@ define provision_volume_modification(@declaration) return @resource do
     $fields = $object["fields"]
     $name = $fields['name']
     call start_debugging()
-    @resource = rs_aws_vpc.volume.create($fields)
+    @resource = rs_aws_ec2.volume.create($fields)
     call stop_debugging()
     $volume_modification = to_object(@resource)
     call sys_log.detail(join(["volume:", to_s($volume_modification)]))

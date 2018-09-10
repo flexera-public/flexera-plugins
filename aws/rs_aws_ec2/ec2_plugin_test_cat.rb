@@ -1,8 +1,13 @@
 name 'AWS EC2 Test CAT'
 rs_ca_ver 20161221
-short_description "AWS VPC Test - Test CAT"
+short_description "AWS EC2 Test - Test CAT"
 import "sys_log"
 import "plugin/rs_aws_ec2"
+
+parameter "new_size" do
+  label "New Size"
+  type "string"
+end
 
 output "list_vpc" do
   label 'list action'
@@ -12,12 +17,17 @@ output "list_route_tables" do
   label "list route tables"
 end
 
-resource "my_vpc", type: "rs_aws_vpc.vpc" do
+output "volume_id" do
+  label "Volume ID"
+  default_value @my_volume.volumeId
+end
+
+resource "my_vpc", type: "rs_aws_ec2.vpc" do
   cidr_block "10.0.0.0/16"
   instance_tenancy "default"
 end
 
-resource "my_vpc_endpoint", type: "rs_aws_vpc.endpoint" do
+resource "my_vpc_endpoint", type: "rs_aws_ec2.endpoint" do
   vpc_id @my_vpc.vpcId
   service_name "com.amazonaws.us-east-1.s3"
 end
@@ -28,7 +38,7 @@ resource "my_rs_vpc", type: "rs_cm.network" do
   cloud_href "/api/clouds/1"
 end
 
-resource "my_rs_vpc_tag", type: "rs_aws_vpc.tags" do
+resource "my_rs_vpc_tag", type: "rs_aws_ec2.tags" do
   resource_id_1 @my_rs_vpc.resource_uid
   tag_1_key "Name"
   tag_1_value @@deployment.name
@@ -48,7 +58,7 @@ resource "my_igw", type: "rs_cm.network_gateway" do
   type "internet"
 end
 
-resource "my_rs_vpc_endpoint", type: "rs_aws_vpc.endpoint" do
+resource "my_rs_vpc_endpoint", type: "rs_aws_ec2.endpoint" do
   vpc_id @my_rs_vpc.resource_uid
   service_name "com.amazonaws.us-east-1.s3"
 end
@@ -59,9 +69,15 @@ resource "my_nat_ip", type: "rs_cm.ip_address" do
   cloud_href "/api/clouds/1"
 end
 
-resource "my_nat_gateway", type: "rs_aws_vpc.nat_gateway" do
+resource "my_nat_gateway", type: "rs_aws_ec2.nat_gateway" do
   allocation_id "replace-me"
   subnet_id @my_subnet.resource_uid
+end
+
+resource "my_volume", type: "rs_aws_ec2.volume" do
+  availability_zone "us-east-1a"
+  size "10"
+  volume_type "gp2"
 end
 
 operation 'list_vpc' do
@@ -80,17 +96,25 @@ operation "terminate" do
   definition "generated_terminate"
 end
 
+operation "resize_volume" do
+  definition "resize_volume"
+end
+
 define list_vpcs(@my_vpc) return $object,$rt_tbl do
-  call rs_aws_vpc.start_debugging()
-  @vpcs = rs_aws_vpc.vpc.list()
+  call rs_aws_ec2.start_debugging()
+  @vpcs = rs_aws_ec2.vpc.list()
   $object = to_object(first(@vpcs))
   $object = to_s($object)
   @route_tables = @my_vpc.routeTables()
   $rt_tbl = to_s(to_object(@route_tables))
-  call rs_aws_vpc.stop_debugging()
+  call rs_aws_ec2.stop_debugging()
 end
 
-define generated_launch(@my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs_vpc_endpoint,@my_nat_ip,@my_nat_gateway,@my_subnet,@my_igw,@my_rs_vpc_tag) return @my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs_vpc_endpoint,@my_nat_ip,@my_nat_gateway,@my_subnet,@my_igw,@my_rs_vpc_tag do
+define resize_volume(@my_volume,$new_size) return @my_volume do
+  rs_aws_ec2.volume_modification.create(volume_id: @my_volume.volumeId, size: $new_size)
+end
+
+define generated_launch(@my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs_vpc_endpoint,@my_nat_ip,@my_nat_gateway,@my_subnet,@my_igw,@my_rs_vpc_tag,@my_volume) return @my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs_vpc_endpoint,@my_nat_ip,@my_nat_gateway,@my_subnet,@my_igw,@my_rs_vpc_tag,@my_volume do
   provision(@my_vpc)
   @route_tables = @my_vpc.routeTables()
   $endpoint = to_object(@my_vpc_endpoint)
@@ -106,12 +130,12 @@ define generated_launch(@my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs_vpc_endpoint,
   @my_igw.update(network_gateway: { network_href: @my_rs_vpc.href })
   provision(@my_rs_vpc_endpoint)
   provision(@my_nat_ip)
-  @aws_ip = rs_aws_vpc.addresses.show(public_ip_1: @my_nat_ip.address)
+  @aws_ip = rs_aws_ec2.addresses.show(public_ip_1: @my_nat_ip.address)
   $nat_gateway = to_object(@my_nat_gateway)
   $nat_gateway["fields"]["allocation_id"] = @aws_ip.allocationId
   @my_nat_gateway = $nat_gateway
   provision(@my_nat_gateway)
-  @vpc1 = rs_aws_vpc.vpc.show(vpcId: @my_rs_vpc.resource_uid)
+  @vpc1 = rs_aws_ec2.vpc.show(vpcId: @my_rs_vpc.resource_uid)
   @vpc1.enablevpcclassiclink()
   @vpc1.enablevpcclassiclinkdnssupport()
   provision(@my_rs_vpc_tag)
