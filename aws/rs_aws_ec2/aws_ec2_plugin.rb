@@ -1,9 +1,9 @@
 name 'aws_vpc_plugin'
 type 'plugin'
 rs_ca_ver 20161221
-short_description "Amazon Web Services - VPC Plugin"
-long_description "Version 1.3"
-package "plugin/rs_aws_vpc"
+short_description "Amazon Web Services - EC2 Plugin"
+long_description "Version 1.4"
+package "plugin/rs_aws_ec2"
 import "sys_log"
 
 plugin "rs_aws_vpc" do
@@ -481,6 +481,196 @@ plugin "rs_aws_vpc" do
       type "simple_element"
     end
   end
+
+  type "volume" do
+    href_templates "/?Action=DescribeVolume&VolumeId.1={{//DescribeVolumesResponse/volumeSet/item/volumeId}}"
+    provision 'provision_volume'
+    delete    'delete_volume'
+
+    field "availability_zone" do
+      alias_for "AvailabilityZone"
+      type "string"
+      location "query"
+    end
+
+    field "encrypted" do
+      alias_for "Encrypted"
+      type "string"
+      location "query"
+    end
+
+    field "iops" do
+      alias_for "Iops"
+      type "string"
+      location "query"
+    end
+
+    field "kms_key_id" do
+      alias_for "KmsKeyId"
+      type "string"
+      location "query"
+    end
+
+    field "size" do
+      alias_for "Size"
+      type "string"
+      location "query"
+    end
+
+    field "snapshot_id" do
+      alias_for "SnapshotId"
+      type "string"
+      location "query"
+    end
+
+    field "volume_type" do
+      alias_for "VolumeType"
+      type "string"
+      location "query"
+    end
+
+    action "create" do
+      verb "POST"
+      path "/?Action=CreateVolume"
+    end
+
+    action "get" do
+      verb "POST"
+      path "/?Action=DescribeVolume"
+      output_path "//DescribeVolumesResponse/volumeSet/item"
+    end
+
+    action "destroy" do
+      verb "POST"
+      path "/?Action=DeleteVolume"
+    end
+
+    action "list" do
+      verb "POST"
+      path "/?Action=DescribeVolume"
+      output_path "//DescribeVolumesResponse/volumeSet/item"
+    end
+
+    output "volumeId" do
+      type "simple_element"
+    end
+
+    output "size" do
+      type "simple_element"
+    end
+
+    output "availabilityZone" do
+      type "simple_element"
+    end
+
+    output "status" do
+      type "simple_element"
+    end
+
+    output "createTime" do
+      type "simple_element"
+    end
+
+    output "attachmentSet" do
+      type "complex_element"
+    end
+
+    output "volumeType" do
+      type "simple_element"
+    end
+
+    output "encrypted" do
+      type "simple_element"
+    end
+  end
+
+  type "volume_modification" do
+    href_templates "/?Action=DescribeVolumesModifications&VolumeId.1={{//DescribeVolumesModificationsResponse/volumeModificationSet/item/volumeId}}"
+    provision 'provision_volume_modification'
+    delete    'no_operation'
+
+    field "volume_id" do
+      alias_for "VolumeId"
+      type "string"
+      location "query"
+    end
+
+    field "iops" do
+      alias_for "Iops"
+      type "string"
+      location "query"
+    end
+
+    field "size" do
+      alias_for "Size"
+      type "string"
+      location "query"
+    end
+
+    field "volume_type" do
+      alias_for "VolumeType"
+      type "string"
+      location "query"
+    end
+
+    action "create" do
+      verb "POST"
+      path "/?Action=ModifyVolume"
+      output_path "//ModifyVolumeResponse/volumeModification"
+    end
+
+    action "get" do
+      verb "POST"
+      path "/?Action=DescribeVolumesModifications"
+      output_path "//DescribeVolumesModificationsResponse/volumeModificationSet/item"
+    end
+
+    action "list" do
+      verb "POST"
+      path "/?Action=DescribeVolumesModifications"
+      output_path "//DescribeVolumesModificationsResponse/volumeModificationSet/item"
+    end
+
+    output "volumeId" do
+      type "simple_element"
+    end
+
+    output "targetIops" do
+      type "simple_element"
+    end
+
+    output "originalIops" do
+      type "simple_element"
+    end
+
+    output "modificationState" do
+      type "simple_element"
+    end
+
+    output "targetSize" do
+      type "simple_element"
+    end
+
+    output "targetVolumeType" do
+      type "simple_element"
+    end
+
+    output "progress" do
+      type "simple_element"
+    end
+
+    output "startTime" do
+      type "simple_element"
+    end
+
+    output "originalSize" do
+      type "simple_element"
+    end
+
+    output "originalVolumeType" do
+      type "simple_element"
+    end
+  end
 end
 
 resource_pool "vpc_pool" do
@@ -599,6 +789,52 @@ define provision_tags(@declaration) return @resource do
   end
 end
 
+define provision_volume(@declaration) return @resource do
+  sub on_error: stop_debugging() do
+    $object = to_object(@declaration)
+    $fields = $object["fields"]
+    $name = $fields['name']
+    call start_debugging()
+    @resource = rs_aws_vpc.volume.create($fields)
+    call stop_debugging()
+    $volume = to_object(@resource)
+    call sys_log.detail(join(["volume:", to_s($volume)]))
+    call start_debugging()
+    $state = @resource.status
+    call stop_debugging()
+    while $state != "available" do
+      sleep(10)
+      call sys_log.detail(join(["state: ", $state]))
+      call start_debugging()
+      $state = @resource.status
+      call stop_debugging()
+    end
+  end
+end
+
+define provision_volume_modification(@declaration) return @resource do
+  sub on_error: stop_debugging() do
+    $object = to_object(@declaration)
+    $fields = $object["fields"]
+    $name = $fields['name']
+    call start_debugging()
+    @resource = rs_aws_vpc.volume.create($fields)
+    call stop_debugging()
+    $volume_modification = to_object(@resource)
+    call sys_log.detail(join(["volume:", to_s($volume_modification)]))
+    call start_debugging()
+    $state = @resource.modificationState
+    call stop_debugging()
+    while $state != "completed" do
+      sleep(10)
+      call sys_log.detail(join(["state: ", $state]))
+      call start_debugging()
+      $state = @resource.modificationState
+      call stop_debugging()
+    end
+  end
+end
+
 define delete_vpc(@vpc) do
   sub on_error: stop_debugging() do
     call start_debugging()
@@ -635,6 +871,14 @@ define delete_tags(@tag) do
   sub on_error: stop_debugging() do
     call start_debugging()
     @tag.destroy()
+    call stop_debugging()
+  end
+end
+
+define delete_volume(@volume) do
+  sub on_error: stop_debugging() do
+    call start_debugging()
+    @volume.destroy()
     call stop_debugging()
   end
 end

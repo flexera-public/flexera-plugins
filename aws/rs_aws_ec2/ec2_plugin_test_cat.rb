@@ -1,8 +1,8 @@
-name 'AWS VPC Test CAT'
+name 'AWS EC2 Test CAT'
 rs_ca_ver 20161221
 short_description "AWS VPC Test - Test CAT"
 import "sys_log"
-import "plugin/rs_aws_vpc"
+import "plugin/rs_aws_ec2"
 
 output "list_vpc" do
   label 'list action'
