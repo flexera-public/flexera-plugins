@@ -1,4 +1,4 @@
-name 'aws_ec2_plugin'
+name 'aws_compute_plugin'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Amazon Web Services - EC2 Plugin"

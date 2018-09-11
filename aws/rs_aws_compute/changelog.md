@@ -1,4 +1,10 @@
-VPC Plugin changelog
+Compute Plugin changelog
+v1.4
+-----
+- Changing Plugin to Compute from VPC
+- Adding Volume Support
+- Adding volume modification support
+
 v1.3
 -----
 - adding in privatelink support
