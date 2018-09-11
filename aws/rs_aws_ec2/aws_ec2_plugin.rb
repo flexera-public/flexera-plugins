@@ -3,10 +3,10 @@ type 'plugin'
 rs_ca_ver 20161221
 short_description "Amazon Web Services - EC2 Plugin"
 long_description "Version 1.4"
-package "plugin/rs_aws_ec2"
+package "plugin/rs_aws_compute"
 import "sys_log"
 
-plugin "rs_aws_ec2" do
+plugin "rs_aws_compute" do
   endpoint do
     default_host "ec2.amazonaws.com"
     default_scheme "https"
@@ -483,7 +483,7 @@ plugin "rs_aws_ec2" do
   end
 
   type "volume" do
-    href_templates "/?Action=DescribeVolume&VolumeId.1={{//DescribeVolumesResponse/volumeSet/item/volumeId}}"
+    href_templates "/?Action=DescribeVolumes&VolumeId.1={{//CreateVolumeResponse/volumeId}}","/?Action=DescribeVolumes&VolumeId.1={{//DescribeVolumesResponse/volumeSet/item/volumeId}}"
     provision 'provision_volume'
     delete    'delete_volume'
 
@@ -532,6 +532,7 @@ plugin "rs_aws_ec2" do
     action "create" do
       verb "POST"
       path "/?Action=CreateVolume"
+      output_path "//CreateVolumeResponse"
     end
 
     action "get" do
@@ -542,7 +543,7 @@ plugin "rs_aws_ec2" do
 
     action "destroy" do
       verb "POST"
-      path "/?Action=DeleteVolume"
+      path "/?Action=DeleteVolume&VolumeId=$volumeId"
     end
 
     action "list" do
@@ -674,7 +675,7 @@ plugin "rs_aws_ec2" do
 end
 
 resource_pool "ec2_pool" do
-  plugin $rs_aws_ec2
+  plugin $rs_aws_compute
   auth "key", type: "aws" do
     version     4
     service    'ec2'
@@ -690,7 +691,7 @@ define provision_vpc(@declaration) return @vpc do
     $fields = $object["fields"]
     $name = $fields['name']
     call start_debugging()
-    @vpc = rs_aws_ec2.vpc.create($fields)
+    @vpc = rs_aws_compute.vpc.create($fields)
     call stop_debugging()
     $vpc = to_object(@vpc)
     call sys_log.detail(join(["vpc:", to_s($vpc)]))
@@ -713,7 +714,7 @@ define provision_endpoint(@declaration) return @vpcendpoint do
     $fields = $object["fields"]
     $name = $fields['name']
     call start_debugging()
-    @vpcendpoint = rs_aws_ec2.endpoint.create($fields)
+    @vpcendpoint = rs_aws_compute.endpoint.create($fields)
     call stop_debugging()
     $vpc = to_object(@vpcendpoint)
     call sys_log.detail(join(["vpcendpoint:", to_s($vpc)]))
@@ -736,7 +737,7 @@ define provision_route_table(@declaration) return @resource do
     $fields = $object["fields"]
     $name = $fields['name']
     call start_debugging()
-    @resource = rs_aws_ec2.route_table.create($fields)
+    @resource = rs_aws_compute.route_table.create($fields)
     call stop_debugging()
     $vpc = to_object(@resource)
     call sys_log.detail(join(["vpcendpoint:", to_s($vpc)]))
@@ -759,7 +760,7 @@ define provision_nat_gateway(@declaration) return @resource do
     $fields = $object["fields"]
     $name = $fields['name']
     call start_debugging()
-    @resource = rs_aws_ec2.nat_gateway.create($fields)
+    @resource = rs_aws_compute.nat_gateway.create($fields)
     call stop_debugging()
     $vpc = to_object(@resource)
     call sys_log.detail(join(["natgateway:", to_s($vpc)]))
@@ -782,7 +783,7 @@ define provision_tags(@declaration) return @resource do
     $fields = $object["fields"]
     $name = $fields['name']
     call start_debugging()
-    @resource = rs_aws_ec2.tags.create($fields)
+    @resource = rs_aws_compute.tags.create($fields)
     call stop_debugging()
     $vpc = to_object(@resource)
     call sys_log.detail(join(["tags:", to_s($vpc)]))
@@ -795,7 +796,7 @@ define provision_volume(@declaration) return @resource do
     $fields = $object["fields"]
     $name = $fields['name']
     call start_debugging()
-    @resource = rs_aws_ec2.volume.create($fields)
+    @resource = rs_aws_compute.volume.create($fields)
     call stop_debugging()
     $volume = to_object(@resource)
     call sys_log.detail(join(["volume:", to_s($volume)]))
@@ -818,7 +819,7 @@ define provision_volume_modification(@declaration) return @resource do
     $fields = $object["fields"]
     $name = $fields['name']
     call start_debugging()
-    @resource = rs_aws_ec2.volume.create($fields)
+    @resource = rs_aws_compute.volume.create($fields)
     call stop_debugging()
     $volume_modification = to_object(@resource)
     call sys_log.detail(join(["volume:", to_s($volume_modification)]))
@@ -847,6 +848,7 @@ define delete_endpoint(@endpoint) do
   sub on_error: stop_debugging() do
     call start_debugging()
     @endpoint.destroy()
+    sleep(30)
     call stop_debugging()
   end
 end
@@ -855,6 +857,7 @@ define delete_route_table(@route_table) do
   sub on_error: stop_debugging() do
     call start_debugging()
     @route_table.destroy()
+    sleep(30)
     call stop_debugging()
   end
 end
@@ -863,6 +866,15 @@ define delete_nat_gateway(@nat_gateway) do
   sub on_error: stop_debugging() do
     call start_debugging()
     @nat_gateway.destroy()
+    sleep(30)
+    $state = @nat_gateway.state
+    while $state != "deleted" do
+      sleep(10)
+      call sys_log.detail(join(["state: ", $state]))
+      call start_debugging()
+      $state = @nat_gateway.state
+      call stop_debugging()
+    end
     call stop_debugging()
   end
 end
