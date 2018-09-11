@@ -674,7 +674,7 @@ plugin "rs_aws_compute" do
   end
 end
 
-resource_pool "ec2_pool" do
+resource_pool "compute_pool" do
   plugin $rs_aws_compute
   auth "key", type: "aws" do
     version     4
