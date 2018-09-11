@@ -8,7 +8,7 @@ This repo contains a library of open source RightScale plugins.
 - [AWS Elastic File System](./aws/rs_aws_efs/)
 - [AWS Relational Database Service](./aws/rs_aws_rds/)
 - [AWS CloudFormation](./aws/rs_aws_cft/)
-- [AWS Virtual Private Cloud](./aws/rs_aws_vpc/)
+- [AWS EC2](./aws/rs_aws_compute/)
 - [AWS ElastiCache](./aws/rs_aws_elasticache)
 - [AWS Lambda](./aws/rs_aws_lambda)
 - [AWS MQ](./aws/rs_aws_mq)

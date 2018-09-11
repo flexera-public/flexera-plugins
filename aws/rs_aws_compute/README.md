@@ -1,13 +1,13 @@
-# AWS VPC Plugin
+# AWS Compute Plugin
 
 ## Overview
-The AWS VPC Plugin integrates RightScale Self-Service with the basic functionality of the AWS VPC. 
+The AWS Compute Plugin integrates RightScale Self-Service with the basic functionality of the AWS Compute. 
 
 ## Requirements
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
 - Admin rights to a RightScale account with SelfService enabled
-  - Admin is needed to set/retrieve the RightScale Credentials for the VPC API.
+  - Admin is needed to set/retrieve the RightScale Credentials for the Compute API.
 - AWS Account credentials with the appropriate permissions to manage elastic load balancers
 - The following RightScale Credentials
   - `AWS_ACCESS_KEY_ID`
@@ -22,16 +22,16 @@ The AWS VPC Plugin integrates RightScale Self-Service with the basic functionali
    - For more details on using the portal review the [SS User Interface Guide](http://docs.rightscale.com/ss/guides/ss_user_interface_guide.html)
 1. In the Design section, use the `Upload CAT` interface to complete the following:
    1. Upload each of packages listed in the Requirements Section
-   1. Upload the `aws_vpc_plugin.rb` file located in this repository
+   1. Upload the `aws_compute_plugin.rb` file located in this repository
  
 ## How to Use
-The VPC Plugin has been packaged as `plugin/rs_aws_vpc`. In order to use this plugin you must import this plugin into a CAT.
+The Compute Plugin has been packaged as `plugin/rs_aws_compute`. In order to use this plugin you must import this plugin into a CAT.
 ```
-import "plugin/rs_aws_vpc"
+import "plugin/rs_aws_compute"
 ```
 For more information on using packages, please refer to the RightScale online documenataion. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
-AWS VPC resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
+AWS Compute resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
 The resulting resrouce can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
 ## Supported Resources
  - vpc
@@ -44,12 +44,12 @@ The resulting resrouce can be manipulated just like the native RightScale resour
 ## Usage
 ```
 #Creates an VPC
-resource "my_vpc", type: "rs_aws_vpc.vpc" do
+resource "my_vpc", type: "rs_aws_compute.vpc" do
   cidr_block "10.0.0.0/16"
   instance_tenancy "default"
 end
 
-resource "my_vpc_endpoint", type: "rs_aws_vpc.endpoint" do
+resource "my_vpc_endpoint", type: "rs_aws_compute.endpoint" do
   vpc_id @my_vpc.vpcId
   service_name "com.amazonaws.us-east-1.s3"
 end
@@ -60,7 +60,7 @@ resource "my_rs_vpc", type: "rs_cm.network" do
   cloud_href "/api/clouds/1"
 end
 
-resource "my_rs_vpc_endpoint", type: "rs_aws_vpc.endpoint" do
+resource "my_rs_vpc_endpoint", type: "rs_aws_compute.endpoint" do
   vpc_id @my_rs_vpc.resource_uid
   service_name "com.amazonaws.us-east-1.s3"
 end
@@ -161,13 +161,47 @@ end
 | create | [CreateTags](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateTags.html) | Supported |
 | destroy | [DeleteTags](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DeleteTags.html) | Supported |
 
+## volume
+#### Supported Fields
+| Field Name | Required? | Description |
+|------------|-----------|-------------|
+| availability_zone | Yes | The Availability Zone in which to create the volume. Use DescribeAvailabilityZones to list the Availability Zones that are currently available to you. |
+| encrypted | No | Specifies whether the volume should be encrypted. Encrypted Amazon EBS volumes may only be attached to instances that support Amazon EBS encryption. Volumes that are created from encrypted snapshots are automatically encrypted. There is no way to create an encrypted volume from an unencrypted snapshot or vice versa. If your AMI uses encrypted volumes, you can only launch it on supported instance types. For more information, see Amazon EBS Encryption in the Amazon Elastic Compute Cloud User Guide.  |
+| iops | No | The number of I/O operations per second (IOPS) to provision for the volume, with a maximum ratio of 50 IOPS/GiB. Range is 100 to 32000 IOPS for volumes in most regions. For exceptions, see Amazon EBS Volume Types in the Amazon Elastic Compute Cloud User Guide.  |
+| kms_key_id | No | An identifier for the AWS Key Management Service (AWS KMS) customer master key (CMK) to use when creating the encrypted volume. This parameter is only required if you want to use a non-default CMK; if this parameter is not specified, the default CMK for EBS is used. If a KmsKeyId is specified, the Encrypted flag must also be set.  |
+| size | No | The size of the volume, in GiBs. |
+| snapshot_id | No | The snapshot from which to create the volume. |
+| volume_type | No | The volume type. This can be gp2 for General Purpose SSD, io1 for Provisioned IOPS SSD, st1 for Throughput Optimized HDD, sc1 for Cold HDD, or standard for Magnetic volumes.  |
+
+## Supported Actions
+| Action | API Implementation | Support Level |
+|--------------|:----:|:-------------:|
+| create | [CreateVolume](https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateVolume.html) | Supported |
+| destroy | [DeleteVolume](https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DeleteVolume.html) | Supported |
+| get | [DescribeVolumes](https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeVolumes.html) | Supported |
+
+## volume_modification
+#### Supported Fields
+| Field Name | Required? | Description |
+|------------|-----------|-------------|
+| volume_id | yes | The ID of the volume. |
+| iops | No | The number of I/O operations per second (IOPS) to provision for the volume, with a maximum ratio of 50 IOPS/GiB. Range is 100 to 32000 IOPS for volumes in most regions. For exceptions, see Amazon EBS Volume Types in the Amazon Elastic Compute Cloud User Guide.  |
+| size | No | The size of the volume, in GiBs. |
+| volume_type | No | The volume type. This can be gp2 for General Purpose SSD, io1 for Provisioned IOPS SSD, st1 for Throughput Optimized HDD, sc1 for Cold HDD, or standard for Magnetic volumes.  |
+
+## Supported Actions
+| Action | API Implementation | Support Level |
+|--------------|:----:|:-------------:|
+| create | [ModifyVolume](https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_ModifyVolume.html) | Supported |
+| get | [DescribeVolumesModifications](https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeVolumesModifications.html) | Supported |
+
 # Implementation Notes
-- The AWS VPC Plugin makes no attempt to support non-AWS resources. (i.e. Allow the passing the RightScale or other resources as arguments to an VPC resource.) 
+- The AWS Compute Plugin makes no attempt to support non-AWS resources. (i.e. Allow the passing the RightScale or other resources as arguments to an VPC resource.) 
  - The most common example might be to pass a RightScale instance to attach it to the VPC or similar. Support for this functionality will need to be implemented in the application CAT.
  
-Full list of possible actions can be found on the [AWS VPC API Documentation](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/Welcome.html)
+Full list of possible actions can be found on the [AWS Compute API Documentation](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/Welcome.html)
 ## Examples
-Please review [vpc_plugin_test_cat.rb](./vpc_plugin_test_cat.rb) for a basic example implementation.
+Please review [compute_plugin_test_cat.rb](./compute_plugin_test_cat.rb) for a basic example implementation.
 	
 ## Known Issues / Limitations
 
@@ -176,4 +210,4 @@ Support for this plugin will be provided though GitHub Issues and the RightScale
 Visit http://chat.rightscale.com/ to join!
 
 ## License
-The AWS VPC Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.
+The AWS Compute Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.
