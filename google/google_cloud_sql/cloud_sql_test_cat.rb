@@ -33,6 +33,12 @@ parameter "param_gce_password" do
   operations ["create_gsql_user"]
 end
 
+parameter "db_name" do
+  label "DB Name"
+  type "string"
+  default "my-database"
+end
+
 parameter "param_backup_id" do
   type "string"
   label "Backup ID"
@@ -80,6 +86,12 @@ operation "create_gsql_user" do
   definition "defn_create_gsql_user"
 end
 
+operation "create_gsql_db" do
+  label "Create GSQL Database"
+  description "Creates GSQL Database"
+  definition "defn_create_gsql_db"
+end
+
 resource "gsql_instance", type: "cloud_sql.instances" do
   name join([$db_instance_prefix,"-",last(split(@@deployment.href, "/"))])
   database_version "MYSQL_5_7"
@@ -117,6 +129,13 @@ end
 
 resource "gsql_backup", type: "cloud_sql.backup_runs" do
   instance_name @gsql_instance.name
+end
+
+resource "gsql_db", type: "cloud_sql.databases" do
+  name $db_name
+  instance_name @gsql_instance.name
+  collation "utf8_general_ci"
+  charset "utf8"
 end
 
 define create_database_backup(@gsql_instance) return @gsql_instance do
@@ -181,6 +200,10 @@ define defn_create_gsql_user(@gsql_instance,$param_gce_user, $param_gce_password
   @gsql_user = cloud_sql.users.create(name: $param_gce_user, instance_name: @gsql_instance.name, password: $param_gce_password)
 end
 
+define defn_create_gsql_db(@gsql_instance,@gsql_db) return @gsql_instance,@gsql_db do
+  @gsql_db = provision(@gsql_db)
+end
+
 operation "launch" do
   definition "gen_launch"
 end
@@ -189,7 +212,7 @@ operation "terminate" do
   definition "gen_terminate"
 end
 
-define gen_launch(@gsql_instance_failover) return @gsql_instance_failover,@@gsql_instance_failover do
+define gen_launch(@gsql_instance_failover,@gsql_db) return @gsql_instance_failover,@@gsql_instance_failover do
  #return empty - let autoprovision
  @@gsql_instance_failover = cloud_sql.instances.empty()
 end
