@@ -1,4 +1,5 @@
 Google Cloud SQL Plugin changelog
+
 v1.2
 -----
 - Fixing filter alias
