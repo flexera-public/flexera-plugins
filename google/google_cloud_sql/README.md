@@ -132,17 +132,20 @@ end
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
-| create | [insert](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/insert) | Supported
-| delete | [delete](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/delete) | Supported
-| get | [get](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/get) | Supported
-| list | [list](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/list) | Supported
-| update | [update](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/update) | Untested 
-| restart | [restart](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/restart) | Untested
-| clone | [clone](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/clone) | Untested
-| failover | [failover](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/failover) | Untested
-| import | [import](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/import) | Untested
-| export | [export](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/export) | Untested
-
+| create | [insert](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/insert) | Supported |
+| delete | [delete](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/delete) | Supported |
+| get | [get](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/get) | Supported |
+| list | [list](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/list) | Supported |
+| update | [update](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/update) | Untested |
+| patch | [patch](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/patch) | Untested |
+| restart | [restart](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/restart) | Untested |
+| clone | [clone](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/clone) | Untested |
+| failover | [failover](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/failover) | Untested |
+| import | [import](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/import) | Untested |
+| export | [export](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/export) | Untested |
+| get_replica | [get](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/get) | Supported |
+| delete_replica | [delete](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/delete) | Supported |
+| restore_backup | [restoreBackup](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances/restoreBackup) | Supported |
 
 #### Supported Links
 
