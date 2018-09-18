@@ -78,7 +78,7 @@ plugin "cloud_sql" do
   
     field "filter" do 
       location "query"
-      alias_for "maxResults"
+      alias_for "filter"
       type "string"
     end 
 
@@ -116,9 +116,27 @@ plugin "cloud_sql" do
       type "operation"
     end
 
+    action "delete_replica" do
+      verb "DELETE"
+      path "/projects/$project/instances/$name"
+      type "operation"
+      field "name" do
+        location "path"
+      end
+    end
+
     action "get" do 
       verb "GET"
       path "$href"
+      type "instances"
+    end
+
+    action "get_replica" do 
+      verb "GET"
+      path "/projects/$project/instances/$name"
+      field "name" do
+        location "path"
+      end
       type "instances"
     end
 
@@ -135,7 +153,7 @@ plugin "cloud_sql" do
 
       field "filter" do 
         location "query"
-        alias_for "maxResults"
+        alias_for "filter"
       end 
     end 
 
@@ -148,6 +166,20 @@ plugin "cloud_sql" do
         location "body"
       end
     end 
+
+    action "patch" do
+      verb "PATCH"
+      path "$href"
+      type "operation"
+
+      field "failover_replica" do 
+        alias_for "failoverReplica"
+        type "object"
+      end
+      field "settings" do
+        location "body"
+      end
+    end
 
     action "restart" do
       verb "POST"
@@ -193,7 +225,17 @@ plugin "cloud_sql" do
       field "export_context" do
         alias_for "exportContext"
       end
-    end 
+    end
+
+    action "restore_backup" do
+      verb "POST"
+      path "$href/restoreBackup"
+      type "operation"
+
+      field "restore_backup_context" do
+        alias_for "restoreBackupContext"
+      end 
+    end
 
     link "databases" do
       path "$href/databases"
