@@ -1,7 +1,7 @@
 name "Google Cloud SQL Plugin"
 rs_ca_ver 20161221
 short_description "Google Cloud SQL"
-long_description "Version: 1.1"
+long_description "Version: 1.2"
 type 'plugin'
 package "plugins/google_sql"
 import "sys_log"
