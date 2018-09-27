@@ -4,6 +4,10 @@ short_description "AWS EC2 Test - Test CAT"
 import "sys_log"
 import "plugin/rs_aws_compute"
 
+parameter "param_region" do
+  like $rs_aws_compute.param_region
+end
+
 parameter "new_size" do
   label "New Size"
   type "string"

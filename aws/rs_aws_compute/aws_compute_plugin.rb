@@ -2,9 +2,16 @@ name 'aws_compute_plugin'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Amazon Web Services - EC2 Plugin"
-long_description "Version 1.4"
+long_description "Version 1.5"
 package "plugin/rs_aws_compute"
 import "sys_log"
+
+parameter 'param_region' do
+  type 'string'
+  label 'AWS Region'
+  default 'us-east-1'
+  description 'The region in which the resources are created'
+end
 
 plugin "rs_aws_compute" do
   endpoint do
@@ -679,7 +686,7 @@ resource_pool "compute_pool" do
   auth "key", type: "aws" do
     version     4
     service    'ec2'
-    region     'us-east-1'
+    region     $param_region
     access_key cred('AWS_ACCESS_KEY_ID')
     secret_key cred('AWS_SECRET_ACCESS_KEY')
   end

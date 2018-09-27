@@ -1,4 +1,7 @@
 Compute Plugin changelog
+v1.5
+------
+- Adding CreateImage support
 v1.4
 -----
 - Changing Plugin to Compute from VPC
