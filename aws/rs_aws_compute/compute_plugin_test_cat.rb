@@ -29,6 +29,11 @@ parameter "param_image_description" do
   type "string"
 end
 
+parameter "param_ami_id" do
+  label "AMI Id"
+  type "string"
+end
+
 output "list_vpc" do
   label 'list action'
 end
@@ -50,6 +55,10 @@ end
 output "output_dns_name" do
   label "DNS Id"
   default_value $instance_dns_name
+end
+
+output "output_ami_id" do
+  label "AMI Id"
 end
 
 resource "my_vpc", type: "rs_aws_compute.vpc" do
@@ -81,10 +90,16 @@ resource "my_rs_vpc_tag", type: "rs_aws_compute.tags" do
 end
 
 resource "my_subnet", type: "rs_cm.subnet" do
-  name join([@@deployment.name, "-us-east-1a"])
+  name join([@@deployment.name, "-us-east-1b"])
   cidr_block "10.0.1.0/24"
-  network_href "replace-me"
-  datacenter "us-east-1a"
+  network_href @my_rs_vpc
+  datacenter "us-east-1b"
+  cloud_href "/api/clouds/1"
+end
+
+resource "my_sg", type: "rs_cm.security_group" do
+  name join([@@deployment.name, "-default"])
+  network @my_rs_vpc
   cloud_href "/api/clouds/1"
 end
 
@@ -92,6 +107,14 @@ resource "my_igw", type: "rs_cm.network_gateway" do
   name join([@@deployment.name, "-igw"])
   cloud_href "/api/clouds/1"
   type "internet"
+end
+
+resource "my_rt_igw", type: "rs_cm.route" do
+  description "internet route"
+  destination_cidr_block "0.0.0.0/0"
+  next_hop_href @my_igw.href
+  next_hop_type "network_gateway"
+  route_table_href first(@my_rs_vpc.route_tables()).href
 end
 
 resource "my_rs_vpc_endpoint", type: "rs_aws_compute.endpoint" do
@@ -121,9 +144,10 @@ resource 'server1', type: 'rs_cm.server' do
   cloud "EC2 us-east-1"
   server_template "RightLink 10.6.0 Linux Base"
   instance_type "t2.medium"
-  network "StefhenVPC"
-  subnets ["Subnet-b"]
-  security_groups [ "SSH and RDP" ]
+  network @my_rs_vpc
+  subnets [@my_subnet]
+  security_groups [ @my_sg ]
+  associate_public_ip_address true
 end
 
 operation 'list_vpc' do
@@ -152,6 +176,13 @@ end
 
 operation "snapshot_root_volume" do
   definition "snapshot_root_volume"
+  output_mappings do {
+    $output_ami_id => $ami_id
+  } end
+end
+
+operation "op_deregister_image" do
+  definition "deregister_image"
 end
 
 define list_vpcs(@my_vpc) return $object,$rt_tbl do
@@ -168,16 +199,27 @@ define resize_volume($param_region,@my_volume,$new_size) return @my_volume do
   rs_aws_compute.volume_modification.create(volume_id: @my_volume.volumeId, size: $new_size)
 end
 
-define snapshot_root_volume($param_region, $param_instance_id, $param_image_name, $param_image_description) do
+define snapshot_root_volume($param_region, $param_instance_id, $param_image_name, $param_image_description) return $ami_id do
   call rs_aws_compute.start_debugging()
+  $ami_id = 111
   sub on_error: stop_debugging() do
     @instance = rs_aws_compute.instances.show(instance_id: $param_instance_id)
-    @instance.create_image(name: $param_image_name, description: $param_description)
+    @image = @instance.create_image(name: $param_image_name, description: $param_description)
+    $ami_id = @image.imageId
   end
   call rs_aws_compute.stop_debugging()
 end
 
-define generated_launch($param_region,@my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs_vpc_endpoint,@my_nat_ip,@my_nat_gateway,@my_subnet,@my_igw,@my_rs_vpc_tag,@my_volume,@my_vpc_tag,@server1) return @my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs_vpc_endpoint,@my_nat_ip,@my_nat_gateway,@my_subnet,@my_igw,@my_rs_vpc_tag,@my_volume,@instance,$instance_dns_name,$instance_id do
+define deregister_image($param_region,$param_ami_id) do
+  call rs_aws_compute.start_debugging()
+  sub on_error: stop_debugging() do
+    @image = rs_aws_compute.images.show(image_id: $param_ami_id)
+    @image.deregister_image()
+  end
+  call rs_aws_compute.stop_debugging()
+end
+
+define generated_launch($param_region,@my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs_vpc_endpoint,@my_nat_ip,@my_nat_gateway,@my_subnet,@my_igw,@my_rs_vpc_tag,@my_volume,@my_vpc_tag,@my_sg,@my_rt_igw,@server1) return @my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs_vpc_endpoint,@my_nat_ip,@my_nat_gateway,@my_subnet,@my_igw,@my_rs_vpc_tag,@my_volume,@my_sg,@my_rt_igw,@instance,$instance_dns_name,$instance_id do
   call rs_aws_compute.start_debugging()
   sub on_error: rs_aws_compute.stop_debugging() do
     provision(@my_vpc)
@@ -207,6 +249,8 @@ define generated_launch($param_region,@my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs
     provision(@my_rs_vpc_tag)
     @vpc1.create_tag(tag_1_key: "new_key", tag_1_value: "new_value")
     provision(@my_volume)
+    provision(@my_sg)
+    provision(@my_rt_igw)
     provision(@server1) 
     $instance_id = @server1.current_instance().resource_uid
     @instance = rs_aws_compute.instances.show(instance_id: $instance_id)

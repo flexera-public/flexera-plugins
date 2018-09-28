@@ -710,6 +710,7 @@ plugin "rs_aws_compute" do
     action "create_image" do
       verb "POST"
       path "/?Action=CreateImage&InstanceId=$instanceId"
+      output_path "//CreateImageResponse"
 
       field "name" do
         alias_for "Name"
@@ -726,8 +727,45 @@ plugin "rs_aws_compute" do
         alias_for "NoReboot"
         location "query"
       end
+      type "images"
     end
     output "instanceId","imageId","privateDnsName"
+  end
+
+  type "images" do
+    href_templates "/?Action=DescribeImages&ImageId.1={{//DescribeImagesResponse/imagesSet/item/imageId}}","/?Action=DescribeImages&ImageId.1={{//CreateImageResponse/imageId}}"
+    provision 'no_operation'
+    delete    'no_operation'
+
+    action "get" do
+      verb "POST"
+      path "/?Action=DescribeImages&ImageId.1=$imageId"
+      output_path "//DescribeImagesResponse/imagesSet/item"
+    end
+
+    action "show" do
+      verb "POST"
+      path "/?Action=DescribeImages"
+      output_path "//DescribeImagesResponse/imagesSet/item"
+
+      field "image_id" do
+        alias_for "ImageId.1"
+        location "query"
+      end
+    end
+
+    action "list" do
+      verb "POST"
+      path "/?Action=DescribeImages"
+      output_path "//DescribeImagesResponse/imagesSet/item"
+    end
+
+    action "deregister_image" do
+      verb "POST"
+      path "/?Action=DeregisterImage&ImageId=$imageId"
+    end
+
+    output "imageId","name","description","imageLocation","imageState","imageOwnerId","isPublic","architecture","imageType","kernelId","ramdiskId","imageOwnerAlias","rootDeviceType","rootDeviceName"
   end
 end
 
