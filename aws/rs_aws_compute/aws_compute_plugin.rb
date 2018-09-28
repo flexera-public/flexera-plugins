@@ -706,6 +706,27 @@ plugin "rs_aws_compute" do
       path "/?Action=DescribeInstances"
       output_path "//DescribeInstancesResponse/reservationSet/item/instancesSet/item"
     end
+
+    action "create_image" do
+      verb "POST"
+      path "/?Action=CreateImage&InstanceId=$instanceId"
+
+      field "name" do
+        alias_for "Name"
+        location "query"
+        required true
+      end
+
+      field "description" do
+        alias_for "Description"
+        location "query"
+      end
+
+      field "no_reboot" do
+        alias_for "NoReboot"
+        location "query"
+      end
+    end
     output "instanceId","imageId","privateDnsName"
   end
 end
