@@ -10,7 +10,6 @@ parameter 'param_region' do
   type 'string'
   label 'AWS Region'
   default 'us-east-1'
-  description 'The region in which the resources are created'
 end
 
 plugin "rs_aws_compute" do
@@ -678,6 +677,36 @@ plugin "rs_aws_compute" do
     output "originalVolumeType" do
       type "simple_element"
     end
+  end
+
+  type "instances" do
+    href_templates "/?Action=DescribeInstances&InstanceId.1={{//DescribeInstancesResponse/reservationSet/item/instancesSet/item/instanceId}}"
+    provision 'no_operation'
+    delete    'no_operation'
+
+    action "get" do
+      verb "POST"
+      path "/?Action=DescribeInstances&InstanceId.1=$instanceId"
+      output_path "//DescribeInstancesResponse/reservationSet/item/instancesSet/item"
+    end
+
+    action "show" do
+      verb "POST"
+      path "/?Action=DescribeInstances"
+      output_path "//DescribeInstancesResponse/reservationSet/item/instancesSet/item"
+
+      field "instance_id" do
+        alias_for "InstanceId.1"
+        location "query"
+      end
+    end
+
+    action "list" do
+      verb "POST"
+      path "/?Action=DescribeInstances"
+      output_path "//DescribeInstancesResponse/reservationSet/item/instancesSet/item"
+    end
+    output "instanceId","imageId","privateDnsName"
   end
 end
 

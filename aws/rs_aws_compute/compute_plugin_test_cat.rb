@@ -6,6 +6,7 @@ import "plugin/rs_aws_compute"
 
 parameter "param_region" do
   like $rs_aws_compute.param_region
+  description "json:{\"definition\":\"getZones\", \"description\": \"The region in which the resources are created\"}"
 end
 
 parameter "new_size" do
@@ -24,6 +25,11 @@ end
 output "volume_id" do
   label "Volume ID"
   default_value @my_volume.volumeId
+end
+
+output "dns_name" do
+  label "DNS Id"
+  default_value $instance_dns_name
 end
 
 resource "my_vpc", type: "rs_aws_compute.vpc" do
@@ -124,7 +130,7 @@ define resize_volume(@my_volume,$new_size) return @my_volume do
   rs_aws_compute.volume_modification.create(volume_id: @my_volume.volumeId, size: $new_size)
 end
 
-define generated_launch(@my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs_vpc_endpoint,@my_nat_ip,@my_nat_gateway,@my_subnet,@my_igw,@my_rs_vpc_tag,@my_volume,@my_vpc_tag) return @my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs_vpc_endpoint,@my_nat_ip,@my_nat_gateway,@my_subnet,@my_igw,@my_rs_vpc_tag,@my_volume do
+define generated_launch($param_region,@my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs_vpc_endpoint,@my_nat_ip,@my_nat_gateway,@my_subnet,@my_igw,@my_rs_vpc_tag,@my_volume,@my_vpc_tag) return @my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs_vpc_endpoint,@my_nat_ip,@my_nat_gateway,@my_subnet,@my_igw,@my_rs_vpc_tag,@my_volume,@instance,$instance_dns_name do
   call rs_aws_compute.start_debugging()
   sub on_error: rs_aws_compute.stop_debugging() do
     provision(@my_vpc)
@@ -154,6 +160,10 @@ define generated_launch(@my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs_vpc_endpoint,
     provision(@my_rs_vpc_tag)
     @vpc1.create_tag(tag_1_key: "new_key", tag_1_value: "new_value")
     provision(@my_volume)
+    @server = rs_cm.get(href: "/api/deployments/13738/servers/1831131003").current_instance()
+    $instance_id = @server.resource_uid
+    @instance = rs_aws_compute.instances.show(instance_id: $instance_id)
+    $instance_dns_name = @instance.privateDnsName
   end
 end
 
@@ -166,4 +176,20 @@ define generated_terminate(@my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs_vpc_endpoi
   delete(@my_subnet)
   delete(@my_vpc)
   delete(@my_rs_vpc)
+end
+
+define getZones() return $values do
+  @clouds = rs_cm.clouds.index(filter: ["cloud_type==amazon"])
+  @datacenters = @clouds.datacenters()
+  $dc_array = []
+  $dcs = []
+  foreach @datacenter in @datacenters do
+    $zone = @datacenter.name
+    $size = size($zone) 
+    $datacenter=join(split($zone,"")[0..($size-2)],"")
+    $dcs << $datacenter
+  end
+  $dc_unique = unique($dcs)
+  $dc_array = sort($dc_unique)
+  $values = $dc_array
 end
