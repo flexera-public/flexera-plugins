@@ -92,7 +92,7 @@ end
 resource "my_subnet", type: "rs_cm.subnet" do
   name join([@@deployment.name, "-us-east-1b"])
   cidr_block "10.0.1.0/24"
-  network_href @my_rs_vpc
+  network @my_rs_vpc
   datacenter "us-east-1b"
   cloud_href "/api/clouds/1"
 end
@@ -107,14 +107,13 @@ resource "my_igw", type: "rs_cm.network_gateway" do
   name join([@@deployment.name, "-igw"])
   cloud_href "/api/clouds/1"
   type "internet"
+  network @my_rs_vpc
 end
 
 resource "my_rt_igw", type: "rs_cm.route" do
   description "internet route"
   destination_cidr_block "0.0.0.0/0"
-  next_hop_href @my_igw.href
-  next_hop_type "network_gateway"
-  route_table_href first(@my_rs_vpc.route_tables()).href
+  next_hop_network_gateway @my_igw
 end
 
 resource "my_rs_vpc_endpoint", type: "rs_aws_compute.endpoint" do
@@ -218,8 +217,16 @@ define deregister_image($param_region,$param_ami_id) do
   end
   call rs_aws_compute.stop_debugging()
 end
+define handle_retries($attempts) do
+  if $attempts <= 10
+    sleep(60)
+    $_error_behavior = "retry"
+  else
+    $_error_behavior = "skip"
+  end
+end
 
-define generated_launch($param_region,@my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs_vpc_endpoint,@my_nat_ip,@my_nat_gateway,@my_subnet,@my_igw,@my_rs_vpc_tag,@my_volume,@my_vpc_tag,@my_sg,@my_rt_igw,@server1) return @my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs_vpc_endpoint,@my_nat_ip,@my_nat_gateway,@my_subnet,@my_igw,@my_rs_vpc_tag,@my_volume,@my_sg,@my_rt_igw,@instance,$instance_dns_name,$instance_id do
+define generated_launch($param_region,@my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs_vpc_endpoint,@my_nat_ip,@my_nat_gateway,@my_subnet,@my_igw,@my_rs_vpc_tag,@my_volume,@my_vpc_tag,@my_sg,@my_rt_igw,@server1) return @my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs_vpc_endpoint,@my_nat_ip,@my_nat_gateway,@my_subnet,@my_igw,@my_rs_vpc_tag,@my_volume,@my_sg,@my_rt_igw,@instance,$instance_dns_name,$instance_id,@server1 do
   call rs_aws_compute.start_debugging()
   sub on_error: rs_aws_compute.stop_debugging() do
     provision(@my_vpc)
@@ -235,7 +242,6 @@ define generated_launch($param_region,@my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs
     @my_subnet = $subnet
     provision(@my_subnet)
     provision(@my_igw)
-    @my_igw.update(network_gateway: { network_href: @my_rs_vpc.href })
     provision(@my_rs_vpc_endpoint)
     provision(@my_nat_ip)
     @aws_ip = rs_aws_compute.addresses.show(public_ip_1: @my_nat_ip.address)
@@ -250,6 +256,17 @@ define generated_launch($param_region,@my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs
     @vpc1.create_tag(tag_1_key: "new_key", tag_1_value: "new_value")
     provision(@my_volume)
     provision(@my_sg)
+    @default_route_table = rs_cm.route_table.empty()
+    $attempts = 0
+    sub on_error: handle_retries($attempts), timeout: 60m do
+      $attempts = $attempts + 1
+      @default_route_table = @my_rs_vpc.default_route_table()
+      sleep(60)
+    end
+    $default_route_table_href = @default_route_table.href
+    $route_igw = to_object(@my_rt_igw)
+    $route_igw["fields"]["route_table_href"] = $default_route_table_href
+    @my_rt_igw = $route_igw
     provision(@my_rt_igw)
     provision(@server1) 
     $instance_id = @server1.current_instance().resource_uid
@@ -258,11 +275,15 @@ define generated_launch($param_region,@my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs
   end
 end
 
-define generated_terminate(@my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs_vpc_endpoint,@my_nat_gateway,@my_nat_ip,@my_igw,@my_subnet) do
+define generated_terminate(@server1,@my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs_vpc_endpoint,@my_nat_gateway,@my_nat_ip,@my_igw,@my_subnet,@my_rt_igw) do
+  @instance = @server1.current_instance()
+  delete(@instance)
+  delete(@server1)
   delete(@my_rs_vpc_endpoint)
   delete(@my_vpc_endpoint)
   delete(@my_nat_gateway)
   delete(@my_nat_ip)
+  delete(@my_rt_igw)
   delete(@my_igw)
   delete(@my_subnet)
   delete(@my_vpc)
