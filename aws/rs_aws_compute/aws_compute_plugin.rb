@@ -2,9 +2,15 @@ name 'aws_compute_plugin'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Amazon Web Services - EC2 Plugin"
-long_description "Version 1.4"
+long_description "Version 1.5"
 package "plugin/rs_aws_compute"
 import "sys_log"
+
+parameter 'param_region' do
+  type 'string'
+  label 'AWS Region'
+  default 'us-east-1'
+end
 
 plugin "rs_aws_compute" do
   endpoint do
@@ -672,6 +678,95 @@ plugin "rs_aws_compute" do
       type "simple_element"
     end
   end
+
+  type "instances" do
+    href_templates "/?Action=DescribeInstances&InstanceId.1={{//DescribeInstancesResponse/reservationSet/item/instancesSet/item/instanceId}}"
+    provision 'no_operation'
+    delete    'no_operation'
+
+    action "get" do
+      verb "POST"
+      path "/?Action=DescribeInstances&InstanceId.1=$instanceId"
+      output_path "//DescribeInstancesResponse/reservationSet/item/instancesSet/item"
+    end
+
+    action "show" do
+      verb "POST"
+      path "/?Action=DescribeInstances"
+      output_path "//DescribeInstancesResponse/reservationSet/item/instancesSet/item"
+
+      field "instance_id" do
+        alias_for "InstanceId.1"
+        location "query"
+      end
+    end
+
+    action "list" do
+      verb "POST"
+      path "/?Action=DescribeInstances"
+      output_path "//DescribeInstancesResponse/reservationSet/item/instancesSet/item"
+    end
+
+    action "create_image" do
+      verb "POST"
+      path "/?Action=CreateImage&InstanceId=$instanceId"
+      output_path "//CreateImageResponse"
+
+      field "name" do
+        alias_for "Name"
+        location "query"
+        required true
+      end
+
+      field "description" do
+        alias_for "Description"
+        location "query"
+      end
+
+      field "no_reboot" do
+        alias_for "NoReboot"
+        location "query"
+      end
+      type "images"
+    end
+    output "instanceId","imageId","privateDnsName"
+  end
+
+  type "images" do
+    href_templates "/?Action=DescribeImages&ImageId.1={{//DescribeImagesResponse/imagesSet/item/imageId}}","/?Action=DescribeImages&ImageId.1={{//CreateImageResponse/imageId}}"
+    provision 'no_operation'
+    delete    'no_operation'
+
+    action "get" do
+      verb "POST"
+      path "/?Action=DescribeImages&ImageId.1=$imageId"
+      output_path "//DescribeImagesResponse/imagesSet/item"
+    end
+
+    action "show" do
+      verb "POST"
+      path "/?Action=DescribeImages"
+      output_path "//DescribeImagesResponse/imagesSet/item"
+
+      field "image_id" do
+        alias_for "ImageId.1"
+        location "query"
+      end
+    end
+
+    action "list" do
+      verb "POST"
+      path "/?Action=DescribeImages"
+      output_path "//DescribeImagesResponse/imagesSet/item"
+    end
+
+    action "deregister_image" do
+      verb "POST"
+      path "/?Action=DeregisterImage&ImageId=$imageId"
+    end
+
+    output "imageId","name","description","imageLocation","imageState","imageOwnerId","isPublic","architecture","imageType","kernelId","ramdiskId","imageOwnerAlias","rootDeviceType","rootDeviceName"
+  end
 end
 
 resource_pool "compute_pool" do
@@ -679,7 +774,7 @@ resource_pool "compute_pool" do
   auth "key", type: "aws" do
     version     4
     service    'ec2'
-    region     'us-east-1'
+    region     $param_region
     access_key cred('AWS_ACCESS_KEY_ID')
     secret_key cred('AWS_SECRET_ACCESS_KEY')
   end
