@@ -1117,52 +1117,52 @@ plugin "rs_aws_cft" do
       end 
 
       field "tag_value_6" do
-        alias_for "Tags.member.5.Value"
+        alias_for "Tags.member.6.Value"
         location "query"
       end 
 
       field "tag_key_6" do
-        alias_for "Tags.member.5.Key"
+        alias_for "Tags.member.6.Key"
         location "query"
       end
 
       field "tag_value_7" do
-        alias_for "Tags.member.5.Value"
+        alias_for "Tags.member.7.Value"
         location "query"
       end
 
       field "tag_key_7" do
-        alias_for "Tags.member.5.Key"
+        alias_for "Tags.member.7.Key"
         location "query"
       end
 
       field "tag_value_8" do
-        alias_for "Tags.member.5.Value"
+        alias_for "Tags.member.8.Value"
         location "query"
       end 
 
       field "tag_key_8" do
-        alias_for "Tags.member.5.Key"
+        alias_for "Tags.member.8.Key"
         location "query"
       end
 
       field "tag_value_9" do
-        alias_for "Tags.member.5.Value"
+        alias_for "Tags.member.9.Value"
         location "query"
       end
 
       field "tag_key_9" do
-        alias_for "Tags.member.5.Key"
+        alias_for "Tags.member.9.Key"
         location "query"
       end
 
       field "tag_value_10" do
-        alias_for "Tags.member.5.Value"
+        alias_for "Tags.member.10.Value"
         location "query"
       end
 
       field "tag_key_10" do
-        alias_for "Tags.member.5.Key"
+        alias_for "Tags.member.10.Key"
         location "query"
       end
 
