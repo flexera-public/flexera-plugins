@@ -1,4 +1,10 @@
 CFT Plugin changelog
+
+v1.5
+----
+- Expanded support for parameters from 30 to 40 CFT parameters.  
+- Expanded support for tags from 5 to 10.
+
 v1.4
 ----
 - Added support for get_stack_events action
