@@ -931,6 +931,106 @@ plugin "rs_aws_cft" do
         location "query"
       end 
 
+      field "parameter_31_name" do
+        alias_for "Parameters.member.31.ParameterKey"
+        location "query"
+      end 
+  
+      field "parameter_31_value" do
+        alias_for "Parameters.member.31.ParameterValue"
+        location "query"
+      end 
+  
+      field "parameter_32_name" do
+        alias_for "Parameters.member.32.ParameterKey"
+        location "query"
+      end 
+  
+      field "parameter_32_value" do
+        alias_for "Parameters.member.32.ParameterValue"
+        location "query"
+      end 
+  
+      field "parameter_33_name" do
+        alias_for "Parameters.member.33.ParameterKey"
+        location "query"
+      end 
+  
+      field "parameter_33_value" do
+        alias_for "Parameters.member.33.ParameterValue"
+        location "query"
+      end 
+  
+      field "parameter_34_name" do
+        alias_for "Parameters.member.34.ParameterKey"
+        location "query"
+      end 
+  
+      field "parameter_34_value" do
+        alias_for "Parameters.member.34.ParameterValue"
+        location "query"
+      end 
+  
+      field "parameter_35_name" do
+        alias_for "Parameters.member.35.ParameterKey"
+        location "query"
+      end 
+  
+      field "parameter_35_value" do
+        alias_for "Parameters.member.35.ParameterValue"
+        location "query"
+      end 
+  
+      field "parameter_36_name" do
+        alias_for "Parameters.member.36.ParameterKey"
+        location "query"
+      end 
+  
+      field "parameter_36_value" do
+        alias_for "Parameters.member.36.ParameterValue"
+        location "query"
+      end 
+  
+      field "parameter_37_name" do
+        alias_for "Parameters.member.37.ParameterKey"
+        location "query"
+      end 
+  
+      field "parameter_37_value" do
+        alias_for "Parameters.member.37.ParameterValue"
+        location "query"
+      end 
+  
+      field "parameter_38_name" do
+        alias_for "Parameters.member.38.ParameterKey"
+        location "query"
+      end 
+  
+      field "parameter_38_value" do
+        alias_for "Parameters.member.38.ParameterValue"
+        location "query"
+      end 
+  
+      field "parameter_39_name" do
+        alias_for "Parameters.member.39.ParameterKey"
+        location "query"
+      end 
+  
+      field "parameter_39_value" do
+        alias_for "Parameters.member.39.ParameterValue"
+        location "query"
+      end 
+  
+      field "parameter_40_name" do
+        alias_for "Parameters.member.40.ParameterKey"
+        location "query"
+      end 
+  
+      field "parameter_40_value" do
+        alias_for "Parameters.member.40.ParameterValue"
+        location "query"
+      end      
+
       field "resource_type_1" do
         alias_for "ResourceTypes.member.1"
         location "query"
@@ -1015,6 +1115,56 @@ plugin "rs_aws_cft" do
         alias_for "Tags.member.5.Key"
         location "query"
       end 
+
+      field "tag_value_6" do
+        alias_for "Tags.member.6.Value"
+        location "query"
+      end 
+
+      field "tag_key_6" do
+        alias_for "Tags.member.6.Key"
+        location "query"
+      end
+
+      field "tag_value_7" do
+        alias_for "Tags.member.7.Value"
+        location "query"
+      end
+
+      field "tag_key_7" do
+        alias_for "Tags.member.7.Key"
+        location "query"
+      end
+
+      field "tag_value_8" do
+        alias_for "Tags.member.8.Value"
+        location "query"
+      end 
+
+      field "tag_key_8" do
+        alias_for "Tags.member.8.Key"
+        location "query"
+      end
+
+      field "tag_value_9" do
+        alias_for "Tags.member.9.Value"
+        location "query"
+      end
+
+      field "tag_key_9" do
+        alias_for "Tags.member.9.Key"
+        location "query"
+      end
+
+      field "tag_value_10" do
+        alias_for "Tags.member.10.Value"
+        location "query"
+      end
+
+      field "tag_key_10" do
+        alias_for "Tags.member.10.Key"
+        location "query"
+      end
 
       field "template_body" do
         alias_for "TemplateBody"
