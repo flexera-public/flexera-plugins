@@ -81,7 +81,16 @@ The resulting resrouce can be manipulated just like the native RightScale resour
 resource "my_stack", type: "rs_aws_cft.stack" do
   stack_name join(["cft-", last(split(@@deployment.href, "/"))])
   template_url "https://s3.amazonaws.com/rs-cft-bucket/mytemplate.template"
+  timeout_in_minutes 30
   description "CFT Stack Launched from RightScale Self-Service"
+  parameter_1_name  "KeyPairName"         #CFTemplate Parameter 
+  parameter_1_value $param_KeyPairName    #CAT parameter value input
+  parameter_2_name  "AMITOUSE"            #CFTemplate Parameter 
+  parameter_2_value $param_AMITOUSE       #CAT parameter value input
+  tag_key_1         CreatedBy"            #CFTemplate Parameter for Tags
+  tag_value_1       $param_Tags_CreatedBy #CAT parameter value input for tag
+  tag_key_2         "REGION"              #CFTemplate Parameter  for Tags
+  tag_value_2       $param_Tags_REGION    #CAT parameter value input for tag
 end
 ```
 
@@ -120,6 +129,31 @@ end
 - PhysicalResourceId
 - ResourceType
 - ResourceStatus
+
+```
+#output "stackname" do
+  label "CloudFormation StackName"
+  default_value @stack.StackName
+end
+
+# Output the StackID
+output "stackid" do
+  label "CloudFormation StackId"
+  default_value @stack.StackId
+end
+
+# Output the Creation Time of Stack
+output "creationtime" do
+  label "CloudFormation CreationTime"
+  default_value @stack.CreationTime
+end
+
+# Output the Stack Status
+output "stackstatus" do
+  label "CloudFormation StackStatus"
+  default_value @stack.StackStatus
+end
+```
 
 #### Supported Links
 | Link | Associated Resource | RCL Example |
