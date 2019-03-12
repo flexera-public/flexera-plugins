@@ -557,6 +557,11 @@ plugin "rs_azure_ip" do
     end
 
     field "sku" do
+      type "composite"
+      location "body"
+    end
+
+    field "location" do
       type "string"
       location "body"
     end
@@ -626,7 +631,7 @@ resource_pool "rs_azure_lb" do
 end
 
 resource_pool "rs_azure_ip" do
-  plugin $rs_azure_lb
+  plugin $rs_azure_ip
   parameter_values do
     subscription_id $subscription_id
   end

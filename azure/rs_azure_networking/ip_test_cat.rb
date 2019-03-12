@@ -17,8 +17,22 @@ permission "read_creds" do
   resources "rs_cm.credentials"
 end
 
-resource "ip", type: "rs_azure_ip.public_ip_address" do
+resource "resource_group", type: "rs_cm.resource_group" do
   name @@deployment.name
+  cloud "AzureRM Central US"
+end
+
+resource "ip", type: "rs_azure_ip.public_ip_address" do
+  name join(["my-ip-", last(split(@@deployment.href, "/"))])
+  resource_group @@deployment.name
+  location "Central US"
+  properties do {
+    "publicIPAllocationMethod" => "Static",
+    "publicIPAddressVersion" => "IPv4"
+  } end
+  sku do {
+    "name" => "Standard"
+  } end
 end
 
 operation "launch" do
@@ -29,9 +43,11 @@ operation "launch" do
   } end
 end
 
-define launch_handler(@ip,$subscription_id) return @ip,$ip do
+define launch_handler(@resource_group,@ip,$subscription_id) return @ip, $ip do
+  provision(@resource_group)
   provision(@ip)
-  $ip = @ip.properties.ipAddress
+  $props = @ip.properties
+  $ip = @ip.properties["ipAddress"]
 end
 
 define start_debugging() do
