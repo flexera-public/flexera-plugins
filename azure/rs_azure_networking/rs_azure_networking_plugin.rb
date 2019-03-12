@@ -21,7 +21,7 @@ plugin "rs_azure_networking" do
     default_host "https://management.azure.com/"
     default_scheme "https"
     query do {
-      'api-version' =>  '2017-09-01'
+      'api-version' =>  '2018-11-01'
     } end
   end
 
@@ -386,6 +386,62 @@ plugin "rs_azure_networking" do
     end
   end
 
+  type "public_ip_address" do
+    href_templates "{{contains(id, 'Microsoft.Network/publicIPAddresses') && id || null}}"
+    provision "provision_ip"
+    delete    "delete_resource"
+
+    field "resource_group" do
+      type "string"
+      location "path"
+    end
+
+    field "name" do
+      type "string"
+      location "path"
+    end
+
+    field "properties" do
+      type "composite"
+      location "body"
+    end
+
+    field "sku" do
+      type "composite"
+      location "body"
+    end
+
+    field "location" do
+      type "string"
+      location "body"
+    end
+
+    action "create" do
+      type "public_ip_address"
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Network/publicIPAddresses/$name"
+      verb "PUT"
+    end
+
+    action "show" do
+      type "public_ip_address"
+      path "$href"
+      verb "GET"
+    end
+
+    action "get" do
+      type "public_ip_address"
+      path "$href"
+      verb "GET"
+    end
+
+    action "destroy" do
+      type "public_ip_address"
+      path "$href"
+      verb "DELETE"
+    end
+
+    output "id","name","location","tags","etag","sku","properties"
+  end
 end
 
 plugin "rs_azure_lb" do
@@ -522,78 +578,6 @@ plugin "rs_azure_lb" do
   end
 end
 
-plugin "rs_azure_ip" do
-  endpoint do
-    default_host "https://management.azure.com/"
-    default_scheme "https"
-    query do {
-      'api-version' =>  '2018-11-01'
-    } end
-  end
-
-  parameter "subscription_id" do
-    type  "string"
-    label "subscription_id"
-  end
-
-  type "public_ip_address" do
-    href_templates "{{contains(id, 'Microsoft.Network/publicIPAddresses') && id || null}}"
-    provision "provision_ip"
-    delete    "delete_resource"
-
-    field "resource_group" do
-      type "string"
-      location "path"
-    end
-
-    field "name" do
-      type "string"
-      location "path"
-    end
-
-    field "properties" do
-      type "composite"
-      location "body"
-    end
-
-    field "sku" do
-      type "composite"
-      location "body"
-    end
-
-    field "location" do
-      type "string"
-      location "body"
-    end
-
-    action "create" do
-      type "public_ip_address"
-      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Network/publicIPAddresses/$name"
-      verb "PUT"
-    end
-
-    action "show" do
-      type "public_ip_address"
-      path "$href"
-      verb "GET"
-    end
-
-    action "get" do
-      type "public_ip_address"
-      path "$href"
-      verb "GET"
-    end
-
-    action "destroy" do
-      type "public_ip_address"
-      path "$href"
-      verb "DELETE"
-    end
-
-    output "id","name","location","tags","etag","sku","properties"
-  end
-end
-
 resource_pool "rs_azure_networking" do
     plugin $rs_azure_networking
     parameter_values do
@@ -628,24 +612,6 @@ resource_pool "rs_azure_lb" do
         } end
       end
     end
-end
-
-resource_pool "rs_azure_ip" do
-  plugin $rs_azure_ip
-  parameter_values do
-    subscription_id $subscription_id
-  end
-
-  auth "azure_auth", type: "oauth2" do
-    token_url "https://login.microsoftonline.com/TENANT_ID/oauth2/token"
-    grant type: "client_credentials" do
-      client_id cred("AZURE_APPLICATION_ID")
-      client_secret cred("AZURE_APPLICATION_KEY")
-      additional_params do {
-        "resource" => "https://management.azure.com/"
-      } end
-    end
-  end
 end
 
 define skip_known_error() do
@@ -806,7 +772,7 @@ define provision_ip(@declaration) return @resource do
     call sys_log.summary(join(["Provision ", $type]))
     call sys_log.detail($object)
     call start_debugging()
-    @operation = rs_azure_ip.$type.create($fields)
+    @operation = rs_azure_networking.$type.create($fields)
     call sys_log.detail(to_object(@operation))
     @resource = @operation.show()
     call sys_log.detail(to_object(@resource))

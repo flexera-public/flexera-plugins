@@ -22,7 +22,7 @@ resource "resource_group", type: "rs_cm.resource_group" do
   cloud "AzureRM Central US"
 end
 
-resource "ip", type: "rs_azure_ip.public_ip_address" do
+resource "ip", type: "rs_azure_networking.public_ip_address" do
   name join(["my-ip-", last(split(@@deployment.href, "/"))])
   resource_group @@deployment.name
   location "Central US"
