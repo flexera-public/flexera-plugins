@@ -2,7 +2,7 @@ name 'rs_azure_networking_plugin'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Azure Networking Plugin"
-long_description "Version: 1.4"
+long_description "Version: 1.5"
 package "plugins/rs_azure_networking_plugin"
 import "sys_log"
 
