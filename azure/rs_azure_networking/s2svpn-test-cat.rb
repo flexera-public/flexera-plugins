@@ -28,11 +28,6 @@ parameter "param_remote_asn" do
   operations "make_connection"
 end
 
-parameter "param_local_subnet" do
-  type "string"
-  operations "make_connection"
-end
-
 parameter "param_local_asn" do
   type "string"
   operations "make_connection"
@@ -95,7 +90,7 @@ resource "virtual_gateway", type: "rs_azure_networking.virtual_network_gateway" 
         "properties" => {
           "privateIPAllocationMethod" => "Dynamic",
           "subnet" => {
-            "id" => $param_subnet
+            "id" => @subnet.id
           },
           "publicIPAddress" => {
             "id" => @ip.id
