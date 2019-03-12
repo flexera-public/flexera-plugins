@@ -47,6 +47,7 @@ The resulting resource can be manipulated just like the native RightScale resour
  - rs_azure_networking.interface
  - rs_azure_networking.network
  - rs_azure_networking.peering
+ - rs_azure_networking.public_ip_address
 
 ## Usage
 ```
@@ -284,6 +285,31 @@ end
 - remoteVirtualNetwork
 - peeringState
 - provisioningState
+
+## rs_azure_networking.public_ip_address
+#### Supported Fields
+| Field Name | Required? | Description |
+|------------|-----------|-------------|
+|name|Yes|The name of the public IP address.|
+|subscription_id|Yes|Azure Subscription ID|
+|resource_group|Yes|Name of resource group in which the network resides|
+|location|Yes|Resource location.|
+|properties|Yes|Resource Properties|
+|sku|Yes|Sku of IP|
+
+
+#### Supported Actions
+
+| Action | API Implementation | Support Level |
+|--------------|:----:|:-------------:|
+| create&update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/publicipaddress(preview)/createorupdate) | Supported |
+| destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/publicipaddress(preview)/delete) | Supported |
+| get | [Get](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/publicipaddress(preview)/get)| Supported |
+| list | [Get](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/publicipaddress(preview)/list)| Supported |
+
+#### Supported Outputs
+- id
+- name
 
 ## Implementation Notes
 - The Azure Networking Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to an LB resource.)  

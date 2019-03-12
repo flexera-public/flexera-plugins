@@ -1,5 +1,9 @@
 Networking Plugin changelog
 
+v1.4 (03-12-2019)
+-----------------
+- Added public_ip_address Support
+
 v1.3 (02-09-2018)
 -----------------
 - Added `list_all` action to the `network` type
