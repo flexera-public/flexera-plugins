@@ -4,6 +4,11 @@ short_description "Azure S2S VPN - Test CAT"
 import "sys_log"
 import "plugins/rs_azure_networking_plugin"
 
+permission "read_creds" do
+  actions   "rs_cm.show_sensitive","rs_cm.index_sensitive"
+  resources "rs_cm.credentials"
+end
+
 parameter "subscription_id" do
   like $rs_azure_networking_plugin.subscription_id
 end
@@ -32,11 +37,6 @@ parameter "param_local_asn" do
   type "string"
   operations "make_connection"
   default "65515"
-end
-
-permission "read_creds" do
-  actions   "rs_cm.show_sensitive","rs_cm.index_sensitive"
-  resources "rs_cm.credentials"
 end
 
 resource "resource_group", type: "rs_cm.resource_group" do
