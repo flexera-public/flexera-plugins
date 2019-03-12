@@ -8,8 +8,30 @@ parameter "subscription_id" do
   like $rs_azure_networking_plugin.subscription_id
 end
 
-output "ip1" do
-  label "New IP"
+parameter "param_remote_ip" do
+  type "string"
+  operations "make_connection"
+end
+
+parameter "param_remote_subnet" do
+  type "string"
+  operations "make_connection"
+end
+
+parameter "param_remote_asn" do
+  type "string"
+  operations "make_connection"
+end
+
+parameter "param_local_subnet" do
+  type "string"
+  operations "make_connection"
+end
+
+parameter "param_local_asn" do
+  type "string"
+  operations "make_connection"
+  default "65515"
 end
 
 permission "read_creds" do
@@ -20,6 +42,19 @@ end
 resource "resource_group", type: "rs_cm.resource_group" do
   name @@deployment.name
   cloud "AzureRM Central US"
+end
+
+resource "network", type: "rs_cm.network" do
+  name join(["my-network-", last(split(@@deployment.href, "/"))])
+  cloud "AzureRM Central US"
+  deployment_href @@deployment.href
+  cidr_block "192.168.2.0/24"
+end
+
+resource "subnet", type: "rs_cm.subnet" do
+  name join(["my-subnet-", last(split(@@deployment.href, "/"))])
+  network @network
+  cidr_block "192.168.2.0/24"
 end
 
 resource "ip", type: "rs_azure_networking.public_ip_address" do
@@ -35,6 +70,59 @@ resource "ip", type: "rs_azure_networking.public_ip_address" do
   } end
 end
 
+resource "local_gateway", type: "rs_azure_networking.local_network_gateway" do
+  name join(["my-local-gw",last(split(@@deployment.href, "/"))])
+  resource_group @@deployment.name
+  location "Central US"
+  properties do {
+    "localNetworkAddressSpace" => {
+      "addressPrefixes" => [$remote_subnet]
+    },
+    "gatewayIpAddress": $param_remote_ip,
+    "bgpSettings" => {
+      "asn" => $param_remote_asn
+    }
+  } end
+end
+
+resource "virtual_gateway", type: "rs_azure_networking.virtual_network_gateway" do
+  name join(["my-virtual-gw",last(split(@@deployment.href, "/"))])
+  resource_group @@deployment.name
+  location "Central US"
+  properties do {
+    "ipConfigurations" => [
+      {
+        "properties" => {
+          "privateIPAllocationMethod" => "Dynamic",
+          "subnet" => {
+            "id" => $param_subnet
+          },
+          "publicIPAddress" => {
+            "id" => @ip.id
+          }
+        },
+        "name" => join(["ip-configuration-",last(split(@@deployment.href, "/"))])
+      }
+    ],
+    "gatewayType" => "Vpn",
+    "vpnType" => "RouteBased",
+    "enableBgp" => true,
+    "activeActive" => false,
+    "bgpSettings" => {
+      "asn" => $param_local_asn
+    }
+  } end
+end
+
+resource "connection", type: "rs_azure_networking.virtual_network_gateway_connections" do
+  name join(["my-connection",last(split(@@deployment.href, "/"))])
+  resource_group @@deployment.name
+  location "Central US"
+  properties do {
+
+  } end
+end
+
 operation "launch" do
  description "Launch the application"
  definition "launch_handler"
@@ -43,11 +131,24 @@ operation "launch" do
   } end
 end
 
-define launch_handler(@resource_group,@ip,$subscription_id) return @ip, $ip do
+operation "make_connection" do
+  description "make connection"
+  definition "make_gws_and_connection"
+end
+
+define launch_handler(@resource_group,@network,@subnet,@ip,$subscription_id) return @resource_group,@network,@subnet,@ip,$subscription_id,$ip do
   provision(@resource_group)
+  provision(@network)
+  provision(@subnet)
   provision(@ip)
   $props = @ip.properties
   $ip = @ip.properties["ipAddress"]
+end
+
+define make_gws_and_connection(@local_gateway,@virtual_gateway,@connection) return @local_gateway,@virtual_gateway,@connection do
+  provision(@local_gateway)
+  provision(@virtual_gateway)
+  provision(@connection)
 end
 
 define start_debugging() do
