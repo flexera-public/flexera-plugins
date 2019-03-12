@@ -442,6 +442,167 @@ plugin "rs_azure_networking" do
 
     output "id","name","location","tags","etag","sku","properties"
   end
+
+  type "local_network_gateway" do
+    href_templates "{{contains(id, 'Microsoft.Network/localNetworkGateways') && id || null}}"
+    provision "provision_lng"
+    delete    "delete_resource"
+
+    field "resource_group" do
+      type "string"
+      location "path"
+    end
+
+    field "name" do
+      type "string"
+      location "path"
+    end
+
+    field "properties" do
+      type "composite"
+      location "body"
+    end
+
+    field "location" do
+      type "string"
+      location "body"
+    end
+
+    action "create" do
+      type "local_network_gateway"
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Network/localNetworkGateways/$name"
+      verb "PUT"
+    end
+
+    action "show" do
+      type "local_network_gateway"
+      path "$href"
+      verb "GET"
+    end
+
+    action "get" do
+      type "local_network_gateway"
+      path "$href"
+      verb "GET"
+    end
+
+    action "destroy" do
+      type "local_network_gateway"
+      path "$href"
+      verb "DELETE"
+    end
+
+    output "id","name","location","tags","etag","properties"
+  end
+
+  type "virtual_network_gateway" do
+    href_templates "{{contains(id, 'Microsoft.Network/virtualNetworkGateways') && id || null}}"
+    provision "provision_vng"
+    delete    "delete_resource"
+
+    field "resource_group" do
+      type "string"
+      location "path"
+    end
+
+    field "name" do
+      type "string"
+      location "path"
+    end
+
+    field "properties" do
+      type "composite"
+      location "body"
+    end
+
+    field "location" do
+      type "string"
+      location "body"
+    end
+
+    action "create" do
+      type "virtual_network_gateway"
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Network/virtualNetworkGateways/$name"
+      verb "PUT"
+    end
+
+    action "show" do
+      type "virtual_network_gateway"
+      path "$href"
+      verb "GET"
+    end
+
+    action "get" do
+      type "virtual_network_gateway"
+      path "$href"
+      verb "GET"
+    end
+
+    action "destroy" do
+      type "virtual_network_gateway"
+      path "$href"
+      verb "DELETE"
+    end
+
+    output "id","name","location","tags","etag","properties"
+  end
+
+  type "virtual_network_gateway_connections" do
+    href_templates "{{contains(id, 'Microsoft.Network/connections') && id || null}}"
+    provision "provision_vngc"
+    delete    "delete_resource"
+
+    field "resource_group" do
+      type "string"
+      location "path"
+    end
+
+    field "name" do
+      type "string"
+      location "path"
+    end
+
+    field "properties" do
+      type "composite"
+      location "body"
+    end
+
+    field "sku" do
+      type "composite"
+      location "body"
+    end
+
+    field "location" do
+      type "string"
+      location "body"
+    end
+
+    action "create" do
+      type "virtual_network_gateway_connections"
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Network/connections/$name"
+      verb "PUT"
+    end
+
+    action "show" do
+      type "virtual_network_gateway_connections"
+      path "$href"
+      verb "GET"
+    end
+
+    action "get" do
+      type "virtual_network_gateway_connections"
+      path "$href"
+      verb "GET"
+    end
+
+    action "destroy" do
+      type "virtual_network_gateway_connections"
+      path "$href"
+      verb "DELETE"
+    end
+
+    output "id","name","location","tags","etag","sku","properties"
+  end
 end
 
 plugin "rs_azure_lb" do
@@ -761,6 +922,66 @@ define provision_peering(@declaration) return @resource do
 end
 
 define provision_ip(@declaration) return @resource do
+  sub on_error: stop_debugging() do
+    $object = to_object(@declaration)
+    $fields = $object["fields"]
+    call sys_log.detail(join(["fields", $fields]))
+    $type = $object["type"]
+    $name = $fields["name"]
+    $resource_group = $fields["resource_group"]
+    call sys_log.set_task_target(@@deployment)
+    call sys_log.summary(join(["Provision ", $type]))
+    call sys_log.detail($object)
+    call start_debugging()
+    @operation = rs_azure_networking.$type.create($fields)
+    call sys_log.detail(to_object(@operation))
+    @resource = @operation.show()
+    call sys_log.detail(to_object(@resource))
+    call stop_debugging()
+  end
+end
+
+define provision_lng(@declaration) return @resource do
+  sub on_error: stop_debugging() do
+    $object = to_object(@declaration)
+    $fields = $object["fields"]
+    call sys_log.detail(join(["fields", $fields]))
+    $type = $object["type"]
+    $name = $fields["name"]
+    $resource_group = $fields["resource_group"]
+    call sys_log.set_task_target(@@deployment)
+    call sys_log.summary(join(["Provision ", $type]))
+    call sys_log.detail($object)
+    call start_debugging()
+    @operation = rs_azure_networking.$type.create($fields)
+    call sys_log.detail(to_object(@operation))
+    @resource = @operation.show()
+    call sys_log.detail(to_object(@resource))
+    call stop_debugging()
+  end
+end
+
+define provision_vng(@declaration) return @resource do
+  sub on_error: stop_debugging() do
+    $object = to_object(@declaration)
+    $fields = $object["fields"]
+    call sys_log.detail(join(["fields", $fields]))
+    $type = $object["type"]
+    $name = $fields["name"]
+    $resource_group = $fields["resource_group"]
+    call sys_log.set_task_target(@@deployment)
+    call sys_log.summary(join(["Provision ", $type]))
+    call sys_log.detail($object)
+    call start_debugging()
+    @operation = rs_azure_networking.$type.create($fields)
+    call sys_log.detail(to_object(@operation))
+    @resource = @operation.show()
+    call sys_log.detail(to_object(@resource))
+    call stop_debugging()
+  end
+end
+
+define provision_vngc(@declaration) return @resource do
   sub on_error: stop_debugging() do
     $object = to_object(@declaration)
     $fields = $object["fields"]
