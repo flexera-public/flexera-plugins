@@ -110,6 +110,11 @@ resource "virtual_gateway", type: "rs_azure_networking.virtual_network_gateway" 
         "name" => join(["vng-ip-configuration-",last(split(@@deployment.href, "/"))])
       }
     ],
+    "sku": {
+      "name": "VpnGw1",
+      "tier": "VpnGw1",
+      "capacity": 2
+    },
     "gatewayType" => "Vpn",
     "vpnType" => "RouteBased",
     "enableBgp" => true,
@@ -141,6 +146,11 @@ resource "connection", type: "rs_azure_networking.virtual_network_gateway_connec
             "name": join(["vng-ip-configuration-",last(split(@@deployment.href, "/"))]),
           }
         ],
+        "sku": {
+          "name": "VpnGw1",
+          "tier": "VpnGw1",
+          "capacity": 2
+        },
         "gatewayType": "Vpn",
         "vpnType": "RouteBased",
         "enableBgp": true,
@@ -165,7 +175,7 @@ resource "connection", type: "rs_azure_networking.virtual_network_gateway_connec
     "connectionType": "IPsec",
     "connectionProtocol": "IKEv2",
     "routingWeight": 0,
-    "sharedKey": "Abc123",
+    "sharedKey": "Flexera12345",
     "enableBgp": true,
     "usePolicyBasedTrafficSelectors": false,
     "ipsecPolicies" => []
@@ -190,14 +200,19 @@ define launch_handler(@resource_group,@network,@subnet,@ip,$subscription_id,$par
   provision(@network)
   provision(@subnet)
   provision(@ip)
+  @local_gateway = @local_gateway
+  @virtual_gateway = @virtual_gateway
+  @connection = @connection
   $props = @ip.properties
   $ip = @ip.properties["ipAddress"]
 end
 
 define make_gws_and_connection($subscription_id,$param_local_asn,$param_remote_asn,$param_remote_ip,$param_remote_subnet,@local_gateway,@virtual_gateway,@connection) return @local_gateway,@virtual_gateway,@connection do
+  call start_debugging()
   provision(@local_gateway)
   provision(@virtual_gateway)
   provision(@connection)
+  call stop_debugging()
 end
 
 define start_debugging() do
