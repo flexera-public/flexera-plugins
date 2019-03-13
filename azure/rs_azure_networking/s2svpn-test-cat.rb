@@ -183,7 +183,7 @@ define launch_handler(@resource_group,@network,@subnet,@ip,$subscription_id) ret
   $ip = @ip.properties["ipAddress"]
 end
 
-define make_gws_and_connection(@local_gateway,@virtual_gateway,@connection) return @local_gateway,@virtual_gateway,@connection do
+define make_gws_and_connection($param_local_asn,$param_remote_asn,$param_remote_ip,$param_remote_subnet,@local_gateway,@virtual_gateway,@connection) return @local_gateway,@virtual_gateway,@connection do
   provision(@local_gateway)
   provision(@virtual_gateway)
   provision(@connection)
