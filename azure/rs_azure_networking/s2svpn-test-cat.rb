@@ -96,7 +96,7 @@ resource "virtual_gateway", type: "rs_azure_networking.virtual_network_gateway" 
             "id" => @ip.id
           }
         },
-        "name" => join(["ip-configuration-",last(split(@@deployment.href, "/"))])
+        "name" => join(["vng-ip-configuration-",last(split(@@deployment.href, "/"))])
       }
     ],
     "gatewayType" => "Vpn",
@@ -114,7 +114,50 @@ resource "connection", type: "rs_azure_networking.virtual_network_gateway_connec
   resource_group @@deployment.name
   location "Central US"
   properties do {
-
+    "virtualNetworkGateway1" => {
+      "properties" => {
+        "ipConfigurations" => [
+          {
+            "properties" => {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet" => {
+                "id": @subnet.id
+              },
+              "publicIPAddress" => {
+                "id": @ip.id
+              }
+            },
+            "name": join(["vng-ip-configuration-",last(split(@@deployment.href, "/"))]),
+          }
+        ],
+        "gatewayType": "Vpn",
+        "vpnType": "RouteBased",
+        "enableBgp": true,
+        "activeActive": true
+      },
+      "id": @virtual_gateway.id,
+      "location": "centralus"
+    },
+    "localNetworkGateway2" => {
+      "properties" => {
+        "localNetworkAddressSpace" => {
+          "addressPrefixes" => [$remote_subnet]
+        },
+        "gatewayIpAddress": $param_remote_ip,
+        "bgpSettings" => {
+          "asn" => $param_remote_asn
+        }
+      },
+      "id": @local_gateway.id,
+      "location": "centralus"
+    },
+    "connectionType": "IPsec",
+    "connectionProtocol": "IKEv2",
+    "routingWeight": 0,
+    "sharedKey": "Abc123",
+    "enableBgp": true,
+    "usePolicyBasedTrafficSelectors": false,
+    "ipsecPolicies" => []
   } end
 end
 
