@@ -12,6 +12,10 @@ output "ip1" do
   label "New IP"
 end
 
+output "ip_id" do
+  label "IP Id"
+end
+
 permission "read_creds" do
   actions   "rs_cm.show_sensitive","rs_cm.index_sensitive"
   resources "rs_cm.credentials"
@@ -39,7 +43,8 @@ operation "launch" do
  description "Launch the application"
  definition "launch_handler"
   output_mappings do {
-    $ip1 => $ip
+    $ip1 => $ip,
+    $ip_id => @ip.id
   } end
 end
 

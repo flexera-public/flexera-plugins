@@ -746,7 +746,7 @@ resource_pool "rs_azure_networking" do
     end
 
     auth "azure_auth", type: "oauth2" do
-      token_url "https://login.microsoftonline.com/09b8fec1-4b8d-48dd-8afa-5c1a775ea0f2/oauth2/token"
+      token_url "https://login.microsoftonline.com/TENANT_ID/oauth2/token"
       grant type: "client_credentials" do
         client_id cred("AZURE_APPLICATION_ID")
         client_secret cred("AZURE_APPLICATION_KEY")
@@ -764,7 +764,7 @@ resource_pool "rs_azure_lb" do
     end
 
     auth "azure_auth", type: "oauth2" do
-      token_url "https://login.microsoftonline.com/09b8fec1-4b8d-48dd-8afa-5c1a775ea0f2/oauth2/token"
+      token_url "https://login.microsoftonline.com/TENANT_ID/oauth2/token"
       grant type: "client_credentials" do
         client_id cred("AZURE_APPLICATION_ID")
         client_secret cred("AZURE_APPLICATION_KEY")
@@ -956,6 +956,17 @@ define provision_lng(@declaration) return @resource do
     @operation = rs_azure_networking.$type.create($fields)
     call sys_log.detail(to_object(@operation))
     @resource = @operation.show()
+    $status = @resource.properties["provisioningState"]
+    sub timeout: 60m do
+      while $status != "Succeeded" do
+        $status = @resource.properties["provisioningState"]
+        call sys_log.detail(join(["Status: ", $status]))
+        if $status == "Failed"
+          raise "Local Network Gateway Status failed!"
+        end
+        sleep(10)
+      end
+    end
     call sys_log.detail(to_object(@resource))
     call stop_debugging()
   end
@@ -976,6 +987,17 @@ define provision_vng(@declaration) return @resource do
     @operation = rs_azure_networking.$type.create($fields)
     call sys_log.detail(to_object(@operation))
     @resource = @operation.show()
+    $status = @resource.properties["provisioningState"]
+    sub timeout: 60m do
+      while $status != "Succeeded" do
+        $status = @resource.properties["provisioningState"]
+        call sys_log.detail(join(["Status: ", $status]))
+        if $status == "Failed"
+          raise "Virtual Network Gateway Status failed!"
+        end
+        sleep(10)
+      end
+    end
     call sys_log.detail(to_object(@resource))
     call stop_debugging()
   end
@@ -996,6 +1018,17 @@ define provision_vngc(@declaration) return @resource do
     @operation = rs_azure_networking.$type.create($fields)
     call sys_log.detail(to_object(@operation))
     @resource = @operation.show()
+    $status = @resource.properties["provisioningState"]
+    sub timeout: 60m do
+      while $status != "Succeeded" do
+        $status = @resource.properties["provisioningState"]
+        call sys_log.detail(join(["Status: ", $status]))
+        if $status == "Failed"
+          raise "Virtual Network Gateway Connection Status failed!"
+        end
+        sleep(10)
+      end
+    end
     call sys_log.detail(to_object(@resource))
     call stop_debugging()
   end
