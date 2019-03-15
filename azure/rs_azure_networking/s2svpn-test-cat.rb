@@ -150,7 +150,7 @@ resource "connection", type: "rs_azure_networking.virtual_network_gateway_connec
     "localNetworkGateway2" => {
       "properties" => {
         "localNetworkAddressSpace" => {
-          "addressPrefixes" => [$remote_subnet]
+          "addressPrefixes" => [$param_remote_subnet]
         },
         "gatewayIpAddress": $param_remote_ip,
         "bgpSettings" => {
