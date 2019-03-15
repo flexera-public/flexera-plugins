@@ -2,7 +2,7 @@ name 'Azure S2S VPN - Test CAT'
 rs_ca_ver 20161221
 short_description "Azure S2S VPN - Test CAT"
 import "sys_log"
-import "plugins/rs_azure_networking_plugin"
+import "plugins/rs_azure_networking"
 
 permission "read_creds" do
   actions   "rs_cm.show_sensitive","rs_cm.index_sensitive"
@@ -14,7 +14,7 @@ output "ip1" do
 end
 
 parameter "subscription_id" do
-  like $rs_azure_networking_plugin.subscription_id
+  like $rs_azure_networking.subscription_id
 end
 
 parameter "param_vpn_ip_id" do
