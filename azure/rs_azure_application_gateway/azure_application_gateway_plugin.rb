@@ -33,8 +33,14 @@ end
 
 parameter "public_ip" do
   type  "string"
-  label "Public IP"
+  label "Public IP Address"
   description "Provide a Public IP Address to use.  If left blank a new Public IP address will be created."
+end
+
+parameter "ssl_cred" do
+  type  "string"
+  label "SSL Certificate Credential"
+  description "Provide the SSL Certificate Credentail to be used."
 end
 
 permission "read_creds" do
@@ -157,7 +163,7 @@ resource_pool "rs_azure_application_gateway" do
     end
 
     auth "azure_auth", type: "oauth2" do
-      token_url "https://login.microsoftonline.com/TENANT_ID/oauth2/token"
+      token_url "https://login.microsoftonline.com/881ff53d-5163-49bd-9d6b-09fa993dd1f5/oauth2/token"
       grant type: "client_credentials" do
         client_id cred("AZURE_APPLICATION_ID")
         client_secret cred("AZURE_APPLICATION_KEY")
