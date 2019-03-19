@@ -37,13 +37,14 @@ parameter "param_sku" do
   like $rs_azure_application_gateway.sku
 end
 
-parameter "param_public_ip" do
-  like $rs_azure_application_gateway.public_ip
-end
-
 parameter "param_ssl_cred" do
   like $rs_azure_application_gateway.ssl_cred
-  default "APPGATEWAY_PLUGIN"
+  default "APPGATEWAY_PLUGIN_SSL_CERT"
+end
+
+parameter "param_ssl_cred_password" do
+  like $rs_azure_application_gateway.ssl_cred_password
+  default "APPGATEWAY_PLUGIN_SSL_CERT_PASSWORD"
 end
 
 mapping "mapping_sku_name" do {
@@ -71,7 +72,10 @@ resource "ip", type: "rs_azure_networking.public_ip_address" do
   location 'eastus'
   properties do {
     "publicIPAllocationMethod" => "Dynamic",
-    "publicIPAddressVersion" => "IPv4"
+    "publicIPAddressVersion" => "IPv4",
+    dnsSettings:{
+      domainNameLabel: @rg.name,
+    }
   } end
   sku do {
     "name" => "Basic"
@@ -109,7 +113,7 @@ resource "appgw", type: "rs_azure_application_gateway.gateway" do
     frontendPorts:[{
       name: join(["appgw-",last(split(@@deployment.href, "/")),"-fp443"]),
       "properties" => {
-        "port" => 80
+        "port" => 443
       },
     }],
     backendAddressPools: [
@@ -148,7 +152,10 @@ resource "appgw", type: "rs_azure_application_gateway.gateway" do
           frontendPort: {
             id: join(["/subscriptions/",$subscription_id,"/resourceGroups/",@rg.name,"/providers/Microsoft.Network/applicationGateways/",join(["appgw-",last(split(@@deployment.href, "/"))]),"/frontendPorts/",join(["appgw-",last(split(@@deployment.href, "/")),"-fp443"])])
           },
-          protocol: "Http"
+          protocol: "Https",
+          sslCertificate: {
+            id: join(["/subscriptions/",$subscription_id,"/resourceGroups/",@rg.name,"/providers/Microsoft.Network/applicationGateways/",join(["appgw-",last(split(@@deployment.href, "/"))]),"/sslCertificates/",join(["appgw-",last(split(@@deployment.href, "/")),"-sslCert"])])
+          }
         }
       }
     ],
@@ -169,12 +176,18 @@ resource "appgw", type: "rs_azure_application_gateway.gateway" do
              }
            },
          ],
-
-    # sslCertificates:[{
-    #   properties:{
-    #     data: 'stubbed set in launch'
-    #   }
-    # }]
+      sslCertificates:[
+        {
+              name: join(["appgw-",last(split(@@deployment.href, "/")),"-sslCert"]),
+              # "properties": {
+              #   "keyVaultSecretId": "https://kv/sslCert"
+              # }
+              properties:{
+                data: cred($param_ssl_cred),
+                password: cred($param_ssl_cred_password)
+            }
+        }
+      ]
   } end
   tags do {
       "defaultExperience" => "DocumentDB",
@@ -215,38 +228,30 @@ operation "launch" do
   } end
  end
 
- define launch_handler(@rg,@appgw,@ip,$param_subnet,$param_tier,$param_sku,$param_subnet,$param_instance_count,$param_public_ip,$param_ssl_cred) return $uri,$state,@appgw,@rg,@ip,$address do
+ define launch_handler(@rg,@appgw,@ip,$param_subnet,$param_tier,$param_sku,$param_subnet,$param_instance_count,$param_ssl_cred) return $uri,$state,@appgw,@rg,@ip,$address do
    call start_debugging()
+
    provision(@rg)
    @cloud = find('clouds',first(split($param_subnet, ' : ')))
    @subnet = find('subnets',last(split($param_subnet, ' : ')))
-   @cred = find('credentials',$param_ssl_cred)
+   #@cred = first(rs_cm.credentials.get(filter: ["name=="+$param_ssl_cred],view: 'sensitive'))
 
-   if $param_public_ip == ''
-     provision(@ip)
-   else
-     raise "getting ip address not supported yet"
-   end
-
+   provision(@ip)
    sleep_until(@ip.properties['provisioningState'] == 'Succeeded')
 
    # modify the gateway base on inputs
    $gateway = to_object(@appgw)
 
-   # overwrite the location attribute
-   #$gateway['fields']['location'] = @cloud.display_name
    # add the subnet
    $gateway['fields']['properties']['gatewayIPConfigurations'][0]['properties']['subnet']['id'] = @subnet.resource_uid
-   #add the public_ip
+   #add the public_ip,
    $gateway['fields']['properties']['frontendIPConfigurations'][0]['properties']['publicIPAddress']['id'] = @ip.id
-   #$gateway['fields']['properties']['frontendIPConfigurations'][0]['properties']['subnet'][id] = @subnet.resource_uid
-   #add the SSL Certificate from the Credential from the Public IP Addreess Input
-   #$gateway['fields']['properties']['sslCertificates'][0]['properties']['data'] = @cred.value
 
    @appgw = $gateway
    provision(@appgw)
+
    call stop_debugging()
-   $uri = join(["https://" + @appgw.name, ".", 'eastus',".cloudapp.azure.com"])
+   $uri = join(["https://",@ip.properties['dnsSettings']['fqdn']])
    $address = @ip.properties["ipAddress"]
  end
 

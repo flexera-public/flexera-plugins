@@ -31,16 +31,16 @@ parameter "sku" do
   default "Small"
 end
 
-parameter "public_ip" do
-  type  "string"
-  label "Public IP Address"
-  description "Provide a Public IP Address to use.  If left blank a new Public IP address will be created."
-end
-
 parameter "ssl_cred" do
   type  "string"
   label "SSL Certificate Credential"
-  description "Provide the SSL Certificate Credentail to be used."
+  description "Provide the SSL Certificate Credential to be used."
+end
+
+parameter "ssl_cred_password" do
+  type  "string"
+  label "SSL Certificate Password Credential "
+  description "Provide the SSL Certificate password Credential to be used."
 end
 
 permission "read_creds" do
