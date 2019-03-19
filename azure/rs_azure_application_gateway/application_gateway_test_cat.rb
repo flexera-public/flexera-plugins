@@ -12,17 +12,16 @@ end
 
 parameter "subscription_id" do
   like $rs_azure_application_gateway.subscription_id
-  default "9ae470b8-66cb-496a-9bc3-bbf4eedd408f"
-  #default "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+  default "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 end
 
 parameter "param_subnet" do
     type "string"
     label "Region : vNet : Subnet"
-    #description "json:{\"definition\":\"getSubnets\", \"description\": \"Pick the 'Region : vNet : Subnet' combination where you would like to launch the server.\"}"
+    description "json:{\"definition\":\"getSubnets\", \"description\": \"Pick the 'Region : vNet : Subnet' combination where you would like to launch the server.\"}"
     min_length 1
     operations "launch"
-    default 'AzureRM East US : Default-vnet : default'
+    #default 'AzureRM East US : Default-vnet : default'
 end
 
 parameter "param_tier" do
@@ -39,12 +38,12 @@ end
 
 parameter "param_ssl_cred" do
   like $rs_azure_application_gateway.ssl_cred
-  default "APPGATEWAY_PLUGIN_SSL_CERT"
+
 end
 
 parameter "param_ssl_cred_password" do
   like $rs_azure_application_gateway.ssl_cred_password
-  default "APPGATEWAY_PLUGIN_SSL_CERT_PASSWORD"
+
 end
 
 mapping "mapping_sku_name" do {
@@ -182,7 +181,7 @@ resource "ip", type: "rs_azure_networking.public_ip_address" do
     "publicIPAllocationMethod" => "Dynamic",
     "publicIPAddressVersion" => "IPv4",
     dnsSettings:{
-      domainNameLabel: @rg.name,
+      domainNameLabel: @appgw.name,
     }
   } end
   sku do {
@@ -297,7 +296,7 @@ resource "appgw", type: "rs_azure_application_gateway.gateway" do
         }
       ],
       webApplicationFirewallConfiguration:{
-        
+
       }
   } end
   tags do {
