@@ -61,6 +61,114 @@ mapping "mapping_sku_name" do {
 }
 end
 
+mapping "mapping_regions" do {
+  "AzureRM West US" => {
+    "name"=> 'westus',
+    "zones"=> [],
+  },
+  "AzureRM Japan East" =>{
+    "name"=> 'japaneast',
+    "zones"=> [],
+  },
+  "AzureRM Southeast Asia" => {
+    "name"=> 'southeastasia',
+    "zones"=> [],
+  },
+  "AzureRM Japan West" =>{
+    "name"=> 'japanwest',
+    "zones"=> []
+  },
+  "AzureRM East Asia" =>{
+    "name"=> 'eastasia',
+    "zones"=> []
+  },
+  "AzureRM East US" => {
+    "name"=> 'eastus',
+    "zones"=> []
+  },
+  "AzureRM West Europe"=>{
+    "name"=> 'westeurope',
+    "zones"=> []
+  },
+  "AzureRM North Central US"=>{
+    "name"=> 'northcentralus',
+    "zones"=> []
+  },
+  "AzureRM Central US"=>{
+    "name"=> 'centralus',
+    "zones"=> []
+  },
+  "AzureRM Canada Central"=>{
+    "name"=> 'CanadaCentral',
+    "zones"=> []
+  },
+  "AzureRM North Europe"=>{
+    "name"=> 'northeurope',
+    "zones"=> []
+  },
+  "AzureRM Brazil South"=>{
+    "name"=> 'brazilsouth',
+    "zones"=> []
+  },
+  "AzureRM Canada East"=>{
+    "name"=> 'CanadaEast',
+    "zones"=> []
+  },
+  "AzureRM East US 2"=>{
+    "name"=> 'eastus2',
+    "zones"=> []
+  },
+  "AzureRM South Central US"=>{
+    "name"=> 'southcentralus',
+    "zones"=> []
+  },
+  "AzureRM Australia East"=>{
+    "name"=> 'australiaeast',
+    "zones"=> []
+  },
+  "AzureRM Australia Southeast"=>{
+    "name"=> 'australiasoutheast',
+    "zones"=> []
+  },
+  "AzureRM West US 2"=>{
+    "name"=> 'westus2',
+    "zones"=> []
+  },
+  "AzureRM West Central US"=>{
+    "name"=> 'westcentralus',
+    "zones"=> []
+  },
+  "AzureRM UK South"=>{
+    "name"=> 'uksouth',
+    "zones"=> []
+  },
+  "AzureRM UK West"=>{
+    "name"=> 'ukwest',
+    "zones"=> []
+  },
+  "AzureRM West India"=>{
+    "name"=> 'WestIndia',
+    "zones"=> []
+  },
+  "AzureRM Central India"=>{
+    "name"=> 'CentralIndia',
+    "zones"=> []
+  },
+  "AzureRM South India"=>{
+    "name"=> 'SouthIndia',
+    "zones"=> []
+  },
+  "AzureRM Korea Central"=>{
+    "name"=> 'KoreaCentral',
+    "zones"=> []
+  },
+  "AzureRM Korea South"=>{
+    "name"=> 'KoreaSouth',
+    "zones"=> []
+  },
+
+} end
+
 resource "rg", type: "rs_cm.resource_group" do
   name join(["appgw-rg-",last(split(@@deployment.href, "/"))])
   cloud find(first(split($param_subnet, ' : ')))
@@ -69,7 +177,7 @@ end
 resource "ip", type: "rs_azure_networking.public_ip_address" do
   name join(["appgw-", last(split(@@deployment.href, "/")),"-publicip"])
   resource_group @rg.name
-  location 'eastus'
+  location map($mapping_regions,first(split($param_subnet, ' : ')),"name")
   properties do {
     "publicIPAllocationMethod" => "Dynamic",
     "publicIPAddressVersion" => "IPv4",
@@ -85,7 +193,7 @@ end
 resource "appgw", type: "rs_azure_application_gateway.gateway" do
   name join(["appgw-",last(split(@@deployment.href, "/"))])
   resource_group @rg.name
-  location 'eastus'
+  location map($mapping_regions,first(split($param_subnet, ' : ')),"name")
   properties do {
     sku:  {
       capacity: $param_instance_count,
@@ -195,10 +303,6 @@ resource "appgw", type: "rs_azure_application_gateway.gateway" do
       "envrionment" => "dev",
       "department" => "engineering"
   } end
-  # zones do {
-  #
-  #
-  #  } end
 end
 
 output "output_name" do
@@ -228,13 +332,17 @@ operation "launch" do
   } end
  end
 
+ operation "terminate" do
+   description "Launch the resources"
+   definition "terminate"
+ end
+
  define launch_handler(@rg,@appgw,@ip,$param_subnet,$param_tier,$param_sku,$param_subnet,$param_instance_count,$param_ssl_cred) return $uri,$state,@appgw,@rg,@ip,$address do
    call start_debugging()
 
    provision(@rg)
    @cloud = find('clouds',first(split($param_subnet, ' : ')))
    @subnet = find('subnets',last(split($param_subnet, ' : ')))
-   #@cred = first(rs_cm.credentials.get(filter: ["name=="+$param_ssl_cred],view: 'sensitive'))
 
    provision(@ip)
    sleep_until(@ip.properties['provisioningState'] == 'Succeeded')
@@ -244,8 +352,15 @@ operation "launch" do
 
    # add the subnet
    $gateway['fields']['properties']['gatewayIPConfigurations'][0]['properties']['subnet']['id'] = @subnet.resource_uid
-   #add the public_ip,
+   # add the public_ip,
    $gateway['fields']['properties']['frontendIPConfigurations'][0]['properties']['publicIPAddress']['id'] = @ip.id
+
+   # if use select tier "WAF", setup the WAF properties
+   if $param_tier == "WAF"
+     $gateway['fields']['properties']['webApplicationFirewallConfiguration']['enabled'] = true
+     $gateway['fields']['properties']['webApplicationFirewallConfiguration']['firewallMode'] = 'Detection'
+     $gateway['fields']['properties']['webApplicationFirewallConfiguration']['requestBodyCheck'] = false
+   end
 
    @appgw = $gateway
    provision(@appgw)
@@ -253,6 +368,10 @@ operation "launch" do
    call stop_debugging()
    $uri = join(["https://",@ip.properties['dnsSettings']['fqdn']])
    $address = @ip.properties["ipAddress"]
+ end
+
+ define terminate(@appgw) do
+   delete(@appgw)
  end
 
  define getSubnets() return $values do
