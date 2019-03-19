@@ -295,7 +295,10 @@ resource "appgw", type: "rs_azure_application_gateway.gateway" do
                 password: cred($param_ssl_cred_password)
             }
         }
-      ]
+      ],
+      webApplicationFirewallConfiguration:{
+        
+      }
   } end
   tags do {
       "defaultExperience" => "DocumentDB",
