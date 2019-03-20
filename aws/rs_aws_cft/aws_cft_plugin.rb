@@ -542,6 +542,12 @@ plugin "rs_aws_cft" do
       location "query"
     end    
 
+    field "parameter_41_name" do
+      alias_for "Parameters.member.41.ParameterKey"
+      type "string"
+      location "query"
+    end
+
     field "parameter_41_value" do
       alias_for "Parameters.member.41.ParameterValue"
       type "string"
@@ -652,6 +658,12 @@ plugin "rs_aws_cft" do
 
     field "parameter_50_value" do
       alias_for "Parameters.member.50.ParameterValue"
+      type "string"
+      location "query"
+    end
+
+    field "parameter_51_name" do
+      alias_for "Parameters.member.52.ParameterKey"
       type "string"
       location "query"
     end
