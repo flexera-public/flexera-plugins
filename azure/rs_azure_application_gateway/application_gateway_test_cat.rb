@@ -181,7 +181,7 @@ resource "ip", type: "rs_azure_networking.public_ip_address" do
     "publicIPAllocationMethod" => "Dynamic",
     "publicIPAddressVersion" => "IPv4",
     dnsSettings:{
-      domainNameLabel: @appgw.name,
+      domainNameLabel: join(["appgw-",last(split(@@deployment.href, "/"))]),
     }
   } end
   sku do {
@@ -344,7 +344,8 @@ operation "launch" do
 
    provision(@rg)
    @cloud = find('clouds',first(split($param_subnet, ' : ')))
-   @subnet = find('subnets',last(split($param_subnet, ' : ')))
+   @network = find('networks', get(1, split($param_subnet, ' : ')))
+   @subnet = find('subnets',{name: last(split($param_subnet, ' : ')), network_href: @network.href} )
 
    provision(@ip)
    sleep_until(@ip.properties['provisioningState'] == 'Succeeded')
