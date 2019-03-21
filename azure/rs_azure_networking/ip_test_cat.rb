@@ -2,14 +2,18 @@ name 'Azure Ip Address - Test CAT'
 rs_ca_ver 20161221
 short_description "Azure Ip Address - Test CAT"
 import "sys_log"
-import "plugins/rs_azure_networking_plugin"
+import "plugins/rs_azure_networking"
 
 parameter "subscription_id" do
-  like $rs_azure_networking_plugin.subscription_id
+  like $rs_azure_networking.subscription_id
 end
 
 output "ip1" do
   label "New IP"
+end
+
+output "ip_id" do
+  label "IP Id"
 end
 
 permission "read_creds" do
@@ -39,7 +43,8 @@ operation "launch" do
  description "Launch the application"
  definition "launch_handler"
   output_mappings do {
-    $ip1 => $ip
+    $ip1 => $ip,
+    $ip_id => @ip.id
   } end
 end
 

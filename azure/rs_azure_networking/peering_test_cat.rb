@@ -3,10 +3,10 @@ rs_ca_ver 20161221
 short_description 'Azure Peering - Test CAT'
 
 import 'sys_log'
-import 'plugins/rs_azure_networking_plugin'
+import 'plugins/rs_azure_networking'
 
 parameter 'subscription_id' do
-  like $rs_azure_networking_plugin.subscription_id
+  like $rs_azure_networking.subscription_id
 end
 
 permission 'read_creds' do

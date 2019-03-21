@@ -1,5 +1,11 @@
 Networking Plugin changelog
 
+v1.5 (03-12-2019)
+-----------------
+- Adding in Local Gateway
+- Adding in Virtual Network Gateway
+- Adding in Virtual Network Gateway Connection
+
 v1.4 (03-12-2019)
 -----------------
 - Added public_ip_address Support

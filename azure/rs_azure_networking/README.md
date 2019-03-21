@@ -48,6 +48,9 @@ The resulting resource can be manipulated just like the native RightScale resour
  - rs_azure_networking.network
  - rs_azure_networking.peering
  - rs_azure_networking.public_ip_address
+ - rs_azure_networking.local_network_gateway
+ - rs_azure_networking.virtual_network_gateway
+ - rs_azure_networking.virtual_network_gateway_connections
 
 ## Usage
 ```
@@ -310,6 +313,96 @@ end
 #### Supported Outputs
 - id
 - name
+- location
+- tags
+- etag
+- properties
+
+## rs_azure_networking.local_network_gateway
+#### Supported Fields
+| Field Name | Required? | Description |
+|------------|-----------|-------------|
+|name|Yes|The name of the local network gateway.|
+|subscription_id|Yes|Azure Subscription ID|
+|resource_group|Yes|Name of resource group in which the network resides|
+|location|Yes|Resource location.|
+|properties|Yes|Resource Properties|
+
+
+#### Supported Actions
+
+| Action | API Implementation | Support Level |
+|--------------|:----:|:-------------:|
+| create&update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/network-gateway/localnetworkgateways/createorupdate) | Supported |
+| destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/network-gateway/localnetworkgateways/delete) | Supported |
+| get | [Get](https://docs.microsoft.com/en-us/rest/api/network-gateway/localnetworkgateways/get)| Supported |
+| list | [Get](https://docs.microsoft.com/en-us/rest/api/network-gateway/localnetworkgateways/list)| Supported |
+
+#### Supported Outputs
+- id
+- name
+- location
+- tags
+- etag
+- sku
+- properties
+
+## rs_azure_networking.virtual_network_gateway
+#### Supported Fields
+| Field Name | Required? | Description |
+|------------|-----------|-------------|
+|name|Yes|The name of the virtual network gateway address.|
+|subscription_id|Yes|Azure Subscription ID|
+|resource_group|Yes|Name of resource group in which the network resides|
+|location|Yes|Resource location.|
+|properties|Yes|Resource Properties|
+
+
+#### Supported Actions
+
+| Action | API Implementation | Support Level |
+|--------------|:----:|:-------------:|
+| create&update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/network-gateway/virtualnetworkgateways/createorupdate) | Supported |
+| destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/network-gateway/virtualnetworkgateways/delete) | Supported |
+| get | [Get](https://docs.microsoft.com/en-us/rest/api/network-gateway/virtualnetworkgateways/get)| Supported |
+| list | [Get](https://docs.microsoft.com/en-us/rest/api/network-gateway/virtualnetworkgateways/list)| Supported |
+
+#### Supported Outputs
+- id
+- name
+- location
+- tags
+- etag
+- properties
+
+## rs_azure_networking.virtual_network_gateway_connections
+#### Supported Fields
+| Field Name | Required? | Description |
+|------------|-----------|-------------|
+|name|Yes|The name of the virtual network gateway connection.|
+|subscription_id|Yes|Azure Subscription ID|
+|resource_group|Yes|Name of resource group in which the network resides|
+|location|Yes|Resource location.|
+|properties|Yes|Resource Properties|
+|sku|Yes|Sku of connection|
+
+
+#### Supported Actions
+
+| Action | API Implementation | Support Level |
+|--------------|:----:|:-------------:|
+| create&update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/network-gateway/virtualnetworkgatewayconnections/createorupdate) | Supported |
+| destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/network-gateway/virtualnetworkgatewayconnections/delete) | Supported |
+| get | [Get](https://docs.microsoft.com/en-us/rest/api/network-gateway/virtualnetworkgatewayconnections/get)| Supported |
+| list | [Get](https://docs.microsoft.com/en-us/rest/api/network-gateway/virtualnetworkgatewayconnections/list)| Supported |
+
+#### Supported Outputs
+- id
+- name
+- location
+- tags
+- etag
+- properties
 
 ## Implementation Notes
 - The Azure Networking Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to an LB resource.)  
