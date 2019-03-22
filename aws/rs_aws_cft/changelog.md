@@ -1,5 +1,9 @@
 CFT Plugin changelog
 
+v1.6
+----
+- Expanded support for parameters from 40 to 60 CFT parameters.
+
 v1.5
 ----
 - Expanded support for parameters from 30 to 40 CFT parameters.  
