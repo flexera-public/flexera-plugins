@@ -55,8 +55,8 @@ For more information on using packages, please refer to the RightScale online do
 | stack_name | yes | The name that is associated with the stack. The name must be unique in the region in which you are creating the stack. | 
 | stack_policy_body | no | Structure containing the stack policy body. You can specify either `stack_policy_body` or `stack_policy_url`, but not both. | 
 | stack_policy_url | no | Location of a file containing the stack policy. The URL must point to a policy located in an S3 bucket in the same region as the stack. You can specify either `stack_policy_body` or `stack_policy_url`, but not both. | 
-| tag_key_n | no | A string used to identify a tag key.  Where `n` equals 1-10 (ie. `tag_key_1`). `tag_key_1` and `tag_value_1` create a hash of a single CFT tag, etc. |
-| tag_value_n | no | A string containing the value for the associated tag key.  Where `n` equals 1-10 (ie. `tag_value_1`).  `tag_key_1` and `tag_value_1` create a hash of a single CFT tag, etc. |
+| tag_key_n | no | A string used to identify a tag key.  Where `n` equals 1-50 (ie. `tag_key_1`). `tag_key_1` and `tag_value_1` create a hash of a single CFT tag, etc. |
+| tag_value_n | no | A string containing the value for the associated tag key.  Where `n` equals 1-50 (ie. `tag_value_1`).  `tag_key_1` and `tag_value_1` create a hash of a single CFT tag, etc. |
 | template_body | no ** | Structure containing the template body with a minimum length of 1 byte and a maximum length of 51,200 bytes. |
 | template_url | no ** | Location of file containing the template body. The URL must point to a template (max size: 460,800 bytes) that is located in an Amazon S3 bucket. Examples include generating and using presigned S3 URL. | 
 | timeout_in_minutes | no | The amount of time that can pass before the stack status becomes CREATE_FAILED; if `disable_rollback` is not set or is set to false, the stack will be rolled back. Note: the auto-provision definition of `stack` resources includes a 1 hour timeout.  If you need to extend that timeout, it is recommended to either edit the provision defintion in the plugin OR use a custom provision definition in your CAT. |
