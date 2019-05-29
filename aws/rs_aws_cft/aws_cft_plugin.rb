@@ -2,7 +2,7 @@ name 'rs_aws_cft'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Amazon Web Services - Cloud Formation"
-long_description "Version: 1.6"
+long_description "Version: 1.7"
 package "plugins/rs_aws_cft"
 import "sys_log"
 
@@ -945,6 +945,486 @@ plugin "rs_aws_cft" do
       location "query"
     end 
     
+    field "tag_value_11" do
+      alias_for "Tags.member.11.Value"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_key_11" do
+      alias_for "Tags.member.11.Key"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_value_12" do
+      alias_for "Tags.member.12.Value"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_key_12" do
+      alias_for "Tags.member.12.Key"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_value_13" do
+      alias_for "Tags.member.13.Value"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_key_13" do
+      alias_for "Tags.member.13.Key"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_value_14" do
+      alias_for "Tags.member.14.Value"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_key_14" do
+      alias_for "Tags.member.14.Key"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_value_15" do
+      alias_for "Tags.member.15.Value"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_key_15" do
+      alias_for "Tags.member.15.Key"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_value_16" do
+      alias_for "Tags.member.16.Value"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_key_16" do
+      alias_for "Tags.member.16.Key"
+      type "string"
+      location "query"
+    end
+
+    field "tag_value_17" do
+      alias_for "Tags.member.17.Value"
+      type "string"
+      location "query"
+    end
+
+    field "tag_key_17" do
+      alias_for "Tags.member.17.Key"
+      type "string"
+      location "query"
+    end
+
+    field "tag_value_18" do
+      alias_for "Tags.member.18.Value"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_key_18" do
+      alias_for "Tags.member.18.Key"
+      type "string"
+      location "query"
+    end
+
+    field "tag_value_19" do
+      alias_for "Tags.member.19.Value"
+      type "string"
+      location "query"
+    end
+
+    field "tag_key_19" do
+      alias_for "Tags.member.19.Key"
+      type "string"
+      location "query"
+    end
+
+    field "tag_value_20" do
+      alias_for "Tags.member.20.Value"
+      type "string"
+      location "query"
+    end
+
+    field "tag_key_20" do
+      alias_for "Tags.member.20.Key"
+      type "string"
+      location "query"
+    end
+
+    field "tag_value_21" do
+      alias_for "Tags.member.21.Value"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_key_21" do
+      alias_for "Tags.member.21.Key"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_value_22" do
+      alias_for "Tags.member.22.Value"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_key_22" do
+      alias_for "Tags.member.22.Key"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_value_23" do
+      alias_for "Tags.member.23.Value"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_key_23" do
+      alias_for "Tags.member.23.Key"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_value_24" do
+      alias_for "Tags.member.24.Value"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_key_24" do
+      alias_for "Tags.member.24.Key"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_value_25" do
+      alias_for "Tags.member.25.Value"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_key_25" do
+      alias_for "Tags.member.25.Key"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_value_26" do
+      alias_for "Tags.member.26.Value"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_key_26" do
+      alias_for "Tags.member.26.Key"
+      type "string"
+      location "query"
+    end
+
+    field "tag_value_27" do
+      alias_for "Tags.member.27.Value"
+      type "string"
+      location "query"
+    end
+
+    field "tag_key_27" do
+      alias_for "Tags.member.27.Key"
+      type "string"
+      location "query"
+    end
+
+    field "tag_value_28" do
+      alias_for "Tags.member.28.Value"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_key_28" do
+      alias_for "Tags.member.28.Key"
+      type "string"
+      location "query"
+    end
+
+    field "tag_value_29" do
+      alias_for "Tags.member.29.Value"
+      type "string"
+      location "query"
+    end
+
+    field "tag_key_29" do
+      alias_for "Tags.member.29.Key"
+      type "string"
+      location "query"
+    end
+
+    field "tag_value_30" do
+      alias_for "Tags.member.30.Value"
+      type "string"
+      location "query"
+    end
+
+    field "tag_key_30" do
+      alias_for "Tags.member.30.Key"
+      type "string"
+      location "query"
+    end
+
+    field "tag_value_31" do
+      alias_for "Tags.member.31.Value"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_key_31" do
+      alias_for "Tags.member.31.Key"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_value_32" do
+      alias_for "Tags.member.32.Value"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_key_32" do
+      alias_for "Tags.member.32.Key"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_value_33" do
+      alias_for "Tags.member.33.Value"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_key_33" do
+      alias_for "Tags.member.33.Key"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_value_34" do
+      alias_for "Tags.member.34.Value"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_key_34" do
+      alias_for "Tags.member.34.Key"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_value_35" do
+      alias_for "Tags.member.35.Value"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_key_35" do
+      alias_for "Tags.member.35.Key"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_value_36" do
+      alias_for "Tags.member.36.Value"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_key_36" do
+      alias_for "Tags.member.36.Key"
+      type "string"
+      location "query"
+    end
+
+    field "tag_value_37" do
+      alias_for "Tags.member.37.Value"
+      type "string"
+      location "query"
+    end
+
+    field "tag_key_37" do
+      alias_for "Tags.member.37.Key"
+      type "string"
+      location "query"
+    end
+
+    field "tag_value_38" do
+      alias_for "Tags.member.38.Value"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_key_38" do
+      alias_for "Tags.member.38.Key"
+      type "string"
+      location "query"
+    end
+
+    field "tag_value_39" do
+      alias_for "Tags.member.39.Value"
+      type "string"
+      location "query"
+    end
+
+    field "tag_key_39" do
+      alias_for "Tags.member.39.Key"
+      type "string"
+      location "query"
+    end
+
+    field "tag_value_40" do
+      alias_for "Tags.member.40.Value"
+      type "string"
+      location "query"
+    end
+
+    field "tag_key_40" do
+      alias_for "Tags.member.40.Key"
+      type "string"
+      location "query"
+    end
+
+      field "tag_value_41" do
+      alias_for "Tags.member.41.Value"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_key_41" do
+      alias_for "Tags.member.41.Key"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_value_42" do
+      alias_for "Tags.member.42.Value"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_key_42" do
+      alias_for "Tags.member.42.Key"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_value_43" do
+      alias_for "Tags.member.43.Value"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_key_43" do
+      alias_for "Tags.member.43.Key"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_value_44" do
+      alias_for "Tags.member.44.Value"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_key_44" do
+      alias_for "Tags.member.44.Key"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_value_45" do
+      alias_for "Tags.member.45.Value"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_key_45" do
+      alias_for "Tags.member.45.Key"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_value_46" do
+      alias_for "Tags.member.46.Value"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_key_46" do
+      alias_for "Tags.member.46.Key"
+      type "string"
+      location "query"
+    end
+
+    field "tag_value_47" do
+      alias_for "Tags.member.47.Value"
+      type "string"
+      location "query"
+    end
+
+    field "tag_key_47" do
+      alias_for "Tags.member.47.Key"
+      type "string"
+      location "query"
+    end
+
+    field "tag_value_48" do
+      alias_for "Tags.member.48.Value"
+      type "string"
+      location "query"
+    end 
+
+    field "tag_key_48" do
+      alias_for "Tags.member.48.Key"
+      type "string"
+      location "query"
+    end
+
+    field "tag_value_49" do
+      alias_for "Tags.member.49.Value"
+      type "string"
+      location "query"
+    end
+
+    field "tag_key_49" do
+      alias_for "Tags.member.49.Key"
+      type "string"
+      location "query"
+    end
+
+    field "tag_value_50" do
+      alias_for "Tags.member.50.Value"
+      type "string"
+      location "query"
+    end
+
+    field "tag_key_50" do
+      alias_for "Tags.member.50.Key"
+      type "string"
+      location "query"
+    end
+
     field "template_body" do
       alias_for "TemplateBody"
       type "string"
@@ -1783,6 +2263,406 @@ plugin "rs_aws_cft" do
 
       field "tag_key_10" do
         alias_for "Tags.member.10.Key"
+        location "query"
+      end
+
+      field "tag_value_11" do
+        alias_for "Tags.member.11.Value"
+        location "query"
+      end 
+
+      field "tag_key_11" do
+        alias_for "Tags.member.11.Key"
+        location "query"
+      end 
+
+      field "tag_value_12" do
+        alias_for "Tags.member.12.Value"
+        location "query"
+      end 
+
+      field "tag_key_12" do
+        alias_for "Tags.member.12.Key"
+        location "query"
+      end 
+
+      field "tag_value_13" do
+        alias_for "Tags.member.13.Value"
+        location "query"
+      end 
+
+      field "tag_key_13" do
+        alias_for "Tags.member.13.Key"
+        location "query"
+      end 
+
+      field "tag_value_14" do
+        alias_for "Tags.member.14.Value"
+        location "query"
+      end 
+
+      field "tag_key_14" do
+        alias_for "Tags.member.14.Key"
+        location "query"
+      end 
+
+      field "tag_value_15" do
+        alias_for "Tags.member.15.Value"
+        location "query"
+      end 
+
+      field "tag_key_15" do
+        alias_for "Tags.member.15.Key"
+        location "query"
+      end 
+
+      field "tag_value_16" do
+        alias_for "Tags.member.16.Value"
+        location "query"
+      end 
+
+      field "tag_key_16" do
+        alias_for "Tags.member.16.Key"
+        location "query"
+      end
+
+      field "tag_value_17" do
+        alias_for "Tags.member.17.Value"
+        location "query"
+      end
+
+      field "tag_key_17" do
+        alias_for "Tags.member.17.Key"
+        location "query"
+      end
+
+      field "tag_value_18" do
+        alias_for "Tags.member.18.Value"
+        location "query"
+      end 
+
+      field "tag_key_18" do
+        alias_for "Tags.member.18.Key"
+        location "query"
+      end
+
+      field "tag_value_19" do
+        alias_for "Tags.member.19.Value"
+        location "query"
+      end
+
+      field "tag_key_19" do
+        alias_for "Tags.member.19.Key"
+        location "query"
+      end
+
+      field "tag_value_20" do
+        alias_for "Tags.member.20.Value"
+        location "query"
+      end
+
+      field "tag_key_20" do
+        alias_for "Tags.member.20.Key"
+        location "query"
+      end
+
+      field "tag_value_21" do
+        alias_for "Tags.member.21.Value"
+        location "query"
+      end 
+
+      field "tag_key_21" do
+        alias_for "Tags.member.21.Key"
+        location "query"
+      end 
+
+      field "tag_value_22" do
+        alias_for "Tags.member.22.Value"
+        location "query"
+      end 
+
+      field "tag_key_22" do
+        alias_for "Tags.member.22.Key"
+        location "query"
+      end 
+
+      field "tag_value_23" do
+        alias_for "Tags.member.23.Value"
+        location "query"
+      end 
+
+      field "tag_key_23" do
+        alias_for "Tags.member.23.Key"
+        location "query"
+      end 
+
+      field "tag_value_24" do
+        alias_for "Tags.member.24.Value"
+        location "query"
+      end 
+
+      field "tag_key_24" do
+        alias_for "Tags.member.24.Key"
+        location "query"
+      end 
+
+      field "tag_value_25" do
+        alias_for "Tags.member.25.Value"
+        location "query"
+      end 
+
+      field "tag_key_25" do
+        alias_for "Tags.member.25.Key"
+        location "query"
+      end 
+
+      field "tag_value_26" do
+        alias_for "Tags.member.26.Value"
+        location "query"
+      end 
+
+      field "tag_key_26" do
+        alias_for "Tags.member.26.Key"
+        location "query"
+      end
+
+      field "tag_value_27" do
+        alias_for "Tags.member.27.Value"
+        location "query"
+      end
+
+      field "tag_key_27" do
+        alias_for "Tags.member.27.Key"
+        location "query"
+      end
+
+      field "tag_value_28" do
+        alias_for "Tags.member.28.Value"
+        location "query"
+      end 
+
+      field "tag_key_28" do
+        alias_for "Tags.member.28.Key"
+        location "query"
+      end
+
+      field "tag_value_29" do
+        alias_for "Tags.member.29.Value"
+        location "query"
+      end
+
+      field "tag_key_29" do
+        alias_for "Tags.member.29.Key"
+        location "query"
+      end
+
+      field "tag_value_30" do
+        alias_for "Tags.member.30.Value"
+        location "query"
+      end
+
+      field "tag_key_30" do
+        alias_for "Tags.member.30.Key"
+        location "query"
+      end
+
+      field "tag_value_31" do
+        alias_for "Tags.member.31.Value"
+        location "query"
+      end 
+
+      field "tag_key_31" do
+        alias_for "Tags.member.31.Key"
+        location "query"
+      end 
+
+      field "tag_value_32" do
+        alias_for "Tags.member.32.Value"
+        location "query"
+      end 
+
+      field "tag_key_32" do
+        alias_for "Tags.member.32.Key"
+        location "query"
+      end 
+
+      field "tag_value_33" do
+        alias_for "Tags.member.33.Value"
+        location "query"
+      end 
+
+      field "tag_key_33" do
+        alias_for "Tags.member.33.Key"
+        location "query"
+      end 
+
+      field "tag_value_34" do
+        alias_for "Tags.member.34.Value"
+        location "query"
+      end 
+
+      field "tag_key_34" do
+        alias_for "Tags.member.34.Key"
+        location "query"
+      end 
+
+      field "tag_value_35" do
+        alias_for "Tags.member.35.Value"
+        location "query"
+      end 
+
+      field "tag_key_35" do
+        alias_for "Tags.member.35.Key"
+        location "query"
+      end 
+
+      field "tag_value_36" do
+        alias_for "Tags.member.36.Value"
+        location "query"
+      end 
+
+      field "tag_key_36" do
+        alias_for "Tags.member.36.Key"
+        location "query"
+      end
+
+      field "tag_value_37" do
+        alias_for "Tags.member.37.Value"
+        location "query"
+      end
+
+      field "tag_key_37" do
+        alias_for "Tags.member.37.Key"
+        location "query"
+      end
+
+      field "tag_value_38" do
+        alias_for "Tags.member.38.Value"
+        location "query"
+      end 
+
+      field "tag_key_38" do
+        alias_for "Tags.member.38.Key"
+        location "query"
+      end
+
+      field "tag_value_39" do
+        alias_for "Tags.member.39.Value"
+        location "query"
+      end
+
+      field "tag_key_39" do
+        alias_for "Tags.member.39.Key"
+        location "query"
+      end
+
+      field "tag_value_40" do
+        alias_for "Tags.member.40.Value"
+        location "query"
+      end
+
+      field "tag_key_40" do
+        alias_for "Tags.member.40.Key"
+        location "query"
+      end
+
+      field "tag_value_41" do
+        alias_for "Tags.member.41.Value"
+        location "query"
+      end 
+
+      field "tag_key_41" do
+        alias_for "Tags.member.41.Key"
+        location "query"
+      end 
+
+      field "tag_value_42" do
+        alias_for "Tags.member.42.Value"
+        location "query"
+      end 
+
+      field "tag_key_42" do
+        alias_for "Tags.member.42.Key"
+        location "query"
+      end 
+
+      field "tag_value_43" do
+        alias_for "Tags.member.43.Value"
+        location "query"
+      end 
+
+      field "tag_key_43" do
+        alias_for "Tags.member.43.Key"
+        location "query"
+      end 
+
+      field "tag_value_44" do
+        alias_for "Tags.member.44.Value"
+        location "query"
+      end 
+
+      field "tag_key_44" do
+        alias_for "Tags.member.44.Key"
+        location "query"
+      end 
+
+      field "tag_value_45" do
+        alias_for "Tags.member.45.Value"
+        location "query"
+      end 
+
+      field "tag_key_45" do
+        alias_for "Tags.member.45.Key"
+        location "query"
+      end 
+
+      field "tag_value_46" do
+        alias_for "Tags.member.46.Value"
+        location "query"
+      end 
+
+      field "tag_key_46" do
+        alias_for "Tags.member.46.Key"
+        location "query"
+      end
+
+      field "tag_value_47" do
+        alias_for "Tags.member.47.Value"
+        location "query"
+      end
+
+      field "tag_key_47" do
+        alias_for "Tags.member.47.Key"
+        location "query"
+      end
+
+      field "tag_value_48" do
+        alias_for "Tags.member.48.Value"
+        location "query"
+      end 
+
+      field "tag_key_48" do
+        alias_for "Tags.member.48.Key"
+        location "query"
+      end
+
+      field "tag_value_49" do
+        alias_for "Tags.member.49.Value"
+        location "query"
+      end
+
+      field "tag_key_49" do
+        alias_for "Tags.member.49.Key"
+        location "query"
+      end
+
+      field "tag_value_50" do
+        alias_for "Tags.member.50.Value"
+        location "query"
+      end
+
+      field "tag_key_50" do
+        alias_for "Tags.member.50.Key"
         location "query"
       end
 
