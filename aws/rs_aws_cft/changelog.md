@@ -1,5 +1,9 @@
 CFT Plugin changelog
 
+v1.7
+----
+- Expanded support for tags from 10 to 50.
+
 v1.6
 ----
 - Expanded support for parameters from 40 to 60 CFT parameters.
