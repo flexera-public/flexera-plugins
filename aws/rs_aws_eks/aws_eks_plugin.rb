@@ -1,12 +1,39 @@
-name 'aws_eks_plugin'
+name 'AWS EKS Plugin'
 type 'plugin'
 rs_ca_ver 20161221
-short_description "Amazon Web Services - EKS"
-long_description "Version: 2.0"
 package "plugins/rs_aws_eks"
 import "sys_log"
 
-plugin "rs_aws_eks" do
+pagination 'aws_pagination' do
+  get_page_marker do
+    body_path '/*/nextToken'
+  end
+
+  set_page_marker do
+    query 'NextToken'
+  end
+end
+
+plugin "aws_eks" do
+  short_description 'Amazon Elastic Kubernetes Service (Amazon EKS) is a fully managed Kubernetes service'
+  long_description 'Amazon Elastic Kubernetes Service (Amazon EKS) is a fully managed Kubernetes service with support for pagination, etc.'
+  version '0.0.1'
+
+  documentation_link 'source' do
+    label 'Source'
+    url 'https://github.com/rightscale/rightscale-plugins/blob/master/aws/rs_aws_eks/aws_eks_plugin.rb'
+  end
+
+  documentation_link 'readme' do
+    label 'Readme'
+    url 'https://github.com/rightscale/rightscale-plugins/blob/master/aws/rs_aws_eks/README.md'
+  end
+
+  documentation_link 'changelog' do
+    label 'Changelog'
+    url 'https://github.com/rightscale/rightscale-plugins/blob/master/aws/rs_aws_eks/CHANGELOG.md'
+  end
+
   endpoint do
     default_scheme "https"
   end
