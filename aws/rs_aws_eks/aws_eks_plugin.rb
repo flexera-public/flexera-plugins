@@ -162,7 +162,7 @@ define provision_cluster(@declaration) return @resource do
     call sys_log.set_task_target(@@deployment)
     call sys_log.summary(join(["Provision ", $type]))
     call sys_log.detail($object)
-    @operation = rs_aws_eks.$type.create($fields)
+    @operation = aws_eks.$type.create($fields)
     call sys_log.detail(to_object(@operation))
     sub timeout: 20m, on_timeout: skip do
       sleep_until(@operation.status =~ "^(ACTIVE|DELETING|FAILED)")
