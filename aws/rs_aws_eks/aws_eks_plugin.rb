@@ -2,7 +2,7 @@ name 'aws_eks_plugin'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Amazon Web Services - EKS"
-long_description "Version: 1.0"
+long_description "Version: 2.0"
 package "plugins/rs_aws_eks"
 import "sys_log"
 
