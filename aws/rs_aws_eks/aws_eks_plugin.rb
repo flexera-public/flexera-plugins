@@ -34,7 +34,22 @@ plugin "aws_eks" do
     url 'https://github.com/rightscale/rightscale-plugins/blob/master/aws/rs_aws_eks/CHANGELOG.md'
   end
 
+  parameter 'region' do
+    type 'string'
+    label 'AWS Region'
+    description 'The region in which the resources are created'
+    allowed_values "us-east-1","us-east-2","us-west-1","us-west-2","ap-south-1","ap-northeast-2","ap-southeast-1","ap-southeast-2","ap-northeast-1","ca-central-1","eu-central-1","eu-west-1","eu-west-2","eu-west-3", "sa-east-1","eu-north-1"
+  end
+
+  parameter 'page_size' do
+    type 'string'
+    label 'Page size for AWS responses'
+    default '200'
+    description 'The maximum results count for each page of AWS data received.'
+  end
+
   endpoint do
+    default_host join(["eks.",$region,".amazonaws.com"])
     default_scheme "https"
   end
 
@@ -105,13 +120,17 @@ plugin "aws_eks" do
 
 end
 
-resource_pool "rs_aws_eks" do
-  plugin $rs_aws_eks
-  host "eks.us-east-1.amazonaws.com"
+resource_pool "aws_eks" do
+  plugin $aws_eks
+
+  parameter_values do
+    region $region
+  end
+
+  host join(["eks.",$region,".amazonaws.com"])
   auth "key", type: "aws" do
     version     4
     service    'eks'
-    region     'us-east-1'
     access_key cred('AWS_ACCESS_KEY_ID')
     secret_key cred('AWS_SECRET_ACCESS_KEY')
   end
