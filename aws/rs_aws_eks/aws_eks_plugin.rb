@@ -1,17 +1,32 @@
 name 'AWS EKS Plugin'
 type 'plugin'
+short_description 'Amazon Elastic Kubernetes Service (Amazon EKS) is a fully managed Kubernetes service'
 rs_ca_ver 20161221
-package "plugins/rs_aws_eks"
+package "aws_eks"
 import "sys_log"
 
 pagination 'aws_pagination' do
   get_page_marker do
-    body_path '/*/nextToken'
+    body_path 'nextToken'
   end
 
   set_page_marker do
-    query 'NextToken'
+    query 'nextToken'
   end
+end
+
+parameter 'region' do
+  type 'string'
+  label 'AWS Region'
+  description 'The region in which the resources are created'
+  allowed_values "us-east-1","us-east-2","us-west-1","us-west-2","ap-south-1","ap-northeast-2","ap-southeast-1","ap-southeast-2","ap-northeast-1","ca-central-1","eu-central-1","eu-west-1","eu-west-2","eu-west-3", "sa-east-1","eu-north-1"
+end
+
+parameter 'page_size' do
+  type 'string'
+  label 'Page size for AWS responses'
+  default '200'
+  description 'The maximum results count for each page of AWS data received.'
 end
 
 plugin "aws_eks" do
@@ -37,19 +52,15 @@ plugin "aws_eks" do
   parameter 'region' do
     type 'string'
     label 'AWS Region'
-    description 'The region in which the resources are created'
-    allowed_values "us-east-1","us-east-2","us-west-1","us-west-2","ap-south-1","ap-northeast-2","ap-southeast-1","ap-southeast-2","ap-northeast-1","ca-central-1","eu-central-1","eu-west-1","eu-west-2","eu-west-3", "sa-east-1","eu-north-1"
   end
 
   parameter 'page_size' do
     type 'string'
     label 'Page size for AWS responses'
-    default '200'
-    description 'The maximum results count for each page of AWS data received.'
   end
 
   endpoint do
-    default_host join(["eks.",$region,".amazonaws.com"])
+    default_host "eks.$region.amazonaws.com"
     default_scheme "https"
   end
 
@@ -117,9 +128,6 @@ plugin "aws_eks" do
     output "endpoint","status","createdAt","certificateAuthority","arn","roleArn","clientRequestToken","version","name","resourcesVpcConfig"
 
     polling do
-      field_values do
-        page_size $page_size
-      end
       period 60
     end
   end
@@ -130,6 +138,7 @@ resource_pool "aws_eks" do
 
   parameter_values do
     region $region
+    page_size $page_size
   end
 
   host join(["eks.",$region,".amazonaws.com"])

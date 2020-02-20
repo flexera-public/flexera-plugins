@@ -1,10 +1,10 @@
 name 'EKS Test CAT'
 rs_ca_ver 20161221
 short_description "Amazon Web Services - EKS"
-import "plugins/rs_aws_eks"
+import "aws_eks"
 
 
-resource "my_cluster", type: "rs_aws_eks.clusters" do
+resource "my_cluster", type: "aws_eks.clusters" do
   name "my_kube_cluster"
   resources_vpc_config do {
     "securityGroupIds" => ["sg-7dad9003"],
