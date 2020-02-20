@@ -3,6 +3,9 @@ rs_ca_ver 20161221
 short_description "Amazon Web Services - EKS"
 import "aws_eks"
 
+parameter "region" do
+  like $aws_eks.region
+end
 
 resource "my_cluster", type: "aws_eks.clusters" do
   name "my_kube_cluster"
@@ -12,7 +15,7 @@ resource "my_cluster", type: "aws_eks.clusters" do
     "vpcId" => "vpc-8172a6f8"
   } end
   role_arn "arn:aws:iam::041819229125:role/DF-EKS-Role"
-  version "1.10"
+  version "1.14"
 end
 
 output "out_endpoint" do

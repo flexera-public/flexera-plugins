@@ -131,6 +131,60 @@ plugin "aws_eks" do
       period 60
     end
   end
+
+  type "nodegroups" do
+    href_templates [
+      "/clusters/{{cluster.name}}/node-groups/{{$name}}",
+      "/clusters/{{$cluster_name}}/node-groups/{{?name}}",
+    ]
+
+    provision "provision_cluster"
+    delete    "delete_resource"
+    field "next_token" do
+      alias_for "nextToken"
+      type "string"
+      location "query"
+    end
+
+    field "cluster_name" do
+      location "path"
+    end
+
+    action "create" do
+      verb "POST"
+      path "/clusters/$cluster_name/node-groups"
+    end
+
+    action "destroy" do
+      verb "DELETE"
+      path "$href"
+    end
+
+    action "get" do
+      verb "GET"
+      path "$href"
+      output_path "nodegroup"
+    end
+
+    action "list" do
+      verb "GET"
+      path "/clusters/$cluster_name/node-groups"
+
+      field "cluster_name" do
+        location "path"
+      end
+      output_path "nodegroups[*]"
+      pagination $aws_pagination
+    end
+
+    output_path "nodegroup"
+    output "amiType","clusterName","createdAt","diskSize","health","instanceTypes","labels","modifiedAt","nodegroupArn","nodegroupName","nodeRole","releaseVersion","remoteAccess","resources","scalingConfig","status","subnets","tags","version"
+
+    polling do
+      period 60
+      parent "clusters"
+    end
+  end
 end
 
 resource_pool "aws_eks" do
