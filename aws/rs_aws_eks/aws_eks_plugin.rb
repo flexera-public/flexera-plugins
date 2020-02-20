@@ -1,6 +1,6 @@
-name 'AWS EKS Plugin'
+name 'Amazon Elastic Kubernetes Service (Amazon EKS)'
 type 'plugin'
-short_description 'Amazon Elastic Kubernetes Service (Amazon EKS) is a fully managed Kubernetes service'
+short_description 'Amazon Web Services (AWS) - Amazon Elastic Kubernetes Service (Amazon EKS)'
 rs_ca_ver 20161221
 package "aws_eks"
 import "sys_log"
@@ -30,8 +30,8 @@ parameter 'page_size' do
 end
 
 plugin "aws_eks" do
-  short_description 'Amazon Elastic Kubernetes Service (Amazon EKS) is a fully managed Kubernetes service'
-  long_description 'Amazon Elastic Kubernetes Service (Amazon EKS) is a fully managed Kubernetes service with support for pagination, etc.'
+  short_description 'AWS-EKS plugin'
+  long_description 'Supports AWS EKS cluster and select resources'
   version '2.0.0'
 
   documentation_link 'source' do
