@@ -17,7 +17,7 @@ end
 plugin "aws_eks" do
   short_description 'Amazon Elastic Kubernetes Service (Amazon EKS) is a fully managed Kubernetes service'
   long_description 'Amazon Elastic Kubernetes Service (Amazon EKS) is a fully managed Kubernetes service with support for pagination, etc.'
-  version '0.0.1'
+  version '2.0.0'
 
   documentation_link 'source' do
     label 'Source'
@@ -110,14 +110,19 @@ plugin "aws_eks" do
       path "/clusters"
 
       output_path "clusters[]"
+      pagination $aws_pagination
     end
 
     output_path "cluster"
-
     output "endpoint","status","createdAt","certificateAuthority","arn","roleArn","clientRequestToken","version","name","resourcesVpcConfig"
 
+    polling do
+      field_values do
+        page_size $page_size
+      end
+      period 60
+    end
   end
-
 end
 
 resource_pool "aws_eks" do
