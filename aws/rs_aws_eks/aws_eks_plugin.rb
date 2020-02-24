@@ -66,7 +66,7 @@ plugin "aws_eks" do
 
   type "clusters" do
     href_templates "/clusters/{{cluster.name}}"
-    provision "provision_cluster"
+    provision "provision_resource"
     delete    "delete_resource"
 
     field "client_request_token" do
@@ -134,12 +134,13 @@ plugin "aws_eks" do
 
   type "nodegroups" do
     href_templates [
-      "/clusters/{{cluster.name}}/node-groups/{{$name}}",
-      "/clusters/{{$cluster_name}}/node-groups/{{?name}}",
+      "/clusters/{{cluster.name}}/node-groups/{{nodegroupName}}",
+      "/clusters/{{clusterName}}/node-groups/{{nodegroupName}}",
     ]
 
-    provision "provision_cluster"
+    provision "provision_resource"
     delete    "delete_resource"
+
     field "next_token" do
       alias_for "nextToken"
       type "string"
@@ -148,6 +149,70 @@ plugin "aws_eks" do
 
     field "cluster_name" do
       location "path"
+      type "string"
+    end
+
+    field "amiType" do
+      type "string"
+      location "body"
+    end
+
+    field "diskSize" do
+      type "string"
+      location "body"
+    end
+
+    field "instanceTypes" do
+      type "array"
+      location "body"
+    end
+
+    field "labels" do
+      type "composite"
+      location "body"
+    end
+
+    field "name" do
+      alias_for "nodegroupName"
+      type "string"
+      required "true"
+      location "body"
+    end
+
+    field "nodeRole" do
+      type "string"
+      location "body"
+    end
+
+    field "releaseVersion" do
+      type "string"
+      location "body"
+    end
+
+    field "remoteAccess" do
+      type "composite"
+      location "body"
+    end
+
+    field "scalingConfig" do
+      type "composite"
+      location "body"
+    end
+
+    field "subnets" do
+      type "array"
+      location "body"
+      required "true"
+    end
+
+    field "tags" do
+      type "composite"
+      location "body"
+    end
+
+    field "version" do
+      type "string"
+      location "body"
     end
 
     action "create" do
@@ -182,7 +247,6 @@ plugin "aws_eks" do
 
     polling do
       period 60
-      parent "clusters"
     end
   end
 end
@@ -207,7 +271,7 @@ end
 define no_operation() do
 end
 
-define provision_cluster(@declaration) return @resource do
+define provision_resource(@declaration) return @resource do
   call start_debugging()
   sub on_error: stop_debugging() do
     $object = to_object(@declaration)

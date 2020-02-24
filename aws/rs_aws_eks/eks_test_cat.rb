@@ -8,7 +8,7 @@ parameter "region" do
 end
 
 resource "my_cluster", type: "aws_eks.clusters" do
-  name "my_kube_cluster"
+  name "my_kube_cluster11"
   resources_vpc_config do {
     "securityGroupIds" => ["sg-7dad9003"],
     "subnetIds" => ["subnet-b357c2fb","subnet-bb06b7e1"],
@@ -16,6 +16,17 @@ resource "my_cluster", type: "aws_eks.clusters" do
   } end
   role_arn "arn:aws:iam::041819229125:role/DF-EKS-Role"
   version "1.14"
+end
+
+resource "my_nodegroup", type: "aws_eks.nodegroups" do
+  name "my_node_group"
+  cluster_name @my_cluster.name
+  amiType "AL2_x86_64"
+  nodeRole "arn:aws:iam::041819229125:role/rs-sre-staging-us-east-2-worker-node-iam"
+  subnets do [
+    "subnet-b357c2fb",
+    "subnet-bb06b7e1"
+  ] end
 end
 
 output "out_endpoint" do
