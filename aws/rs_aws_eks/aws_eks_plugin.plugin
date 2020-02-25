@@ -136,6 +136,7 @@ plugin "aws_eks" do
     href_templates [
       "/clusters/{{cluster.name}}/node-groups/{{nodegroupName}}",
       "/clusters/{{clusterName}}/node-groups/{{nodegroupName}}",
+      "/clusters/{{nodegroup.clusterName}}/node-groups/{{nodegroup.nodegroupName}}"
     ]
 
     provision "provision_resource"
@@ -272,27 +273,30 @@ define no_operation() do
 end
 
 define provision_resource(@declaration) return @resource do
+  $object = to_object(@declaration)
+  $fields = $object["fields"]
+  $type = $object["type"]
+  call sys_log.set_task_target(@@deployment)
+  call sys_log.summary(join(["Provision ", $type]))
+  call sys_log.detail($object)
   call start_debugging()
+  @operation = aws_eks.$type.empty()
   sub on_error: stop_debugging() do
-    $object = to_object(@declaration)
-    $fields = $object["fields"]
-    $type = $object["type"]
-    call sys_log.set_task_target(@@deployment)
-    call sys_log.summary(join(["Provision ", $type]))
-    call sys_log.detail($object)
     @operation = aws_eks.$type.create($fields)
-    call sys_log.detail(to_object(@operation))
-    sub timeout: 20m, on_timeout: skip do
-      sleep_until(@operation.status =~ "^(ACTIVE|DELETING|FAILED)")
-    end
-    if @operation.status != "ACTIVE"
-      @operation.destroy()
-      raise "Failed to provision EKS Cluster"
-    end
-    @resource = @operation.get()
-    call sys_log.detail(to_object(@resource))
-    call stop_debugging()
   end
+  call stop_debugging()
+  call sys_log.detail(to_object(@operation))
+  call start_debugging()
+  sub timeout: 20m, on_timeout: skip, on_error: stop_debugging() do
+    sleep_until(@operation.status =~ "^(ACTIVE|DELETING|FAILED)")
+  end
+  if @operation.status != "ACTIVE"
+    @operation.destroy()
+    raise "Failed to provision EKS Cluster"
+  end
+  @resource = @operation.get()
+  call stop_debugging()
+  call sys_log.detail(to_object(@resource))
 end
 
 define delete_resource(@declaration) do

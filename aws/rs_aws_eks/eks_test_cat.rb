@@ -8,7 +8,7 @@ parameter "region" do
 end
 
 resource "my_cluster", type: "aws_eks.clusters" do
-  name "my_kube_cluster11"
+  name join(["my_kube_cluster", last(split(@@deployment.href, "/"))])
   resources_vpc_config do {
     "securityGroupIds" => ["sg-7dad9003"],
     "subnetIds" => ["subnet-b357c2fb","subnet-bb06b7e1"],
@@ -19,7 +19,7 @@ resource "my_cluster", type: "aws_eks.clusters" do
 end
 
 resource "my_nodegroup", type: "aws_eks.nodegroups" do
-  name "my_node_group"
+  name join(["my_node_group", last(split(@@deployment.href, "/"))])
   cluster_name @my_cluster.name
   amiType "AL2_x86_64"
   nodeRole "arn:aws:iam::041819229125:role/rs-sre-staging-us-east-2-worker-node-iam"
