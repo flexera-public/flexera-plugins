@@ -1,9 +1,9 @@
-name 'rs_azure_aks'
+name 'Azure Kubernetes Service (Azure AKS)'
 type 'plugin'
 rs_ca_ver 20161221
-short_description "Azure AKS Plugin"
+short_description "Azure Kubernetes Service (Azure AKS)"
 long_description "Version: 0.1"
-package "plugins/rs_azure_aks"
+package "azure_aks"
 import "sys_log"
 
 parameter "subscription_id" do
@@ -16,7 +16,26 @@ permission "read_creds" do
   resources "rs_cm.credentials"
 end
 
-plugin "rs_azure_aks" do
+plugin "azure_aks" do
+  short_description "Azure AKS plugin"
+  long_description "Supports Azure AKS cluster and select resources"
+  version "2.0.0"
+
+  documentation_link 'source' do
+    label 'Source'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/azure/rs_azure_aks/azure_aks.plugin'
+  end
+
+  documentation_link 'readme' do
+    label 'Readme'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/azure/rs_azure_aks/README.md'
+  end
+
+  documentation_link 'changelog' do
+    label 'Changelog'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/azure/rs_azure_aks/CHANGELOG.md'
+  end
+
   endpoint do
     default_host "https://management.azure.com/"
     default_scheme "https"
@@ -30,7 +49,7 @@ plugin "rs_azure_aks" do
     label "subscription_id"
   end
 
-  type "aks" do
+  type "managedClusters" do
     href_templates "{{id}}"
     provision "provision_resource"
     delete    "delete_resource"
@@ -116,6 +135,10 @@ plugin "rs_azure_aks" do
 
     output "provisioningState" do
       body_path "properties.provisioningState"
+    end
+
+    polling do
+      period 60
     end
   end
 end

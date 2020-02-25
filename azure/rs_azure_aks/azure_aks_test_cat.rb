@@ -2,7 +2,7 @@ name 'Azure AKS Service - Kubernetes Test CAT'
 rs_ca_ver 20161221
 short_description "Azure AKS Service  - Kubernetes Test CAT"
 import "sys_log"
-import "plugins/rs_azure_aks"
+import "azure_aks"
 
 parameter "subscription_id" do
   like $rs_azure_aks.subscription_id
@@ -21,7 +21,7 @@ resource "my_resource_group", type: "rs_cm.resource_group" do
 end
 
  
-resource "my_k8s", type: "rs_azure_aks.aks" do
+resource "my_k8s", type: "azure_aks.managedClusters" do
   name join(["aks", last(split(@@deployment.href, "/"))])
   resource_group @my_resource_group.name
   location "Central US"
