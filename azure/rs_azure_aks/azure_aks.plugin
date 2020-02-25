@@ -80,7 +80,7 @@ plugin "azure_aks" do
     end
 
     action "create" do
-      type "aks"
+      type "managedClusters"
       path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.ContainerService/managedClusters/$name"
       verb "PUT"
     end
@@ -104,25 +104,25 @@ plugin "azure_aks" do
     end
 
     action "get" do
-      type "aks"
+      type "managedClusters"
       path "$href"
       verb "GET"
     end
 
     action "update" do
-      type "aks"
+      type "managedClusters"
       path "$href"
       verb "PUT"
     end
 
     action "list" do
-      type "aks"
+      type "managedClusters"
       path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.ContainerService/managedClusters"
       verb "GET"
     end
 
     action "destroy" do
-      type "aks"
+      type "managedClusters"
       path "$href"
       verb "DELETE"
     end
@@ -144,13 +144,13 @@ plugin "azure_aks" do
 end
 
 resource_pool "rs_azure_aks" do
-    plugin $rs_azure_aks
+    plugin $azure_aks
     parameter_values do
       subscription_id $subscription_id
     end
 
     auth "azure_auth", type: "oauth2" do
-      token_url "https://login.microsoftonline.com/TENANT_ID/oauth2/token"
+      token_url "https://login.microsoftonline.com/09b8fec1-4b8d-48dd-8afa-5c1a775ea0f2/oauth2/token"
       grant type: "client_credentials" do
         client_id cred("AZURE_APPLICATION_ID")
         client_secret cred("AZURE_APPLICATION_KEY")
@@ -182,7 +182,8 @@ define provision_resource(@declaration) return @resource do
     call sys_log.summary(join(["Provision ", $type]))
     call sys_log.detail($object)
     call start_debugging()
-    @operation = rs_azure_aks.$type.create($fields)
+    @operation = 
+    azure_aks.$type.create($fields)
     call stop_debugging()
     $name = $fields["name"]
     $resource_group = $fields["resource_group"]
