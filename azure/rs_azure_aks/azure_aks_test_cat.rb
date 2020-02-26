@@ -94,12 +94,23 @@ operation "launch" do
  definition "launch_handler"
 end
 
+operation "terminate" do
+  description "terminate"
+  definition "terminate_handler"
+end
+
 define launch_handler(@my_resource_group,@my_k8s,@my_agent_pool) return @my_resource_group,@my_k8s,@my_agent_pool do
   call start_debugging()
   provision(@my_resource_group)
   provision(@my_k8s)
   provision(@my_agent_pool)
   call stop_debugging()
+end
+
+define terminate_handler(@my_agent_pool,@my_k8s,@my_resource_group) return @my_resource_group,@my_k8s,@my_agent_pool do
+  delete(@my_agent_pool)
+  delete(@my_k8s)
+  delete(@my_resource_group)
 end
 
 define start_debugging() do
