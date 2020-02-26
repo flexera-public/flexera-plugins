@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+  ],
+  "settings": {
+    "editor.detectIndentation": false,
+    "editor.tabCompletion": "on",
+    "editor.tabSize": 2,
+    "files.associations": {
+      "*.plugin": "ruby"
+    }
+  }
+}
