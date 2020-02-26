@@ -1,0 +1,3 @@
+*.plugin linguist-language=ruby
+# Force Unix line endings even on Windows
+* text=auto eol=lf
