@@ -42,17 +42,12 @@ resource "my_k8s", type: "azure_aks.managedClusters" do
         "vmSize" =>  "Standard_DS2",
         "dnsPrefix" => join(["dnsprefix-", last(split(@@deployment.href, "/"))]),
         "type": "VirtualMachineScaleSets",
-        "osType" => 'Linux',
-        "availabilityZones": [
-          "1",
-          "2",
-          "3"
-        ]
+        "osType" => 'Linux'
       }
     ],
     "diagnosticsProfile" => {
       "vmDiagnostics" => {
-          "enabled" =>  "false"
+          "enabled" =>  "true"
       }
     },
     "networkProfile": {
@@ -81,15 +76,29 @@ resource "my_k8s", type: "azure_aks.managedClusters" do
   } end
 end
 
+resource "my_agent_pool", type: "azure_aks.agentPools" do
+  name "nodepool1"
+  resource_group @my_resource_group.name
+  cluster_name @my_k8s.name
+  location "Central US"
+  properties do {
+    "count" =>  3,
+    "vmSize" =>  "Standard_DS2",
+    "type": "VirtualMachineScaleSets",
+    "osType" => 'Linux'
+  } end
+end
+
 operation "launch" do
  description "Launch the application"
  definition "launch_handler"
 end
 
-define launch_handler(@my_resource_group,@my_k8s) return @my_resource_group,@my_k8s do
+define launch_handler(@my_resource_group,@my_k8s,@my_agent_pool) return @my_resource_group,@my_k8s,@my_agent_pool do
   call start_debugging()
   provision(@my_resource_group)
   provision(@my_k8s)
+  provision(@my_agent_pool)
   call stop_debugging()
 end
 
