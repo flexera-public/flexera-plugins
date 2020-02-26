@@ -26,6 +26,7 @@ resource "my_k8s", type: "azure_aks.managedClusters" do
   resource_group @my_resource_group.name
   location "Central US"
   properties do {
+  "kubernetesVersion" => "1.15.7",
   "dnsPrefix" => join(["dnsprefix-", last(split(@@deployment.href, "/"))]),
    "orchestratorProfile" => {
       "orchestratorType" =>  "Kubernetes"
@@ -34,21 +35,38 @@ resource "my_k8s", type: "azure_aks.managedClusters" do
       "clientId" => cred("AZURE_APPLICATION_ID"),
       "secret" => cred("AZURE_APPLICATION_KEY")
     },
- 
     "agentPoolProfiles" =>  [
       {
         "name" =>  "agentpools",
-        "count" =>  2,
+        "count" =>  3,
         "vmSize" =>  "Standard_DS2",
         "dnsPrefix" => join(["dnsprefix-", last(split(@@deployment.href, "/"))]),
-        "storageProfile" => 'ManagedDisks',
-        "osType" => 'Linux'
+        "type": "VirtualMachineScaleSets",
+        "osType" => 'Linux',
+        "availabilityZones": [
+          "1",
+          "2",
+          "3"
+        ]
       }
     ],
     "diagnosticsProfile" => {
       "vmDiagnostics" => {
           "enabled" =>  "false"
       }
+    },
+    "networkProfile": {
+      "loadBalancerSku": "standard",
+      "outboundType": "loadBalancer",
+      "loadBalancerProfile": {
+        "managedOutboundIPs": {
+          "count": 2
+        }
+      }
+    },
+    "autoScalerProfile": {
+      "scan-interval": "20s",
+      "scale-down-delay-after-add": "15m"
     },
     "linuxProfile" => {
       "adminUsername" =>  "azureuser",

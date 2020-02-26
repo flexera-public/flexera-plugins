@@ -40,7 +40,7 @@ plugin "azure_aks" do
     default_host "https://management.azure.com/"
     default_scheme "https"
     query do {
-      'api-version' =>  '2018-03-31'
+      'api-version' =>  '2020-02-01'
     } end
   end
 
