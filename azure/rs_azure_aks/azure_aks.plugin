@@ -137,6 +137,10 @@ plugin "azure_aks" do
       body_path "properties.provisioningState"
     end
 
+    output "nodeResourceGroup" do
+      body_path "properties.nodeResourceGroup"
+    end
+
     polling do
       period 60
     end
@@ -221,6 +225,14 @@ plugin "azure_aks" do
       type "agentPools"
       path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.ContainerService/managedClusters/$cluster_name/agentPools"
       verb "GET"
+
+      field "resource_group" do
+        location "path"
+      end
+
+      field "cluster_name" do
+        location "path"
+      end
     end
 
     action "destroy" do
@@ -241,6 +253,10 @@ plugin "azure_aks" do
 
     polling do
       period 60
+      field_values do
+        resource_group parent_field('nodeResourceGroup')
+        cluster_name parent_field('name')
+      end
     end
   end
 end
