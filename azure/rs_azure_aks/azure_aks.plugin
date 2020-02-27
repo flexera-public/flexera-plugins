@@ -257,6 +257,7 @@ plugin "azure_aks" do
         resource_group parent_field('nodeResourceGroup')
         cluster_name parent_field('name')
       end
+      parent "managedClusters"
     end
   end
 end
