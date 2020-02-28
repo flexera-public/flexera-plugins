@@ -1,9 +1,9 @@
-name "Google Container Engine Plugin"
+name "Google Kubernetes Engine (GKE)"
 rs_ca_ver 20161221
-short_description "GKE plugin"
-long_description "Version: 2.0"
+short_description "Google Kubernetes Engine (GKE)"
+long_description "Supports Google Kubernetes Engine (GKE) cluster and select resources."
 type 'plugin'
-package "gke2"
+package "gke"
 import "sys_log"
 
 parameter "google_project" do
@@ -13,6 +13,25 @@ parameter "google_project" do
 end
 
 plugin "gke" do
+  short_description "Google Kubernetes Engine (GKE)"
+  long_description "Supports Google Kubernetes Engine (GKE) cluster and select resources."
+  version "2.0.0"
+
+  documentation_link 'source' do
+    label 'Source'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/google/gke/gke.plugin'
+  end
+
+  documentation_link 'readme' do
+    label 'Readme'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/google/gke/README.md'
+  end
+
+  documentation_link 'changelog' do
+    label 'Changelog'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/google/gke/CHANGELOG.md'
+  end
+
   endpoint do
     default_scheme "https"
     default_host "container.googleapis.com"
@@ -32,7 +51,7 @@ plugin "gke" do
     provision "provision_cluster"
     delete "destroy_cluster"
 
-    field "zone" do
+    field "location" do
       required true
       type "string"
       location "path"
@@ -51,7 +70,7 @@ plugin "gke" do
 
     action "create" do
       verb "POST"
-      path "/projects/$project/locations/$zone/clusters"
+      path "/projects/$project/locations/$location/clusters"
       type "operation"
     end 
 
@@ -87,7 +106,96 @@ plugin "gke" do
     end 
 
     output "name","description","initialNodeCount","loggingService","monitoringService","network","clusterIpv4Cidr","subnetwork","locations","enableKubernetesAlpha","resourceLabels","labelFingerprint","selfLink","zone","endpoint","initialClusterVersion","currentMasterVersion","currentNodeVersion","createTime","status","statusMessage","nodeIpv4CidrSize","servicesIpv4Cidr","instanceGroupUrls","currentNodeCount","expireTime","nodeConfig","masterAuth","addonsConfig","nodePools","legacyAbac","networkPolicy","ipAllocationPolicy","masterAuthorizedNetworksConfig"
+    
+    output "location" do
+      body_path "locations[0]"
+    end
 
+    polling do
+      period 60
+    end
+  end
+
+  # https://cloud.google.com/container-engine/reference/rest/v1/projects.zones.clusters.nodePools
+  type "nodePools" do
+    href_templates "{{contains(selfLink, '/nodePools/') && selfLink || null}}","{{contains(selfLink, '/nodePools/') && nodePools[*].selfLink || null}}"
+
+    provision "provision_cluster"
+    delete "destroy_cluster"
+
+    field "location" do
+      required true
+      type "string"
+      location "path"
+    end 
+
+    field "cluster" do
+      required true
+      type "string"
+      location "path"
+    end
+
+    field "nodePool" do
+      required "true"
+      type "object"
+      location "body"
+    end
+
+    field "update" do
+      type "object"
+      location "body"
+    end 
+
+    action "create" do
+      verb "POST"
+      path "/projects/$project/locations/$location/clusters/$cluster/nodePools"
+      type "operation"
+    end 
+
+    action "get" do
+      verb "GET"
+      path "$href"
+      type "nodePools"
+    end 
+
+    action "list" do
+      verb "GET"
+      path "/projects/$project/locations/$location/clusters/$cluster/nodePools"
+      type "nodePools"
+
+      field "zone" do
+        location "path"
+      end 
+
+      output_path "nodePools[]"
+    end
+    
+    action "destroy" do
+      verb "DELETE"
+      path "$href"
+      type "operation"
+    end
+
+    action "update" do
+      verb "PUT"
+      path "$href"
+      type "operation"
+
+      field "update" do
+        location "body"
+      end
+    end
+
+    output "name","config","initialNodeCount","locations","selfLink","version","instanceGroupUrls","status","autoscaling","management","maxPodsConstraint","conditions","podIpv4CidrSize","upgradeSettings"
+
+    polling do
+      period 60
+      field_values do
+        location parent_field('location')
+        cluster parent_field('name')
+      end
+      parent "clusters"
+    end
   end
 
   # https://cloud.google.com/container-engine/reference/rest/v1/projects.zones.operations
@@ -144,6 +252,11 @@ define provision_cluster(@declaration) return @resource on_error: stop_debugging
   end
   @resource = @operation.targetLink()
   call sys_log.detail(to_object(@resource))
+  @resource.get()
+  while @resource.status != "RUNNING" do
+    sleep(1)
+    call sys_log.detail(@resource.status)
+  end
   call stop_debugging()
 end
 
