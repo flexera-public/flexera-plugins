@@ -3,7 +3,7 @@ rs_ca_ver 20161221
 short_description "GKE plugin"
 long_description "Version: 2.0"
 type 'plugin'
-package "plugins/gke"
+package "gke2"
 import "sys_log"
 
 parameter "google_project" do
@@ -51,7 +51,7 @@ plugin "gke" do
 
     action "create" do
       verb "POST"
-      path "/projects/$project/zones/$zone/clusters"
+      path "/projects/$project/locations/$zone/clusters"
       type "operation"
     end 
 
@@ -63,12 +63,8 @@ plugin "gke" do
 
     action "list" do
       verb "GET"
-      path "/projects/$project/zones/$zone/clusters"
+      path "/projects/$project/locations/-/clusters"
       type "clusters"
-
-      field "zone" do
-        location "path"
-      end 
 
       output_path "clusters[]"
     end
