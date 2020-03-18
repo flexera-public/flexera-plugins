@@ -91,7 +91,7 @@ plugin "kubernetes" do
       body_path "metadata.labels"
     end
 
-    output "out_containers" do
+    output "containers" do
       body_path "spec.containers"
     end
 
@@ -102,18 +102,6 @@ plugin "kubernetes" do
     output "volumeMounts" do
       body_path "spec.volumeMounts"
     end
-
-    link "containers" do
-      path "$href"
-      type "containers"
-    end
-  end
-
-  type "containers" do
-    href_templates "{{spec.containers[*].name}}","{{items[*].spec.containers[*].name}}"
-  end
-
-  type "volumes" do
   end
 end
 
@@ -273,7 +261,7 @@ define get_pods() return @pods,$pods,$podnames,$containers do
   $arr_container_names = []
   foreach @pod in @pods do
     $arr_pod_names << @pod.name
-    foreach $container in @pod.out_containers do
+    foreach $container in @pod.containers do
       $arr_container_names << $container["name"]
     end
   end
