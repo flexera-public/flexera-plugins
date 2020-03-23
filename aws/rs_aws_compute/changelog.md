@@ -1,4 +1,9 @@
 Compute Plugin changelog
+
+v1.6
+------
+- Adding new syntax for resource browser
+
 v1.5
 ------
 - Adding CreateImage support
