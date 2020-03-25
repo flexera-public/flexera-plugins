@@ -2,7 +2,7 @@ name 'Amazon EC2 Service (Amazon EC2)'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Amazon Web Services (AWS) - Amazon EC2"
-long_description "Version 1.5"
+long_description ""
 package "plugin/rs_aws_compute"
 import "sys_log"
 
