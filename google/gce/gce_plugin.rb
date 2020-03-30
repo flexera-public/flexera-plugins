@@ -30,12 +30,12 @@ plugin "gce" do
   
   documentation_link 'source' do
     label 'Source'
-    url 'https://github.com/flexera/flexera-plugins/blob/master/aws/rs_aws_compute/aws_compute_plugin.rb'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/google/gce/gce_plugin.rb'
   end
   
   documentation_link 'readme' do
     label 'readme'
-    url 'https://github.com/flexera/flexera-plugins/blob/master/aws/rs_aws_compute/README.md'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/google/gce/README.md'
   end
   
   parameter 'page_size' do
