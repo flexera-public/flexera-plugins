@@ -1,7 +1,7 @@
-name "Google Compute Engine"
+name "Google Compute Engine (GCE)"
 rs_ca_ver 20161221
-short_description "Google Compute Engine plugin"
-long_description "Version: 1.0"
+short_description "Google Compute Engine (GCE)"
+long_description ""
 type 'plugin'
 package "plugins/gce"
 import "sys_log"
@@ -13,7 +13,38 @@ parameter "gce_project" do
   allowed_pattern "^[0-9a-z:\.-]+$"
 end
 
+pagination "google_pagination" do
+  get_page_marker do
+    body_path "nextPageToken"
+  end
+  set_page_marker do
+    query "pageToken"
+  end
+end
+
 plugin "gce" do
+
+  short_description 'Google Compute Engine (GCE) plugin'
+  long_description 'Plugin support for Google Compute Engine (GCE) compute resources.'
+  version '2.0.0'
+  
+  documentation_link 'source' do
+    label 'Source'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/aws/rs_aws_compute/aws_compute_plugin.rb'
+  end
+  
+  documentation_link 'readme' do
+    label 'readme'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/aws/rs_aws_compute/README.md'
+  end
+  
+  parameter 'page_size' do
+    type 'string'
+    label 'Page size for AWS responses'
+    default '200'
+    description 'The maximum results count for each page of AWS data received.'
+  end 
+
   endpoint do
     default_scheme "https"
     default_host "www.googleapis.com"
@@ -86,7 +117,20 @@ plugin "gce" do
       path "/projects/$project/regions/$region/addresses"
       type "address"
       output_path "items"
+          field "page_size" do
+          type 'string'
+        location 'query'
+        alias_for 'maxResults'
+      end
+     pagination $aws_pagination	
     end
+	
+    polling do
+      field_values do
+      page_size $page_size
+    end  
+      period 60
+    end	
 
     link "region" do
       url "$region"
@@ -377,6 +421,19 @@ plugin "gce" do
       path "/projects/$project/global/backendServices"
       type "backendService"
       output_path "items"
+      field "page_size" do
+          type 'string'
+          location 'query'
+          alias_for 'maxResults'
+      end
+      pagination $aws_pagination	
+    end
+	
+    polling do
+      field_values do
+      page_size $page_size
+    end  
+      period 60
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/backendServices/patch.
@@ -544,6 +601,19 @@ plugin "gce" do
       path "/projects/$project/zones/$zone/disks"
       type "disk"
       output_path "items"
+      field "page_size" do
+          type 'string'
+          location 'query'
+          alias_for 'maxResults'
+      end
+      pagination $aws_pagination	
+    end
+	
+    polling do
+      field_values do
+      page_size $page_size
+    end  
+      period 60
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/disks/resize.
@@ -884,6 +954,19 @@ plugin "gce" do
       path "/projects/$project/global/forwardingRules"
       type "forwardingRule"
       output_path "items"
+      field "page_size" do
+          type 'string'
+          location 'query'
+          alias_for 'maxResults'
+      end
+      pagination $aws_pagination	
+    end
+	
+    polling do
+      field_values do
+      page_size $page_size
+    end  
+      period 60
     end
 
     link "region" do
@@ -1014,6 +1097,19 @@ plugin "gce" do
       path "/projects/$project/global/healthChecks"
       type "healthCheck"
       output_path "items"
+      field "page_size" do
+          type 'string'
+          location 'query'
+          alias_for 'maxResults'
+      end
+      pagination $aws_pagination	
+    end
+	
+    polling do
+      field_values do
+      page_size $page_size
+    end  
+      period 60
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/healthChecks/patch.
@@ -1560,6 +1656,19 @@ plugin "gce" do
       path "/projects/$project/zones/$zone/instanceGroups"
       type "instanceGroup"
       output_path "items"
+        field "page_size" do
+          type 'string'
+          location 'query'
+          alias_for 'maxResults'
+      end
+      pagination $aws_pagination	
+    end
+	
+    polling do
+      field_values do
+      page_size $page_size
+    end  
+      period 60
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instanceGroups/listInstances.
@@ -1794,7 +1903,20 @@ plugin "gce" do
       path "/projects/$project/zones/$zone/instances"
       type "instance"
       output_path "items"
+      field "page_size" do
+          type 'string'
+          location 'query'
+          alias_for 'maxResults'
+      end
+      pagination $aws_pagination	
     end
+	
+    polling do
+      field_values do
+      page_size $page_size
+    end  
+      period 60
+    end	
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instances/reset.
     action "reset" do 
@@ -1984,6 +2106,19 @@ plugin "gce" do
       path "/projects/$project/global/networks"
       type "network"
       output_path "items"
+      field "page_size" do
+          type 'string'
+          location 'query'
+          alias_for 'maxResults'
+      end
+      pagination $aws_pagination	
+    end
+	
+    polling do
+      field_values do
+      page_size $page_size
+    end  
+      period 60
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/networks/switchToCustomMode.
@@ -2680,6 +2815,19 @@ plugin "gce" do
       path "/projects/$project/global/snapshots"
       type "snapshot"
       output_path "items"
+      field "page_size" do
+          type 'string'
+          location 'query'
+          alias_for 'maxResults'
+      end
+      pagination $aws_pagination	
+    end
+	
+    polling do
+      field_values do
+      page_size $page_size
+    end  
+      period 60
     end
 
     provision "no_operation"
