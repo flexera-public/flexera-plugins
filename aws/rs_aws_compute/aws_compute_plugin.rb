@@ -5,6 +5,10 @@ short_description "Amazon Web Services (AWS) - Amazon EC2"
 long_description ""
 package "plugin/rs_aws_compute"
 import "sys_log"
+info(
+  provider: "AWS",
+  service: "EC2"
+)
 
 parameter 'param_region' do
   type 'string'
