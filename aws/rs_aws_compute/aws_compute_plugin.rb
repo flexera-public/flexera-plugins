@@ -5,6 +5,10 @@ short_description "Amazon Web Services - EC2 Plugin"
 long_description "Version 1.5"
 package "plugin/rs_aws_compute"
 import "sys_log"
+info(
+      provider: "Google",
+      service: "Compute"
+    )
 
 parameter 'param_region' do
   type 'string'
