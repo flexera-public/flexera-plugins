@@ -122,7 +122,7 @@ plugin "gce" do
         location 'query'
         alias_for 'maxResults'
       end
-     pagination $aws_pagination	
+     pagination $google_pagination	
     end
 	
     polling do
@@ -426,7 +426,7 @@ plugin "gce" do
           location 'query'
           alias_for 'maxResults'
       end
-      pagination $aws_pagination	
+      pagination $google_pagination	
     end
 	
     polling do
@@ -606,7 +606,7 @@ plugin "gce" do
           location 'query'
           alias_for 'maxResults'
       end
-      pagination $aws_pagination	
+      pagination $google_pagination	
     end
 	
     polling do
@@ -959,7 +959,7 @@ plugin "gce" do
           location 'query'
           alias_for 'maxResults'
       end
-      pagination $aws_pagination	
+      pagination $google_pagination	
     end
 	
     polling do
@@ -1102,7 +1102,7 @@ plugin "gce" do
           location 'query'
           alias_for 'maxResults'
       end
-      pagination $aws_pagination	
+      pagination $google_pagination	
     end
 	
     polling do
@@ -1661,7 +1661,7 @@ plugin "gce" do
           location 'query'
           alias_for 'maxResults'
       end
-      pagination $aws_pagination	
+      pagination $google_pagination	
     end
 	
     polling do
@@ -1908,7 +1908,7 @@ plugin "gce" do
           location 'query'
           alias_for 'maxResults'
       end
-      pagination $aws_pagination	
+      pagination $google_pagination	
     end
 	
     polling do
@@ -2111,7 +2111,7 @@ plugin "gce" do
           location 'query'
           alias_for 'maxResults'
       end
-      pagination $aws_pagination	
+      pagination $google_pagination	
     end
 	
     polling do
@@ -2820,7 +2820,7 @@ plugin "gce" do
           location 'query'
           alias_for 'maxResults'
       end
-      pagination $aws_pagination	
+      pagination $google_pagination	
     end
 	
     polling do
