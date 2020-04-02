@@ -5,6 +5,10 @@ long_description ""
 type 'plugin'
 package "plugins/gce"
 import "sys_log"
+info(
+      provider: "Google",
+      service: "Compute"
+    )
 
 parameter "gce_project" do
   type "string"
