@@ -40,9 +40,9 @@ plugin "gce" do
   
   parameter 'page_size' do
     type 'string'
-    label 'Page size for AWS responses'
+    label 'Page size for google responses'
     default '200'
-    description 'The maximum results count for each page of AWS data received.'
+    description 'The maximum results count for each page of google data received.'
   end 
 
   endpoint do
