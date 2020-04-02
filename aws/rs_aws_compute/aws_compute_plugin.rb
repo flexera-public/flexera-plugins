@@ -473,7 +473,11 @@ plugin "rs_aws_compute" do
       end
      pagination $aws_pagination	  
     end
-
+	
+    output "instanceId" do
+      type "simple_element"
+    end
+	
     output "publicIP" do
       type "simple_element"
     end
