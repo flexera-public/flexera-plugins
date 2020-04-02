@@ -1,10 +1,15 @@
-name 'rs_azure_compute'
+name 'Azure Compute'
 type 'plugin'
 rs_ca_ver 20161221
-short_description "Azure Compute Plugin"
-long_description "Version: 1.5"
+short_description "Azure Compute"
+long_description ""
 package "plugins/rs_azure_compute"
 import "sys_log"
+info(
+  provider: "Azure",
+  service: "Compute"
+  )
+
 
 parameter "subscription_id" do
   type  "string"
@@ -16,7 +21,32 @@ permission "read_creds" do
   resources "rs_cm.credentials"
 end
 
+#pagination support
+pagination "azure_pagination" do
+  get_page_marker do
+    body_path "nextLink"
+  end
+  set_page_marker do
+    uri true
+  end
+end
+
 plugin "rs_azure_compute" do
+
+  short_description 'Azure Compute'
+  long_description 'Azure Compute'
+  version '2.0.0'
+
+  documentation_link 'source' do
+    label 'Source'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/azure/rs_azure_compute/azure_compute_plugin.rb'
+  end
+  
+  documentation_link 'readme' do
+    label 'Readme'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/azure/rs_azure_compute/README.md'
+  end
+
   endpoint do
     default_host "https://management.azure.com/"
     default_scheme "https"
@@ -150,6 +180,7 @@ plugin "rs_azure_compute" do
       type "virtualmachine"
       path "/subscriptions/$subscription_id/providers/Microsoft.Compute/virtualMachines"
       verb "GET"
+      pagination $azure_pagination	  
     end
 
     action "stop" do
@@ -181,6 +212,12 @@ plugin "rs_azure_compute" do
       path "$href/instanceView"
     end
 
+    polling do
+     field_values do	 
+     end    
+       period 60
+	   action 'list_all'
+    end
     output "id","name","location","tags","properties","nextLink"
   end
 
@@ -333,6 +370,52 @@ plugin "rs_azure_compute" do
 
     output "state" do
       body_path "properties.provisioningState"
+    end
+  end
+  
+   type "snapshots" do
+    href_templates "{{type=='Microsoft.Compute/snapshots' && id || null}}"
+    provision "no_operation"
+    delete    "no_operation"
+
+    action "list" do
+      type "snapshots"
+      path "/subscriptions/$subscription_id/providers/Microsoft.Compute/snapshots"
+      verb "GET"
+	  output_path "value[*]"
+      pagination $azure_pagination	  
+    end
+    output_path "properties"
+    output "id","name","location","tags","timeCreated","subscriptionId","subscriptionName"
+
+    polling do
+      field_values do
+    end  
+      period 60
+	  action 'list'
+    end
+  end
+
+  type "disks" do
+    href_templates "{{type=='Microsoft.Compute/disks' && id || null}}"
+    provision "no_operation"
+    delete    "no_operation"
+
+    action "list" do
+      type "snapshots"
+      path "/subscriptions/$subscription_id/providers/Microsoft.Compute/disks"
+      verb "GET"
+	  output_path "value[*]"
+      pagination $azure_pagination	  
+    end
+    output_path "properties"
+    output "id","name","location","tags","timeCreated","subscriptionId","subscriptionName"
+
+    polling do
+      field_values do
+    end  
+      period 60
+	  action 'list'
     end
   end
 end
