@@ -1,10 +1,14 @@
 name "Google Cloud DNS"
 rs_ca_ver 20161221
-short_description "Google Cloud DNS plugin"
-long_description "Version: 1.0"
+short_description "Google Cloud DNS"
+long_description ""
 type 'plugin'
 package "plugins/googledns"
 import "sys_log"
+info(
+  provider: "Google",
+  service: "CloudDNS"
+)
 
 parameter "google_project" do
   type "string"
@@ -19,7 +23,30 @@ parameter "dns_zone" do
   # Needed to manage DNS Records (type = resourceRecordSet)
 end 
 
+pagination "google_pagination" do
+  get_page_marker do
+    body_path "nextPageToken"
+  end
+  set_page_marker do
+    query "pageToken"
+  end
+end
+
 plugin "clouddns" do
+  short_description "Google Cloud DNS"
+  long_description "Supports Google Cloud DNS ManagedZones and RecordSets"
+  version "2.0.0"
+
+  documentation_link 'source' do
+    label 'Source'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/google/google_cloud_dns/google_cloud_dns.rb'
+  end
+
+  documentation_link 'readme' do
+    label "ReadMe"
+    url 'https://github.com/flexera/flexera-plugins/blob/master/google/google_cloud_dns/README.md'
+  end
+
   endpoint do
     default_scheme "https"
     default_host "www.googleapis.com"
@@ -36,9 +63,8 @@ plugin "clouddns" do
     type "string"
     label "Zone Name/ID"
     description "The DNS Zone Name (or DNS Zone ID) to create/manage"
-  end 
-
-
+  end
+  
   # https://cloud.google.com/dns/api/v1/managedZones
   type "managedZone" do
     href_templates "/projects/$project/managedZones/{{id}}"
@@ -100,11 +126,20 @@ plugin "clouddns" do
       path "/projects/$project/managedZones"
       output_path "managedZones[]"
 
-      field "max_results" do 
+      field "max_results" do
         location "query"
         alias_for "maxResults"
       end 
+      pagination $google_pagination
     end 
+
+    polling do
+      field_values do
+        max_results '200'
+      end
+      period 60
+      action 'list'
+    end
 
     link "project" do
       path "/projects/$project"
@@ -225,7 +260,7 @@ type "resourceRecordSet" do
       verb "GET"
       path "/projects/$project/managedZones/$managed_zone/rrsets"
 
-      field "max_results" do 
+      field "max_results" do
         location "query"
         alias_for "maxResults"
       end 
@@ -238,8 +273,16 @@ type "resourceRecordSet" do
       field "type" do
         location "query"
       end
+      pagination $google_pagination
+    end
 
-    end 
+    polling do
+      field_values do
+        max_results '200'
+      end
+      period 60
+      action 'list'
+    end
 
     action "get" do 
       verb "GET"
