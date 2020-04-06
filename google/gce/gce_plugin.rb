@@ -84,7 +84,26 @@ plugin "gce" do
       type "string"
     end
 
-    output "address","creationTimestamp","description","id","kind","name","region","selfLink","status","users"
+    output "address","creationTimestamp","description","kind","selfLink","users"
+	
+    output 'id' do
+     body_path 'id'
+    end
+
+    output 'name' do
+	  body_path 'name'
+    end
+
+    output 'region' do
+      body_path 'region'
+    end
+
+    output 'state' do
+	 body_path 'status'
+    end
+
+    output 'tags' do
+    end	
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/addresses/aggregatedList.
     action "aggregatedList" do 
@@ -381,8 +400,26 @@ plugin "gce" do
       type "number"
     end
 
-    output "affinityCookieTtlSec","backends","cdnPolicy","connectionDraining","creationTimestamp","description","enableCDN","fingerprint","healthChecks","id","kind","loadBalancingScheme","name","port","portName","protocol","region","selfLink","sessionAffinity","timeoutSec"
+    output "affinityCookieTtlSec","backends","cdnPolicy","connectionDraining","creationTimestamp","description","enableCDN","fingerprint","healthChecks","kind","loadBalancingScheme","port","portName","protocol","selfLink","sessionAffinity","timeoutSec"
 
+    output 'id' do
+     body_path 'id'
+    end
+
+    output 'name' do
+	  body_path 'name'
+    end
+
+    output 'region' do
+      body_path 'region'
+    end
+
+    output 'state' do
+    end
+
+    output 'tags' do
+    end	
+	
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/backendServices/aggregatedList.
     action "aggregatedList" do 
       verb "GET"
@@ -561,8 +598,27 @@ plugin "gce" do
       type "string"
     end
 
-    output "creationTimestamp","description","diskEncryptionKey","id","kind","lastAttachTimestamp","lastDetachTimestamp","licenses","name","options","selfLink","sizeGb","sourceImage","sourceImageEncryptionKey","sourceImageId","sourceSnapshot","sourceSnapshotEncryptionKey","sourceSnapshotId","status","type","users","zone"
+    output "creationTimestamp","description","diskEncryptionKey","kind","lastAttachTimestamp","lastDetachTimestamp","licenses","options","selfLink","sizeGb","sourceImage","sourceImageEncryptionKey","sourceImageId","sourceSnapshot","sourceSnapshotEncryptionKey","sourceSnapshotId","type","users"
 
+    output 'id' do
+     body_path 'id'
+    end
+
+    output 'name' do
+	  body_path 'name'
+    end
+
+    output 'region' do
+      body_path 'zone'
+    end
+
+    output 'state' do
+      body_path 'status'
+    end
+
+    output 'tags' do
+    end	
+	
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/disks/aggregatedList.
     action "aggregatedList" do 
       verb "GET"
@@ -936,8 +992,26 @@ plugin "gce" do
       type "string"
     end
 
-    output "IPAddress","IPProtocol","backendService","creationTimestamp","description","id","kind","loadBalancingScheme","name","network","portRange","ports","region","selfLink","subnetwork","target"
+    output "IPAddress","IPProtocol","backendService","creationTimestamp","description","kind","loadBalancingScheme","network","portRange","ports","selfLink","subnetwork","target"
 
+    output 'id' do
+     body_path 'id'
+    end
+
+    output 'name' do
+	  body_path 'name'
+    end
+
+    output 'region' do
+      body_path 'region'
+    end
+
+    output 'state' do
+    end
+
+    output 'tags' do
+    end	
+	
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/globalForwardingRules/get.
     action "get" do 
       verb "GET"
@@ -1072,7 +1146,24 @@ plugin "gce" do
       type "number"
     end
 
-    output "checkIntervalSec","creationTimestamp","description","healthyThreshold","httpHealthCheck","httpsHealthCheck","id","kind","name","selfLink","sslHealthCheck","tcpHealthCheck","timeoutSec","type","unhealthyThreshold"
+    output "checkIntervalSec","creationTimestamp","description","healthyThreshold","httpHealthCheck","httpsHealthCheck","kind","selfLink","sslHealthCheck","tcpHealthCheck","timeoutSec","type","unhealthyThreshold"
+
+    output 'id' do
+     body_path 'id'
+    end
+
+    output 'name' do
+	  body_path 'name'
+    end
+
+    output 'region' do
+    end
+
+    output 'state' do
+    end
+
+    output 'tags' do
+    end	
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/healthChecks/delete.
     action "delete" do 
@@ -1616,7 +1707,25 @@ plugin "gce" do
       type "string"
     end
 
-    output "creationTimestamp","description","fingerprint","id","kind","name","namedPorts","network","region","selfLink","size","subnetwork","zone"
+    output "creationTimestamp","description","fingerprint","kind","namedPorts","network","selfLink","size","subnetwork","zone"
+
+    output 'id' do
+     body_path 'id'
+    end
+
+    output 'name' do
+	  body_path 'name'
+    end
+
+    output 'region' do
+      body_path 'region'
+    end
+
+    output 'state' do
+    end
+
+    output 'tags' do
+    end	
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instanceGroups/addInstances.
     action "addInstances" do 
@@ -1828,7 +1937,27 @@ plugin "gce" do
       type "object"
     end
 
-    output "canIpForward","cpuPlatform","creationTimestamp","description","disks","id","kind","machineType","metadata","name","networkInterfaces","scheduling","selfLink","serviceAccounts","status","statusMessage","tags","zone"
+    output "canIpForward","cpuPlatform","creationTimestamp","description","disks","kind","machineType","metadata","networkInterfaces","scheduling","selfLink","serviceAccounts","statusMessage"
+
+    output 'id' do
+     body_path 'id'
+    end
+
+    output 'name' do
+	  body_path 'name'
+    end
+
+    output 'region' do
+     body_path 'zone'
+    end
+
+    output 'state' do
+	 body_path 'status'
+    end
+
+    output 'tags' do
+     body_path 'tags'
+    end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instances/addAccessConfig.
     action "addAccessConfig" do 
@@ -2081,7 +2210,24 @@ plugin "gce" do
       type "string"
     end
 
-    output "IPv4Range","autoCreateSubnetworks","creationTimestamp","description","gatewayIPv4","id","kind","name","selfLink","subnetworks"
+    output "IPv4Range","autoCreateSubnetworks","creationTimestamp","description","gatewayIPv4","kind","selfLink","subnetworks"
+
+    output 'id' do
+     body_path 'id'
+    end
+
+    output 'name' do
+	  body_path 'name'
+    end
+
+    output 'region' do
+    end
+
+    output 'state' do
+    end
+
+    output 'tags' do
+    end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/networks/delete.
     action "delete" do 
@@ -2797,8 +2943,26 @@ plugin "gce" do
       type "object"
     end
 
-    output "creationTimestamp","description","diskSizeGb","id","kind","licenses","name","selfLink","snapshotEncryptionKey","sourceDisk","sourceDiskEncryptionKey","sourceDiskId","status","storageBytes","storageBytesStatus"
+    output "creationTimestamp","description","diskSizeGb","kind","licenses","selfLink","snapshotEncryptionKey","sourceDisk","sourceDiskEncryptionKey","sourceDiskId","storageBytes","storageBytesStatus"
 
+    output 'id' do
+     body_path 'id'
+    end
+
+    output 'name' do
+	  body_path 'name'
+    end
+
+    output 'region' do
+    end
+
+    output 'state' do
+	 body_path 'status'
+    end
+
+    output 'tags' do
+    end
+	
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/snapshots/delete.
     action "delete" do 
       verb "DELETE"
