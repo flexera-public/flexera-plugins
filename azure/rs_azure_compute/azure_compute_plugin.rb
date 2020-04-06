@@ -218,7 +218,27 @@ plugin "rs_azure_compute" do
        period 60
 	   action 'list_all'
     end
-    output "id","name","location","tags","properties","nextLink"
+    output "properties","nextLink"
+	
+    output 'id' do
+     body_path 'id'
+    end
+
+    output 'name' do
+	  body_path 'name'
+    end
+
+    output 'region' do
+     body_path 'location'
+    end
+
+    output 'state' do
+    end
+
+    output 'tags' do
+     body_path 'tags'
+    end
+	
   end
 
   type "extensions" do
@@ -385,8 +405,30 @@ plugin "rs_azure_compute" do
 	  output_path "value[*]"
       pagination $azure_pagination	  
     end
+	
     output_path "properties"
-    output "id","name","location","tags","timeCreated","subscriptionId","subscriptionName"
+	
+    output "timeCreated","subscriptionId","subscriptionName"
+	
+    output 'id' do
+     body_path 'id'
+    end
+
+    output 'name' do
+	  body_path 'name'
+    end
+
+    output 'region' do
+     body_path 'location'
+    end
+
+    output 'state' do
+    end
+
+    output 'tags' do
+     body_path 'tags'
+    end
+	
 
     polling do
       field_values do
@@ -408,8 +450,29 @@ plugin "rs_azure_compute" do
 	  output_path "value[*]"
       pagination $azure_pagination	  
     end
+	
     output_path "properties"
-    output "id","name","location","tags","timeCreated","subscriptionId","subscriptionName"
+	
+    output "timeCreated","subscriptionId","subscriptionName"
+	
+    output 'id' do
+     body_path 'id'
+    end
+
+    output 'name' do
+	  body_path 'name'
+    end
+
+    output 'region' do
+     body_path 'location'
+    end
+
+    output 'state' do
+    end
+
+    output 'tags' do
+     body_path 'tags'
+    end	
 
     polling do
       field_values do
