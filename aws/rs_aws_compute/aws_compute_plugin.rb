@@ -93,12 +93,22 @@ plugin "rs_aws_compute" do
         alias_for 'MaxResults'
       end
 
-    output "vpcId" do
-      type "simple_element"
+    output 'id' do
+     body_path 'vpcId'
     end
 
-    output "state" do
-      type "simple_element"
+    output 'name' do
+    end
+
+    output 'region' do
+    end
+
+    output 'state' do
+      body_path 'state'
+    end
+
+    output 'tags' do
+     body_path 'tagSet'
     end
 
     output "cidrBlock" do
@@ -110,10 +120,6 @@ plugin "rs_aws_compute" do
     end
 
     output "dhcpOptionsId" do
-      type "simple_element"
-    end
-
-    output "tagSet" do
       type "simple_element"
     end
 
@@ -473,9 +479,23 @@ plugin "rs_aws_compute" do
       end
      pagination $aws_pagination	  
     end
-	
-    output "instanceId" do
-      type "simple_element"
+
+    output 'id' do
+     body_path 'instanceId'
+    end
+
+    output 'name' do
+    end
+
+    output 'region' do
+    end
+
+    output 'state' do
+      body_path 'state'
+    end
+
+    output 'tags' do
+     body_path 'tagSet'
     end
 	
     output "publicIP" do
@@ -487,9 +507,6 @@ plugin "rs_aws_compute" do
     end
 
     output "allocationId" do
-      type "simple_element"
-    end
-    output "tagSet" do
       type "simple_element"
     end	
 	
@@ -645,19 +662,26 @@ plugin "rs_aws_compute" do
      pagination $aws_pagination	  
     end
 
-    output "volumeId" do
-      type "simple_element"
+    output 'id' do
+     body_path 'volumeId'
+    end
+
+    output 'name' do
+    end
+
+    output 'region' do
+	 body_path 'availabilityZone'
+    end
+
+    output 'state' do
+      body_path 'status'
+    end
+
+    output 'tags' do
+     body_path 'tagSet'
     end
 
     output "size" do
-      type "simple_element"
-    end
-
-    output "availabilityZone" do
-      type "simple_element"
-    end
-
-    output "status" do
       type "simple_element"
     end
 
@@ -674,9 +698,6 @@ plugin "rs_aws_compute" do
     end
 
     output "encrypted" do
-      type "simple_element"
-    end
-    output "tagSet" do
       type "simple_element"
     end
 	
@@ -834,7 +855,27 @@ plugin "rs_aws_compute" do
       end
       type "images"
     end
-    output "instanceId","ipAddress","vpcId","imageId","privateDnsName","tagSet"
+	
+    output "ipAddress","vpcId","imageId","privateDnsName"
+	
+    output 'id' do
+     body_path 'instanceId'
+    end
+
+    output 'name' do
+    end
+
+    output 'region' do
+	 body_path 'placement.availabilityZone'
+    end
+
+    output 'state' do
+      body_path 'instanceState.name'
+    end
+
+    output 'tags' do
+     body_path 'tagSet'
+    end
 	
     polling do
       field_values do
@@ -880,7 +921,25 @@ plugin "rs_aws_compute" do
      pagination $aws_pagination	  
     end
 
-    output "snapshotId","volumeId","startTime","tagSet"
+    output "volumeId","startTime"
+	
+    output 'id' do
+     body_path 'snapshotId'
+    end
+
+    output 'name' do
+    end
+
+    output 'region' do
+    end
+
+    output 'state' do
+      body_path 'status'
+    end
+
+    output 'tags' do
+     body_path 'tagSet'
+    end	
 	
     polling do
       field_values do

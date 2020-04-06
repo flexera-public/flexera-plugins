@@ -44,7 +44,7 @@ end
 
 output "volume_id" do
   label "Volume ID"
-  default_value @my_volume.volumeId
+  default_value @my_volume.id
 end
 
 output "output_instance_id" do
@@ -67,13 +67,13 @@ resource "my_vpc", type: "rs_aws_compute.vpc" do
 end
 
 resource "my_vpc_tag", type: "rs_aws_compute.tags" do
-  resource_id_1 @my_vpc.vpcId
+  resource_id_1 @my_vpc.id
   tag_1_key "Name"
   tag_1_value join([@@deployment.name,"-vpc"])
 end
 
 resource "my_vpc_endpoint", type: "rs_aws_compute.endpoint" do
-  vpc_id @my_vpc.vpcId
+  vpc_id @my_vpc.id
   service_name "com.amazonaws.us-east-1.s3"
 end
 
