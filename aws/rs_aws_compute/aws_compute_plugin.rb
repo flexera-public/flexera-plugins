@@ -5,6 +5,7 @@ short_description "Amazon Web Services - EC2 Plugin"
 long_description "Version 1.5"
 package "plugin/rs_aws_compute"
 import "sys_log"
+# testing
 
 parameter 'param_region' do
   type 'string'
@@ -20,7 +21,7 @@ plugin "rs_aws_compute" do
       "Version" => "2016-11-15"
     } end
   end
-  
+
   type "vpc" do
     # HREF is set to the correct template in the provision definition due to a lack of usable fields in the response to build the href
     href_templates "/?Action=DescribeVpcs&VpcId.1={{//CreateVpcResponse/vpc/vpcId}}","/?DescribeVpcs&VpcId.1={{//DescribeVpcsResponse/vpcSet/item/vpcId}}"
@@ -82,7 +83,7 @@ plugin "rs_aws_compute" do
       path "/?Action=CreateVpc"
       output_path "//CreateVpcResponse/vpc"
     end
-    
+
     action "destroy" do
       verb "POST"
       path "/?Action=DeleteVpc&VpcId=$vpcId"
@@ -200,7 +201,7 @@ plugin "rs_aws_compute" do
       type "string"
       location "query"
     end
-    
+
     output "vpcEndpointId" do
       type "simple_element"
     end
@@ -234,17 +235,17 @@ plugin "rs_aws_compute" do
       path "/?Action=CreateVpcEndpoint"
       output_path "//CreateVpcEndpointResponse/vpcEndpoint"
     end
-    
+
     action "destroy" do
       verb "POST"
       path "/?Action=DeleteVpcEndpoints&VpcEndpointId.1=$vpcEndpointId"
     end
- 
+
     action "get" do
       verb "POST"
       output_path "//DescribeVpcEndpointsResponse/vpcEndpointSet/item"
     end
- 
+
     action "list" do
       verb "POST"
       path "/?Action=DescribeVpcEndpoints"
@@ -262,7 +263,7 @@ plugin "rs_aws_compute" do
       type      "string"
       location  "query"
     end
-    
+
     output "routeTableId" do
       type "simple_element"
     end
@@ -292,17 +293,17 @@ plugin "rs_aws_compute" do
       path "/?Action=CreateRouteTable"
       output_path "//CreateRouteTableResponse/routeTable"
     end
-    
+
     action "destroy" do
       verb "POST"
       path "/?Action=DeleteRouteTables&RouteTableId.1=$routeTableId"
     end
- 
+
     action "get" do
       verb "POST"
       output_path "//DescribeRouteTablesResponse/routeTableSet/item"
     end
- 
+
     action "list" do
       verb "POST"
       path "/?Action=DescribeVpcEndpoints"
@@ -352,17 +353,17 @@ plugin "rs_aws_compute" do
       path "/?Action=CreateNatGateway"
       output_path "//CreateNatGatewayResponse/natGateway"
     end
-    
+
     action "destroy" do
       verb "POST"
       path "/?Action=DeleteNatGateway&NatGatewayId=$natGatewayId"
     end
- 
+
     action "get" do
       verb "POST"
       output_path "//DescribeNatGatewaysResponse/natGatewaySet/item"
     end
- 
+
     action "list" do
       verb "POST"
       path "/?Action=DescribeNatGateways"
