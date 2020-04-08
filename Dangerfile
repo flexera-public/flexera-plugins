@@ -50,4 +50,9 @@ has_app_changes.each do |file|
   if file.scan(/^[a-z0-9.\/_-]+$/).empty?
     fail "Plugin path should be lowercase. #{file}"
   end
+  data = `cat #{file}`
+  compile  = `./rsc -a #{ENV['ACCOUNT_ID']}  -r #{ENV['REFRESH_TOKEN']} ss compile /api/designer/collections/#{ENV[ACCOUNT_ID]}/templates source="#{data}"`
+  json = JSON.parse(compile)
+  message json['name']
+  message json['info']
 end
