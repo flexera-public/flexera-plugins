@@ -50,9 +50,36 @@ has_app_changes.each do |file|
   if file.scan(/^[a-z0-9.\/_-]+$/).empty?
     fail "Plugin path should be lowercase. #{file}"
   end
-  data = `cat #{file}`
-  compile  = `./rsc -a #{ENV['ACCOUNT_ID']}  -r #{ENV['REFRESH_TOKEN']} ss compile /api/designer/collections/#{ENV[ACCOUNT_ID]}/templates source="#{data}"`
-  json = JSON.parse(compile)
-  message json['name']
-  message json['info']
+end
+
+# helper methods
+def valid_json?(string)
+  !!JSON.parse(string)
+rescue JSON::ParserError
+  false
+end
+
+# check the plugin syntax and plugin fields
+has_app_changes.each do |file|
+  cmd = "./tools/bin/compile #{file}"
+  plugin  = `#{cmd}`
+  json = {}
+  if valid_json?(plugin)
+    json = JSON.parse(plugin)
+  else
+    fail "File syntax check failed. #{file}."
+  end
+  if json['type'] && json['type']=='plugin'
+    fail "Add plugin name" unless json['name']
+    fail "Add short_description. #{file}" unless json['short_description']
+    if json['info']
+      fail "Add info provider. #{file}" unless json['info']['provider']
+      fail "Add info service. #{file}"  unless json['info']['service']
+    else
+      fail "Add info provider and service. #{file}"
+    end
+    if json['plugin']
+      fail "Add plugin version. #{file}" unless json['plugin']['version']
+    end
+  end
 end
