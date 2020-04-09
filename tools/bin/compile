@@ -4,6 +4,7 @@
 # syntax.  The output is in JSON and the Dangerfile uses the JSON to validate
 # the plugin includes the required fields.
 
+PATH=$PATH:.
 content_path=$1
 content=$(IFS= cat $content_path | while read; do echo "$REPLY"; done)
 
