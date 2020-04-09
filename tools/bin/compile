@@ -8,4 +8,4 @@ PATH=$PATH:.
 content_path=$1
 content=$(IFS= cat $content_path | while read; do echo "$REPLY"; done)
 
-rsc -h us-3.rightscale.com -a ${ACCOUNT_ID}  -r ${REFRESH_TOKEN} ss compile /api/designer/collections/${ACCOUNT_ID}/templates source="${content}"
+./rsc -h us-3.rightscale.com -a ${ACCOUNT_ID}  -r ${REFRESH_TOKEN} ss compile /api/designer/collections/${ACCOUNT_ID}/templates source="${content}"
