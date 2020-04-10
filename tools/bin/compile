@@ -1,15 +1,17 @@
-#!/bin/sh
-
+#!/bin/bash
 # this script compiles the plugin and cat files to validate they are in proper
 # syntax.  The output is in JSON and the Dangerfile uses the JSON to validate
 # the plugin includes the required fields.
+set -x
+set -e
 
-echo ${ACCOUNT_ID}
-echo ${REFRESH_TOKEN}
+echo $ACCOUNT_ID
+echo $REFRESH_TOKEN
 echo $1
 
 PATH=$PATH:.
 content_path=$1
 content=$(IFS= cat $content_path | while read; do echo "$REPLY"; done)
 
-./rsc -h us-3.rightscale.com -a ${ACCOUNT_ID}  -r ${REFRESH_TOKEN} ss compile /api/designer/collections/${ACCOUNT_ID}/templates source="${content}"
+
+rsc -h us-3.rightscale.com -a ${ACCOUNT_ID}  -r ${REFRESH_TOKEN} ss compile /api/designer/collections/${ACCOUNT_ID}/templates source="${content}"
