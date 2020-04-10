@@ -1,5 +1,7 @@
 # Change Log
 
+something new
+
 ## [Week-of-05-07-2018](https://github.com/rightscale/rightscale-plugins/tree/Week-of-05-07-2018) (2018-05-08)
 [Full Changelog](https://github.com/rightscale/rightscale-plugins/compare/Week-of-02-12-2018...Week-of-05-07-2018)
 
