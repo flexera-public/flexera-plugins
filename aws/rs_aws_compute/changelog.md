@@ -1,4 +1,9 @@
 Compute Plugin changelog
+
+v2.0
+---
+
+- adding something here
 v1.5
 ------
 - Adding CreateImage support
