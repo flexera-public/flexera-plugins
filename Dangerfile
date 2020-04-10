@@ -1,5 +1,9 @@
 # DangerFile
 # https://danger.systems/reference.html
+
+require_relative 'tools/lib/helper'
+helper = Helper.new
+
 # get list of old names that were renamed
 renamed_files = (git.renamed_files.collect{|r| r[:before]})
 # get list of all files changes minus the old files renamed
@@ -52,19 +56,12 @@ has_app_changes.each do |file|
   end
 end
 
-# helper methods
-def valid_json?(string)
-  !!JSON.parse(string)
-rescue JSON::ParserError
-  false
-end
-
 # check the plugin syntax and plugin fields
 has_app_changes.each do |file|
   cmd = "./tools/bin/compile #{file}"
   plugin  = `#{cmd}`
   json = {}
-  if valid_json?(plugin)
+  if helper.valid_json?(plugin)
     json = JSON.parse(plugin)
   else
     fail "File syntax check failed. #{file}."
@@ -78,8 +75,11 @@ has_app_changes.each do |file|
     else
       fail "Add info provider and service. #{file}"
     end
-    if json['plugin']
-      fail "Add plugin version. #{file}" unless json['plugin']['version']
+    if json['plugins']
+      fail "Add plugin version. #{file}" unless helper.nested_hash_value(json['plugins'],'version')
+      fail "Add plugin short_description. #{file}" unless helper.nested_hash_value(json['plugins'],'short_description')
+      fail "Add plugin documentation_link for readme. #{file}" unless helper.nested_hash_value(json['plugins'],'readme')
+      fail "Add plugin documentation_link for source. #{file}" unless helper.nested_hash_value(json['plugins'],'source')
     end
   end
 end

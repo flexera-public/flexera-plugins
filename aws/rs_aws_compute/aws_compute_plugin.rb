@@ -14,6 +14,18 @@ parameter 'param_region' do
 end
 
 plugin "rs_aws_compute" do
+
+  version '2.0.0'
+  documentation_link "getting_started" do
+    label 'getting_started'
+    url 'https://ec2-volumes/getting-started'
+  end
+
+    documentation_link "readme" do
+        label 'support'
+        url 'https://ec2-volumes/support'
+    end
+
   endpoint do
     default_host "ec2.amazonaws.com"
     default_scheme "https"
