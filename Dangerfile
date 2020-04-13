@@ -9,11 +9,11 @@ renamed_files = (git.renamed_files.collect{|r| r[:before]})
 # get list of all files changes minus the old files renamed
 # remove list of renamed files to prevent errors on files that don't exist
 changed_files = (git.added_files + git.modified_files - renamed_files)
-has_app_changes = changed_files.select{ |file| file.end_with? "plugin" or file.end_with? "rb"  }
-has_new_plugin = git.added_files.select{ |file| file.end_with? "plugin" or file.end_with? "rb" }
+has_app_changes = changed_files.select{ |file| file.end_with? "plugin" or file.end_with? "rb" and !file.start_with?("tools/") }
+has_new_plugin = git.added_files.select{ |file| file.end_with? "plugin" or file.end_with? "rb" and !file.start_with?("tools/") }
 md_files = changed_files.select{ |file| file.end_with? "md" }
 
-# Changelog entries are required for changes to library files.
+# Changelog entries are required for changes to plugin files.
 no_changelog_entry = (changed_files.grep(/[\w]+CHANGELOG.md/i)+changed_files.grep(/CHANGELOG.md/i)).empty?
 if (has_app_changes.length != 0) && no_changelog_entry
   fail "Please add a CHANGELOG.md file"
