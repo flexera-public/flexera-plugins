@@ -1,10 +1,14 @@
 name "Google Kubernetes Engine (GKE)"
 rs_ca_ver 20161221
 short_description "Google Kubernetes Engine (GKE)"
-long_description "Supports Google Kubernetes Engine (GKE) cluster and select resources."
+long_description ""
 type 'plugin'
-package "gke"
+package "plugins/gke"
 import "sys_log"
+info(
+  provider: "Google",
+  service: "GKE"
+)
 
 parameter "google_project" do
   type "string"
@@ -19,17 +23,12 @@ plugin "gke" do
 
   documentation_link 'source' do
     label 'Source'
-    url 'https://github.com/flexera/flexera-plugins/blob/master/google/gke/gke.plugin'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/google/gke/gke.rb'
   end
 
   documentation_link 'readme' do
-    label 'Readme'
+    label 'ReadMe'
     url 'https://github.com/flexera/flexera-plugins/blob/master/google/gke/README.md'
-  end
-
-  documentation_link 'changelog' do
-    label 'Changelog'
-    url 'https://github.com/flexera/flexera-plugins/blob/master/google/gke/CHANGELOG.md'
   end
 
   endpoint do
@@ -51,7 +50,7 @@ plugin "gke" do
     provision "provision_cluster"
     delete "destroy_cluster"
 
-    field "location" do
+    field "zone" do
       required true
       type "string"
       location "path"
@@ -70,7 +69,7 @@ plugin "gke" do
 
     action "create" do
       verb "POST"
-      path "/projects/$project/locations/$location/clusters"
+      path "/projects/$project/zone/$zone/clusters"
       type "operation"
     end 
 
@@ -82,8 +81,12 @@ plugin "gke" do
 
     action "list" do
       verb "GET"
-      path "/projects/$project/locations/-/clusters"
+      path "/projects/$project/zones/$zone/clusters"
       type "clusters"
+
+      field "zone" do
+        location "path"
+      end
 
       output_path "clusters[]"
     end
