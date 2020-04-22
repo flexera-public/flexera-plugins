@@ -517,6 +517,7 @@ plugin "rs_aws_compute" do
       page_size $page_size
     end  
       period 60
+	  action 'list'	  
     end
   end
 
