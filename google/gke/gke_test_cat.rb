@@ -1,7 +1,7 @@
 name 'GKE - Test CAT'
 rs_ca_ver 20161221
 short_description "Google Cloud Platform - GKE - Test CAT"
-import "gke"
+import "plugins/gke"
 
 ##########################
 ##########################
@@ -21,7 +21,7 @@ end
 ##########################
 
 resource "my_cluster", type: "gke.clusters" do
-  location "us-central1-a"
+  zone "us-central1-a"
   cluster do {
     "name" => join(["rs-cluster-", last(split(@@deployment.href, "/"))]),
     "initialClusterVersion" => "1.15.9-gke.9",
@@ -31,7 +31,8 @@ resource "my_cluster", type: "gke.clusters" do
         "initialNodeCount" => 3
       }
     ]
-  } end 
+  } 
+  end 
 end
 
 resource "my_node_pool", type: "gke.nodePools" do
