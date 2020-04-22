@@ -69,7 +69,7 @@ plugin "gke" do
 
     action "create" do
       verb "POST"
-      path "/projects/$project/zone/$zone/clusters"
+      path "/projects/$project/zones/$zone/clusters"
       type "operation"
     end 
 
