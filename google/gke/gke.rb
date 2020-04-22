@@ -86,7 +86,7 @@ plugin "gke" do
 
       field "zone" do
         location "path"
-      end
+      end 
 
       output_path "clusters[]"
     end
