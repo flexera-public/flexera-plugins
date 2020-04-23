@@ -473,13 +473,7 @@ plugin "rs_aws_compute" do
     action "list" do
       verb "POST"
       path "/?Action=DescribeAddresses"
-      output_path "//DescribeAddressesResponse/addressesSet/item"
-	  field "page_size" do
-          type 'string'
-        location 'query'
-        alias_for 'MaxResults'
-      end
-     pagination $aws_pagination	  
+      output_path "//DescribeAddressesResponse/addressesSet/item"	  
     end
 
     output 'id' do
@@ -514,7 +508,6 @@ plugin "rs_aws_compute" do
 	
     polling do
       field_values do
-      page_size $page_size
     end  
       period 60
 	  action 'list'	  
@@ -638,7 +631,7 @@ plugin "rs_aws_compute" do
 
     action "get" do
       verb "POST"
-      path "/?Action=DescribeVolume"
+      path "/?Action=DescribeVolumes"
       output_path "//DescribeVolumesResponse/volumeSet/item"
 	  field "page_size" do
           type 'string'
@@ -655,7 +648,7 @@ plugin "rs_aws_compute" do
 
     action "list" do
       verb "POST"
-      path "/?Action=DescribeVolume"
+      path "/?Action=DescribeVolumes"
       output_path "//DescribeVolumesResponse/volumeSet/item"
 	  field "page_size" do
           type 'string'
