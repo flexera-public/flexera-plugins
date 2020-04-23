@@ -14,7 +14,6 @@ parameter "gce_project" do
   type "string"
   label "GCE Project"
   category "GCE Plugin"
-  allowed_pattern "^[0-9a-z:\.-]+$"
 end
 
 pagination "google_pagination" do
@@ -60,10 +59,22 @@ plugin "gce" do
     label "Project"
     description "The GCE project to create resources in"
   end
+  
+  parameter "zone" do
+    type "string"
+    label "Zone"
+    description "Zone to create resources in"
+  end
 
+  parameter "region" do
+    type "string"
+    label "Region"
+    description "Region to create resources in"
+  end
+  
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/addresses.
   type "address" do
-    href_templates "{{selfLink}}","{{items[*].selfLink}}","{{items.*.addresses[].selfLink}}"
+    href_templates "{{id}}","{{items[*].id}}","{{items.*.addresses[].id}}"
 
     field "region" do
       location "path"
@@ -153,6 +164,7 @@ plugin "gce" do
       page_size $page_size
     end  
       period 60
+      action 'list'
     end	
 
     link "region" do
@@ -338,7 +350,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/backendServices.
   type "backendService" do
-    href_templates "{{selfLink}}","{{items[*].selfLink}}","{{items.*.backendServices[].selfLink}}"
+    href_templates "{{id}}","{{items[*].id}}","{{items.*.backendServices[].id}}"
 
     field "affinityCookieTtlSec" do
       type "number"
@@ -475,6 +487,7 @@ plugin "gce" do
       page_size $page_size
     end  
       period 60
+      action 'list'
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/backendServices/patch.
@@ -544,7 +557,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/disks.
   type "disk" do
-    href_templates "{{selfLink}}","{{items[*].selfLink}}","{{items.*.disks[].selfLink}}"
+    href_templates "{{id}}","{{items[*].id}}","{{items.*.disks[].id}}"
 
     field "zone" do
       location "path"
@@ -674,6 +687,7 @@ plugin "gce" do
       page_size $page_size
     end  
       period 60
+      action 'list'
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/disks/resize.
@@ -944,7 +958,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/globalForwardingRules.
   type "globalForwardingRule" do
-    href_templates "{{selfLink}}","{{items[*].selfLink}}"
+    href_templates "{{id}}","{{items[*].id}}"
 
     field "ipAddress" do
       alias_for "IPAddress"
@@ -1045,6 +1059,7 @@ plugin "gce" do
       page_size $page_size
     end  
       period 60
+      action 'list'
     end
 
     link "region" do
@@ -1096,7 +1111,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/healthChecks.
   type "healthCheck" do
-    href_templates "{{selfLink}}","{{items[*].selfLink}}"
+    href_templates "{{id}}","{{items[*].id}}"
 
     field "checkIntervalSec" do
       type "number"
@@ -1205,6 +1220,7 @@ plugin "gce" do
       page_size $page_size
     end  
       period 60
+      action 'list'
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/healthChecks/patch.
@@ -1675,7 +1691,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instanceGroups.
   type "instanceGroup" do
-    href_templates "{{selfLink}}","{{items[*].selfLink}}","{{items.*.instanceGroups[].selfLink}}"
+    href_templates "{{id}}","{{items[*].id}}","{{items.*.instanceGroups[].id}}"
 
     field "zone" do
       location "path"
@@ -1782,6 +1798,7 @@ plugin "gce" do
       page_size $page_size
     end  
       period 60
+      action 'list'
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instanceGroups/listInstances.
@@ -1887,7 +1904,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instances.
   type "instance" do
-    href_templates "{{selfLink}}","{{items[*].selfLink}}","{{items.*.instances[].selfLink}}"
+    href_templates "{{id}}","{{items[*].id}}","{{items.*.instances[].id}}"
 
     field "zone" do
       location "path"
@@ -2049,6 +2066,7 @@ plugin "gce" do
       page_size $page_size
     end  
       period 60
+      action 'list'
     end	
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instances/reset.
@@ -2186,7 +2204,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/networks.
   type "network" do
-    href_templates "{{selfLink}}","{{items[*].selfLink}}"
+    href_templates "{{id}}","{{items[*].id}}"
 
     field "ipv4Range" do
       alias_for "IPv4Range"
@@ -2269,6 +2287,7 @@ plugin "gce" do
       page_size $page_size
     end  
       period 60
+      action 'list'
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/networks/switchToCustomMode.
@@ -2925,7 +2944,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/snapshots.
   type "snapshot" do
-    href_templates "{{selfLink}}","{{items[*].selfLink}}"
+    href_templates "{{id}}","{{items[*].id}}"
 
     field "description" do
       type "string"
@@ -2996,6 +3015,7 @@ plugin "gce" do
       page_size $page_size
     end  
       period 60
+      action 'list'
     end
 
     provision "no_operation"
@@ -3963,21 +3983,5 @@ define stop_debugging() do
     $$debugging = false
   end
 end
-resource_pool "gce" do
-  plugin $gce
-  parameter_values do
-    project $gce_project
-  end
-  auth "my_google_auth", type: "oauth2" do
-    token_url "https://www.googleapis.com/oauth2/v4/token"
-    grant type: "jwt_bearer" do
-      iss cred("GCE_PLUGIN_ACCOUNT")
-      aud "https://www.googleapis.com/oauth2/v4/token"
-      additional_claims do {
-        "scope" => "https://www.googleapis.com/auth/compute"
-      } end
-      signing_key cred("GCE_PLUGIN_PRIVATE_KEY")
-    end
-  end
-end
+
 
