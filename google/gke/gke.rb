@@ -126,7 +126,7 @@ plugin "gke" do
     provision "provision_cluster"
     delete "destroy_cluster"
 
-    field "location" do
+    field "zone" do
       required true
       type "string"
       location "path"
@@ -151,7 +151,7 @@ plugin "gke" do
 
     action "create" do
       verb "POST"
-      path "/projects/$project/locations/$location/clusters/$cluster/nodePools"
+      path "/projects/$project/zones/$zone/clusters/$cluster/nodePools"
       type "operation"
     end 
 
