@@ -1,10 +1,9 @@
-GCE Plugin changelog
+# GCE Plugin changelog
 
-v2.0
-------
+## v2.0
 
 - Adding new syntax for resource browser
 
-v1.0
------
+## v1.0
+
 - initial release
