@@ -52,7 +52,7 @@ plugin "rs_azure_compute" do
     default_scheme "https"
     query do {
       # 'api-version' =>  '2016-04-30-preview'
-      'api-version' =>  '2017-12-01'
+      'api-version' =>  '2019-07-01'
     } end
   end
 
@@ -136,7 +136,7 @@ plugin "rs_azure_compute" do
   end
 
   type "virtualmachine" do
-    href_templates "{{contains(id, 'virtualMachines') && id || null}}"
+    href_templates "{{ value[*].properties.vmId }}"
     provision "no_operation"
     delete    "no_operation"
 
@@ -180,7 +180,8 @@ plugin "rs_azure_compute" do
       type "virtualmachine"
       path "/subscriptions/$subscription_id/providers/Microsoft.Compute/virtualMachines"
       verb "GET"
-      pagination $azure_pagination	  
+      pagination $azure_pagination	
+      output_path "value[*]"  
     end
 
     action "stop" do
@@ -394,7 +395,7 @@ plugin "rs_azure_compute" do
   end
   
    type "snapshots" do
-    href_templates "{{type=='Microsoft.Compute/snapshots' && id || null}}"
+    href_templates "{{value[*].properties.sourceUniqueId}}"
     provision "no_operation"
     delete    "no_operation"
 
@@ -406,9 +407,6 @@ plugin "rs_azure_compute" do
       pagination $azure_pagination	  
     end
 	
-    output_path "properties"
-	
-    output "timeCreated","subscriptionId","subscriptionName"
 	
     output 'id' do
      body_path 'id'
@@ -428,6 +426,18 @@ plugin "rs_azure_compute" do
     output 'tags' do
      body_path 'tags'
     end
+
+	output 'timeCreated' do
+     body_path 'properties.timeCreated'
+    end
+
+    output 'uniqueId' do
+	  body_path 'properties.uniqueId'
+    end
+
+    output 'diskSizeGB' do
+     body_path 'properties.diskSizeGB'
+    end
 	
 
     polling do
@@ -439,7 +449,7 @@ plugin "rs_azure_compute" do
   end
 
   type "disks" do
-    href_templates "{{type=='Microsoft.Compute/disks' && id || null}}"
+    href_templates "{{value[*].properties.uniqueId}}"
     provision "no_operation"
     delete    "no_operation"
 
@@ -450,10 +460,6 @@ plugin "rs_azure_compute" do
 	  output_path "value[*]"
       pagination $azure_pagination	  
     end
-	
-    output_path "properties"
-	
-    output "timeCreated","subscriptionId","subscriptionName"
 	
     output 'id' do
      body_path 'id'
@@ -473,6 +479,18 @@ plugin "rs_azure_compute" do
     output 'tags' do
      body_path 'tags'
     end	
+	
+	output 'timeCreated' do
+     body_path 'properties.timeCreated'
+    end
+
+    output 'subscriptionId' do
+	  body_path 'properties.subscriptionId'
+    end
+
+    output 'subscriptionName' do
+     body_path 'properties.subscriptionName'
+    end
 
     polling do
       field_values do
