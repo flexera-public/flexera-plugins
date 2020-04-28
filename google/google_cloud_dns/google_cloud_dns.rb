@@ -67,7 +67,7 @@ plugin "clouddns" do
   
   # https://cloud.google.com/dns/api/v1/managedZones
   type "managedZone" do
-    href_templates "/projects/$project/managedZones/{{id}}"
+    href_templates "{{managedZones[*].id}}"
 
     field "name" do
       required true
@@ -200,7 +200,7 @@ plugin "clouddns" do
   end
 
 type "resourceRecordSet" do
-    href_templates "/projects/$project/managedZones/$managed_zone/rrsets?name={{additions[*].name}}","/projects/$project/managedZones/$managed_zone/rrsets?name={{deletions[*].name}}","/projects/$project/managedZones/$managed_zone/rrsets?name={{rrsets[*].name}}"
+    href_templates "{{rrsets[*].type}}"
 
     field "record" do
       type "array"
