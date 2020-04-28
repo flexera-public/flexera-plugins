@@ -1,9 +1,9 @@
-Google Cloud DNS Plugin changelog
+# Changelog
 
-v2.0
-----
+## v2.0
+
 - Added syntax for Resource Browser
- 
-v1.0
------
-- initial release
+
+## v1.0
+
+- Initial release
