@@ -43,7 +43,7 @@ This procedure will setup the Credentials required for the GCE Plugin to interac
 1. Be sure your RightScale account has Self-Service enabled
 1. Follow the Getting Started section to create a Service Account and RightScale Credentials
 1. Navigate to the appropriate Self-Service portal
-   - For more details on using the portal review the [SS User Interface Guide](http://docs.rightscale.com/ss/guides/ss_user_interface_guide.html)
+   1. For more details on using the portal review the [SS User Interface Guide](http://docs.rightscale.com/ss/guides/ss_user_interface_guide.html)
 1. In the Design section, use the `Upload CAT` interface to complete the following:
    1. Upload each of packages listed in the Requirements Section
    1. Upload the `google_cloud_dns.rb` file located in this repository
@@ -147,7 +147,6 @@ end
 | get | [list](https://cloud.google.com/dns/api/v1/resourceRecordSets/list) | Supported
 | list | [list](https://cloud.google.com/dns/api/v1/resourceRecordSets/list) | Supported
 
-
 #### Supported Links
 
 | Link | Resource Type | 
@@ -187,7 +186,7 @@ N/A
 ## Examples
 - [test_cat-record_only.rb](./test_cat-record_only.rb)
 - [test_cat-zone&record.rb](./test_cat-zone&record.rb)
-	
+
 ## Known Issues / Limitations
 - Project resources only allow a GET actions, which will return DNS Quotas allowed for the associated GCP Project.
 
