@@ -1,9 +1,11 @@
 # GCP Cloud DNS Plugin
 
 ## Overview
+
 The GCP Cloud DNS Plugin consumes the Google Cloud DNS API and exposes the supported resources to RightScale Self-Service. This allows for easy extension of a Self-Service Cloud Application to create, delete, and manage Cloud DNS resource.
 
 ## Requirements
+
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
 - `admin`, `ss_enduser`, & `ss_designer` roles on a RightScale account with Self-Service enabled
