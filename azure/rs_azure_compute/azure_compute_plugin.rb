@@ -454,7 +454,7 @@ plugin "rs_azure_compute" do
     delete    "no_operation"
 
     action "list" do
-      type "snapshots"
+      type "disks"
       path "/subscriptions/$subscription_id/providers/Microsoft.Compute/disks"
       verb "GET"
 	  output_path "value[*]"
