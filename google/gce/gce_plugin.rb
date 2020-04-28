@@ -122,6 +122,12 @@ plugin "gce" do
       path "/projects/$project/aggregated/addresses"
       type "address"
       output_path "items.*.addresses[]"
+      field "page_size" do
+          type 'string'
+          location 'query'
+          alias_for 'maxResults'
+      end
+      pagination $google_pagination
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/addresses/delete.
@@ -638,6 +644,12 @@ plugin "gce" do
       path "/projects/$project/aggregated/disks"
       type "disk"
       output_path "items.*.disks[]"
+      field "page_size" do
+          type 'string'
+          location 'query'
+          alias_for 'maxResults'
+      end
+      pagination $google_pagination
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/disks/createSnapshot.
@@ -1756,6 +1768,12 @@ plugin "gce" do
       path "/projects/$project/aggregated/instanceGroups"
       type "instanceGroup"
       output_path "items.*.instanceGroups[]"
+      field "page_size" do
+          type 'string'
+          location 'query'
+          alias_for 'maxResults'
+      end
+      pagination $google_pagination
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instanceGroups/delete.
@@ -1989,6 +2007,12 @@ plugin "gce" do
       path "/projects/$project/aggregated/instances"
       type "instance"
       output_path "items.*.instances[]"
+      field "page_size" do
+          type 'string'
+          location 'query'
+          alias_for 'maxResults'
+      end
+      pagination $google_pagination
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instances/attachDisk.
