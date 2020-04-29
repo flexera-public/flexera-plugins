@@ -52,7 +52,7 @@ This procedure will setup the Credentials required for the GCE Plugin to interac
 1. In the Design section, use the `Upload CAT` interface to complete the following:
    1. Upload each of packages listed in the Requirements Section
    1. Upload the `google_cloud_dns.rb` file located in this repository
- 
+
 ## How to Use
 
 The Cloud DNS Plugin has been packaged as `plugins/googledns`. In order to use this plugin you must import this plugin into a CAT.
@@ -94,6 +94,7 @@ For more information on using packages, please refer to the RightScale online do
 GCP Cloud DNS resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
 The resulting resrouce can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
 ```
+
 #Creates a new EFS File System
 
 resource "my_zone", type: clouddns.managedZone do

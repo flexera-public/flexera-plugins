@@ -200,8 +200,8 @@ plugin "clouddns" do
   end
 
 type "resourceRecordSet" do
-    href_templates "{{rrsets[*].type}}"
-
+    href_templates "{{rrsets[*].join('-', [@.name, @.type])}}"
+   
     field "record" do
       type "array"
     end
