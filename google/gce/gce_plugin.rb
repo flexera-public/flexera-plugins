@@ -60,18 +60,6 @@ plugin "gce" do
     description "The GCE project to create resources in"
   end
 
-  parameter "zone" do
-    type "string"
-    label "Zone"
-    description "Zone to create resources in"
-  end
-
-  parameter "region" do
-    type "string"
-    label "Region"
-    description "Region to create resources in"
-  end
-
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/addresses.
   type "address" do
     href_templates "{{id}}","{{items[*].id}}","{{items.*.addresses[].id}}"
