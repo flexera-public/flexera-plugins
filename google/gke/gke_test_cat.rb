@@ -10,9 +10,15 @@ import "plugins/gke"
 ##########################
 
 parameter "google_project" do
-  like $gke.google_project
-  default "rightscale.com:services1"
+    like $gke.google_project
 end
+
+##########################
+##########################
+#######  Outputs  ########
+##########################
+##########################
+
 
 ##########################
 ##########################
@@ -24,23 +30,23 @@ resource "my_cluster", type: "gke.clusters" do
   zone "us-central1-a"
   cluster do {
     "name" => join(["rs-cluster-", last(split(@@deployment.href, "/"))]),
-    "initialClusterVersion" => "1.15.9-gke.9",
-    "nodePools" => [
-      {
-        "name" => "nodepool1",
-        "initialNodeCount" => 3
-      }
-    ]
-  } 
-  end 
-end
+    "initialNodeCount" => 3,
+    "initialClusterVersion" => "1.7.11-gke.1"
+  } end 
+end 
 
-resource "my_node_pool", type: "gke.nodePools" do
-  location "us-central1-a"
-  cluster @my_cluster.name
-  nodePool do {
-    "name" => "nodepool2",
-    "initialNodeCount" => 3
-  }
-  end
-end
+
+
+##########################
+##########################
+###### Operations ########
+##########################
+##########################
+
+
+
+##########################
+##########################
+###### Definitions #######
+##########################
+##########################
