@@ -34,7 +34,7 @@ plugin "gke" do
   endpoint do
     default_scheme "https"
     default_host "container.googleapis.com"
-    path "/v1"
+    path "/v1beta1"
   end
 
   parameter "project" do
@@ -43,9 +43,9 @@ plugin "gke" do
     description "The GCP Project to create/manage resources"
   end
 
-  # https://cloud.google.com/container-engine/reference/rest/v1/projects.zones.clusters
+  # https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1beta1/projects.locations.clusters
   type "clusters" do
-    href_templates "{{contains(selfLink, '/clusters/') && selfLink || null}}","{{contains(selfLink, '/clusters/') && clusters[*].selfLink || null}}"
+    href_templates "{{clusters[*].join('-', [@.name, @.endpoint])}}"
 
     provision "provision_cluster"
     delete "destroy_cluster"
@@ -69,7 +69,7 @@ plugin "gke" do
 
     action "create" do
       verb "POST"
-      path "/projects/$project/zones/$zone/clusters"
+      path "/projects/$project/locations/-/clusters"
       type "operation"
     end 
 
@@ -81,13 +81,8 @@ plugin "gke" do
 
     action "list" do
       verb "GET"
-      path "/projects/$project/zones/$zone/clusters"
+      path "/projects/$project/locations/-/clusters"
       type "clusters"
-
-      field "zone" do
-        location "path"
-      end 
-
       output_path "clusters[]"
     end
     
@@ -116,88 +111,7 @@ plugin "gke" do
 
     polling do
       period 60
-    end
-  end
-
-  # https://cloud.google.com/container-engine/reference/rest/v1/projects.zones.clusters.nodePools
-  type "nodePools" do
-    href_templates "{{contains(selfLink, '/nodePools/') && selfLink || null}}","{{contains(selfLink, '/nodePools/') && nodePools[*].selfLink || null}}"
-
-    provision "provision_cluster"
-    delete "destroy_cluster"
-
-    field "zone" do
-      required true
-      type "string"
-      location "path"
-    end 
-
-    field "cluster" do
-      required true
-      type "string"
-      location "path"
-    end
-
-    field "nodePool" do
-      required "true"
-      type "object"
-      location "body"
-    end
-
-    field "update" do
-      type "object"
-      location "body"
-    end 
-
-    action "create" do
-      verb "POST"
-      path "/projects/$project/zones/$zone/clusters/$cluster/nodePools"
-      type "operation"
-    end 
-
-    action "get" do
-      verb "GET"
-      path "$href"
-      type "nodePools"
-    end 
-
-    action "list" do
-      verb "GET"
-      path "/projects/$project/locations/$location/clusters/$cluster/nodePools"
-      type "nodePools"
-
-      field "zone" do
-        location "path"
-      end 
-
-      output_path "nodePools[]"
-    end
-    
-    action "destroy" do
-      verb "DELETE"
-      path "$href"
-      type "operation"
-    end
-
-    action "update" do
-      verb "PUT"
-      path "$href"
-      type "operation"
-
-      field "update" do
-        location "body"
-      end
-    end
-
-    output "name","config","initialNodeCount","locations","selfLink","version","instanceGroupUrls","status","autoscaling","management","maxPodsConstraint","conditions","podIpv4CidrSize","upgradeSettings"
-
-    polling do
-      period 60
-      field_values do
-        location parent_field('location')
-        cluster parent_field('name')
-      end
-      parent "clusters"
+      action 'list'
     end
   end
 
