@@ -1,0 +1,196 @@
+name "Plugin Synchronization"
+rs_pt_ver 20180301
+type "policy"
+short_description "A policy to automate publishing plugins to the catalog. See the [README](https://github.com/flexera/flexera-plugins/tree/master/tools/plugin_sync/) and [docs.rightscale.com/policies](http://docs.rightscale.com/policies/) to learn more."
+long_description ""
+severity "low"
+category "Operational"
+
+info( version: "1.0", publish: "false")
+
+parameter "param_email" do
+  type "list"
+  label "Email addresses"
+  description "Email addresses of the recipients you wish to notify"
+  min_length 1
+end
+
+parameter "param_publish" do
+  type "number"
+  label "Publish Template"
+  description "Publish Template, 0:False, 1:True"
+  default 0
+  allowed_values 0,1
+end
+
+parameter "force_upgrade" do
+  type "number"
+  label "Force Upgrade"
+  description "Force Upgrade, 0:False, 1:True"
+  default 0
+  allowed_values 0,1
+end
+
+auth "auth_rs", type: "rightscale"
+
+# get the active plugins from github
+datasource "ds_active_plugin_list" do
+  request do
+    verb "GET"
+    host "s3.amazonaws.com"
+    path "/flexera-plugin-sync-tool/active-plugin-list.json"
+  end
+  result do
+    collect jmes_path(response,"plugins") do
+      field "name", jmes_path(col_item, "name")
+      field "file_name", jmes_path(col_item, "file_name")
+      field "version", jmes_path(col_item, "version")
+      field "change_log", jmes_path(col_item,"change_log")
+    end
+  end
+end
+
+#get the list of published plugins
+datasource "ds_published_plugin_list" do
+  request do
+    auth $auth_rs
+    verb "GET"
+    host 'cloud-3.rightscale.com'
+    path join(["/cloud/v1/orgs/",rs_org_id,"/plugins"])
+    header "Api-Version", "1.0"
+    #query "view", "extended"
+  end
+  result do
+    collect jmes_path(response,"items") do
+      field "name",     jmes_path(col_item, "name")
+      field "file_name", jmes_path(col_item, "fileName")
+      field "info",     jmes_path(col_item, "info")
+      field "version",  jmes_path(col_item, "version")
+    end
+  end
+end
+
+datasource "ds_combined_plugin_list" do
+  run_script $js_combine_plugin_lists, $ds_active_plugin_list, $ds_published_plugin_list, $force_upgrade
+end
+
+script "js_combine_plugin_lists", type: "javascript" do
+  parameters "active_plugin_list", "published_plugin_list", "force_upgrade"
+  result "plugin_list"
+  code <<-EOS
+  var plugin_list = [];
+  var old_plugin_list = {};
+  var github_raw_url = 'https://raw.githubusercontent.com/flexera/flexera-plugins/master/';
+
+  // create a map of published templates
+  for (var index = 0; index < published_plugin_list.length; index++) {
+    var published_plugin = published_plugin_list[index];
+    old_plugin_list[published_plugin.name] = published_plugin;
+  }
+
+  // loop through active plugins from s3 json file
+  for ( var i = 0; i < active_plugin_list.length; i++) {
+    var active_plugin = active_plugin_list[i]
+    // map catalog plugin with json list
+    var account_plugin = old_plugin_list[active_plugin.name]
+
+    console.log(old_plugin_list[active_plugin.name])
+    console.log(active_plugin.name)
+    var plugin_name = ""
+    var account_version = "0.0.0"
+    if (account_plugin){
+
+      var account_version = account_plugin.version
+      var plugin_name = account_plugin.name
+
+    }
+    var a_version = account_version.toString().split('.')
+    var r_version = active_plugin.version.toString().split('.')
+
+    var version_upgradeable = false
+    curr_major_version = parseInt(a_version[0])
+    curr_minor_version = parseInt(a_version[1])
+    curr_patch_version = parseInt(a_version[2])
+    new_major_version = parseInt(r_version[0])
+    new_minor_version = parseInt(r_version[1])
+    new_patch_version =parseInt(r_version[2])
+
+    if (curr_major_version == new_major_version ) {
+      if (curr_minor_version < new_minor_version) {
+          var version_upgradeable = true
+      }
+    }
+    else if (curr_major_version < new_major_version) {
+      var version_upgradeable = true
+    }
+    if (force_upgrade == 1 ) {
+      var version_upgradeable = true
+    }
+    plugin_list.push({
+      name: active_plugin.name,
+      file_name: active_plugin.file_name,
+      repo_version: active_plugin.version,
+      account_version: account_version,
+      account_plugin: account_plugin,
+      version_upgradeable: version_upgradeable,
+      change_log: github_raw_url.concat(active_plugin.change_log)
+    })
+  }
+EOS
+end
+
+# escalation "upload_new_plugins" do
+#   run "upload_template", data, rs_project_id,rs_org_id, $param_publish
+# end
+
+escalation "report_plugin_update" do
+  email $param_email
+end
+
+# define upload_template($data,$project_id,$rs_org_id,$param_publish) return $url_array,$response_array do
+#
+#     $url_array = []
+#     $response_array = []
+#     foreach $item in $data do
+#       $url = "https://raw.githubusercontent.com/flexera/flexera-plugins/master/"+to_s($item["file_name"])
+#       $url_array << $url
+#
+#       $plugin_request = http_get(
+#        insecure: false,
+#        url: $url
+#       )
+#       $plugin_source = $plugin_request["body"]
+#       $file_name = last(split($item["file_name"],'/'))
+#
+#       $create_response = http_request(
+#         verb: "post",
+#         https: true,
+#         host: 'cloud-3.rightscale.com',
+#         href: join(["/cloud/v1/orgs/",$rs_org_id,"/plugins"]),
+#         headers: { "Api-Version": "1.0" },
+#         body: { "sourceContent": $plugin_source, "fileName": $file_name }
+#       )
+#       $response_array << $create_response
+#
+#     end
+# end
+
+policy "upload_plugins" do
+  validate_each $ds_combined_plugin_list do
+    summary_template "{{ rs_project_name }} (Account ID: {{ rs_project_id }}): {{ len data }} Plugins Updated"
+    detail_template <<-EOS
+
+# Plugins Updated
+
+| Name | File Name | Repo Version | Published Version | Version Upgradeable | ChangeLog |
+| ---- | --------- | ------------ | ----------------- | ------------------- | --------- |
+{{ range data -}}
+| {{ .name }} | {{.file_name}} | {{.repo_version}} | {{.account_version}} | {{.version_upgradeable}} | {{ .change_log }} |
+{{ end -}}
+EOS
+
+    escalate $report_plugin_update
+    #escalate $upload_new_plugins
+    check logic_not(val(item, "version_upgradeable"))
+  end
+end
