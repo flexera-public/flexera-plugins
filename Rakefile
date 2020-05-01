@@ -54,7 +54,7 @@ task :generate_plugin_list do
           next
         end
 
-        puts "Adding #{name}  #{version}"
+        puts "Adding #{name} #{file} #{version}"
 
         file_list<<{
           "name": name,
