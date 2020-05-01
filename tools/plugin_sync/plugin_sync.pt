@@ -99,12 +99,12 @@ script "js_combine_plugin_lists", type: "javascript" do
     var plugin_name = ""
     var account_version = "0.0.0"
     if (account_plugin){
-
       var account_version = account_plugin.version
       var plugin_name = account_plugin.name
-
     }
+    # published version
     var a_version = account_version.toString().split('.')
+    # repo version
     var r_version = active_plugin.version.toString().split('.')
 
     var version_upgradeable = false
@@ -115,17 +115,18 @@ script "js_combine_plugin_lists", type: "javascript" do
     new_minor_version = parseInt(r_version[1])
     new_patch_version =parseInt(r_version[2])
 
-    if (curr_major_version == new_major_version ) {
-      if (curr_minor_version < new_minor_version) {
-          var version_upgradeable = true
-      }
-    }
-    else if (curr_major_version < new_major_version) {
+    if (curr_major_version < new_major_version ) {
       var version_upgradeable = true
+    } else if (curr_minor_version < new_minor_version) {
+        var version_upgradeable = true
+    } else if (curr_patch_version < new_patch_version) {
+        var version_upgradeable = true
     }
+
     if (force_upgrade == 1 ) {
       var version_upgradeable = true
     }
+
     plugin_list.push({
       name: active_plugin.name,
       file_name: active_plugin.file_name,
