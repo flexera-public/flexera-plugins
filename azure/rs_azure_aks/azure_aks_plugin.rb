@@ -4,7 +4,7 @@ rs_ca_ver 20161221
 short_description "Azure AKS Plugin"
 long_description "Version: 0.1"
 package "plugins/rs_azure_aks"
-import "sys_log"
+#import "sys_log"
 
 parameter "subscription_id" do
   type  "string"
@@ -38,7 +38,7 @@ plugin "rs_azure_aks" do
     field "resource_group" do
       type "string"
       location "path"
-    end 
+    end
 
     field "name" do
       type "string"
@@ -77,7 +77,7 @@ plugin "rs_azure_aks" do
 
       field "resource_group" do
         location "path"
-      end 
+      end
 
       field "name" do
         location "path"
@@ -209,7 +209,7 @@ end
 define delete_resource(@declaration) do
   call start_debugging()
   $delete_count = 0
-  sub on_error: handle_retries($delete_count) do 
+  sub on_error: handle_retries($delete_count) do
     $delete_count = $delete_count + 1
     @declaration.destroy()
   end
