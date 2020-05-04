@@ -97,7 +97,7 @@ GCP Cloud DNS resources can now be created by specifying a resource declaration 
 The resulting resrouce can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
 ```
 
-#### Creates a new EFS File System
+#### Creates a new Managed Zone
 
 resource "my_zone", type: clouddns.managedZone do
   name "zoneA"
