@@ -2,9 +2,10 @@ name 'rs_azure_aks'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Azure AKS Plugin"
-long_description "Version: 0.1"
+long_description ""
 package "plugins/rs_azure_aks"
-import "sys_log"
+
+info(provider: 'Azure', service: 'AKS')
 
 parameter "subscription_id" do
   type  "string"
@@ -17,6 +18,8 @@ permission "read_creds" do
 end
 
 plugin "rs_azure_aks" do
+  version: "2.0.0"
+  
   endpoint do
     default_host "https://management.azure.com/"
     default_scheme "https"
@@ -38,7 +41,7 @@ plugin "rs_azure_aks" do
     field "resource_group" do
       type "string"
       location "path"
-    end 
+    end
 
     field "name" do
       type "string"
@@ -77,7 +80,7 @@ plugin "rs_azure_aks" do
 
       field "resource_group" do
         location "path"
-      end 
+      end
 
       field "name" do
         location "path"
@@ -209,7 +212,7 @@ end
 define delete_resource(@declaration) do
   call start_debugging()
   $delete_count = 0
-  sub on_error: handle_retries($delete_count) do 
+  sub on_error: handle_retries($delete_count) do
     $delete_count = $delete_count + 1
     @declaration.destroy()
   end
