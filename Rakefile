@@ -12,7 +12,7 @@ task :generate_plugin_list do
   FileUtils.mkdir_p 'dist'
   file_list = []
   # get a list of the plugins and exlude certain directories
-  Dir['**/*.rb','**/*.plugin'].reject{ |f|  f['tools/'] || f['libraries/'] || f['bundle']}.sort.each do |file|
+  Dir['**/*.rb','**/*.plugin'].reject{ |f|  f['tools/'] || f['libraries/'] || f['bundle'] }.sort.each do |file|
     change_log = ::File.join(file.split('/')[0...-1].join('/'),'CHANGELOG.md')
     readme = ::File.join(file.split('/')[0...-1].join('/'),'README.md')
     publish = true
