@@ -23,6 +23,7 @@ The GCP Cloud DNS Plugin consumes the Google Cloud DNS API and exposes the suppo
 ### Creating a GCP Service Account
 
 This procedure will create a GCE Service account with the appropriate permissions to use this plugin.
+
 1. Review the [Using OAuth 2.0 for Server to Server Applications](https://developers.google.com/identity/protocols/OAuth2ServiceAccount) documentation.
 1. Follow the section named _Creating a service account_
     - Roles needs to include:
@@ -35,6 +36,7 @@ This procedure will create a GCE Service account with the appropriate permission
 ### Creating the RightScale Credentials
 
 This procedure will setup the Credentials required for the GCE Plugin to interact with the GCE API
+
 1. Review the [Credentials](http://docs.rightscale.com/cm/dashboard/design/credentials/index.html) documentation.
 1. Create a credential in the desired RightScale Account with the name of `GOOGLE_DNS_PLUGIN_ACCOUNT`
 1. Paste the Service Account Id into the value of this credential and save
@@ -95,7 +97,7 @@ GCP Cloud DNS resources can now be created by specifying a resource declaration 
 The resulting resrouce can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
 ```
 
-#Creates a new EFS File System
+#### Creates a new EFS File System
 
 resource "my_zone", type: clouddns.managedZone do
   name "zoneA"
