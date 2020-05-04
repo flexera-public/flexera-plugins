@@ -58,12 +58,6 @@ plugin "clouddns" do
     label "Project"
     description "The GCP Project to create/manage resources"
   end
-
-  parameter "managed_zone" do
-    type "string"
-    label "Zone Name/ID"
-    description "The DNS Zone Name (or DNS Zone ID) to create/manage"
-  end
   
   # https://cloud.google.com/dns/api/v1/managedZones
   type "managedZone" do
@@ -200,7 +194,7 @@ plugin "clouddns" do
   end
 
 type "resourceRecordSet" do
-    href_templates "{{rrsets[*].join('-', [@.name, @.type])}}"
+    href_templates "{{rrsets[*].join('-', [@.name, @.rrdatas[0]])}}"
    
     field "record" do
       type "array"
@@ -239,6 +233,10 @@ type "resourceRecordSet" do
       path "/projects/$project/managedZones/$managed_zone/changes"
       output_path "additions[]"
 
+      field "managed_zone" do
+        location "path"
+      end
+
       field "record" do
         alias_for "additions"
       end
@@ -248,6 +246,10 @@ type "resourceRecordSet" do
     action "delete" do
       verb "POST"
       path "/projects/$project/managedZones/$managed_zone/changes"
+
+      field "managed_zone" do
+        location "path"
+      end
 
       field "record" do
         alias_for "deletions"
@@ -263,7 +265,11 @@ type "resourceRecordSet" do
       field "max_results" do
         location "query"
         alias_for "maxResults"
-      end 
+      end
+
+      field "managed_zone" do
+        location "path"
+      end
 
       field "name" do
         location "query"
@@ -278,8 +284,10 @@ type "resourceRecordSet" do
 
     polling do
       field_values do
+        managed_zone parent_field('name')
         max_results '200'
       end
+      parent "managedZone"
       period 60
       action 'list'
     end
@@ -314,7 +322,6 @@ resource_pool "clouddns" do
   plugin $clouddns
   parameter_values do
     project $google_project
-    managed_zone $dns_zone
   end
   auth "my_google_auth", type: "oauth2" do
     token_url "https://www.googleapis.com/oauth2/v4/token"
@@ -424,4 +431,3 @@ define stop_debugging() do
     $$debugging = false
   end
 end
-
