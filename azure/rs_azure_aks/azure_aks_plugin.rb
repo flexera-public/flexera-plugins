@@ -4,7 +4,7 @@ rs_ca_ver 20161221
 short_description "Azure AKS Plugin"
 long_description "Version: 0.1"
 package "plugins/rs_azure_aks"
-#import "sys_log"
+import "sys_log"
 
 parameter "subscription_id" do
   type  "string"
