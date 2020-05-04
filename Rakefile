@@ -11,7 +11,8 @@ desc "Create a list of active plugins to be published to the Public Plugin Catal
 task :generate_plugin_list do
   FileUtils.mkdir_p 'dist'
   file_list = []
-  Dir['**/*.rb','**/*.plugin'].reject{ |f| f['tools/'] }.each do |file|
+  # get a list of the plugins and exlude certain directories
+  Dir['**/*.rb','**/*.plugin'].reject{ |f|  f['tools/'] || f['libraries/'] || f['bundle']}.each do |file|
     change_log = ::File.join(file.split('/')[0...-1].join('/'),'CHANGELOG.md')
     readme = ::File.join(file.split('/')[0...-1].join('/'),'README.md')
     publish = true
