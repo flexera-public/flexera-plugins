@@ -15,14 +15,6 @@ parameter "param_email" do
   min_length 1
 end
 
-parameter "param_publish" do
-  type "number"
-  label "Publish Template"
-  description "Publish Template, 0:False, 1:True"
-  default 0
-  allowed_values 0,1
-end
-
 parameter "force_upgrade" do
   type "number"
   label "Force Upgrade"
@@ -141,14 +133,14 @@ EOS
 end
 
 escalation "upload_new_plugins" do
-  run "upload_template", data, rs_project_id,rs_org_id, $param_publish
+  run "upload_template", data, rs_project_id,rs_org_id
 end
 
 escalation "report_plugin_update" do
   email $param_email
 end
 
-define upload_template($data,$project_id,$rs_org_id,$param_publish) return $url_array,$response_array do
+define upload_template($data,$project_id,$rs_org_id) return $url_array,$response_array do
 
     $url_array = []
     $response_array = []
