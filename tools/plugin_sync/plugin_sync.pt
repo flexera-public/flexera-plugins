@@ -102,9 +102,9 @@ script "js_combine_plugin_lists", type: "javascript" do
       var account_version = account_plugin.version
       var plugin_name = account_plugin.name
     }
-    # published version
+    // published version
     var a_version = account_version.toString().split('.')
-    # repo version
+    // repo version
     var r_version = active_plugin.version.toString().split('.')
 
     var version_upgradeable = false
@@ -140,41 +140,41 @@ script "js_combine_plugin_lists", type: "javascript" do
 EOS
 end
 
-# escalation "upload_new_plugins" do
-#   run "upload_template", data, rs_project_id,rs_org_id, $param_publish
-# end
+escalation "upload_new_plugins" do
+  run "upload_template", data, rs_project_id,rs_org_id, $param_publish
+end
 
 escalation "report_plugin_update" do
   email $param_email
 end
 
-# define upload_template($data,$project_id,$rs_org_id,$param_publish) return $url_array,$response_array do
-#
-#     $url_array = []
-#     $response_array = []
-#     foreach $item in $data do
-#       $url = "https://raw.githubusercontent.com/flexera/flexera-plugins/master/"+to_s($item["file_name"])
-#       $url_array << $url
-#
-#       $plugin_request = http_get(
-#        insecure: false,
-#        url: $url
-#       )
-#       $plugin_source = $plugin_request["body"]
-#       $file_name = last(split($item["file_name"],'/'))
-#
-#       $create_response = http_request(
-#         verb: "post",
-#         https: true,
-#         host: 'cloud-3.rightscale.com',
-#         href: join(["/cloud/v1/orgs/",$rs_org_id,"/plugins"]),
-#         headers: { "Api-Version": "1.0" },
-#         body: { "sourceContent": $plugin_source, "fileName": $file_name }
-#       )
-#       $response_array << $create_response
-#
-#     end
-# end
+define upload_template($data,$project_id,$rs_org_id,$param_publish) return $url_array,$response_array do
+
+    $url_array = []
+    $response_array = []
+    foreach $item in $data do
+      $url = "https://raw.githubusercontent.com/flexera/flexera-plugins/master/"+to_s($item["file_name"])
+      $url_array << $url
+
+      $plugin_request = http_get(
+       insecure: false,
+       url: $url
+      )
+      $plugin_source = $plugin_request["body"]
+      $file_name = last(split($item["file_name"],'/'))
+
+      $create_response = http_request(
+        verb: "post",
+        https: true,
+        host: 'cloud-3.rightscale.com',
+        href: join(["/cloud/v1/orgs/",$rs_org_id,"/plugins"]),
+        headers: { "Api-Version": "1.0" },
+        body: { "sourceContent": $plugin_source, "fileName": $file_name }
+      )
+      $response_array << $create_response
+
+    end
+end
 
 policy "upload_plugins" do
   validate_each $ds_combined_plugin_list do
@@ -191,7 +191,7 @@ policy "upload_plugins" do
 EOS
 
     escalate $report_plugin_update
-    #escalate $upload_new_plugins
+    escalate $upload_new_plugins
     check logic_not(val(item, "version_upgradeable"))
   end
 end
