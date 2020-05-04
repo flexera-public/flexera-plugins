@@ -164,11 +164,12 @@ define upload_template($data,$project_id,$rs_org_id,$param_publish) return $url_
       $file_name = last(split($item["file_name"],'/'))
 
       $create_response = http_request(
+        auth: $$auth_rs,
         verb: "post",
         https: true,
         host: 'cloud-3.rightscale.com',
         href: join(["/cloud/v1/orgs/",$rs_org_id,"/plugins"]),
-        headers: { "Api-Version": "1.0" },
+        headers: { "api-version": "1.0" },
         body: { "sourceContent": $plugin_source, "fileName": $file_name }
       )
       $response_array << $create_response
