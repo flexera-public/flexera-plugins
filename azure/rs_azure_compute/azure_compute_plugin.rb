@@ -4,7 +4,7 @@ rs_ca_ver 20161221
 short_description "Azure Compute"
 long_description ""
 package "plugins/rs_azure_compute"
-import "sys_log"
+#import "sys_log"
 info(
   provider: "Azure",
   service: "Compute"
@@ -31,7 +31,7 @@ pagination "azure_pagination" do
   end
 end
 
-plugin "rs_azure_compute" do
+plugin "azure_compute" do
 
   short_description 'Azure Compute'
   long_description 'Azure Compute'
@@ -41,7 +41,7 @@ plugin "rs_azure_compute" do
     label 'Source'
     url 'https://github.com/flexera/flexera-plugins/blob/master/azure/rs_azure_compute/azure_compute_plugin.rb'
   end
-  
+
   documentation_link 'readme' do
     label 'Readme'
     url 'https://github.com/flexera/flexera-plugins/blob/master/azure/rs_azure_compute/README.md'
@@ -180,8 +180,8 @@ plugin "rs_azure_compute" do
       type "virtualmachine"
       path "/subscriptions/$subscription_id/providers/Microsoft.Compute/virtualMachines"
       verb "GET"
-      pagination $azure_pagination	
-      output_path "value[*]"  
+      pagination $azure_pagination
+      output_path "value[*]"
     end
 
     action "stop" do
@@ -214,13 +214,13 @@ plugin "rs_azure_compute" do
     end
 
     polling do
-     field_values do	 
-     end    
+     field_values do
+     end
        period 60
 	   action 'list_all'
     end
     output "properties","nextLink"
-	
+
     output 'id' do
      body_path 'id'
     end
@@ -239,7 +239,7 @@ plugin "rs_azure_compute" do
     output 'tags' do
      body_path 'tags'
     end
-	
+
   end
 
   type "extensions" do
@@ -393,7 +393,7 @@ plugin "rs_azure_compute" do
       body_path "properties.provisioningState"
     end
   end
-  
+
    type "snapshots" do
     href_templates "{{value[*].properties.sourceUniqueId}}"
     provision "no_operation"
@@ -404,10 +404,10 @@ plugin "rs_azure_compute" do
       path "/subscriptions/$subscription_id/providers/Microsoft.Compute/snapshots"
       verb "GET"
 	  output_path "value[*]"
-      pagination $azure_pagination	  
+      pagination $azure_pagination
     end
-	
-	
+
+
     output 'id' do
      body_path 'id'
     end
@@ -438,11 +438,11 @@ plugin "rs_azure_compute" do
     output 'diskSizeGB' do
      body_path 'properties.diskSizeGB'
     end
-	
+
 
     polling do
       field_values do
-    end  
+    end
       period 60
 	  action 'list'
     end
@@ -458,9 +458,9 @@ plugin "rs_azure_compute" do
       path "/subscriptions/$subscription_id/providers/Microsoft.Compute/disks"
       verb "GET"
 	  output_path "value[*]"
-      pagination $azure_pagination	  
+      pagination $azure_pagination
     end
-	
+
     output 'id' do
      body_path 'id'
     end
@@ -478,8 +478,8 @@ plugin "rs_azure_compute" do
 
     output 'tags' do
      body_path 'tags'
-    end	
-	
+    end
+
 	output 'timeCreated' do
      body_path 'properties.timeCreated'
     end
@@ -494,7 +494,7 @@ plugin "rs_azure_compute" do
 
     polling do
       field_values do
-    end  
+    end
       period 60
 	  action 'list'
     end

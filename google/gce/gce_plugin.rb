@@ -4,7 +4,7 @@ short_description "Google Compute Engine (GCE)"
 long_description ""
 type 'plugin'
 package "plugins/gce"
-import "sys_log"
+#import "sys_log"
 info(
       provider: "Google",
       service: "Compute"
@@ -25,7 +25,7 @@ pagination "google_pagination" do
   end
 end
 
-plugin "gce" do
+plugin "gce_compute" do
 
   short_description 'Google Compute Engine (GCE) plugin'
   long_description 'Plugin support for Google Compute Engine (GCE) compute resources.'

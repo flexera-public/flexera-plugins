@@ -22,4 +22,4 @@ deploy:
   access_key_id: "$PLUGIN_SYNC_TOOL_S3_AWS_ACCESS_KEY_ID"
   secret_access_key: "$PLUGIN_SYNC_TOOL_S3_AWS_SECRET_ACCESS_KEY"
   on:
-    branch: master
+    branch: test_pub
