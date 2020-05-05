@@ -1,10 +1,15 @@
-name 'rs_azure_compute'
+name 'Azure Compute'
 type 'plugin'
 rs_ca_ver 20161221
-short_description "Azure Compute Plugin"
-long_description "Version: 1.5"
+short_description "Azure Compute"
+long_description ""
 package "plugins/rs_azure_compute"
 import "sys_log"
+info(
+  provider: "Azure",
+  service: "Compute"
+  )
+
 
 parameter "subscription_id" do
   type  "string"
@@ -16,13 +21,38 @@ permission "read_creds" do
   resources "rs_cm.credentials"
 end
 
+#pagination support
+pagination "azure_pagination" do
+  get_page_marker do
+    body_path "nextLink"
+  end
+  set_page_marker do
+    uri true
+  end
+end
+
 plugin "rs_azure_compute" do
+
+  short_description 'Azure Compute'
+  long_description 'Azure Compute'
+  version '2.0.0'
+
+  documentation_link 'source' do
+    label 'Source'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/azure/rs_azure_compute/azure_compute_plugin.rb'
+  end
+  
+  documentation_link 'readme' do
+    label 'Readme'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/azure/rs_azure_compute/README.md'
+  end
+
   endpoint do
     default_host "https://management.azure.com/"
     default_scheme "https"
     query do {
       # 'api-version' =>  '2016-04-30-preview'
-      'api-version' =>  '2017-12-01'
+      'api-version' =>  '2019-07-01'
     } end
   end
 
@@ -106,7 +136,7 @@ plugin "rs_azure_compute" do
   end
 
   type "virtualmachine" do
-    href_templates "{{contains(id, 'virtualMachines') && id || null}}"
+    href_templates "{{ value[*].properties.vmId }}"
     provision "no_operation"
     delete    "no_operation"
 
@@ -150,6 +180,8 @@ plugin "rs_azure_compute" do
       type "virtualmachine"
       path "/subscriptions/$subscription_id/providers/Microsoft.Compute/virtualMachines"
       verb "GET"
+      pagination $azure_pagination	
+      output_path "value[*]"  
     end
 
     action "stop" do
@@ -181,7 +213,33 @@ plugin "rs_azure_compute" do
       path "$href/instanceView"
     end
 
-    output "id","name","location","tags","properties","nextLink"
+    polling do
+     field_values do	 
+     end    
+       period 60
+	   action 'list_all'
+    end
+    output "properties","nextLink"
+	
+    output 'id' do
+     body_path 'id'
+    end
+
+    output 'name' do
+	  body_path 'name'
+    end
+
+    output 'region' do
+     body_path 'location'
+    end
+
+    output 'state' do
+    end
+
+    output 'tags' do
+     body_path 'tags'
+    end
+	
   end
 
   type "extensions" do
@@ -333,6 +391,112 @@ plugin "rs_azure_compute" do
 
     output "state" do
       body_path "properties.provisioningState"
+    end
+  end
+  
+   type "snapshots" do
+    href_templates "{{value[*].properties.sourceUniqueId}}"
+    provision "no_operation"
+    delete    "no_operation"
+
+    action "list" do
+      type "snapshots"
+      path "/subscriptions/$subscription_id/providers/Microsoft.Compute/snapshots"
+      verb "GET"
+	  output_path "value[*]"
+      pagination $azure_pagination	  
+    end
+	
+	
+    output 'id' do
+     body_path 'id'
+    end
+
+    output 'name' do
+	  body_path 'name'
+    end
+
+    output 'region' do
+     body_path 'location'
+    end
+
+    output 'state' do
+    end
+
+    output 'tags' do
+     body_path 'tags'
+    end
+
+	output 'timeCreated' do
+     body_path 'properties.timeCreated'
+    end
+
+    output 'uniqueId' do
+	  body_path 'properties.uniqueId'
+    end
+
+    output 'diskSizeGB' do
+     body_path 'properties.diskSizeGB'
+    end
+	
+
+    polling do
+      field_values do
+    end  
+      period 60
+	  action 'list'
+    end
+  end
+
+  type "disks" do
+    href_templates "{{value[*].properties.uniqueId}}"
+    provision "no_operation"
+    delete    "no_operation"
+
+    action "list" do
+      type "disks"
+      path "/subscriptions/$subscription_id/providers/Microsoft.Compute/disks"
+      verb "GET"
+	  output_path "value[*]"
+      pagination $azure_pagination	  
+    end
+	
+    output 'id' do
+     body_path 'id'
+    end
+
+    output 'name' do
+	  body_path 'name'
+    end
+
+    output 'region' do
+     body_path 'location'
+    end
+
+    output 'state' do
+    end
+
+    output 'tags' do
+     body_path 'tags'
+    end	
+	
+	output 'timeCreated' do
+     body_path 'properties.timeCreated'
+    end
+
+    output 'subscriptionId' do
+	  body_path 'properties.subscriptionId'
+    end
+
+    output 'subscriptionName' do
+     body_path 'properties.subscriptionName'
+    end
+
+    polling do
+      field_values do
+    end  
+      period 60
+	  action 'list'
     end
   end
 end
