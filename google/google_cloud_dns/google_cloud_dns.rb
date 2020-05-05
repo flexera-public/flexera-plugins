@@ -16,13 +16,6 @@ parameter "google_project" do
   allowed_pattern "^[0-9a-z:\.-]+$"
 end
 
-parameter "dns_zone" do
-  type "string"
-  label "Zone Name/ID"
-  description "The DNS Zone Name (or DNS Zone ID) to create/manage"
-  # Needed to manage DNS Records (type = resourceRecordSet)
-end 
-
 pagination "google_pagination" do
   get_page_marker do
     body_path "nextPageToken"
