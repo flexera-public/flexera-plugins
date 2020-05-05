@@ -30,7 +30,7 @@ datasource "ds_active_plugin_list" do
   request do
     verb "GET"
     host "s3.amazonaws.com"
-    path "/flexera-plugin-sync-tool/active-plugin-list.json"
+    path "/rs-policysync-tool/active-plugin-list.json"
   end
   result do
     collect jmes_path(response,"plugins") do
@@ -86,8 +86,6 @@ script "js_combine_plugin_lists", type: "javascript" do
     // map catalog plugin with json list
     var account_plugin = old_plugin_list[active_plugin.name]
 
-    console.log(old_plugin_list[active_plugin.name])
-    console.log(active_plugin.name)
     var plugin_name = ""
     var account_version = "0.0.0"
     if (account_plugin){
@@ -145,7 +143,6 @@ define upload_template($data,$project_id,$rs_org_id) return $url_array,$response
     $url_array = []
     $response_array = []
     foreach $item in $data do
-      $url = "https://raw.githubusercontent.com/flexera/flexera-plugins/master/"+to_s($item["file_name"])
       $url_array << $url
 
       $plugin_request = http_get(
