@@ -502,7 +502,7 @@ plugin "azure_compute" do
 end
 
 resource_pool "rs_azure_compute" do
-    plugin $rs_azure_compute
+    plugin $azure_compute
     parameter_values do
       subscription_id $subscription_id
     end

@@ -985,7 +985,7 @@ plugin "aws_compute" do
 end
 
 resource_pool "compute_pool" do
-  plugin $rs_aws_compute
+  plugin $aws_compute
   auth "key", type: "aws" do
     version     4
     service    'ec2'
