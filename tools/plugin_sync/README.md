@@ -13,4 +13,4 @@ This Policy Template can be used to synchronize (upload, overwrite, or alert) bu
 
 ## Required Roles
 
-- `policy_manager` or `policy_designer`
+- `policy_manager` or `policy_designer` 
