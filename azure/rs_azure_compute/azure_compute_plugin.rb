@@ -35,7 +35,7 @@ plugin "xxx_azure_compute" do
 
   short_description 'Azure Compute'
   long_description 'Azure Compute'
-  version '2.0.0'
+  version '2.0.1'
 
   documentation_link 'source' do
     label 'Source'
