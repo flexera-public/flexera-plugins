@@ -143,6 +143,7 @@ define upload_template($data,$project_id,$rs_org_id) return $url_array,$response
     $url_array = []
     $response_array = []
     foreach $item in $data do
+      $url = "https://raw.githubusercontent.com/flexera/flexera-plugins/master/"+to_s($item["file_name"])
       $url_array << $url
 
       $plugin_request = http_get(
