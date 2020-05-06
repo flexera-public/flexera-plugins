@@ -31,7 +31,7 @@ pagination "azure_pagination" do
   end
 end
 
-plugin "xxx-azure_compute" do
+plugin "xxx_azure_compute" do
 
   short_description 'Azure Compute'
   long_description 'Azure Compute'
