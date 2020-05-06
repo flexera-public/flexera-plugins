@@ -152,6 +152,7 @@ define upload_template($data,$project_id,$rs_org_id) return $url_array,$response
       $plugin_source = $plugin_request["body"]
       $file_name = last(split($item["file_name"],'/'))
 
+      # add the new plugin
       $create_response = http_request(
         auth: $$auth_rs,
         verb: "post",
@@ -161,7 +162,18 @@ define upload_template($data,$project_id,$rs_org_id) return $url_array,$response
         headers: { "api-version": "1.0" },
         body: { "sourceContent": $plugin_source, "fileName": $file_name }
       )
-      $response_array << $create_response
+      $response_array << to_s($create_response)
+      # set default-version
+      $version_response = http_request(
+        auth: $$auth_rs,
+        verb: "put",
+        https: true,
+        host: 'cloud-3.rightscale.com',
+        href: join(["/cloud/v1/orgs/",$rs_org_id,"/plugins/",$item['name'],"/default-version"]),
+        headers: { "api-version": "1.0" },
+        body: { "version": $item['repo_version'] }
+      )
+      $response_array << to_s($version_response)
 
     end
 end
