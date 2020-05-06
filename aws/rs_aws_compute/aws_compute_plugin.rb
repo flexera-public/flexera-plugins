@@ -26,11 +26,11 @@ pagination 'aws_pagination' do
   end
 end
 
-plugin "aws_compute" do
+plugin "xxx_aws_compute" do
 
   short_description 'AWS-EC2 plugin'
   long_description 'Supports AWS EC2'
-  version '2.0.1'
+  version '2.0.0'
 
   documentation_link 'source' do
     label 'Source'
@@ -985,7 +985,7 @@ plugin "aws_compute" do
 end
 
 resource_pool "compute_pool" do
-  plugin $aws_compute
+  plugin $xxx_aws_compute
   auth "key", type: "aws" do
     version     4
     service    'ec2'

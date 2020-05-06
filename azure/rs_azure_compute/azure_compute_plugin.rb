@@ -31,7 +31,7 @@ pagination "azure_pagination" do
   end
 end
 
-plugin "azure_compute" do
+plugin "xxx-azure_compute" do
 
   short_description 'Azure Compute'
   long_description 'Azure Compute'
@@ -502,7 +502,7 @@ plugin "azure_compute" do
 end
 
 resource_pool "rs_azure_compute" do
-    plugin $azure_compute
+    plugin $xxx_azure_compute
     parameter_values do
       subscription_id $subscription_id
     end

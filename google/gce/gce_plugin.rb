@@ -25,7 +25,7 @@ pagination "google_pagination" do
   end
 end
 
-plugin "gce_compute" do
+plugin "xxx_gce_compute" do
 
   short_description 'Google Compute Engine (GCE) plugin'
   long_description 'Plugin support for Google Compute Engine (GCE) compute resources.'
