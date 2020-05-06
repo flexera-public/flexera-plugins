@@ -15,6 +15,13 @@ parameter "param_email" do
   min_length 1
 end
 
+parameter "param_cloud_host" do
+  type "string"
+  label "cloud api host"
+  description "The host for the cloud api."
+  default "https://cloud-3.rightscale.com"
+end
+
 parameter "force_upgrade" do
   type "number"
   label "Force Upgrade"
@@ -47,10 +54,8 @@ datasource "ds_published_plugin_list" do
   request do
     auth $auth_rs
     verb "GET"
-    host 'cloud-3.rightscale.com'
+    host $param_cloud_host
     path join(["/cloud/v1/orgs/",rs_org_id,"/plugins"])
-    header "Api-Version", "1.0"
-    #query "view", "extended"
   end
   result do
     collect jmes_path(response,"items") do
@@ -131,14 +136,14 @@ EOS
 end
 
 escalation "upload_new_plugins" do
-  run "upload_template", data, rs_project_id,rs_org_id
+  run "upload_template", data, rs_project_id,rs_org_id, $param_cloud_host
 end
 
 escalation "report_plugin_update" do
   email $param_email
 end
 
-define upload_template($data,$project_id,$rs_org_id) return $url_array,$response_array do
+define upload_template($data,$project_id,$rs_org_id,$param_cloud_host) return $url_array,$response_array do
 
     $url_array = []
     $response_array = []
@@ -158,9 +163,8 @@ define upload_template($data,$project_id,$rs_org_id) return $url_array,$response
         auth: $$auth_rs,
         verb: "post",
         https: true,
-        host: 'cloud-3.rightscale.com',
+        host: $param_cloud_host,
         href: join(["/cloud/v1/orgs/",$rs_org_id,"/plugins"]),
-        headers: { "api-version": "1.0" },
         body: { "sourceContent": $plugin_source, "fileName": $file_name }
       )
       $response_array << to_s($create_response)
@@ -169,9 +173,8 @@ define upload_template($data,$project_id,$rs_org_id) return $url_array,$response
         auth: $$auth_rs,
         verb: "put",
         https: true,
-        host: 'cloud-3.rightscale.com',
+        host: $param_cloud_host,
         href: join(["/cloud/v1/orgs/",$rs_org_id,"/plugins/",$item['name'],"/default-version"]),
-        headers: { "api-version": "1.0" },
         body: { "version": $item['repo_version'] }
       )
       $response_array << to_s($version_response)
