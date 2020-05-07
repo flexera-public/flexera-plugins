@@ -25,9 +25,6 @@ end
 
 plugin "gce" do
 
-  short_description 'Google Compute Engine (GCE) plugin'
-  long_description 'Plugin support for Google Compute Engine (GCE) compute resources.'
-  version '2.2.9'
 
   documentation_link 'source' do
     label 'Source'
