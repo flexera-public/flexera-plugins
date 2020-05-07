@@ -13,6 +13,10 @@ script:
 - bundle exec danger --verbose
 - bundle exec rake generate_plugin_list
 deploy:
+# generate the active plugin list json file
+- provider: script
+  script: bundle exec rake generate_plugin_list
+# upload the active plugin list json file to s3  
 - provider: s3
   bucket: rs-policysync-tool
   region: us-east-1
