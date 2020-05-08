@@ -1,7 +1,9 @@
-# RightScale Plugins
-This repo contains a library of open source RightScale plugins.
+# Flexera CMP Plugins
+
+This repository contains the library of open source Flexera CMP plugins.
 
 ## Released Plugins
+
 ### Amazon Web Services
 - [AWS Elastic Load Balancer (Classic LB)](./aws/rs_aws_elb/)
 - [AWS Elastic Load Balancer (Application LB)](./aws/rs_aws_alb/)
@@ -18,6 +20,7 @@ This repo contains a library of open source RightScale plugins.
 - [AWS EKS](./aws/rs_aws_eks)
 
 ### Azure
+
 - [Azure SQL Database](./azure/rs_azure_sql/)
 - [Azure ARM Templates](./azure/rs_azure_template)
 - [Azure Compute](./azure/rs_azure_compute)
@@ -33,8 +36,10 @@ This repo contains a library of open source RightScale plugins.
 - [Azure Resources](./azure/rs_azure_resources/)
 - [Azure CosmosDB](./azure/rs_azure_cosmosdb/)
 - [Azure AKS](./azure/rs_azure_aks/)
+- [Azure Databricks](./azure/rs_azure_databricks/)
 
 ### Google Cloud Platform
+
 - [GCP Google Compute Engine](./google/gce/)
 - [GCP Cloud DNS](./google/google_cloud_dns/)
 - [GCP Cloud SQL](./google/google_cloud_sql/)
@@ -43,26 +48,32 @@ This repo contains a library of open source RightScale plugins.
 - [Google Deployment Manager](./google/google_deployment_manager/)
 
 ### Fastly
+
 - [Fastly IP Address](./fastly/ipaddresslist/)
 
 ### Infoblox
 - [Infoblox IPAM Appliance](./infoblox/ipam/)
 
 ### VMWare
+
 - [VMWare NSX](./vmware/nsx)
 
 ### Other Clouds
+
 - [Digital Ocean](./digital_ocean)
 
-## RightScale Plugin Documentation
+## Flexera CMP Plugin Documentation
+
 - [Guide](http://docs.rightscale.com/ss/guides/ss_plugins.html)
 - [Reference Documentation](http://docs.rightscale.com/ss/reference/cat/v20161221/ss_plugins.html)
 
 ## Getting Help
-Support for these plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.
-Visit http://chat.rightscale.com/ to join!
+
+Support for these plugin will be provided though GitHub Issues and the
+[Flexera Community](https://community.flexera.com/t5/Cloud-Management-Platform/ct-p/Cloud-Management-Platform).
 
 ### Opening an Issue
+
 Github issues contain a template for three types of requests(Bugs, New Features to an existing Plugin, New Plugin Request)
 
 - Bugs: Any issue you are having with an existing plugin not functioning correctly, this does not include missing features, or actions.
