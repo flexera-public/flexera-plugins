@@ -12,10 +12,10 @@ All releases are tagged in git. To see the releases available to you see the cha
 
 ## Pull requests
 
-- <https://github.com/rightscale/rightscale-plugins/pulls>
+- <https://github.com/flexera/flexera-plugins/pulls>
 
 ## Issues
 
 Need to report an issue? Use the github issues:
 
-- <https://github.com/rightscale/rightscale-plugins/issues>
+- <https://github.com/flexera/flexera-plugins/issues>
