@@ -1,29 +1,24 @@
-Compute Plugin changelog
+# changelog
 
-v2.0
-------
+## v2.0
 
 - Adding new syntax for resource browser
 
-v1.5
-------
+## v1.5
 
 - Adding CreateImage support
 
-v1.4
------
+## v1.4
 
 - Changing Plugin to Compute from VPC
 - Adding Volume Support
 - Adding volume modification support
 
-v1.3
------
+## v1.3
 
 - adding in privatelink support
 
-v1.2
------
+## v1.2
 
 - adding action enablevpcclassiclink, disablevpcclassiclink to vpc resource
 - adding action enablevpcclassiclinkdnssupport,disablevpcclassiclinkdnssupport to vpc resource
@@ -31,19 +26,11 @@ v1.2
 - adding show action to vpc resource
 - adding tags resource to vpc plugin
 
-v1.1
------
+## v1.1
 
 - Adding in nat gateway support
 - Adding in Addresses Read Only Support
 
-v1.1
------
-
-- Adding in nat gateway support
-- Adding in Addresses Read Only Support
-
-v1.0
------
+## v1.0
 
 - initial release of VPC Plugin
