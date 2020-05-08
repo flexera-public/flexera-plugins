@@ -1,10 +1,14 @@
-name 'aws_compute_plugin'
+name 'Amazon EC2 Service (Amazon EC2)'
 type 'plugin'
 rs_ca_ver 20161221
-short_description "Amazon Web Services - EC2 Plugin"
-long_description "Version 1.5"
+short_description "Amazon Web Services (AWS) - Amazon EC2"
+long_description ""
 package "plugin/rs_aws_compute"
 import "sys_log"
+info(
+  provider: "AWS",
+  service: "EC2"
+)
 
 parameter 'param_region' do
   type 'string'
@@ -12,15 +16,56 @@ parameter 'param_region' do
   default 'us-east-1'
 end
 
-plugin "rs_aws_compute" do
-  endpoint do
-    default_host "ec2.amazonaws.com"
-    default_scheme "https"
-    query do {
-      "Version" => "2016-11-15"
-    } end
+pagination 'aws_pagination' do
+  get_page_marker do
+    body_path '/*/nextToken'
   end
-  
+
+  set_page_marker do
+    query 'NextToken'
+  end
+end
+
+plugin "rs_aws_compute" do
+
+  short_description 'AWS-EC2 plugin'
+  long_description 'Supports AWS EC2'
+  version '2.0.0'
+
+  documentation_link 'source' do
+    label 'Source'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/aws/rs_aws_compute/aws_compute_plugin.rb'
+  end
+
+  documentation_link 'readme' do
+    label 'readme'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/aws/rs_aws_compute/README.md'
+  end
+
+  parameter 'region' do
+    type 'string'
+    label 'AWS Region'
+    default 'us-east-1'
+    description 'The region in which the resources are created'
+  end
+
+  parameter 'page_size' do
+    type 'string'
+    label 'Page size for AWS responses'
+    default '200'
+    description 'The maximum results count for each page of AWS data received.'
+  end
+
+    endpoint do
+        default_host 'ec2.$region.amazonaws.com'
+        default_scheme 'https'
+        path '/'
+        query do {
+        'Version' => '2016-11-15'
+        } end
+        request_content_type 'application/x-www-form-urlencoded; charset=utf-8'
+    end
+
   type "vpc" do
     # HREF is set to the correct template in the provision definition due to a lack of usable fields in the response to build the href
     href_templates "/?Action=DescribeVpcs&VpcId.1={{//CreateVpcResponse/vpc/vpcId}}","/?DescribeVpcs&VpcId.1={{//DescribeVpcsResponse/vpcSet/item/vpcId}}"
@@ -44,13 +89,28 @@ plugin "rs_aws_compute" do
       type      "string"
       location  "query"
     end
+	field "page_size" do
+      type 'string'
+        location 'query'
+        alias_for 'MaxResults'
+      end
 
-    output "vpcId" do
-      type "simple_element"
+    output 'id' do
+     body_path 'vpcId'
     end
 
-    output "state" do
-      type "simple_element"
+    output 'name' do
+    end
+
+    output 'region' do
+    end
+
+    output 'state' do
+      body_path 'state'
+    end
+
+    output 'tags' do
+     body_path 'tagSet'
     end
 
     output "cidrBlock" do
@@ -62,10 +122,6 @@ plugin "rs_aws_compute" do
     end
 
     output "dhcpOptionsId" do
-      type "simple_element"
-    end
-
-    output "tagSet" do
       type "simple_element"
     end
 
@@ -82,7 +138,7 @@ plugin "rs_aws_compute" do
       path "/?Action=CreateVpc"
       output_path "//CreateVpcResponse/vpc"
     end
-    
+
     action "destroy" do
       verb "POST"
       path "/?Action=DeleteVpc&VpcId=$vpcId"
@@ -157,6 +213,13 @@ plugin "rs_aws_compute" do
         location "query"
       end
     end
+
+    polling do
+     field_values do
+     end
+       period 60
+	   action 'list'
+    end
   end
 
   type "endpoint" do
@@ -200,7 +263,7 @@ plugin "rs_aws_compute" do
       type "string"
       location "query"
     end
-    
+
     output "vpcEndpointId" do
       type "simple_element"
     end
@@ -234,17 +297,17 @@ plugin "rs_aws_compute" do
       path "/?Action=CreateVpcEndpoint"
       output_path "//CreateVpcEndpointResponse/vpcEndpoint"
     end
-    
+
     action "destroy" do
       verb "POST"
       path "/?Action=DeleteVpcEndpoints&VpcEndpointId.1=$vpcEndpointId"
     end
- 
+
     action "get" do
       verb "POST"
       output_path "//DescribeVpcEndpointsResponse/vpcEndpointSet/item"
     end
- 
+
     action "list" do
       verb "POST"
       path "/?Action=DescribeVpcEndpoints"
@@ -262,7 +325,7 @@ plugin "rs_aws_compute" do
       type      "string"
       location  "query"
     end
-    
+
     output "routeTableId" do
       type "simple_element"
     end
@@ -292,17 +355,17 @@ plugin "rs_aws_compute" do
       path "/?Action=CreateRouteTable"
       output_path "//CreateRouteTableResponse/routeTable"
     end
-    
+
     action "destroy" do
       verb "POST"
       path "/?Action=DeleteRouteTables&RouteTableId.1=$routeTableId"
     end
- 
+
     action "get" do
       verb "POST"
       output_path "//DescribeRouteTablesResponse/routeTableSet/item"
     end
- 
+
     action "list" do
       verb "POST"
       path "/?Action=DescribeVpcEndpoints"
@@ -352,17 +415,17 @@ plugin "rs_aws_compute" do
       path "/?Action=CreateNatGateway"
       output_path "//CreateNatGatewayResponse/natGateway"
     end
-    
+
     action "destroy" do
       verb "POST"
       path "/?Action=DeleteNatGateway&NatGatewayId=$natGatewayId"
     end
- 
+
     action "get" do
       verb "POST"
       output_path "//DescribeNatGatewaysResponse/natGatewaySet/item"
     end
- 
+
     action "list" do
       verb "POST"
       path "/?Action=DescribeNatGateways"
@@ -413,6 +476,24 @@ plugin "rs_aws_compute" do
       output_path "//DescribeAddressesResponse/addressesSet/item"
     end
 
+    output 'id' do
+     body_path 'instanceId'
+    end
+
+    output 'name' do
+    end
+
+    output 'region' do
+    end
+
+    output 'state' do
+      body_path 'state'
+    end
+
+    output 'tags' do
+     body_path 'tagSet'
+    end
+
     output "publicIP" do
       type "simple_element"
     end
@@ -423,6 +504,13 @@ plugin "rs_aws_compute" do
 
     output "allocationId" do
       type "simple_element"
+    end
+
+    polling do
+      field_values do
+    end
+      period 60
+	  action 'list'
     end
   end
 
@@ -543,8 +631,14 @@ plugin "rs_aws_compute" do
 
     action "get" do
       verb "POST"
-      path "/?Action=DescribeVolume"
+      path "/?Action=DescribeVolumes"
       output_path "//DescribeVolumesResponse/volumeSet/item"
+	  field "page_size" do
+          type 'string'
+        location 'query'
+        alias_for 'MaxResults'
+      end
+     pagination $aws_pagination
     end
 
     action "destroy" do
@@ -554,23 +648,36 @@ plugin "rs_aws_compute" do
 
     action "list" do
       verb "POST"
-      path "/?Action=DescribeVolume"
+      path "/?Action=DescribeVolumes"
       output_path "//DescribeVolumesResponse/volumeSet/item"
+	  field "page_size" do
+          type 'string'
+        location 'query'
+        alias_for 'MaxResults'
+      end
+     pagination $aws_pagination
     end
 
-    output "volumeId" do
-      type "simple_element"
+    output 'id' do
+     body_path 'volumeId'
+    end
+
+    output 'name' do
+    end
+
+    output 'region' do
+	 body_path 'availabilityZone'
+    end
+
+    output 'state' do
+      body_path 'status'
+    end
+
+    output 'tags' do
+     body_path 'tagSet'
     end
 
     output "size" do
-      type "simple_element"
-    end
-
-    output "availabilityZone" do
-      type "simple_element"
-    end
-
-    output "status" do
       type "simple_element"
     end
 
@@ -589,6 +696,15 @@ plugin "rs_aws_compute" do
     output "encrypted" do
       type "simple_element"
     end
+
+    polling do
+      field_values do
+      page_size $page_size
+    end
+      period 60
+	  action 'list'
+    end
+
   end
 
   type "volume_modification" do
@@ -705,6 +821,12 @@ plugin "rs_aws_compute" do
       verb "POST"
       path "/?Action=DescribeInstances"
       output_path "//DescribeInstancesResponse/reservationSet/item/instancesSet/item"
+	  field "page_size" do
+          type 'string'
+        location 'query'
+        alias_for 'MaxResults'
+      end
+     pagination $aws_pagination
     end
 
     action "create_image" do
@@ -729,7 +851,100 @@ plugin "rs_aws_compute" do
       end
       type "images"
     end
-    output "instanceId","imageId","privateDnsName"
+
+    output "ipAddress","vpcId","imageId","privateDnsName"
+
+    output 'id' do
+     body_path 'instanceId'
+    end
+
+    output 'name' do
+    end
+
+    output 'region' do
+	 body_path 'placement.availabilityZone'
+    end
+
+    output 'state' do
+      body_path 'instanceState.name'
+    end
+
+    output 'tags' do
+     body_path 'tagSet'
+    end
+
+    polling do
+      field_values do
+      page_size $page_size
+    end
+      period 60
+	  action 'list'
+    end
+
+  end
+
+  type "snapshots" do
+    href_templates "/?Action=DescribeSnapshots&SnapshotId.1={{//DescribeSnapshotsResponse/snapshotSet/item/snapshotId}}"
+    provision 'no_operation'
+    delete    'no_operation'
+
+    action "get" do
+      verb "POST"
+      path "/?Action=DescribeSnapshots&InstanceId.1=$snapshotId"
+      output_path "//DescribeSnapshotsResponse/snapshotSet/item"
+    end
+
+    action "show" do
+      verb "POST"
+      path "/?Action=DescribeSnapshots"
+      output_path "//DescribeSnapshotsResponse/snapshotSet/item"
+
+      field "snapshot_Id" do
+        alias_for "SnapshotId.1"
+        location "query"
+      end
+    end
+
+    action "list" do
+      verb "POST"
+      path "/?Action=DescribeSnapshots"
+      output_path "//DescribeSnapshotsResponse/snapshotSet/item"
+	  field "page_size" do
+          type 'string'
+        location 'query'
+        alias_for 'MaxResults'
+      end
+     pagination $aws_pagination
+    end
+
+    output "volumeId","startTime"
+
+    output 'id' do
+     body_path 'snapshotId'
+    end
+
+    output 'name' do
+    end
+
+    output 'region' do
+    end
+
+    output 'state' do
+      body_path 'status'
+    end
+
+    output 'tags' do
+     body_path 'tagSet'
+    end
+
+    polling do
+      field_values do
+      page_size $page_size
+    end
+      period 60
+	  action 'list'
+    end
+
   end
 
   type "images" do
