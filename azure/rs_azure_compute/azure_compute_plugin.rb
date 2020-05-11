@@ -499,6 +499,47 @@ plugin "rs_azure_compute" do
 	  action 'list'
     end
   end
+  
+   type "images" do
+    href_templates "{{value[*].id}}"
+    provision "no_operation"
+    delete    "no_operation"
+
+    action "list" do
+      type "images"
+      path "/subscriptions/$subscription_id/providers/Microsoft.Compute/images"
+      verb "GET"
+	  output_path "value[*]"
+      pagination $azure_pagination	  
+    end
+	
+    output 'id' do
+     body_path 'id'
+    end
+
+    output 'name' do
+	  body_path 'name'
+    end
+
+    output 'region' do
+     body_path 'location'
+    end
+
+    output 'state' do
+     body_path 'properties.provisioningState'
+    end
+
+    output 'tags' do
+     body_path 'tags'
+    end	
+
+    polling do
+      field_values do
+    end  
+      period 60
+	  action 'list'
+    end
+  end 
 end
 
 resource_pool "rs_azure_compute" do
