@@ -481,7 +481,7 @@ plugin "rs_aws_compute" do
     end
 
     output 'name' do
-     body_path 'publicIp'	
+     body_path 'publicIp'
     end
 
     output 'region' do
@@ -972,7 +972,7 @@ plugin "rs_aws_compute" do
 
     action "list" do
       verb "POST"
-      path "/?Action=DescribeImages"
+      path "/?Action=DescribeImages&Filter.1.Name=is-public&Filter.1.Value.1=false"
       output_path "//DescribeImagesResponse/imagesSet/item"
     end
 
@@ -981,8 +981,51 @@ plugin "rs_aws_compute" do
       path "/?Action=DeregisterImage&ImageId=$imageId"
     end
 
-    output "imageId","name","description","imageLocation","imageState","imageOwnerId","isPublic","architecture","imageType","kernelId","ramdiskId","imageOwnerAlias","rootDeviceType","rootDeviceName"
-  end
+    output 'id' do
+     body_path 'imageId'
+    end
+
+    output 'name' do
+     body_path 'name'	
+    end
+	
+    output 'platform' do
+     body_path 'platformDetails'
+    end
+
+    output 'state' do
+     body_path 'imageState'	
+    end	
+
+    output 'region' do
+    end
+
+    output 'ena-support' do
+      body_path 'enaSupport'
+    end
+
+    output 'description' do
+     body_path 'description'	
+    end	
+
+    output 'virtualization-type' do
+      body_path 'virtualizationType'
+    end
+
+    output 'tags' do
+     body_path 'tagSet'
+    end	
+	
+    output "imageLocation","imageState","imageOwnerId","isPublic","architecture","imageType","kernelId","ramdiskId","imageOwnerAlias","rootDeviceType","rootDeviceName"
+ 
+    polling do
+      field_values do
+    end  
+      period 60
+	  action 'list'
+    end
+
+ end
 end
 
 resource_pool "compute_pool" do
