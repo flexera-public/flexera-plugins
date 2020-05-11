@@ -10,7 +10,6 @@ info(
   service: "Compute"
   )
 
-
 parameter "subscription_id" do
   type  "string"
   label "Subscription ID"
@@ -51,7 +50,6 @@ plugin "rs_azure_compute" do
     default_host "https://management.azure.com/"
     default_scheme "https"
     query do {
-      # 'api-version' =>  '2016-04-30-preview'
       'api-version' =>  '2019-07-01'
     } end
   end
@@ -148,6 +146,26 @@ plugin "rs_azure_compute" do
     field "virtualMachineName" do
       type "string"
       location "path"
+    end
+
+    field "name" do
+      type "string"
+      location "path"
+    end
+
+    field "location" do
+      type "string"
+      location "body"
+    end
+
+    field "plan" do
+      type "composite"
+      location "body"
+    end
+
+    field "properties" do
+      type "composite"
+      location "body"
     end
 
     action "show" do
@@ -403,17 +421,16 @@ plugin "rs_azure_compute" do
       type "snapshots"
       path "/subscriptions/$subscription_id/providers/Microsoft.Compute/snapshots"
       verb "GET"
-	  output_path "value[*]"
+      output_path "value[*]"
       pagination $azure_pagination	  
     end
-	
-	
+
     output 'id' do
-     body_path 'id'
+      body_path 'id'
     end
 
     output 'name' do
-	  body_path 'name'
+      body_path 'name'
     end
 
     output 'region' do
@@ -424,27 +441,26 @@ plugin "rs_azure_compute" do
     end
 
     output 'tags' do
-     body_path 'tags'
+      body_path 'tags'
     end
 
-	output 'timeCreated' do
-     body_path 'properties.timeCreated'
+    output 'timeCreated' do
+      body_path 'properties.timeCreated'
     end
 
     output 'uniqueId' do
-	  body_path 'properties.uniqueId'
+      body_path 'properties.uniqueId'
     end
 
     output 'diskSizeGB' do
-     body_path 'properties.diskSizeGB'
+      body_path 'properties.diskSizeGB'
     end
-	
 
     polling do
       field_values do
-    end  
+      end  
       period 60
-	  action 'list'
+      action 'list'
     end
   end
 
@@ -478,14 +494,14 @@ plugin "rs_azure_compute" do
 
     output 'tags' do
      body_path 'tags'
-    end	
-	
-	output 'timeCreated' do
+    end
+    
+    output 'timeCreated' do
      body_path 'properties.timeCreated'
     end
 
     output 'subscriptionId' do
-	  body_path 'properties.subscriptionId'
+      body_path 'properties.subscriptionId'
     end
 
     output 'subscriptionName' do
@@ -494,9 +510,9 @@ plugin "rs_azure_compute" do
 
     polling do
       field_values do
-    end  
+      end  
       period 60
-	  action 'list'
+      action 'list'
     end
   end
 end
