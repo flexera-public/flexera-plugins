@@ -1000,7 +1000,7 @@ plugin "rs_aws_compute" do
     output 'region' do
     end
 
-    output 'ena-support' do
+    output 'ena_support' do
       body_path 'enaSupport'
     end
 
@@ -1008,7 +1008,7 @@ plugin "rs_aws_compute" do
      body_path 'description'	
     end	
 
-    output 'virtualization-type' do
+    output 'virtualization_type' do
       body_path 'virtualizationType'
     end
 
