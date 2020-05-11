@@ -501,7 +501,7 @@ plugin "rs_azure_compute" do
   end
   
    type "images" do
-    href_templates "{{value[*].id}}"
+    href_templates "{{value[*].name}}"
     provision "no_operation"
     delete    "no_operation"
 
