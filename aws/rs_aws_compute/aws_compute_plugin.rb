@@ -481,6 +481,7 @@ plugin "rs_aws_compute" do
     end
 
     output 'name' do
+     body_path 'publicIp'	
     end
 
     output 'region' do
