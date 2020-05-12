@@ -3,7 +3,7 @@ type 'plugin'
 rs_ca_ver 20161221
 short_description "Azure Compute"
 long_description ""
-package "plugins/rs_azure_compute"
+package "plugins/azure_compute"
 import "sys_log"
 info(
   provider: "Azure",
@@ -166,6 +166,12 @@ plugin "rs_azure_compute" do
     field "properties" do
       type "composite"
       location "body"
+    end
+
+    action "create" do
+      type "virtualmachine"
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Compute/virtualMachines/$name"
+      verb "PUT"
     end
 
     action "show" do
@@ -469,35 +475,48 @@ plugin "rs_azure_compute" do
     provision "no_operation"
     delete    "no_operation"
 
+    field "properties" do
+      type "composite"
+      location "body"
+    end
+
+    field "location" do
+      type "string"
+      location "body"
+    end
+
+    field "name" do
+      type "string"
+      location "path"
+    end
+
+    field "tags" do
+      type "composite"
+      location "body"
+    end
+
+    action "create" do
+      type "disks"
+      path "/subscriptions/$subscription_id/providers/Microsoft.Compute/disks/$name"
+      verb "PUT"
+    end
+
     action "list" do
       type "disks"
       path "/subscriptions/$subscription_id/providers/Microsoft.Compute/disks"
       verb "GET"
-	  output_path "value[*]"
+      output_path "value[*]"
       pagination $azure_pagination	  
     end
-	
-    output 'id' do
-     body_path 'id'
-    end
 
-    output 'name' do
-	  body_path 'name'
-    end
+    output "id", "name", "location", "state", "tags"
 
     output 'region' do
-     body_path 'location'
+      body_path 'location'
     end
 
-    output 'state' do
-    end
-
-    output 'tags' do
-     body_path 'tags'
-    end
-    
     output 'timeCreated' do
-     body_path 'properties.timeCreated'
+      body_path 'properties.timeCreated'
     end
 
     output 'subscriptionId' do
@@ -505,7 +524,7 @@ plugin "rs_azure_compute" do
     end
 
     output 'subscriptionName' do
-     body_path 'properties.subscriptionName'
+      body_path 'properties.subscriptionName'
     end
 
     polling do
