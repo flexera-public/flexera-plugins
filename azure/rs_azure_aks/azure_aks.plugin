@@ -2,9 +2,13 @@ name 'Azure Kubernetes Service (Azure AKS)'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Azure Kubernetes Service (Azure AKS)"
-long_description "Version: 0.1"
+long_description ""
 package "azure_aks"
 import "sys_log"
+info(
+  provider: "Azure",
+  service: "AKS"
+  )
 
 parameter "subscription_id" do
   type  "string"
@@ -126,9 +130,19 @@ plugin "azure_aks" do
       path "$href"
       verb "DELETE"
     end
+	
+    action "list_all" do
+      path "/subscriptions/$subscription_id/providers/Microsoft.ContainerService/managedClusters"
+      verb "GET"
+    end	
+	
+    output_path "value[*]"
+    output "id","name","tags","properties"
 
-    output "id","name","location","tags","properties"
-
+    output "region" do
+      body_path "location"
+    end
+	
     output "state" do
       body_path "properties.provisioningState"
     end
@@ -141,13 +155,16 @@ plugin "azure_aks" do
       body_path "properties.nodeResourceGroup"
     end
 
-    polling do
-      period 60
+   polling do
+     field_values do
+     end    
+       period 60
+	   action 'list_all'
     end
   end
 
   type "agentPools" do
-    href_templates "{{type=='Microsoft.ContainerService/managedClusters/agentPools' && id || null}}"
+    href_templates "{{value[*].name}}"
     provision "provision_agentPool"
     delete    "delete_resource"
 
@@ -223,16 +240,11 @@ plugin "azure_aks" do
 
     action "list" do
       type "agentPools"
-      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.ContainerService/managedClusters/$cluster_name/agentPools"
-      verb "GET"
-
-      field "resource_group" do
+      path "$agent_id/agentPools"
+      verb "GET"	  
+      field "agent_id" do
         location "path"
-      end
-
-      field "cluster_name" do
-        location "path"
-      end
+      end 
     end
 
     action "destroy" do
@@ -240,8 +252,8 @@ plugin "azure_aks" do
       path "$href"
       verb "DELETE"
     end
-
-    output "id","name","location","tags","properties"
+    output_path "value[*]" 						  
+    output "id","name","properties"
 
     output "state" do
       body_path "properties.provisioningState"
@@ -254,10 +266,11 @@ plugin "azure_aks" do
     polling do
       period 60
       field_values do
-        resource_group parent_field('nodeResourceGroup')
-        cluster_name parent_field('name')
+        agent_id parent_field('id')
       end
+      period 60			 
       parent "managedClusters"
+      action "list"
     end
   end
 end
