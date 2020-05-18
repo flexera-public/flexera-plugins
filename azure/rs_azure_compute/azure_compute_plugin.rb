@@ -10,6 +10,11 @@ info(
   service: "Compute"
   )
 
+parameter "tenant_id" do
+  type "string"
+  label "Tenant ID"
+end
+
 parameter "subscription_id" do
   type  "string"
   label "Subscription ID"
@@ -30,7 +35,7 @@ pagination "azure_pagination" do
   end
 end
 
-plugin "rs_azure_compute" do
+plugin "azure_compute" do
 
   short_description 'Azure Compute'
   long_description 'Azure Compute'
@@ -50,10 +55,15 @@ plugin "rs_azure_compute" do
     default_host "https://management.azure.com/"
     default_scheme "https"
     query do {
-      'api-version' =>  '2019-07-01'
+      'api-version' =>  '2019-12-01'
     } end
   end
-
+  
+  parameter "tenant_id" do
+    type "string"
+    label "Tenant ID"
+  end
+  
   parameter "subscription_id" do
     type  "string"
     label "subscription_id"
@@ -134,9 +144,9 @@ plugin "rs_azure_compute" do
   end
 
   type "virtualmachine" do
-    href_templates "{{ value[*].properties.vmId }}"
-    provision "no_operation"
-    delete    "no_operation"
+    href_templates "{{type=='Microsoft.Compute/virtualMachines' && id || null}}", "{{value[0].type=='Microsoft.Compute/virtualMachines' && id || null}}"
+    provision "provision_resource"
+    delete    "delete_resource"
 
     field "resource_group" do
       type "string"
@@ -176,14 +186,14 @@ plugin "rs_azure_compute" do
 
     action "show" do
       type "virtualmachine"
-      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Compute/virtualMachines/$virtualMachineName"
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Compute/virtualMachines/$name"
       verb "GET"
 
       field "resource_group" do
         location "path"
       end
 
-      field "virtualMachineName" do
+      field "name" do
         location "path"
       end
     end
@@ -198,6 +208,13 @@ plugin "rs_azure_compute" do
       type "virtualmachine"
       path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Compute/virtualMachines"
       verb "GET"
+      output_path "value[*]"
+    end
+
+    action "destroy" do
+      type "virtualmachine"
+      path "$href"
+      verb "DELETE"
     end
 
     action "list_all" do
@@ -223,7 +240,7 @@ plugin "rs_azure_compute" do
     action "update" do
       type "virtualmachine"
       path "$href"
-      verb "PUT"
+      verb "PATCH"
     end
 
     action "vmSizes" do
@@ -238,19 +255,20 @@ plugin "rs_azure_compute" do
     end
 
     polling do
-     field_values do	 
-     end    
-       period 60
-	   action 'list_all'
+      field_values do	 
+      end    
+      period 60
+      action 'list_all'
     end
+
     output "properties","nextLink"
-	
+
     output 'id' do
-     body_path 'id'
+      body_path 'id'
     end
 
     output 'name' do
-	  body_path 'name'
+      body_path 'name'
     end
 
     output 'region' do
@@ -261,9 +279,8 @@ plugin "rs_azure_compute" do
     end
 
     output 'tags' do
-     body_path 'tags'
+      body_path 'tags'
     end
-	
   end
 
   type "extensions" do
@@ -472,8 +489,8 @@ plugin "rs_azure_compute" do
 
   type "disks" do
     href_templates "{{value[*].properties.uniqueId}}"
-    provision "no_operation"
-    delete    "no_operation"
+    provision "provision_resource"
+    delete    "delete_resource"
 
     field "properties" do
       type "composite"
@@ -483,6 +500,11 @@ plugin "rs_azure_compute" do
     field "location" do
       type "string"
       location "body"
+    end
+
+    field "resource_group" do
+      type "string"
+      location "path"
     end
 
     field "name" do
@@ -497,8 +519,28 @@ plugin "rs_azure_compute" do
 
     action "create" do
       type "disks"
-      path "/subscriptions/$subscription_id/providers/Microsoft.Compute/disks/$name"
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Compute/disks/$name"
       verb "PUT"
+    end
+
+    action "show" do
+      type "disks"
+      path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Compute/disks/$name"
+      verb "GET"
+
+      field "resource_group" do
+        location "path"
+      end
+
+      field "name" do
+        location "path"
+      end
+    end
+
+    action "get" do
+      type "disks"
+      path "$href"
+      verb "GET"
     end
 
     action "list" do
@@ -507,6 +549,12 @@ plugin "rs_azure_compute" do
       verb "GET"
       output_path "value[*]"
       pagination $azure_pagination	  
+    end
+
+    action "destroy" do
+      type "disks"
+      path "$href"
+      verb "DELETE"
     end
 
     output "id", "name", "location", "state", "tags"
@@ -577,14 +625,15 @@ plugin "rs_azure_compute" do
   end 
 end
 
-resource_pool "rs_azure_compute" do
-    plugin $rs_azure_compute
+resource_pool "azure_compute" do
+    plugin $azure_compute
     parameter_values do
       subscription_id $subscription_id
+      tenant_id $tenant_id
     end
 
     auth "azure_auth", type: "oauth2" do
-      token_url "https://login.microsoftonline.com/TENANT_ID/oauth2/token"
+      token_url join(["https://login.microsoftonline.com/",$tenant_id,"/oauth2/token"])
       grant type: "client_credentials" do
         client_id cred("AZURE_APPLICATION_ID")
         client_secret cred("AZURE_APPLICATION_KEY")
@@ -607,23 +656,29 @@ define skip_known_error() do
 end
 
 define provision_resource(@declaration) return @resource do
+  $object = to_object(@declaration)
+  $fields = $object["fields"]
+  call sys_log.detail(join(["fields", $fields]))
+  $type = $object["type"]
+  $name = $fields["name"]
+  $resource_group = $fields["resource_group"]
+  call sys_log.set_task_target(@@deployment)
+  call sys_log.summary(join(["Provision ", $type]))
+  call sys_log.detail($object)
+  @operation = azure_compute.$type.empty()
+  call start_debugging()
   sub on_error: stop_debugging() do
-    $object = to_object(@declaration)
-    $fields = $object["fields"]
-    call sys_log.detail(join(["fields", $fields]))
-    $type = $object["type"]
-    $name = $fields["name"]
-    $resource_group = $fields["resource_group"]
-    call sys_log.set_task_target(@@deployment)
-    call sys_log.summary(join(["Provision ", $type]))
-    call sys_log.detail($object)
-    call start_debugging()
-    @operation = rs_azure_compute.$type.create($fields)
-    call sys_log.detail(to_object(@operation))
-    @resource = @operation.show(resource_group: $resource_group, name: $name)
-    call sys_log.detail(to_object(@resource))
-    call stop_debugging()
+    @operation = azure_compute.$type.create($fields)
   end
+  call stop_debugging()
+  call sys_log.detail(to_object(@operation))
+  @resource = @operation
+  call start_debugging()
+  sub on_error: stop_debugging() do
+    @resource = @operation.show(resource_group: $resource_group, name: $name)
+  end
+  call stop_debugging()
+  call sys_log.detail(to_object(@resource))
 end
 
 define provision_extension(@declaration) return @resource do
@@ -639,7 +694,7 @@ define provision_extension(@declaration) return @resource do
     call sys_log.summary(join(["Provision ", $type]))
     call sys_log.detail($object)
     call start_debugging()
-    @operation = rs_azure_compute.$type.create($fields)
+    @operation = azure_compute.$type.create($fields)
     call stop_debugging()
     call sys_log.detail(to_object(@operation))
     call start_debugging()
@@ -673,7 +728,7 @@ define provision_scale_set(@declaration) return @resource do
     call sys_log.summary(join(["Provision ", $type]))
     call sys_log.detail($object)
     call start_debugging()
-    @operation = rs_azure_compute.$type.create($fields)
+    @operation = azure_compute.$type.create($fields)
     call stop_debugging()
     call sys_log.detail(to_object(@operation))
     call start_debugging()
