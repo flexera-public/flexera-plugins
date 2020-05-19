@@ -55,7 +55,7 @@ plugin "azure_compute" do
     default_host "https://management.azure.com/"
     default_scheme "https"
     query do {
-      'api-version' =>  '2019-12-01'
+      'api-version' =>  '2019-07-01'
     } end
   end
   
@@ -221,7 +221,7 @@ plugin "azure_compute" do
       type "virtualmachine"
       path "/subscriptions/$subscription_id/providers/Microsoft.Compute/virtualMachines"
       verb "GET"
-      pagination $azure_pagination	
+      pagination $azure_pagination  
       output_path "value[*]"  
     end
 
@@ -255,7 +255,7 @@ plugin "azure_compute" do
     end
 
     polling do
-      field_values do	 
+      field_values do   
       end    
       period 60
       action 'list_all'
@@ -445,7 +445,7 @@ plugin "azure_compute" do
       path "/subscriptions/$subscription_id/providers/Microsoft.Compute/snapshots"
       verb "GET"
       output_path "value[*]"
-      pagination $azure_pagination	  
+      pagination $azure_pagination    
     end
 
     output 'id' do
@@ -488,7 +488,7 @@ plugin "azure_compute" do
   end
 
   type "disks" do
-    href_templates "{{value[*].properties.uniqueId}}"
+    href_templates "{{type=='Microsoft.Compute/disks' && id || null}}", "{{value[0].type=='Microsoft.Compute/disk' && id || null}}"
     provision "provision_resource"
     delete    "delete_resource"
 
@@ -513,6 +513,11 @@ plugin "azure_compute" do
     end
 
     field "tags" do
+      type "composite"
+      location "body"
+    end
+
+    field "sku" do
       type "composite"
       location "body"
     end
@@ -548,7 +553,7 @@ plugin "azure_compute" do
       path "/subscriptions/$subscription_id/providers/Microsoft.Compute/disks"
       verb "GET"
       output_path "value[*]"
-      pagination $azure_pagination	  
+      pagination $azure_pagination    
     end
 
     action "destroy" do
@@ -592,16 +597,16 @@ plugin "azure_compute" do
       type "images"
       path "/subscriptions/$subscription_id/providers/Microsoft.Compute/images"
       verb "GET"
-	  output_path "value[*]"
-      pagination $azure_pagination	  
+      output_path "value[*]"
+      pagination $azure_pagination
     end
-	
+  
     output 'id' do
      body_path 'id'
     end
 
     output 'name' do
-	  body_path 'name'
+    body_path 'name'
     end
 
     output 'region' do
@@ -614,13 +619,13 @@ plugin "azure_compute" do
 
     output 'tags' do
      body_path 'tags'
-    end	
+    end  
 
     polling do
       field_values do
     end  
       period 60
-	  action 'list'
+    action 'list'
     end
   end 
 end
