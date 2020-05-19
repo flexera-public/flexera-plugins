@@ -272,10 +272,11 @@ plugin "azure_compute" do
     end
 
     output 'region' do
-     body_path 'location'
+      body_path 'location'
     end
 
     output 'state' do
+      body_path "properties.provisioningState"
     end
 
     output 'tags' do
@@ -461,6 +462,7 @@ plugin "azure_compute" do
     end
 
     output 'state' do
+      body_path "properties.provisioningState"
     end
 
     output 'tags' do
@@ -562,7 +564,7 @@ plugin "azure_compute" do
       verb "DELETE"
     end
 
-    output "id", "name", "location", "state", "tags"
+    output "id", "name", "location", "tags"
 
     output 'region' do
       body_path 'location'
@@ -578,6 +580,10 @@ plugin "azure_compute" do
 
     output 'subscriptionName' do
       body_path 'properties.subscriptionName'
+    end
+
+    output 'state' do
+      body_path "properties.provisioningState"
     end
 
     polling do
@@ -683,6 +689,19 @@ define provision_resource(@declaration) return @resource do
     @resource = @operation.show(resource_group: $resource_group, name: $name)
   end
   call stop_debugging()
+  call start_debugging()
+  $status = @resource.state
+  while $status != "Succeeded" do
+    $status = @resource.state
+    if $status == "Failed"
+      call stop_debugging()
+      raise "Execution Name: "+ $name + ", Status: " + $status
+    end
+    call stop_debugging()
+    call sys_log.detail(join(["Status: ", $status]))
+    call start_debugging()
+    sleep(10)
+  end
   call sys_log.detail(to_object(@resource))
 end
 
