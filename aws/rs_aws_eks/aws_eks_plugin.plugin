@@ -129,7 +129,33 @@ plugin "aws_eks" do
 
     polling do
       period 60
+      action "list"
     end
+  end
+
+  type "cluster" do
+    href_templates "/clusters/{{cluster.name}}"
+    action "list" do
+      verb "GET"
+      path "$id"
+      field "id" do
+        type "string"
+        location "path"
+      end
+    end
+
+    output_path 'cluster'
+
+    output 'name', 'endpoint', 'tags', 'status', 'version'
+
+    polling do
+      field_values do
+        id parent_field("id")
+      end
+      period 60
+      action 'list'
+      parent "clusters"
+   end
   end
 
   type "nodegroups" do
@@ -247,9 +273,42 @@ plugin "aws_eks" do
     output "amiType","clusterName","createdAt","diskSize","health","instanceTypes","labels","modifiedAt","nodegroupArn","nodegroupName","nodeRole","releaseVersion","remoteAccess","resources","scalingConfig","status","subnets","tags","version"
 
     polling do
+      field_values do
+        cluster_name parent_field("name")
+      end
+      action "list"
+      parent "clusters"
       period 60
     end
   end
+end
+
+type "nodegroup" do
+  href_templates [
+    "/clusters/{{cluster.name}}/node-groups/{{nodegroupName}}",
+    "/clusters/{{clusterName}}/node-groups/{{nodegroupName}}",
+    "/clusters/{{nodegroup.clusterName}}/node-groups/{{nodegroup.nodegroupName}}"
+  ]
+  action "list" do
+    verb "GET"
+    path "$id"
+    field "id" do
+      type "string"
+      location "path"
+    end
+  end
+
+  output_path 'nodegroup'
+  output "amiType","clusterName","createdAt","diskSize","health","instanceTypes","labels","modifiedAt","nodegroupArn","nodegroupName","nodeRole","releaseVersion","remoteAccess","resources","scalingConfig","status","subnets","tags","version"
+
+  polling do
+    field_values do
+      id parent_field("id")
+    end
+    period 60
+    action 'list'
+    parent "nodegroups"
+ end
 end
 
 resource_pool "aws_eks" do
