@@ -20,6 +20,7 @@ plugin "gke" do
   short_description "Google Kubernetes Engine (GKE)"
   long_description "Supports Google Kubernetes Engine (GKE) cluster and select resources."
   version "2.0.0"
+  json_query_language 'jq'
 
   documentation_link 'source' do
     label 'Source'
@@ -45,7 +46,7 @@ plugin "gke" do
 
   # https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1/projects.locations.clusters
   type "clusters" do
-    href_templates "{{clusters[*].join('-', [@.name, @.location])}}"
+    href_templates "{{'(\(.clusters[].name)-\(.clusters[].location))'}}"
 
     provision "provision_cluster"
     delete "destroy_cluster"
@@ -83,7 +84,7 @@ plugin "gke" do
       verb "GET"
       path "/projects/$project/locations/-/clusters"
       type "clusters"
-      output_path "clusters[]"
+      output_path ".clusters[]"
     end
     
     action "destroy" do
@@ -117,7 +118,7 @@ plugin "gke" do
 
   # https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1/projects.zones.clusters.nodePools
   type "nodePools" do
-    href_templates "{{nodePools[*].selfLink}}"
+    href_templates "{{.nodePools[].selfLink | split('/') | '\(.[9])-\(.[5])-\(.[7])'}}"
 
     provision "provision_cluster"
     delete "destroy_cluster"
@@ -169,7 +170,7 @@ plugin "gke" do
         location "path"
       end
 
-      output_path "nodePools[]"
+      output_path ".nodePools[]"
     end
     
     action "destroy" do
@@ -203,7 +204,7 @@ plugin "gke" do
 
   # https://cloud.google.com/container-engine/reference/rest/v1/projects.zones.operations
   type "operation" do
-    href_templates "{{contains(selfLink, '/operations/') && selfLink || null}}"
+    href_templates "{{.selfLink}}"
 
     provision "no_operation"
     delete "no_operation"
