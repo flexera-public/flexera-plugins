@@ -46,7 +46,7 @@ plugin "gke" do
 
   # https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1/projects.locations.clusters
   type "clusters" do
-    href_templates "{{'(\(.clusters[].name)-\(.clusters[].location))'}}"
+    href_templates "{{.clusters| .[] | .name+.location}}"
 
     provision "provision_cluster"
     delete "destroy_cluster"
@@ -118,7 +118,7 @@ plugin "gke" do
 
   # https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1/projects.zones.clusters.nodePools
   type "nodePools" do
-    href_templates "{{.nodePools[].selfLink | split('/') | '\(.[9])-\(.[5])-\(.[7])'}}"
+    href_templates "{{.nodePools| .[] | .selfLink /"/" | .[5]+.[7]+.[9]}}"
 
     provision "provision_cluster"
     delete "destroy_cluster"
