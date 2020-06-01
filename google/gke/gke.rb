@@ -106,8 +106,8 @@ plugin "gke" do
 
     output "name","description","initialNodeCount","loggingService","monitoringService","network","clusterIpv4Cidr","subnetwork","locations","enableKubernetesAlpha","resourceLabels","labelFingerprint","selfLink","zone","endpoint","initialClusterVersion","currentMasterVersion","currentNodeVersion","createTime","status","statusMessage","nodeIpv4CidrSize","servicesIpv4Cidr","instanceGroupUrls","currentNodeCount","expireTime","nodeConfig","masterAuth","addonsConfig","nodePools","legacyAbac","networkPolicy","ipAllocationPolicy","masterAuthorizedNetworksConfig"
     
-    output "location" do
-      body_path "locations[0]"
+    output "region" do
+      body_path ".location"
     end
 
     polling do
@@ -118,7 +118,7 @@ plugin "gke" do
 
   # https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1/projects.zones.clusters.nodePools
   type "nodePools" do
-    href_templates "{{.nodePools| .[] | .selfLink /'/' | .[5]+.[7]+.[9]}}"
+    href_templates '{{.nodePools| .[] | .selfLink /"/" | .[5]+.[7]+.[9]}}'
 
     provision "provision_cluster"
     delete "destroy_cluster"
@@ -190,6 +190,10 @@ plugin "gke" do
     end
 
     output "name","config","initialNodeCount","locations","selfLink","version","instanceGroupUrls","status","autoscaling","management","maxPodsConstraint","conditions","podIpv4CidrSize","upgradeSettings"
+
+    output "region" do
+      body_path ".locations[0]"
+    end
 
     polling do
       field_values do
