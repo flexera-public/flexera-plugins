@@ -118,7 +118,7 @@ plugin "gke" do
 
   # https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1/projects.zones.clusters.nodePools
   type "nodePools" do
-    href_templates '{{.nodePools| .[] | .selfLink /"/" | .[5]+.[7]+.[9]}}'
+    href_templates '{{.nodePools| .[] | .selfLink /"/" | .[5]+.[7]+.[9]+.[11]}}'
 
     provision "provision_cluster"
     delete "destroy_cluster"
