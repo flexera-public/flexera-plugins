@@ -107,7 +107,7 @@ plugin "gke" do
     output "name","description","initialNodeCount","loggingService","monitoringService","network","clusterIpv4Cidr","subnetwork","locations","enableKubernetesAlpha","resourceLabels","labelFingerprint","selfLink","zone","endpoint","initialClusterVersion","currentMasterVersion","currentNodeVersion","createTime","status","statusMessage","nodeIpv4CidrSize","servicesIpv4Cidr","instanceGroupUrls","currentNodeCount","expireTime","nodeConfig","masterAuth","addonsConfig","nodePools","legacyAbac","networkPolicy","ipAllocationPolicy","masterAuthorizedNetworksConfig"
     
     output "region" do
-      body_path ".location"
+      body_path '.zone | split("-") | .[0]+"-"+.[1]'
     end
 
     polling do
@@ -192,7 +192,7 @@ plugin "gke" do
     output "name","config","initialNodeCount","locations","selfLink","version","instanceGroupUrls","status","autoscaling","management","maxPodsConstraint","conditions","podIpv4CidrSize","upgradeSettings"
 
     output "region" do
-      body_path ".locations[0]"
+      body_path '.locations[0] | split("-") | .[0]+"-"+.[1]'
     end
 
     polling do
