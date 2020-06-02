@@ -2,10 +2,10 @@ name 'AWS EC2 Test CAT'
 rs_ca_ver 20161221
 short_description "AWS EC2 Test - Test CAT"
 import "sys_log"
-import "plugin/rs_aws_compute"
+import "plugin/aws_compute"
 
 parameter "param_region" do
-  like $rs_aws_compute.param_region
+  like $aws_compute.param_region
   description "json:{\"definition\":\"getZones\", \"description\": \"The region in which the resources are created\"}"
 end
 
@@ -61,18 +61,18 @@ output "output_ami_id" do
   label "AMI Id"
 end
 
-resource "my_vpc", type: "rs_aws_compute.vpc" do
+resource "my_vpc", type: "aws_compute.vpc" do
   cidr_block "10.0.0.0/16"
   instance_tenancy "default"
 end
 
-resource "my_vpc_tag", type: "rs_aws_compute.tags" do
+resource "my_vpc_tag", type: "aws_compute.tags" do
   resource_id_1 @my_vpc.id
   tag_1_key "Name"
   tag_1_value join([@@deployment.name,"-vpc"])
 end
 
-resource "my_vpc_endpoint", type: "rs_aws_compute.endpoint" do
+resource "my_vpc_endpoint", type: "aws_compute.endpoint" do
   vpc_id @my_vpc.id
   service_name "com.amazonaws.us-east-1.s3"
 end
@@ -83,7 +83,7 @@ resource "my_rs_vpc", type: "rs_cm.network" do
   cloud_href "/api/clouds/1"
 end
 
-resource "my_rs_vpc_tag", type: "rs_aws_compute.tags" do
+resource "my_rs_vpc_tag", type: "aws_compute.tags" do
   resource_id_1 @my_rs_vpc.resource_uid
   tag_1_key "Name"
   tag_1_value @@deployment.name
@@ -116,7 +116,7 @@ resource "my_rt_igw", type: "rs_cm.route" do
   next_hop_network_gateway @my_igw
 end
 
-resource "my_rs_vpc_endpoint", type: "rs_aws_compute.endpoint" do
+resource "my_rs_vpc_endpoint", type: "aws_compute.endpoint" do
   vpc_id @my_rs_vpc.resource_uid
   service_name "com.amazonaws.us-east-1.s3"
 end
@@ -127,12 +127,12 @@ resource "my_nat_ip", type: "rs_cm.ip_address" do
   cloud_href "/api/clouds/1"
 end
 
-resource "my_nat_gateway", type: "rs_aws_compute.nat_gateway" do
+resource "my_nat_gateway", type: "aws_compute.nat_gateway" do
   allocation_id "replace-me"
   subnet_id @my_subnet.resource_uid
 end
 
-resource "my_volume", type: "rs_aws_compute.volume" do
+resource "my_volume", type: "aws_compute.volume" do
   availability_zone "us-east-1a"
   size "10"
   volume_type "gp2"
@@ -185,37 +185,37 @@ operation "op_deregister_image" do
 end
 
 define list_vpcs(@my_vpc) return $object,$rt_tbl do
-  call rs_aws_compute.start_debugging()
-  @vpcs = rs_aws_compute.vpc.list()
+  call aws_compute.start_debugging()
+  @vpcs = aws_compute.vpc.list()
   $object = to_object(first(@vpcs))
   $object = to_s($object)
   @route_tables = @my_vpc.routeTables()
   $rt_tbl = to_s(to_object(@route_tables))
-  call rs_aws_compute.stop_debugging()
+  call aws_compute.stop_debugging()
 end
 
 define resize_volume($param_region,@my_volume,$new_size) return @my_volume do
-  rs_aws_compute.volume_modification.create(volume_id: @my_volume.volumeId, size: $new_size)
+  aws_compute.volume_modification.create(volume_id: @my_volume.volumeId, size: $new_size)
 end
 
 define snapshot_root_volume($param_region, $param_instance_id, $param_image_name, $param_image_description) return $ami_id do
-  call rs_aws_compute.start_debugging()
+  call aws_compute.start_debugging()
   $ami_id = 111
   sub on_error: stop_debugging() do
-    @instance = rs_aws_compute.instances.show(instance_id: $param_instance_id)
+    @instance = aws_compute.instances.show(instance_id: $param_instance_id)
     @image = @instance.create_image(name: $param_image_name, description: $param_description)
     $ami_id = @image.imageId
   end
-  call rs_aws_compute.stop_debugging()
+  call aws_compute.stop_debugging()
 end
 
 define deregister_image($param_region,$param_ami_id) do
-  call rs_aws_compute.start_debugging()
+  call aws_compute.start_debugging()
   sub on_error: stop_debugging() do
-    @image = rs_aws_compute.images.show(image_id: $param_ami_id)
+    @image = aws_compute.images.show(image_id: $param_ami_id)
     @image.deregister_image()
   end
-  call rs_aws_compute.stop_debugging()
+  call aws_compute.stop_debugging()
 end
 define handle_retries($attempts) do
   if $attempts <= 10
@@ -227,8 +227,8 @@ define handle_retries($attempts) do
 end
 
 define generated_launch($param_region,@my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs_vpc_endpoint,@my_nat_ip,@my_nat_gateway,@my_subnet,@my_igw,@my_rs_vpc_tag,@my_volume,@my_vpc_tag,@my_sg,@my_rt_igw,@server1) return @my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs_vpc_endpoint,@my_nat_ip,@my_nat_gateway,@my_subnet,@my_igw,@my_rs_vpc_tag,@my_volume,@my_sg,@my_rt_igw,@instance,$instance_dns_name,$instance_id,@server1 do
-  call rs_aws_compute.start_debugging()
-  sub on_error: rs_aws_compute.stop_debugging() do
+  call aws_compute.start_debugging()
+  sub on_error: aws_compute.stop_debugging() do
     provision(@my_vpc)
     provision(@my_vpc_tag)
     @route_tables = @my_vpc.routeTables()
@@ -244,12 +244,12 @@ define generated_launch($param_region,@my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs
     provision(@my_igw)
     provision(@my_rs_vpc_endpoint)
     provision(@my_nat_ip)
-    @aws_ip = rs_aws_compute.addresses.show(public_ip_1: @my_nat_ip.address)
+    @aws_ip = aws_compute.addresses.show(public_ip_1: @my_nat_ip.address)
     $nat_gateway = to_object(@my_nat_gateway)
     $nat_gateway["fields"]["allocation_id"] = @aws_ip.allocationId
     @my_nat_gateway = $nat_gateway
     provision(@my_nat_gateway)
-    @vpc1 = rs_aws_compute.vpc.show(vpcId: @my_rs_vpc.resource_uid)
+    @vpc1 = aws_compute.vpc.show(vpcId: @my_rs_vpc.resource_uid)
     @vpc1.enablevpcclassiclink()
     @vpc1.enablevpcclassiclinkdnssupport()
     provision(@my_rs_vpc_tag)
@@ -268,9 +268,9 @@ define generated_launch($param_region,@my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs
     $route_igw["fields"]["route_table_href"] = $default_route_table_href
     @my_rt_igw = $route_igw
     provision(@my_rt_igw)
-    provision(@server1) 
+    provision(@server1)
     $instance_id = @server1.current_instance().resource_uid
-    @instance = rs_aws_compute.instances.show(instance_id: $instance_id)
+    @instance = aws_compute.instances.show(instance_id: $instance_id)
     $instance_dns_name = @instance.privateDnsName
   end
 end
@@ -297,7 +297,7 @@ define getZones() return $values do
   $dcs = []
   foreach @datacenter in @datacenters do
     $zone = @datacenter.name
-    $size = size($zone) 
+    $size = size($zone)
     $datacenter=join(split($zone,"")[0..($size-2)],"")
     $dcs << $datacenter
   end

@@ -3,7 +3,7 @@ type 'plugin'
 rs_ca_ver 20161221
 short_description "Amazon Web Services (AWS) - Amazon EC2"
 long_description ""
-package "plugin/rs_aws_compute"
+package "plugin/aws_compute"
 import "sys_log"
 info(
   provider: "AWS",
@@ -26,36 +26,36 @@ pagination 'aws_pagination' do
   end
 end
 
-plugin "rs_aws_compute" do
+plugin "aws_compute" do
 
   short_description 'AWS-EC2 plugin'
   long_description 'Supports AWS EC2'
   version '2.0.0'
-  
+
   documentation_link 'source' do
     label 'Source'
     url 'https://github.com/flexera/flexera-plugins/blob/master/aws/rs_aws_compute/aws_compute_plugin.rb'
   end
-  
+
   documentation_link 'readme' do
     label 'readme'
     url 'https://github.com/flexera/flexera-plugins/blob/master/aws/rs_aws_compute/README.md'
   end
-  
+
   parameter 'region' do
     type 'string'
     label 'AWS Region'
     default 'us-east-1'
     description 'The region in which the resources are created'
   end
-  
+
   parameter 'page_size' do
     type 'string'
     label 'Page size for AWS responses'
     default '200'
     description 'The maximum results count for each page of AWS data received.'
-  end 
-  
+  end
+
     endpoint do
         default_host 'ec2.$region.amazonaws.com'
         default_scheme 'https'
@@ -65,7 +65,7 @@ plugin "rs_aws_compute" do
         } end
         request_content_type 'application/x-www-form-urlencoded; charset=utf-8'
     end
-  
+
   type "vpc" do
     # HREF is set to the correct template in the provision definition due to a lack of usable fields in the response to build the href
     href_templates "/?Action=DescribeVpcs&VpcId.1={{//CreateVpcResponse/vpc/vpcId}}","/?DescribeVpcs&VpcId.1={{//DescribeVpcsResponse/vpcSet/item/vpcId}}"
@@ -138,7 +138,7 @@ plugin "rs_aws_compute" do
       path "/?Action=CreateVpc"
       output_path "//CreateVpcResponse/vpc"
     end
-    
+
     action "destroy" do
       verb "POST"
       path "/?Action=DeleteVpc&VpcId=$vpcId"
@@ -156,13 +156,13 @@ plugin "rs_aws_compute" do
       field "vpcId" do
         alias_for "VpcId.1"
         location "query"
-      end  
+      end
     end
 
     action "list" do
       verb "POST"
       path "/?Action=DescribeVpcs"
-      output_path "//DescribeVpcsResponse/vpcSet/item"  
+      output_path "//DescribeVpcsResponse/vpcSet/item"
     end
 
     action "routeTables" do
@@ -213,12 +213,12 @@ plugin "rs_aws_compute" do
         location "query"
       end
     end
-	
+
     polling do
-     field_values do	 
-     end    
-       period 60
-	   action 'list'
+      field_values do
+      end
+      period 60
+	    action 'list'
     end
   end
 
@@ -263,7 +263,7 @@ plugin "rs_aws_compute" do
       type "string"
       location "query"
     end
-    
+
     output "vpcEndpointId" do
       type "simple_element"
     end
@@ -297,17 +297,17 @@ plugin "rs_aws_compute" do
       path "/?Action=CreateVpcEndpoint"
       output_path "//CreateVpcEndpointResponse/vpcEndpoint"
     end
-    
+
     action "destroy" do
       verb "POST"
       path "/?Action=DeleteVpcEndpoints&VpcEndpointId.1=$vpcEndpointId"
     end
- 
+
     action "get" do
       verb "POST"
       output_path "//DescribeVpcEndpointsResponse/vpcEndpointSet/item"
     end
- 
+
     action "list" do
       verb "POST"
       path "/?Action=DescribeVpcEndpoints"
@@ -325,7 +325,7 @@ plugin "rs_aws_compute" do
       type      "string"
       location  "query"
     end
-    
+
     output "routeTableId" do
       type "simple_element"
     end
@@ -355,17 +355,17 @@ plugin "rs_aws_compute" do
       path "/?Action=CreateRouteTable"
       output_path "//CreateRouteTableResponse/routeTable"
     end
-    
+
     action "destroy" do
       verb "POST"
       path "/?Action=DeleteRouteTables&RouteTableId.1=$routeTableId"
     end
- 
+
     action "get" do
       verb "POST"
       output_path "//DescribeRouteTablesResponse/routeTableSet/item"
     end
- 
+
     action "list" do
       verb "POST"
       path "/?Action=DescribeVpcEndpoints"
@@ -415,17 +415,17 @@ plugin "rs_aws_compute" do
       path "/?Action=CreateNatGateway"
       output_path "//CreateNatGatewayResponse/natGateway"
     end
-    
+
     action "destroy" do
       verb "POST"
       path "/?Action=DeleteNatGateway&NatGatewayId=$natGatewayId"
     end
- 
+
     action "get" do
       verb "POST"
       output_path "//DescribeNatGatewaysResponse/natGatewaySet/item"
     end
- 
+
     action "list" do
       verb "POST"
       path "/?Action=DescribeNatGateways"
@@ -473,12 +473,10 @@ plugin "rs_aws_compute" do
     action "list" do
       verb "POST"
       path "/?Action=DescribeAddresses"
-      output_path "//DescribeAddressesResponse/addressesSet/item"	  
+      output_path "//DescribeAddressesResponse/addressesSet/item"
     end
 
-    output 'id' do
-     body_path 'instanceId'
-    end
+    output 'instance_id'
 
     output 'name' do
      body_path 'publicIp'
@@ -494,7 +492,7 @@ plugin "rs_aws_compute" do
     output 'tags' do
      body_path 'tagSet'
     end
-	
+
     output "publicIP" do
       type "simple_element"
     end
@@ -505,13 +503,13 @@ plugin "rs_aws_compute" do
 
     output "allocationId" do
       type "simple_element"
-    end	
-	
+    end
+
     polling do
       field_values do
-    end  
+      end
       period 60
-	  action 'list'	  
+	    action 'list'
     end
   end
 
@@ -639,7 +637,7 @@ plugin "rs_aws_compute" do
         location 'query'
         alias_for 'MaxResults'
       end
-     pagination $aws_pagination	  
+     pagination $aws_pagination
     end
 
     action "destroy" do
@@ -656,7 +654,7 @@ plugin "rs_aws_compute" do
         location 'query'
         alias_for 'MaxResults'
       end
-     pagination $aws_pagination	  
+     pagination $aws_pagination
     end
 
     output 'id' do
@@ -697,13 +695,13 @@ plugin "rs_aws_compute" do
     output "encrypted" do
       type "simple_element"
     end
-	
+
     polling do
       field_values do
       page_size $page_size
-    end  
+    end
       period 60
-	  action 'list'
+	     action 'list'
     end
 
   end
@@ -827,7 +825,7 @@ plugin "rs_aws_compute" do
         location 'query'
         alias_for 'MaxResults'
       end
-     pagination $aws_pagination	  
+     pagination $aws_pagination
     end
 
     action "create_image" do
@@ -852,9 +850,9 @@ plugin "rs_aws_compute" do
       end
       type "images"
     end
-	
+
     output "ipAddress","vpcId","imageId","privateDnsName"
-	
+
     output 'id' do
      body_path 'instanceId'
     end
@@ -873,17 +871,17 @@ plugin "rs_aws_compute" do
     output 'tags' do
      body_path 'tagSet'
     end
-	
+
     polling do
       field_values do
       page_size $page_size
-    end  
+    end
       period 60
 	  action 'list'
     end
 
   end
-  
+
   type "snapshots" do
     href_templates "/?Action=DescribeSnapshots&SnapshotId.1={{//DescribeSnapshotsResponse/snapshotSet/item/snapshotId}}"
     provision 'no_operation'
@@ -910,16 +908,16 @@ plugin "rs_aws_compute" do
       verb "POST"
       path "/?Action=DescribeSnapshots"
       output_path "//DescribeSnapshotsResponse/snapshotSet/item"
-	  field "page_size" do
-          type 'string'
+	    field "page_size" do
+        type 'string'
         location 'query'
         alias_for 'MaxResults'
       end
-     pagination $aws_pagination	  
+      pagination $aws_pagination
     end
 
     output "volumeId","startTime"
-	
+
     output 'id' do
      body_path 'snapshotId'
     end
@@ -936,14 +934,14 @@ plugin "rs_aws_compute" do
 
     output 'tags' do
      body_path 'tagSet'
-    end	
-	
+    end
+
     polling do
       field_values do
-      page_size $page_size
-    end  
+        page_size $page_size
+      end
       period 60
-	  action 'list'
+	    action 'list'
     end
 
   end
@@ -986,16 +984,16 @@ plugin "rs_aws_compute" do
     end
 
     output 'name' do
-     body_path 'name'	
+     body_path 'name'
     end
-	
+
     output 'platform' do
      body_path 'platformDetails'
     end
 
     output 'state' do
-     body_path 'imageState'	
-    end	
+     body_path 'imageState'
+    end
 
     output 'region' do
     end
@@ -1005,8 +1003,8 @@ plugin "rs_aws_compute" do
     end
 
     output 'description' do
-     body_path 'description'	
-    end	
+     body_path 'description'
+    end
 
     output 'virtualization_type' do
       body_path 'virtualizationType'
@@ -1014,13 +1012,13 @@ plugin "rs_aws_compute" do
 
     output 'tags' do
      body_path 'tagSet'
-    end	
-	
+    end
+
     output "imageLocation","imageState","imageOwnerId","isPublic","architecture","imageType","kernelId","ramdiskId","imageOwnerAlias","rootDeviceType","rootDeviceName"
- 
+
     polling do
       field_values do
-    end  
+    end
       period 60
 	  action 'list'
     end
@@ -1029,7 +1027,7 @@ plugin "rs_aws_compute" do
 end
 
 resource_pool "compute_pool" do
-  plugin $rs_aws_compute
+  plugin $aws_compute
   auth "key", type: "aws" do
     version     4
     service    'ec2'
@@ -1045,7 +1043,7 @@ define provision_vpc(@declaration) return @vpc do
     $fields = $object["fields"]
     $name = $fields['name']
     call start_debugging()
-    @vpc = rs_aws_compute.vpc.create($fields)
+    @vpc = aws_compute.vpc.create($fields)
     call stop_debugging()
     $vpc = to_object(@vpc)
     call sys_log.detail(join(["vpc:", to_s($vpc)]))
@@ -1068,7 +1066,7 @@ define provision_endpoint(@declaration) return @vpcendpoint do
     $fields = $object["fields"]
     $name = $fields['name']
     call start_debugging()
-    @vpcendpoint = rs_aws_compute.endpoint.create($fields)
+    @vpcendpoint = aws_compute.endpoint.create($fields)
     call stop_debugging()
     $vpc = to_object(@vpcendpoint)
     call sys_log.detail(join(["vpcendpoint:", to_s($vpc)]))
@@ -1091,7 +1089,7 @@ define provision_route_table(@declaration) return @resource do
     $fields = $object["fields"]
     $name = $fields['name']
     call start_debugging()
-    @resource = rs_aws_compute.route_table.create($fields)
+    @resource = aws_compute.route_table.create($fields)
     call stop_debugging()
     $vpc = to_object(@resource)
     call sys_log.detail(join(["vpcendpoint:", to_s($vpc)]))
@@ -1114,7 +1112,7 @@ define provision_nat_gateway(@declaration) return @resource do
     $fields = $object["fields"]
     $name = $fields['name']
     call start_debugging()
-    @resource = rs_aws_compute.nat_gateway.create($fields)
+    @resource = aws_compute.nat_gateway.create($fields)
     call stop_debugging()
     $vpc = to_object(@resource)
     call sys_log.detail(join(["natgateway:", to_s($vpc)]))
@@ -1137,7 +1135,7 @@ define provision_tags(@declaration) return @resource do
     $fields = $object["fields"]
     $name = $fields['name']
     call start_debugging()
-    @resource = rs_aws_compute.tags.create($fields)
+    @resource = aws_compute.tags.create($fields)
     call stop_debugging()
     $vpc = to_object(@resource)
     call sys_log.detail(join(["tags:", to_s($vpc)]))
@@ -1150,7 +1148,7 @@ define provision_volume(@declaration) return @resource do
     $fields = $object["fields"]
     $name = $fields['name']
     call start_debugging()
-    @resource = rs_aws_compute.volume.create($fields)
+    @resource = aws_compute.volume.create($fields)
     call stop_debugging()
     $volume = to_object(@resource)
     call sys_log.detail(join(["volume:", to_s($volume)]))
@@ -1173,7 +1171,7 @@ define provision_volume_modification(@declaration) return @resource do
     $fields = $object["fields"]
     $name = $fields['name']
     call start_debugging()
-    @resource = rs_aws_compute.volume.create($fields)
+    @resource = aws_compute.volume.create($fields)
     call stop_debugging()
     $volume_modification = to_object(@resource)
     call sys_log.detail(join(["volume:", to_s($volume_modification)]))
