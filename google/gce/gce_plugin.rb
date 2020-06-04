@@ -18,7 +18,7 @@ end
 
 pagination "google_pagination" do
   get_page_marker do
-    body_path "nextPageToken"
+    body_path ".nextPageToken"
   end
   set_page_marker do
     query "pageToken"
@@ -30,6 +30,7 @@ plugin "gce" do
   short_description 'Google Compute Engine (GCE) plugin'
   long_description 'Plugin support for Google Compute Engine (GCE) compute resources.'
   version '2.0.0'
+  json_query_language 'jq'  
 
   documentation_link 'source' do
     label 'Source'
@@ -62,7 +63,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/addresses.
   type "address" do
-    href_templates "{{id}}","{{items[*].id}}","{{items.*.addresses[].id}}"
+    href_templates "{{.id}}","{{.items| .[].id}}","{{.items | .[].addresses // [] | .[].id}}"
 
     field "region" do
       location "path"
@@ -86,19 +87,19 @@ plugin "gce" do
     output "address","creationTimestamp","description","kind","selfLink","users"
 
     output 'id' do
-     body_path 'id'
+     body_path '.id'
     end
 
     output 'name' do
-	  body_path 'name'
+	  body_path '.name'
     end
 
     output 'region' do
-      body_path 'region'
+      body_path '.region /"/" | .[8]'
     end
 
     output 'state' do
-	 body_path 'status'
+	 body_path '.status'
     end
 
     output 'tags' do
@@ -109,7 +110,7 @@ plugin "gce" do
       verb "GET"
       path "/projects/$project/aggregated/addresses"
       type "address"
-      output_path "items.*.addresses[]"
+      output_path ".items | .[].addresses // [] | .[]"
       field "page_size" do
           type 'string'
           location 'query'
@@ -344,7 +345,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/backendServices.
   type "backendService" do
-    href_templates "{{id}}","{{items[*].id}}","{{items.*.backendServices[].id}}"
+    href_templates "{{.id}}","{{.items | .[].id}}","{{.items | .[].backendServices // [] | .[].id}}"
 
     field "affinityCookieTtlSec" do
       type "number"
@@ -409,15 +410,15 @@ plugin "gce" do
     output "affinityCookieTtlSec","backends","cdnPolicy","connectionDraining","creationTimestamp","description","enableCDN","fingerprint","healthChecks","kind","loadBalancingScheme","port","portName","protocol","selfLink","sessionAffinity","timeoutSec"
 
     output 'id' do
-     body_path 'id'
+     body_path '.id'
     end
 
     output 'name' do
-	  body_path 'name'
+	  body_path '.name'
     end
 
     output 'region' do
-      body_path 'region'
+      body_path '.region /"/" | .[8]'
     end
 
     output 'state' do
@@ -431,7 +432,7 @@ plugin "gce" do
       verb "GET"
       path "/projects/$project/aggregated/backendServices"
       type "backendService"
-      output_path "items.*.backendServices[]"
+      output_path ".items | .[].backendServices // [] | .[]"
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/backendServices/delete.
@@ -467,7 +468,7 @@ plugin "gce" do
       verb "GET"
       path "/projects/$project/global/backendServices"
       type "backendService"
-      output_path "items"
+      output_path ".items | .[]"
       field "page_size" do
           type 'string'
           location 'query'
@@ -551,7 +552,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/disks.
   type "disk" do
-    href_templates "{{id}}","{{items[*].id}}","{{items.*.disks[].id}}"
+    href_templates "{{.id}}","{{.items | .[].id}}","{{.items | .[].disks // [] | .[].id}}"
 
     field "zone" do
       location "path"
@@ -608,19 +609,19 @@ plugin "gce" do
     output "creationTimestamp","description","diskEncryptionKey","kind","lastAttachTimestamp","lastDetachTimestamp","licenses","options","selfLink","sizeGb","sourceImage","sourceImageEncryptionKey","sourceImageId","sourceSnapshot","sourceSnapshotEncryptionKey","sourceSnapshotId","type","users"
 
     output 'id' do
-     body_path 'id'
+     body_path '.id'
     end
 
     output 'name' do
-	  body_path 'name'
+	  body_path '.name'
     end
 
     output 'region' do
-      body_path 'zone'
+      body_path '.zone /"/" | .[8] [:-2]'
     end
 
     output 'state' do
-      body_path 'status'
+      body_path '.status'
     end
 
     output 'tags' do
@@ -631,7 +632,7 @@ plugin "gce" do
       verb "GET"
       path "/projects/$project/aggregated/disks"
       type "disk"
-      output_path "items.*.disks[]"
+      output_path ".items | .[].disks // [] | .[]"
       field "page_size" do
           type 'string'
           location 'query'
@@ -1111,7 +1112,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/healthChecks.
   type "healthCheck" do
-    href_templates "{{id}}","{{items[*].id}}"
+    href_templates "{{.id}}","{{.items | .[].id}}"
 
     field "checkIntervalSec" do
       type "number"
@@ -1164,14 +1165,15 @@ plugin "gce" do
     output "checkIntervalSec","creationTimestamp","description","healthyThreshold","httpHealthCheck","httpsHealthCheck","kind","selfLink","sslHealthCheck","tcpHealthCheck","timeoutSec","type","unhealthyThreshold"
 
     output 'id' do
-     body_path 'id'
+     body_path '.id'
     end
 
     output 'name' do
-	  body_path 'name'
+	  body_path '.name'
     end
 
     output 'region' do
+	  body_path '.selfLink /"/" | .[7]'	
     end
 
     output 'state' do
@@ -1206,7 +1208,7 @@ plugin "gce" do
       verb "GET"
       path "/projects/$project/global/healthChecks"
       type "healthCheck"
-      output_path "items"
+      output_path ".items | .[]"
       field "page_size" do
           type 'string'
           location 'query'
@@ -1431,7 +1433,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/images.
   type "image" do
-    href_templates "{{selfLink}}","{{items[*].selfLink}}"
+    href_templates "{{.id}}","{{.items| .[].id}}"
 
     field "archiveSizeBytes" do
       type "number"
@@ -1490,7 +1492,26 @@ plugin "gce" do
       type "string"
     end
 
-    output "archiveSizeBytes","creationTimestamp","deprecated","description","diskSizeGb","family","guestOsFeatures","id","imageEncryptionKey","kind","licenses","name","rawDisk","selfLink","sourceDisk","sourceDiskEncryptionKey","sourceDiskId","sourceType","status"
+    output "archiveSizeBytes","creationTimestamp","deprecated","description","diskSizeGb","family","guestOsFeatures","imageEncryptionKey","kind","licenses","rawDisk","selfLink","sourceDisk","sourceDiskEncryptionKey","sourceDiskId","sourceType","status"
+
+    output 'id' do
+     body_path '.id'
+    end
+
+    output 'name' do
+	  body_path '.name'
+    end
+
+    output 'region' do
+	  body_path '.selfLink /"/" | .[7]'	
+    end
+
+    output 'state' do
+	  body_path '.status'	
+    end
+
+    output 'tags' do
+    end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/images/delete.
     action "delete" do
@@ -1532,7 +1553,21 @@ plugin "gce" do
       verb "GET"
       path "/projects/$project/global/images"
       type "image"
-      output_path "items"
+      output_path ".items| .[]"
+      field "page_size" do
+          type 'string'
+          location 'query'
+          alias_for 'maxResults'
+      end
+      pagination $google_pagination
+    end
+
+    polling do
+      field_values do
+      page_size $page_size
+    end
+      period 60
+      action 'list'
     end
 
     provision "provision_resource"
@@ -1691,7 +1726,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instanceGroups.
   type "instanceGroup" do
-    href_templates "{{id}}","{{items[*].id}}","{{items.*.instanceGroups[].id}}"
+    href_templates "{{.id}}","{{.items| .[].id}}","{{.items | .[].instanceGroups // [] | .[].id}}"
 
     field "zone" do
       location "path"
@@ -1726,15 +1761,15 @@ plugin "gce" do
     output "creationTimestamp","description","fingerprint","kind","namedPorts","network","selfLink","size","subnetwork","zone"
 
     output 'id' do
-     body_path 'id'
+     body_path '.id'
     end
 
     output 'name' do
-	  body_path 'name'
+	  body_path '.name'
     end
 
     output 'region' do
-      body_path 'region'
+      body_path '.region /"/" | .[8]'
     end
 
     output 'state' do
@@ -1755,7 +1790,7 @@ plugin "gce" do
       verb "GET"
       path "/projects/$project/aggregated/instanceGroups"
       type "instanceGroup"
-      output_path "items.*.instanceGroups[]"
+      output_path ".items | .[].instanceGroups // [] | .[]"
       field "page_size" do
           type 'string'
           location 'query'
@@ -1910,7 +1945,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instances.
   type "instance" do
-    href_templates "{{id}}","{{items[*].id}}","{{items.*.instances[].id}}"
+    href_templates "{{.id}}","{{.items| .id}}","{{.items | .[].instances // [] | .[].id}}"
 
     field "zone" do
       location "path"
@@ -1963,23 +1998,23 @@ plugin "gce" do
     output "canIpForward","cpuPlatform","creationTimestamp","description","disks","kind","machineType","metadata","networkInterfaces","scheduling","selfLink","serviceAccounts","statusMessage"
 
     output 'id' do
-     body_path 'id'
+     body_path '.id'
     end
 
     output 'name' do
-	  body_path 'name'
+	  body_path '.name'
     end
 
     output 'region' do
-     body_path 'zone'
+     body_path '.zone /"/" | .[8] [:-2]'
     end
 
     output 'state' do
-	 body_path 'status'
+	 body_path '.status'
     end
 
     output 'tags' do
-     body_path 'tags'
+     body_path '.tags'
     end
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instances/addAccessConfig.
@@ -1994,7 +2029,7 @@ plugin "gce" do
       verb "GET"
       path "/projects/$project/aggregated/instances"
       type "instance"
-      output_path "items.*.instances[]"
+      output_path ".items | .[].instances // [] | .[]"
       field "page_size" do
           type 'string'
           location 'query'
@@ -2216,7 +2251,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/networks.
   type "network" do
-    href_templates "{{id}}","{{items[*].id}}"
+    href_templates "{{.id}}","{{.items| .[].id}}"
 
     field "ipv4Range" do
       alias_for "IPv4Range"
@@ -2243,14 +2278,15 @@ plugin "gce" do
     output "IPv4Range","autoCreateSubnetworks","creationTimestamp","description","gatewayIPv4","kind","selfLink","subnetworks"
 
     output 'id' do
-     body_path 'id'
+     body_path '.id'
     end
 
     output 'name' do
-	  body_path 'name'
+	  body_path '.name'
     end
 
     output 'region' do
+	  body_path '.selfLink /"/" | .[7]'
     end
 
     output 'state' do
@@ -2285,7 +2321,7 @@ plugin "gce" do
       verb "GET"
       path "/projects/$project/global/networks"
       type "network"
-      output_path "items"
+      output_path ".items | .[]"
       field "page_size" do
           type 'string'
           location 'query'
@@ -2956,7 +2992,7 @@ plugin "gce" do
 
   # This resource was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/snapshots.
   type "snapshot" do
-    href_templates "{{id}}","{{items[*].id}}"
+    href_templates "{{.id}}","{{.items| .[].id}}"
 
     field "description" do
       type "string"
@@ -2977,18 +3013,19 @@ plugin "gce" do
     output "creationTimestamp","description","diskSizeGb","kind","licenses","selfLink","snapshotEncryptionKey","sourceDisk","sourceDiskEncryptionKey","sourceDiskId","storageBytes","storageBytesStatus"
 
     output 'id' do
-     body_path 'id'
+     body_path '.id'
     end
 
     output 'name' do
-	  body_path 'name'
+	  body_path '.name'
     end
 
     output 'region' do
+	  body_path '.selfLink /"/" | .[7]'
     end
 
     output 'state' do
-	 body_path 'status'
+	 body_path '.status'
     end
 
     output 'tags' do
@@ -3013,7 +3050,7 @@ plugin "gce" do
       verb "GET"
       path "/projects/$project/global/snapshots"
       type "snapshot"
-      output_path "items"
+      output_path ".items| .[]"
       field "page_size" do
           type 'string'
           location 'query'
