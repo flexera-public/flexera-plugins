@@ -375,7 +375,7 @@ plugin "flexera_aws_rds" do
 
     output_path "//DBInstance"
 
-    output "BackupRetentionPeriod","MultiAZ","DBInstanceStatus","DBInstanceIdentifier","PreferredBackupWindow","PreferredMaintenanceWindow","AvailabilityZone","LatestRestorableTime","Engine","LicenseModel","PubliclyAccessible","DBName","AutoMinorVersionUpgrade","InstanceCreateTime","AllocatedStorage","MasterUsername","DBInstanceClass"
+    output "BackupRetentionPeriod","MultiAZ","DBInstanceStatus","DBInstanceIdentifier","PreferredBackupWindow","PreferredMaintenanceWindow","AvailabilityZone","LatestRestorableTime","Engine","LicenseModel","PubliclyAccessible","DBName","AutoMinorVersionUpgrade","InstanceCreateTime","AllocatedStorage","MasterUsername","DBInstanceClass","tags"
 
     output 'id' do
      body_path 'DBInstanceIdentifier'
@@ -386,14 +386,11 @@ plugin "flexera_aws_rds" do
     end
 
     output 'region' do
-	 body_path 'AvailabilityZone'
+     body_path 'substring(AvailabilityZone,0, string-length(AvailabilityZone))'
     end
 
     output 'state' do
       body_path 'DBInstanceStatus'
-    end
-
-    output 'tags' do
     end
 
     output "endpoint_address" do
@@ -577,8 +574,7 @@ plugin "flexera_aws_rds" do
         alias_for "Tags.member.6.Key"
         location "query"
       end 
-
-
+	  
     end
 
     action "destroy" do
@@ -605,7 +601,7 @@ plugin "flexera_aws_rds" do
     action "list" do
       verb "POST"
       path "/?Action=DescribeDBInstances"
-	  field "page_size" do
+      field "page_size" do
           type 'string'
         location 'query'
         alias_for 'MaxRecords'
@@ -635,10 +631,10 @@ plugin "flexera_aws_rds" do
 	
     polling do
       field_values do
-      page_size $page_size	  
+       page_size $page_size	  
       end
-      period 60
-	  action 'list'
+       period 60
+       action 'list'
     end		
 
     provision 'provision_db_instance'
@@ -664,6 +660,8 @@ plugin "flexera_aws_rds" do
  
     output_path "//DBSecurityGroup"
 	
+    output "tags","region", "state"
+	
     output 'id' do
      body_path 'OwnerId'
     end
@@ -672,15 +670,6 @@ plugin "flexera_aws_rds" do
      body_path 'DBSecurityGroupName'
     end
 
-    output 'region' do
-    end
-
-    output 'state' do
-    end
-
-    output 'tags' do
-    end
-	
     output 'DBSecurityGroupDescription' do
       body_path "DBSecurityGroupDescription"
       type "simple_element"
@@ -714,7 +703,7 @@ plugin "flexera_aws_rds" do
     action "list" do
       verb "POST"
       path "/?Action=DescribeDBSecurityGroups"
-	  field "page_size" do
+       field "page_size" do
           type 'string'
         location 'query'
         alias_for 'MaxRecords'
@@ -724,10 +713,10 @@ plugin "flexera_aws_rds" do
 
     polling do
       field_values do
-      page_size $page_size	  
+       page_size $page_size	  
       end
-      period 60
-	  action 'list'
+       period 60
+       action 'list'
     end	
     provision "provision_sg"
 

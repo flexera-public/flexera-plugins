@@ -2,7 +2,7 @@
 
 ## v2.0
 
-- Added new resource browser changes.
+- Support for Resource Browser.
 
 ## v1.5 (05-12-2018)
 
