@@ -13,6 +13,7 @@ parameter "google_project" do
 end
 
 plugin "cloud_sql" do
+
   endpoint do
     default_scheme "https"
     default_host "www.googleapis.com"
