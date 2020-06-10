@@ -1,10 +1,14 @@
-name "Google Cloud SQL Plugin"
+name "Google Cloud SQL"
 rs_ca_ver 20161221
 short_description "Google Cloud SQL"
-long_description "Version: 1.2"
+long_description ""
 type 'plugin'
 package "plugins/google_sql"
 import "sys_log"
+info(
+  provider: "Google",
+  service: "Cloud SQL",
+)
 
 parameter "google_project" do
   type "string"
@@ -12,17 +16,48 @@ parameter "google_project" do
   allowed_pattern "^[0-9a-z:\.-]+$"
 end
 
+pagination "google_pagination" do
+  get_page_marker do
+    body_path "nextPageToken"
+  end
+  set_page_marker do
+    query "pageToken"
+  end
+end
+
 plugin "cloud_sql" do
-  endpoint do
-    default_scheme "https"
-    default_host "www.googleapis.com"
-    path "/sql/v1beta4"
+
+  short_description 'Google Cloud SQL'
+  long_description 'Supports Google Cloud SQL'
+  version '2.0.0' 
+
+  documentation_link 'source' do
+    label 'Source'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/google/google_cloud_sql/google_cloud_sql.rb'
+  end
+
+  documentation_link 'readme' do
+    label 'Readme'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/google/google_cloud_sql/README.md'
+  end
+
+  parameter 'page_size' do
+    type 'string'
+    label 'Page size for google responses'
+    default '200'
+    description 'The maximum results count for each page of google data received.'
   end
 
   parameter "project" do
     type "string"
     label "Project"
     description "The GCP Project to create/manage resources"
+  end
+
+  endpoint do
+    default_scheme "https"
+    default_host "www.googleapis.com"
+    path "/sql/v1beta4"
   end
 
   type "instances" do
@@ -146,7 +181,7 @@ plugin "cloud_sql" do
       type "instances"
       output_path "items[]"
 
-      field "max_results" do 
+      field "page_size" do 
         location "query"
         alias_for "maxResults"
       end 
@@ -236,6 +271,13 @@ plugin "cloud_sql" do
         alias_for "restoreBackupContext"
       end 
     end
+    polling do
+      field_values do
+       page_size $page_size	  
+      end
+       period 60
+       action 'list'
+    end		
 
     link "databases" do
       path "$href/databases"
