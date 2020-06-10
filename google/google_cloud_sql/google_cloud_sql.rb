@@ -190,6 +190,7 @@ plugin "cloud_sql" do
         location "query"
         alias_for "filter"
       end 
+      pagination $google_pagination
     end 
 
     action "update" do
@@ -271,6 +272,7 @@ plugin "cloud_sql" do
         alias_for "restoreBackupContext"
       end 
     end
+
     polling do
       field_values do
        page_size $page_size	  
