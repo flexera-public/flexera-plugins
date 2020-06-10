@@ -28,7 +28,7 @@ plugin "flexera_aws_rds" do
 
   documentation_link 'source' do
     label 'Source'
-    url 'https://github.com/flexera/flexera-plugins/blob/master/aws/rs_aws_rds/aws_rds_plugin.rb'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/aws/rs_aws_rds/aws_rds.plugin'
   end
 
   documentation_link 'readme' do
