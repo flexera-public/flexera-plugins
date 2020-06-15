@@ -410,6 +410,16 @@ plugin "aws_compute" do
     output "natGatewayAddressSet" do
       type "array"
     end
+	
+    output 'id' do
+     body_path 'natGatewayId'
+    end
+
+    output 'name' do
+     body_path 'subnetId'
+    end
+
+    output "region", "tags"
 
     action "create" do
       verb "POST"
@@ -431,7 +441,22 @@ plugin "aws_compute" do
       verb "POST"
       path "/?Action=DescribeNatGateways"
       output_path "//DescribeNatGatewaysResponse/natGatewaySet/item"
+      field "page_size" do
+          type 'string'
+          location 'query'
+          alias_for 'MaxResults'
+      end
+      pagination $aws_pagination	  
     end
+	
+    polling do
+      field_values do
+      page_size $page_size
+    end
+      period 60
+      action 'list'
+    end
+	
   end
 
   type "addresses" do
@@ -633,10 +658,10 @@ plugin "aws_compute" do
       verb "POST"
       path "/?Action=DescribeVolumes"
       output_path "//DescribeVolumesResponse/volumeSet/item"
-	  field "page_size" do
+      field "page_size" do
           type 'string'
-        location 'query'
-        alias_for 'MaxResults'
+          location 'query'
+          alias_for 'MaxResults'
       end
      pagination $aws_pagination
     end
@@ -666,7 +691,7 @@ plugin "aws_compute" do
     end
 
     output 'region' do
-	 body_path 'availabilityZone'
+	 body_path 'substring(availabilityZone,0, string-length(availabilityZone))'
     end
 
     output 'state' do
@@ -702,7 +727,7 @@ plugin "aws_compute" do
       page_size $page_size
     end
       period 60
-	     action 'list'
+      action 'list'
     end
 
   end
@@ -862,7 +887,7 @@ plugin "aws_compute" do
     end
 
     output 'region' do
-	 body_path 'placement.availabilityZone'
+	 body_path 'substring(placement.availabilityZone,0, string-length(placement.availabilityZone))'
     end
 
     output 'state' do
@@ -909,7 +934,7 @@ plugin "aws_compute" do
       verb "POST"
       path "/?Action=DescribeSnapshots"
       output_path "//DescribeSnapshotsResponse/snapshotSet/item"
-	    field "page_size" do
+     field "page_size" do
         type 'string'
         location 'query'
         alias_for 'MaxResults'
@@ -941,8 +966,8 @@ plugin "aws_compute" do
       field_values do
         page_size $page_size
       end
-      period 60
-	    action 'list'
+        period 60
+        action 'list'
     end
 
   end
@@ -1025,6 +1050,97 @@ plugin "aws_compute" do
     end
 
  end
+ 
+   type "subnets" do
+    href_templates "/?Action=DescribeSubnets&subnetId.1={{//DescribeSubnetsResponse/subnetSet/item/subnetId}}","/?Action=DescribeSubnets&subnetId.1={{//CreateSubnetResponse/subnetId}}"
+    provision 'no_operation'
+    delete    'no_operation'
+
+    action "list" do
+      verb "POST"
+      path "/?Action=DescribeSubnets"
+      output_path "//DescribeSubnetsResponse/subnetSet/item"
+     field "page_size" do
+        type 'string'
+        location 'query'
+        alias_for 'MaxResults'
+      end
+      pagination $aws_pagination	  
+    end
+
+    output 'id' do
+     body_path 'subnetId'
+    end
+
+    output 'name' do
+     body_path 'subnetId'
+    end
+
+    output 'state' do
+     body_path 'state'
+    end
+
+    output 'region' do
+     body_path 'substring(availabilityZone,0, string-length(availabilityZone))'	
+    end
+
+    output 'tags' do
+     body_path 'tagSet'
+    end
+
+    output "description", "vpcId", "cidrBlock", "availableIpAddressCount", "availabilityZone"
+
+    polling do
+      field_values do
+        page_size $page_size
+      end
+        period 60
+        action 'list'
+    end
+
+ end
+ 
+   type "security_groups" do
+    href_templates "/?Action=DescribeSecurityGroups&groupId.1={{//DescribeSecurityGroupsResponse/securityGroupInfo/item/groupId}}","/?Action=DescribeSecurityGroups&groupId.1={{//CreateImageResponse/groupId}}"
+    provision 'no_operation'
+    delete    'no_operation'
+
+    action "list" do
+      verb "POST"
+      path "/?Action=DescribeSecurityGroups"
+      output_path "//DescribeSecurityGroupsResponse/securityGroupInfo/item"
+     field "page_size" do
+        type 'string'
+        location 'query'
+        alias_for 'MaxResults'
+      end
+      pagination $aws_pagination	  
+    end
+
+    output 'id' do
+     body_path 'groupId'
+    end
+
+    output 'name' do
+     body_path 'groupName'
+    end
+	
+    output 'description' do
+     body_path 'groupDescription'
+    end	
+
+    output "ipPermissions", "vpcId", "tags", "region"
+
+    polling do
+      field_values do
+        page_size $page_size
+      end
+        period 60
+        action 'list'
+    end
+
+ end
+ 
 end
 
 resource_pool "compute_pool" do
