@@ -1,10 +1,14 @@
-name 'rs_azure_sql'
+name 'Azure SQL Database'
 type 'plugin'
 rs_ca_ver 20161221
-short_description "Azure SQL Plugin"
-long_description "Version: 1.1"
+short_description "Azure SQL Database"
+long_description ""
 package "plugins/rs_azure_sql"
 import "sys_log"
+info(
+  provider: "Azure",
+  service: "SQL Database"
+)
 
 parameter "subscription_id" do
   type  "string"
@@ -16,7 +20,30 @@ permission "read_creds" do
   resources "rs_cm.credentials"
 end
 
-plugin "rs_azure_sql" do
+pagination "azure_pagination" do
+  get_page_marker do
+    body_path "nextLink"
+  end
+  set_page_marker do
+    uri true
+  end
+end
+
+plugin "flexera_azure_sql" do
+  short_description "Azure SQL Database"
+  long_description "Supports Azure SQL Database"
+  version "2.0.0"
+
+  documentation_link 'source' do
+    label 'Source'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/azure/rs_azure_sql/azure_sql_plugin.rb'
+  end
+
+  documentation_link 'readme' do
+    label "ReadMe"
+    url 'https://github.com/flexera/flexera-plugins/blob/master/azure/rs_azure_sql/README.md'
+  end
+
   endpoint do
     default_host "https://management.azure.com/"
     default_scheme "https"
@@ -76,7 +103,11 @@ plugin "rs_azure_sql" do
       verb "DELETE"
     end
 
-    output "id","name","type","location","kind"
+    output "id","name","type","location","kind","tags"
+
+    output "region" do
+      body_path "location"
+    end
 
     output "fullyQualifiedDomainName" do
       body_path "properties.fullyQualifiedDomainName"
@@ -129,6 +160,19 @@ plugin "rs_azure_sql" do
       type "elastic_pool"
       output_path "value[*]"
     end
+
+    action "list" do
+      verb "GET"
+      pagination $azure_pagination
+      path "/subscriptions/$subscription_id/providers/Microsoft.Sql/servers?api-version=2019-06-01-preview"
+      output_path "value[*]"
+    end
+
+    polling do
+      period 60
+      action 'list'
+    end
+
   end
 
   type "databases" do
@@ -736,7 +780,7 @@ plugin "rs_azure_sql" do
 end
 
 resource_pool "rs_azure_sql" do
-    plugin $rs_azure_sql
+    plugin $flexera_azure_sql
     parameter_values do
       subscription_id $subscription_id
     end
