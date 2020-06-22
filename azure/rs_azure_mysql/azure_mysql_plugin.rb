@@ -1,10 +1,14 @@
-name 'rs_azure_mysql'
+name 'Azure Database for MySQL'
 type 'plugin'
 rs_ca_ver 20161221
-short_description "Azure MySQL Plugin"
+short_description "Azure Database for MySQL"
 long_description "Version: 1.1"
 package "plugins/rs_azure_mysql"
 import "sys_log"
+info(
+      provider: "Azure",
+      service: "Database for MySQL"
+    )
 
 parameter "subscription_id" do
   type  "string"
@@ -16,12 +20,44 @@ permission "read_creds" do
   resources "rs_cm.credentials"
 end
 
-plugin "rs_azure_mysql" do
+#pagination support
+pagination "azure_pagination" do
+  get_page_marker do
+    body_path "nextLink"
+  end
+  set_page_marker do
+    uri true
+  end
+end
+
+plugin "flexera_azure_mysql" do
+
+  short_description 'Azure Database for MySQL'
+  long_description 'Supports Azure Database for MySQL'
+  version '2.0.0' 
+
+  documentation_link 'source' do
+    label 'Source'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/azure/rs_azure_mysql/azure_mysql.plugin'
+  end
+
+  documentation_link 'readme' do
+    label 'Readme'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/azure/rs_azure_mysql/README.md'
+  end
+
+  parameter 'page_size' do
+    type 'string'
+    label 'Page size for google responses'
+    default '200'
+    description 'The maximum results count for each page of google data received.'
+  end
+
   endpoint do
     default_host "https://management.azure.com/"
     default_scheme "https"
     query do {
-      'api-version' =>  '2017-04-30-preview'
+      'api-version' =>  '2017-12-01'
     } end
   end
 
@@ -31,7 +67,8 @@ plugin "rs_azure_mysql" do
   end
 
   type "mysql_server" do
-    href_templates "{{type=='Microsoft.DBforMySQL/servers' && id || null}}"
+    #href_templates "{{type=='Microsoft.DBforMySQL/servers' && id || null}}"
+    href_templates "{{value[*].name}}"
     provision "provision_server"
     delete    "delete_resource"
 
@@ -97,6 +134,14 @@ plugin "rs_azure_mysql" do
       verb "DELETE"
     end
 
+    action "list" do
+      type "mysql_server"
+      path "/subscriptions/$subscription_id/providers/Microsoft.DBforMySQL/servers"
+      verb "GET"
+      output_path "value[*]"
+      pagination $azure_pagination
+    end
+
     output "id","name","type","location","tags","sku","properties"
 
     output "state" do
@@ -137,6 +182,13 @@ plugin "rs_azure_mysql" do
       path "$id/firewallRules"
       type "firewall_rule"
       output_path "value[*]"
+    end
+   
+   polling do
+      field_values do	  
+    end
+      period 60
+      action 'list'
     end
 
   end
@@ -287,8 +339,8 @@ plugin "rs_azure_mysql" do
   end
 end
 
-resource_pool "rs_azure_mysql" do
-    plugin $rs_azure_mysql
+resource_pool "flexera_azure_mysql" do
+    plugin $flexera_azure_mysql
     parameter_values do
       subscription_id $subscription_id
     end
@@ -325,7 +377,7 @@ define provision_resource(@declaration) return @resource do
     call sys_log.summary(join(["Provision ", $type]))
     call sys_log.detail($object)
     call start_debugging()
-    @operation = rs_azure_mysql.$type.create($fields)
+    @operation = flexera_azure_mysql.$type.create($fields)
     call sys_log.detail(to_object(@operation))
     @resource = @operation.show()
     $status = @resource.state
@@ -352,7 +404,7 @@ define provision_server(@declaration) return @resource do
     call sys_log.summary(join(["Provision ", $type]))
     call sys_log.detail($object)
     call start_debugging()
-    @operation = rs_azure_mysql.$type.create($fields)
+    @operation = flexera_azure_mysql.$type.create($fields)
     call sys_log.detail(to_object(@operation))
     call stop_debugging()
     call sys_log.detail("entering check for database created")
@@ -403,7 +455,7 @@ define provision_database(@declaration) return @resource do
     call sys_log.summary(join(["Provision ", $type]))
     call sys_log.detail($object)
     call start_debugging()
-    @operation = rs_azure_mysql.$type.create($fields)
+    @operation = flexera_azure_mysql.$type.create($fields)
     call sys_log.detail($operation)
     call stop_debugging()
     call sys_log.detail(to_object(@operation))
@@ -445,7 +497,7 @@ define provision_firewall_rule(@declaration) return @resource do
     call sys_log.summary(join(["Provision ", $type]))
     call sys_log.detail($object)
     call start_debugging()
-    @operation = rs_azure_mysql.$type.create($fields)
+    @operation = flexera_azure_mysql.$type.create($fields)
     call stop_debugging()
     call sys_log.detail(to_object(@operation))
     call start_debugging()
