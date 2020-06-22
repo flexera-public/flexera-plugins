@@ -61,7 +61,8 @@ plugin "cloud_sql" do
   end
 
   type "instances" do
-    href_templates "/projects/$project/instances/{{name}}","/projects/$project/instances/{{items[*].name}}"
+    #href_templates "/projects/$project/instances/{{name}}","/projects/$project/instances/{{items[*].name}}"
+    href_templates "{{items[*].name}}"
     provision "provision_resource"
     delete "delete_resource"
 
