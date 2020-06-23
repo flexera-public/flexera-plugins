@@ -6,6 +6,11 @@ long_description "Version: 1.0"
 package "plugins/rs_azure_pgsql"
 import "sys_log"
 
+parameter "tenant_id" do
+  type "string"
+  label "Tenant ID"
+end
+
 parameter "subscription_id" do
   type  "string"
   label "Subscription ID"
@@ -21,7 +26,7 @@ plugin "rs_azure_pgsql" do
     default_host "https://management.azure.com/"
     default_scheme "https"
     query do {
-      'api-version' =>  '2017-04-30-preview'
+      'api-version' => '2017-12-01'
     } end
   end
 
@@ -30,6 +35,11 @@ plugin "rs_azure_pgsql" do
     label "subscription_id"
   end
 
+  parameter "tenant_id" do
+    type "string"
+    label "Tenant ID"
+  end
+  
   type "pgsql_server" do
     href_templates "{{type=='Microsoft.DBforPostgreSQL/servers' && id || null}}"
     provision "provision_server"
@@ -307,10 +317,11 @@ resource_pool "rs_azure_pgsql" do
     plugin $rs_azure_pgsql
     parameter_values do
       subscription_id $subscription_id
+      tenant_id $tenant_id
     end
 
     auth "azure_auth", type: "oauth2" do
-      token_url "https://login.microsoftonline.com/TENANT_ID/oauth2/token"
+      token_url join(["https://login.microsoftonline.com/",$tenant_id,"/oauth2/token"])
       grant type: "client_credentials" do
         client_id cred("AZURE_APPLICATION_ID")
         client_secret cred("AZURE_APPLICATION_KEY")

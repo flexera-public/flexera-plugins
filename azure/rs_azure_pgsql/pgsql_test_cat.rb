@@ -3,9 +3,16 @@ rs_ca_ver 20161221
 short_description "Azure PostgresSQL Database Service - Test CAT"
 import "sys_log"
 import "plugins/rs_azure_pgsql"
+import "azure/cloud_parameters"
+
+parameter "tenant_id" do
+  like $cloud_parameters.tenant_id
+  operations "launch"
+end
 
 parameter "subscription_id" do
-  like $rs_azure_pgsql.subscription_id
+  like $cloud_parameters.subscription_id
+  operations "launch"
 end
 
 permission "read_creds" do
@@ -15,59 +22,30 @@ end
 
 resource "sql_server", type: "rs_azure_pgsql.pgsql_server" do
   name join(["my-sql-server-", last(split(@@deployment.href, "/"))])
-  resource_group "CCtestresourcegroup"
-  location "northcentralus"
+  resource_group "AADDS"
+  location "eastus"
   properties do {
     "administratorLogin" => "cloudsa",
     "administratorLoginPassword" => "RightScale2017",
-    "storageMB" => 51200,
     "sslEnforcement" => "Enabled",
-    "createMode" => "Default"
+    "version" => "10",
+    "minimalTlsVersion" => "TLSEnforcementDisabled",
+    "infrastructureEncryption" => "Disabled",
+    "publicNetworkAccess" => "Enabled",
+    "storageProfile" => {
+      "storageMB" => "51200",
+      "backupRetentionDays" => "7",
+      "geoRedundantBackup" => "Disabled",
+      "storageAutogrow" => "Enabled"
+    }
   } end
   sku do {
-    "name" => "PGSQLB100",
+    "name" => "B_Gen5_1",
     "tier" => "Basic",
-    "capacity" => 100
+    "family" => "Gen5",
+    "capacity" => "1"
   } end
   tags do {
     "ElasticServer" => "1"
   } end
-end
-
-resource "firewall_rule", type: "rs_azure_pgsql.firewall_rule" do
-  name "sample-firewall-rule"
-  resource_group "CCtestresourcegroup"
-  location "northcentralus"
-  server_name @sql_server.name
-  properties do {
-    "startIpAddress" => "0.0.0.1",
-    "endIpAddress" => "0.0.0.1"
-  } end
-end
-
-operation "launch" do
- description "Launch the application"
- definition "launch_handler"
-end
-
-define launch_handler(@sql_server,@firewall_rule) return @sql_server do
-  call start_debugging()
-  provision(@sql_server)
-  provision(@firewall_rule)
-  call stop_debugging()
-end
-
-define start_debugging() do
-  if $$debugging == false || logic_and($$debugging != false, $$debugging != true)
-    initiate_debug_report()
-    $$debugging = true
-  end
-end
-
-define stop_debugging() do
-  if $$debugging == true
-    $debug_report = complete_debug_report()
-    call sys_log.detail($debug_report)
-    $$debugging = false
-  end
 end
