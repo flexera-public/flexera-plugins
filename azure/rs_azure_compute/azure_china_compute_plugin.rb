@@ -550,6 +550,12 @@ plugin "azure_compute" do
       verb "GET"
     end
 
+    action "update" do
+      type "disks"
+      path "$href"
+      verb "PATCH"
+    end
+
     action "list" do
       type "disks"
       path "/subscriptions/$subscription_id/providers/Microsoft.Compute/disks"
@@ -644,10 +650,10 @@ resource_pool "azure_compute" do
     end
 
     auth "azure_auth", type: "oauth2" do
-      token_url join(["https://login.partner.microsoftonline.cn/",$tenant_id,"/oauth2/token"])
+      token_url join(["https://login.chinacloudapi.cn/",$tenant_id,"/oauth2/token"])
       grant type: "client_credentials" do
-        client_id cred("AZURE_APPLICATION_ID")
-        client_secret cred("AZURE_APPLICATION_KEY")
+        client_id cred("AZURE_CHINA_APPLICATION_ID")
+        client_secret cred("AZURE_CHINA_APPLICATION_KEY")
         additional_params do {
           "resource" => "https://management.chinacloudapi.cn/"
         } end
