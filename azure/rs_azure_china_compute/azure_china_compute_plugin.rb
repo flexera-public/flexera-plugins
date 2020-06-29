@@ -243,6 +243,12 @@ plugin "azure_compute" do
       verb "PATCH"
     end
 
+    action "patch" do
+      type "virtualmachine"
+      path "$href"
+      verb "PATCH"
+    end
+
     action "vmSizes" do
       verb "GET"
       path "$href/vmSizes"
@@ -548,6 +554,12 @@ plugin "azure_compute" do
       type "disks"
       path "$href"
       verb "GET"
+    end
+
+    action "patch" do
+      type "disks"
+      path "$href"
+      verb "PATCH"
     end
 
     action "update" do
