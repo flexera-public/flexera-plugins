@@ -53,15 +53,18 @@ Be sure your RightScale account has Self-Service enabled
 Follow the Getting Started section to create a Service Account and RightScale Credentials
 Navigate to the appropriate Self-Service portal for more details on using the portal review the [SS User Interface Guide](http://docs.rightscale.com/ss/guides/ss_user_interface_guide.html)
 In the Design section, use the `Upload CAT` interface to complete the following:
+
 - Upload each of packages listed in the Requirements Section
 - Upload the `google_cloud_storage.rb` file located in this repository
- 
+
 ## How to Use
 
 The Cloud DNS Plugin has been packaged as `plugins/google_cloud_storage`. In order to use this plugin you must import this plugin into a CAT.
+
 ```
 import "plugins/google_cloud_storage"
 ```
+
 For more information on using packages, please refer to the RightScale online documenataion. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 ## Supported Resources
@@ -74,13 +77,13 @@ For more information on using packages, please refer to the RightScale online do
 
 ### storage_buckets
 
-#### Supported Fields
+#### Supported Fields for resource storage_buckets
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 | projectId | Yes | Project identifier for which storage bucket details are fetched | 
 
-#### Supported Outputs
+#### Supported Outputs for resource storage_buckets
 
 - name
 - id
@@ -89,17 +92,17 @@ For more information on using packages, please refer to the RightScale online do
 - labels 
 - storage class
 
-#### Usage
+#### Usage for resource storage_buckets
 
 Google Cloud storage bucket resources details are fetched using this. See the Supported Actions section for a full list of supported actions.
 
-#### Supported Actions
+#### Supported Actions for resource storage_buckets
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
 | list | [list](https://cloud.google.com/storage/docs/json_api/v1/buckets/list) | Supported
 
-#### Supported Links
+#### Supported Links for resource storage_buckets
 
 | Link | Resource Type | 
 |------|---------------|
@@ -108,54 +111,53 @@ Google Cloud storage bucket resources details are fetched using this. See the Su
 
 ### bucket_permission
 
-#### Supported Fields
+#### Supported fields for resource bucket_permission`
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 | bucket_name | Yes | Bucket Name |
 
-#### Supported Outputs
+#### Supported Outputs for resource `bucket_permission`
 
 - public_access
 
-#### Usage
+#### Usage for resource bucket_permission
 
 It fetches the permissions assigned to the bucket which provides the public_access value. If bucket is publicly accessible then the value is true else it is false.
 
-
-#### Supported Actions
+#### Supported Actions for resource bucket_permission
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
 | list | [list](https://cloud.google.com/storage/docs/json_api/v1/buckets/getIamPolicy) | Supported
 
-#### Supported Links
+#### Supported Links for resource bucket_permission
 
 N/A
 
 ### bucket_size
 
-#### Supported Fields
+#### Supported Fields for resource bucket_size
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 | bucket_name | Yes | Bucket Name |
 
-#### Supported Outputs
+#### Supported Outputs for resource bucket_size
 
 - size
 
-#### Usage
+#### Usage for resource bucket_size
 
 It fetches all the objects inside the bucket which provides the total size of objects inside the bucket.
 
-#### Supported Actions
+#### Supported Actions for resource bucket_size
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
 | list | [list](https://cloud.google.com/storage/docs/json_api/v1/objects/list) | Supported
 
-#### Supported Links
+#### Supported Links for resource bucket_size
 
 N/A
 
@@ -166,7 +168,7 @@ N/A
 ## Getting Help
 
 Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.
-Visit http://chat.rightscale.com/ to join!
+Visit <http://chat.rightscale.com/> to join!
 
 ## License
 

@@ -38,7 +38,7 @@ plugin "google_cloud_storage" do
   end
 
   type "storage_buckets" do
-  href_templates "{{.items[].id}}"
+    href_templates "{{.items[].id}}"
     output_path ".items[]"
     output "id" do
       body_path ".id"
