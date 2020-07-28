@@ -140,13 +140,13 @@ plugin "google_cloud_storage" do
       end
     end
 
-	polling do
+    polling do
       field_values do
         bucket_name parent_field("id")
       end
       parent "storage_buckets"
       period 60
       action "list"
-	end
+    end
   end
 end
