@@ -2,6 +2,11 @@ name "Google Cloud Storage"
 type "plugin"
 rs_ca_ver 20161221
 short_description "Google cloud storage bucket details"
+long_description ""
+info(
+      provider: "Google",
+      service: "Storage"
+    )
 
 pagination "gce_pagination" do
   get_page_marker do
