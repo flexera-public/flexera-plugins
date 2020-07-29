@@ -16,7 +16,11 @@ plugin "google_cloud_storage" do
 
   short_description "GCE Cloud storage"
   long_description "Supports polling activity for google cloud storage bucket with support for pagination"
-  version "v2.0.0"
+  info(
+    version "v2.0.0",
+    provider: "Google Cloud",
+    service: "GCE",
+  )
   json_query_language 'jq'
   
   documentation_link "source" do
