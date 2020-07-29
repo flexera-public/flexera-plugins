@@ -19,7 +19,7 @@ plugin "google_cloud_storage" do
   info(
     version "v2.0.0",
     provider: "Google Cloud",
-    service: "GCE",
+    service: "GCE"
   )
   json_query_language 'jq'
   
