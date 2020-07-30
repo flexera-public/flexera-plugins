@@ -155,4 +155,3 @@ plugin "google_cloud_storage" do
     end
   end
 end
-end
