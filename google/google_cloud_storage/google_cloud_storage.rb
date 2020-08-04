@@ -3,10 +3,17 @@ type "plugin"
 rs_ca_ver 20161221
 short_description "Google cloud storage bucket details"
 long_description ""
+package "plugins/google_cloud_storage"
 info(
       provider: "Google",
       service: "Storage"
     )
+    
+parameter "google_project" do
+  type "string"
+  label "Google Cloud Project"
+  allowed_pattern "^[0-9a-z:\.-]+$"
+end
 
 pagination "gce_pagination" do
   get_page_marker do
@@ -152,6 +159,73 @@ plugin "google_cloud_storage" do
       parent "storage_buckets"
       period 60
       action "list"
+    end
+  end
+
+  type "objects" do
+    href_templates '{{[.items[].selfLink] | first}}'
+
+    action "get" do
+      type "objects"
+      path "$href"
+    end
+
+    action "show" do
+      type "objects"
+      verb "GET"
+      path "storage/v1/b/$bucket_name/o/$object_name?alt=json"
+      field "bucket_name" do
+        type "string"
+        location "path"
+      end
+
+      field "object_name" do
+        type "string"
+        location "path"
+      end
+    end
+
+    action "content" do
+      type "objects"
+      verb "GET"
+      path "$href?alt=media"
+    end
+    
+    action "list" do
+      type "objects"
+      verb "GET"
+      path "storage/v1/b/$bucket_name/o"
+      field "bucket_name" do
+        type "string"
+        location "path"
+      end
+    end
+
+    polling do
+      field_values do
+        bucket_name parent_field("id")
+      end
+      parent "storage_buckets"
+      period 60
+      action "list"
+    end
+  end
+end
+
+resource_pool "google_cloud_storage" do
+  plugin $google_cloud_storage
+  parameter_values do
+    project_id $google_project
+  end
+  auth "my_google_auth", type: "oauth2" do
+    token_url "https://www.googleapis.com/oauth2/v4/token"
+    grant type: "jwt_bearer" do
+      iss cred("GOOGLE_CONTAINER_ENGINE_ACCOUNT")
+      aud "https://www.googleapis.com/oauth2/v4/token"
+      additional_claims do {
+        "scope" => "https://www.googleapis.com/auth/cloud-platform"
+      } end
+      signing_key cred("GOOGLE_CONTAINER_ENGINE_KEY")
     end
   end
 end
