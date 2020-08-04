@@ -163,7 +163,7 @@ plugin "google_cloud_storage" do
   end
 
   type "objects" do
-    href_templates '{{[.items[].selfLink] | first}}'
+    href_templates '{{ . | select(.kind == "storage#object") | .selfLink }}', '{{select( .items != null ) | [.items[].selfLink] | first}}'
 
     action "get" do
       type "objects"
@@ -190,7 +190,7 @@ plugin "google_cloud_storage" do
       verb "GET"
       path "$href?alt=media"
     end
-    
+
     action "list" do
       type "objects"
       verb "GET"
@@ -220,12 +220,12 @@ resource_pool "google_cloud_storage" do
   auth "my_google_auth", type: "oauth2" do
     token_url "https://www.googleapis.com/oauth2/v4/token"
     grant type: "jwt_bearer" do
-      iss cred("GOOGLE_CONTAINER_ENGINE_ACCOUNT")
+      iss cred("GOOGLE_STORAGE_SERVICE_ACCOUNT")
       aud "https://www.googleapis.com/oauth2/v4/token"
       additional_claims do {
         "scope" => "https://www.googleapis.com/auth/cloud-platform"
       } end
-      signing_key cred("GOOGLE_CONTAINER_ENGINE_KEY")
+      signing_key cred("GOOGLE_STORAGE_SERVICE_ACCOUNT_KEY")
     end
   end
 end
