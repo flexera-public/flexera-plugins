@@ -19,6 +19,7 @@ GCP Service Account credentials
 ## Installation
 
 Be sure your RightScale account has Self-Service enabled
+
 1. Connect AzureRM Cloud credentials to your RightScale account (if not already completed)
 1. Follow steps to [Create an Azure Active Directory Application](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal#create-an-azure-active-directory-application)
 1. Grant the Azure AD Application access to the necessary subscription(s)
@@ -32,7 +33,7 @@ Be sure your RightScale account has Self-Service enabled
 1. In the Design section, use the `Upload CAT` interface to complete the following:
    1. Upload each of packages listed in the Requirements Section
    1. Upload the `azure_blob_service.rb` file located in this repository
-   
+ 
 ## How to Use
 
 The Azure Blob Service Plugin has been packaged as `plugins/rs_azure_blob_service`. In order to use this plugin you must import this plugin into a CAT.
@@ -58,7 +59,6 @@ For more information on using packages, please refer to the RightScale online do
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 | comp | Yes | comp |
-
 
 #### Supported Outputs for resource `blob_services`
 
