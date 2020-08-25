@@ -3,6 +3,11 @@ type 'plugin'
 rs_ca_ver 20161221
 short_description "Azure Blob Services"
 
+info(
+      provider: "Azure",
+      service: "Blob Container"
+    )
+
 pagination 'azure_pagination' do
   get_page_marker do
     body_path '/EnumerationResults/NextMarker'
@@ -19,8 +24,18 @@ end
 
 plugin "rs_azure_blob_service" do
   short_description 'Azure Blob Services'
-  long_description 'Azure Blob Services'
+  long_description 'Supports polling activity for Azure Storage account with support for pagination'
   version '1.0.0'
+  
+  documentation_link "source" do
+    label "Source"
+    url "https://github.com/flexera/flexera-plugins/blob/master/azure/rs_azure_blob_service/azure_blob_services.rb"
+  end
+
+  documentation_link "readme" do
+    label "ReadMe"
+    url "https://github.com/flexera/flexera-plugins/blob/master/azure/rs_azure_blob_service/README.md"
+  end
 
   parameter "storage_account" do
     type  "string"
