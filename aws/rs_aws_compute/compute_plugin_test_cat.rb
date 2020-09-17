@@ -77,54 +77,9 @@ resource "my_vpc_endpoint", type: "aws_compute.endpoint" do
   service_name "com.amazonaws.us-east-1.s3"
 end
 
-resource "my_rs_vpc", type: "rs_cm.network" do
-  name "my_rs_vpc"
-  cidr_block "10.0.0.0/16"
-  cloud_href "/api/clouds/1"
-end
-
-resource "my_rs_vpc_tag", type: "aws_compute.tags" do
-  resource_id_1 @my_rs_vpc.resource_uid
-  tag_1_key "Name"
-  tag_1_value @@deployment.name
-end
-
-resource "my_subnet", type: "rs_cm.subnet" do
-  name join([@@deployment.name, "-us-east-1b"])
-  cidr_block "10.0.1.0/24"
-  network @my_rs_vpc
-  datacenter "us-east-1b"
-  cloud_href "/api/clouds/1"
-end
-
-resource "my_sg", type: "rs_cm.security_group" do
-  name join([@@deployment.name, "-default"])
-  network @my_rs_vpc
-  cloud_href "/api/clouds/1"
-end
-
-resource "my_igw", type: "rs_cm.network_gateway" do
-  name join([@@deployment.name, "-igw"])
-  cloud_href "/api/clouds/1"
-  type "internet"
-  network @my_rs_vpc
-end
-
-resource "my_rt_igw", type: "rs_cm.route" do
-  description "internet route"
-  destination_cidr_block "0.0.0.0/0"
-  next_hop_network_gateway @my_igw
-end
-
 resource "my_rs_vpc_endpoint", type: "aws_compute.endpoint" do
   vpc_id @my_rs_vpc.resource_uid
   service_name "com.amazonaws.us-east-1.s3"
-end
-
-resource "my_nat_ip", type: "rs_cm.ip_address" do
-  name @@deployment.name
-  domain "vpc"
-  cloud_href "/api/clouds/1"
 end
 
 resource "my_nat_gateway", type: "aws_compute.nat_gateway" do
@@ -136,25 +91,6 @@ resource "my_volume", type: "aws_compute.volume" do
   availability_zone "us-east-1a"
   size "10"
   volume_type "gp2"
-end
-
-resource 'server1', type: 'rs_cm.server' do
-  name "server-1"
-  cloud "EC2 us-east-1"
-  server_template "RightLink 10.6.0 Linux Base"
-  instance_type "t2.medium"
-  network @my_rs_vpc
-  subnets [@my_subnet]
-  security_groups [ @my_sg ]
-  associate_public_ip_address true
-end
-
-operation 'list_vpc' do
-  definition 'list_vpcs'
-  output_mappings do {
-    $list_vpc => $object,
-    $list_route_tables => $rt_tbl
-  } end
 end
 
 operation "launch" do
@@ -182,16 +118,6 @@ end
 
 operation "op_deregister_image" do
   definition "deregister_image"
-end
-
-define list_vpcs(@my_vpc) return $object,$rt_tbl do
-  call aws_compute.start_debugging()
-  @vpcs = aws_compute.vpc.list()
-  $object = to_object(first(@vpcs))
-  $object = to_s($object)
-  @route_tables = @my_vpc.routeTables()
-  $rt_tbl = to_s(to_object(@route_tables))
-  call aws_compute.stop_debugging()
 end
 
 define resize_volume($param_region,@my_volume,$new_size) return @my_volume do
@@ -226,7 +152,7 @@ define handle_retries($attempts) do
   end
 end
 
-define generated_launch($param_region,@my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs_vpc_endpoint,@my_nat_ip,@my_nat_gateway,@my_subnet,@my_igw,@my_rs_vpc_tag,@my_volume,@my_vpc_tag,@my_sg,@my_rt_igw,@server1) return @my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs_vpc_endpoint,@my_nat_ip,@my_nat_gateway,@my_subnet,@my_igw,@my_rs_vpc_tag,@my_volume,@my_sg,@my_rt_igw,@instance,$instance_dns_name,$instance_id,@server1 do
+define generated_launch($param_region,@my_vpc,@my_vpc_endpoint,@my_nat_ip,@my_nat_gateway,@my_subnet,@my_igw,@my_volume,@my_vpc_tag,@my_sg,@my_rt_igw) return @my_vpc,@my_vpc_endpoint,@my_nat_ip,@my_nat_gateway,@my_subnet,@my_igw,@my_volume,@my_sg,@my_rt_igw do
   call aws_compute.start_debugging()
   sub on_error: aws_compute.stop_debugging() do
     provision(@my_vpc)
@@ -236,42 +162,18 @@ define generated_launch($param_region,@my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs
     $endpoint["fields"]["route_table_id_1"] = @route_tables.routeTableId
     @my_vpc_endpoint = $endpoint
     provision(@my_vpc_endpoint)
-    provision(@my_rs_vpc)
     $subnet = to_object(@my_subnet)
-    $subnet["fields"]["network_href"] = @my_rs_vpc.href
     @my_subnet = $subnet
     provision(@my_subnet)
     provision(@my_igw)
-    provision(@my_rs_vpc_endpoint)
     provision(@my_nat_ip)
     @aws_ip = aws_compute.addresses.show(public_ip_1: @my_nat_ip.address)
     $nat_gateway = to_object(@my_nat_gateway)
     $nat_gateway["fields"]["allocation_id"] = @aws_ip.allocationId
     @my_nat_gateway = $nat_gateway
     provision(@my_nat_gateway)
-    @vpc1 = aws_compute.vpc.show(vpcId: @my_rs_vpc.resource_uid)
-    @vpc1.enablevpcclassiclink()
-    @vpc1.enablevpcclassiclinkdnssupport()
-    provision(@my_rs_vpc_tag)
-    @vpc1.create_tag(tag_1_key: "new_key", tag_1_value: "new_value")
     provision(@my_volume)
     provision(@my_sg)
-    @default_route_table = rs_cm.route_table.empty()
-    $attempts = 0
-    sub on_error: handle_retries($attempts), timeout: 60m do
-      $attempts = $attempts + 1
-      @default_route_table = @my_rs_vpc.default_route_table()
-      sleep(60)
-    end
-    $default_route_table_href = @default_route_table.href
-    $route_igw = to_object(@my_rt_igw)
-    $route_igw["fields"]["route_table_href"] = $default_route_table_href
-    @my_rt_igw = $route_igw
-    provision(@my_rt_igw)
-    provision(@server1)
-    $instance_id = @server1.current_instance().resource_uid
-    @instance = aws_compute.instances.show(instance_id: $instance_id)
-    $instance_dns_name = @instance.privateDnsName
   end
 end
 
@@ -288,20 +190,4 @@ define generated_terminate(@server1,@my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs_v
   delete(@my_subnet)
   delete(@my_vpc)
   delete(@my_rs_vpc)
-end
-
-define getZones() return $values do
-  @clouds = rs_cm.clouds.index(filter: ["cloud_type==amazon"])
-  @datacenters = @clouds.datacenters()
-  $dc_array = []
-  $dcs = []
-  foreach @datacenter in @datacenters do
-    $zone = @datacenter.name
-    $size = size($zone)
-    $datacenter=join(split($zone,"")[0..($size-2)],"")
-    $dcs << $datacenter
-  end
-  $dc_unique = unique($dcs)
-  $dc_array = sort($dc_unique)
-  $values = $dc_array
 end
