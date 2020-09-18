@@ -1,0 +1,6 @@
+{
+  "scripts": {
+    "textlint": "textlint",
+    "textlint:fix": "textlint --fix"
+  }
+}

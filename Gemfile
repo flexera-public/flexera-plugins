@@ -23,3 +23,5 @@ gem "rb-readline", "~> 0.5.5"
 
 # Markdownlint
 gem "mdl"
+
+gem "danger-textlint"
