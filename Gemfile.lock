@@ -25,6 +25,10 @@ GEM
       no_proxy_fix
       octokit (~> 4.7)
       terminal-table (~> 1)
+    danger-plugin-api (1.0.0)
+      danger (> 2.0)
+    danger-textlint (2.0.1)
+      danger-plugin-api (~> 1.0)
     faraday (0.17.3)
       multipart-post (>= 1.2, < 3)
     faraday-http-cache (2.0.0)
@@ -71,6 +75,7 @@ PLATFORMS
 
 DEPENDENCIES
   danger (~> 6.0.0)
+  danger-textlint
   json (~> 2.1)
   mdl
   pry (~> 0.11.3)
@@ -78,4 +83,4 @@ DEPENDENCIES
   rb-readline (~> 0.5.5)
 
 BUNDLED WITH
-   2.0.1
+   2.1.4
