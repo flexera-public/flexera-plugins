@@ -70,8 +70,8 @@ plugin "aws_compute" do
   type "vpc" do
     # HREF is set to the correct template in the provision definition due to a lack of usable fields in the response to build the href
     href_templates "/?Action=DescribeVpcs&VpcId.1={{//CreateVpcResponse/vpc/vpcId}}","/?DescribeVpcs&VpcId.1={{//DescribeVpcsResponse/vpcSet/item/vpcId}}"
-    provision 'provision_vpc'
-    delete    'delete_vpc'
+    provision 'provision_resource_available_state'
+    delete    'delete_resource'
 
     field "amazon_provided_ipv6_cidr_block" do
       alias_for "AmazonProvidedIpv6CidrBlock"
@@ -227,8 +227,8 @@ plugin "aws_compute" do
   type "endpoint" do
     href_templates "/?Action=DescribeVpcEndpoints&VpcEndpointId.1={{//CreateVpcEndpointResponse/vpcEndpoint/vpcEndpointId}}","/?Action=DescribeVpcEndpoints&VpcEndpointId.1={{//DescribeVpcEndpointsResponse/vpcEndpointSet/item/vpcEndpointId}}"
     #href_templates "/?Action=DescribeVpcEndpoints?Filter.1.Name=vpc-endpoint-id&Filter.1.Value={{//CreateVpcEndpointResponse/vpcEndpoint/vpcEndpointId}}"
-    provision 'provision_endpoint'
-    delete    'delete_endpoint'
+    provision 'provision_resource_available_state'
+    delete    'delete_resource'
 
     field "vpc_id" do
       alias_for "VpcId"
@@ -319,8 +319,8 @@ plugin "aws_compute" do
 
   type "route_table" do
     href_templates "/?Action=DescribeRouteTables&RouteTableId.1={{//CreateRouteTableResponse/routeTable/routeTableId}}","/?Action=DescribeRouteTables&RouteTableId.1={{//DescribeRouteTablesResponse/routeTableSet/item/routeTableId}}"
-    provision 'provision_route_table'
-    delete    'delete_route_table'
+    provision 'provision_resource_available_state'
+    delete    'delete_resource'
 
     field "vpc_id" do
       alias_for "VpcId"
@@ -377,7 +377,7 @@ plugin "aws_compute" do
 
   type "nat_gateway" do
     href_templates "/?Action=DescribeNatGateways&NatGatewayId.1={{//CreateNatGatewayResponse/natGateway/natGatewayId}}","/?Action=DescribeNatGateways&NatGatewayId.1={{//DescribeNatGatewaysResponse/natGatewaySet/item/natGatewayId}}"
-    provision 'provision_nat_gateway'
+    provision 'provision_resource_available_state'
     delete    'delete_nat_gateway'
 
     field "allocation_id" do
@@ -449,7 +449,7 @@ plugin "aws_compute" do
       end
       pagination $aws_pagination	  
     end
-	
+
     polling do
       field_values do
       page_size $page_size
@@ -543,7 +543,7 @@ plugin "aws_compute" do
   type "tags" do
     href_templates "/?Action=DescribeTags&Filter.1.Name=key&Filter.1.Value={{//DescribeTagsResponse/tagSet/item/key}}&Filter.2.Name=value&Filter.2.Value={{//DescribeTagsResponse/tagSet/item/value}}&Filter.3.Name=resource-id&Filter.3.Value.1={{//DescribeTagsResponse/tagSet/item/resourceId}}","/?Action=DescribeTags&Filter.1.Name=key&Filter.1.Value=$tag_1_key&Filter.2.Name=value&Filter.2.Value=$tag_1_value&Filter.3.Name=resource-id&Filter.3.Value.1=$resource_id_1"
     provision 'provision_tags'
-    delete    'delete_tags'
+    delete    'delete_resource'
 
     field "resource_id_1" do
       alias_for "ResourceId.1"
@@ -605,7 +605,7 @@ plugin "aws_compute" do
   type "volume" do
     href_templates "/?Action=DescribeVolumes&VolumeId.1={{//CreateVolumeResponse/volumeId}}","/?Action=DescribeVolumes&VolumeId.1={{//DescribeVolumesResponse/volumeSet/item/volumeId}}"
     provision 'provision_volume'
-    delete    'delete_volume'
+    delete    'delete_resource'
 
     field "availability_zone" do
       alias_for "AvailabilityZone"
@@ -1155,88 +1155,18 @@ resource_pool "compute_pool" do
   end
 end
 
-define provision_vpc(@declaration) return @vpc do
+define provision_resource_available_state(@declaration) return @resource do
   sub on_error: stop_debugging() do
     $object = to_object(@declaration)
     $fields = $object["fields"]
+    $type = $object["type"]
     $name = $fields['name']
     call start_debugging()
-    @vpc = aws_compute.vpc.create($fields)
+    @resource = aws_compute.$type.create($fields)
     call stop_debugging()
-    $vpc = to_object(@vpc)
-    call sys_log.detail(join(["vpc:", to_s($vpc)]))
-    #$vpc["hrefs"][0] = join(["?Action=DescribeLoadBalancers&LoadBalancerNames.member.1=",$name])
-    #@vpc = $vpc
-    $state = @vpc.state
-    while $state != "available" do
-      sleep(10)
-      call sys_log.detail(join(["state: ", $state]))
-      call start_debugging()
-      $state = @vpc.state
-      call stop_debugging()
-    end
-  end
-end
-
-define provision_endpoint(@declaration) return @vpcendpoint do
-  sub on_error: stop_debugging() do
-    $object = to_object(@declaration)
-    $fields = $object["fields"]
-    $name = $fields['name']
-    call start_debugging()
-    @vpcendpoint = aws_compute.endpoint.create($fields)
-    call stop_debugging()
-    $vpc = to_object(@vpcendpoint)
-    call sys_log.detail(join(["vpcendpoint:", to_s($vpc)]))
-    call start_debugging()
-    $state = @vpcendpoint.state
-    call stop_debugging()
-    while $state != "available" do
-      sleep(10)
-      call sys_log.detail(join(["state: ", $state]))
-      call start_debugging()
-      $state = @vpcendpoint.state
-      call stop_debugging()
-    end
-  end
-end
-
-define provision_route_table(@declaration) return @resource do
-  sub on_error: stop_debugging() do
-    $object = to_object(@declaration)
-    $fields = $object["fields"]
-    $name = $fields['name']
-    call start_debugging()
-    @resource = aws_compute.route_table.create($fields)
-    call stop_debugging()
-    $vpc = to_object(@resource)
-    call sys_log.detail(join(["vpcendpoint:", to_s($vpc)]))
-    call start_debugging()
+    $resource = to_object(@resource)
+    call sys_log.detail(join([$type, ": ", to_s($resource)]))
     $state = @resource.state
-    call stop_debugging()
-    while $state != "available" do
-      sleep(10)
-      call sys_log.detail(join(["state: ", $state]))
-      call start_debugging()
-      $state = @resource.state
-      call stop_debugging()
-    end
-  end
-end
-
-define provision_nat_gateway(@declaration) return @resource do
-  sub on_error: stop_debugging() do
-    $object = to_object(@declaration)
-    $fields = $object["fields"]
-    $name = $fields['name']
-    call start_debugging()
-    @resource = aws_compute.nat_gateway.create($fields)
-    call stop_debugging()
-    $vpc = to_object(@resource)
-    call sys_log.detail(join(["natgateway:", to_s($vpc)]))
-    call start_debugging()
-    $state = @resource.state
-    call stop_debugging()
     while $state != "available" do
       sleep(10)
       call sys_log.detail(join(["state: ", $state]))
@@ -1306,27 +1236,10 @@ define provision_volume_modification(@declaration) return @resource do
   end
 end
 
-define delete_vpc(@vpc) do
+define delete_resource(@resource) do
   sub on_error: stop_debugging() do
     call start_debugging()
-    @vpc.destroy()
-    call stop_debugging()
-  end
-end
-
-define delete_endpoint(@endpoint) do
-  sub on_error: stop_debugging() do
-    call start_debugging()
-    @endpoint.destroy()
-    sleep(30)
-    call stop_debugging()
-  end
-end
-
-define delete_route_table(@route_table) do
-  sub on_error: stop_debugging() do
-    call start_debugging()
-    @route_table.destroy()
+    @resource.destroy()
     sleep(30)
     call stop_debugging()
   end
@@ -1345,22 +1258,6 @@ define delete_nat_gateway(@nat_gateway) do
       $state = @nat_gateway.state
       call stop_debugging()
     end
-    call stop_debugging()
-  end
-end
-
-define delete_tags(@tag) do
-  sub on_error: stop_debugging() do
-    call start_debugging()
-    @tag.destroy()
-    call stop_debugging()
-  end
-end
-
-define delete_volume(@volume) do
-  sub on_error: stop_debugging() do
-    call start_debugging()
-    @volume.destroy()
     call stop_debugging()
   end
 end
