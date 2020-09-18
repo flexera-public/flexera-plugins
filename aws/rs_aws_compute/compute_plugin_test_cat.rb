@@ -87,6 +87,8 @@ resource "my_nat_gateway", type: "aws_compute.nat_gateway" do
   subnet_id @my_subnet.resource_uid
 end
 
+resource "my_instance", type: "aws_compute."
+
 resource "my_volume", type: "aws_compute.volume" do
   availability_zone "us-east-1a"
   size "10"
@@ -177,11 +179,7 @@ define generated_launch($param_region,@my_vpc,@my_vpc_endpoint,@my_nat_ip,@my_na
   end
 end
 
-define generated_terminate(@server1,@my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs_vpc_endpoint,@my_nat_gateway,@my_nat_ip,@my_igw,@my_subnet,@my_rt_igw) do
-  @instance = @server1.current_instance()
-  delete(@instance)
-  delete(@server1)
-  delete(@my_rs_vpc_endpoint)
+define generated_terminate(@my_vpc,@my_vpc_endpoint,@my_nat_gateway,@my_nat_ip,@my_igw,@my_subnet) do
   delete(@my_vpc_endpoint)
   delete(@my_nat_gateway)
   delete(@my_nat_ip)
@@ -189,5 +187,4 @@ define generated_terminate(@server1,@my_vpc,@my_vpc_endpoint,@my_rs_vpc,@my_rs_v
   delete(@my_igw)
   delete(@my_subnet)
   delete(@my_vpc)
-  delete(@my_rs_vpc)
 end

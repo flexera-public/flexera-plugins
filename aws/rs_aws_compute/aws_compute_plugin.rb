@@ -57,15 +57,15 @@ plugin "aws_compute" do
     description 'The maximum results count for each page of AWS data received.'
   end
 
-    endpoint do
-        default_host 'ec2.$region.amazonaws.com'
-        default_scheme 'https'
-        path '/'
-        query do {
-        'Version' => '2016-11-15'
-        } end
-        request_content_type 'application/x-www-form-urlencoded; charset=utf-8'
-    end
+  endpoint do
+      default_host 'ec2.$region.amazonaws.com'
+      default_scheme 'https'
+      path '/'
+      query do {
+      'Version' => '2016-11-15'
+      } end
+      request_content_type 'application/x-www-form-urlencoded; charset=utf-8'
+  end
 
   type "vpc" do
     # HREF is set to the correct template in the provision definition due to a lack of usable fields in the response to build the href
@@ -90,14 +90,15 @@ plugin "aws_compute" do
       type      "string"
       location  "query"
     end
-	field "page_size" do
+
+    field "page_size" do
       type 'string'
-        location 'query'
-        alias_for 'MaxResults'
-      end
+      location 'query'
+      alias_for 'MaxResults'
+    end
 
     output 'id' do
-     body_path 'vpcId'
+      body_path 'vpcId'
     end
 
     output 'name' do
@@ -111,7 +112,7 @@ plugin "aws_compute" do
     end
 
     output 'tags' do
-     body_path 'tagSet'
+      body_path 'tagSet'
     end
 
     output "cidrBlock" do
@@ -675,8 +676,8 @@ plugin "aws_compute" do
       verb "POST"
       path "/?Action=DescribeVolumes"
       output_path "//DescribeVolumesResponse/volumeSet/item"
-	  field "page_size" do
-          type 'string'
+      field "page_size" do
+        type 'string'
         location 'query'
         alias_for 'MaxResults'
       end
@@ -684,14 +685,14 @@ plugin "aws_compute" do
     end
 
     output 'id' do
-     body_path 'volumeId'
+      body_path 'volumeId'
     end
 
     output 'name' do
     end
 
     output 'region' do
-	 body_path 'substring(availabilityZone,0, string-length(availabilityZone))'
+      body_path 'substring(availabilityZone,0, string-length(availabilityZone))'
     end
 
     output 'state' do
@@ -699,7 +700,7 @@ plugin "aws_compute" do
     end
 
     output 'tags' do
-     body_path 'tagSet'
+      body_path 'tagSet'
     end
 
     output "size" do
@@ -724,8 +725,8 @@ plugin "aws_compute" do
 
     polling do
       field_values do
-      page_size $page_size
-    end
+        page_size $page_size
+      end
       period 60
       action 'list'
     end
@@ -846,12 +847,12 @@ plugin "aws_compute" do
       verb "POST"
       path "/?Action=DescribeInstances"
       output_path "//DescribeInstancesResponse/reservationSet/item/instancesSet/item"
-	  field "page_size" do
-          type 'string'
+      field "page_size" do
+        type 'string'
         location 'query'
         alias_for 'MaxResults'
       end
-     pagination $aws_pagination
+      pagination $aws_pagination
     end
 
     action "create_image" do
@@ -887,7 +888,7 @@ plugin "aws_compute" do
     end
 
     output 'region' do
-	 body_path 'substring(placement.availabilityZone,0, string-length(placement.availabilityZone))'
+      body_path 'substring(placement.availabilityZone,0, string-length(placement.availabilityZone))'
     end
 
     output 'state' do
@@ -895,15 +896,15 @@ plugin "aws_compute" do
     end
 
     output 'tags' do
-     body_path 'tagSet'
+      body_path 'tagSet'
     end
 
     polling do
       field_values do
-      page_size $page_size
-    end
+        page_size $page_size
+      end
       period 60
-	  action 'list'
+      action 'list'
     end
 
   end
@@ -966,8 +967,8 @@ plugin "aws_compute" do
       field_values do
         page_size $page_size
       end
-        period 60
-        action 'list'
+      period 60
+      action 'list'
     end
 
   end
@@ -1006,19 +1007,19 @@ plugin "aws_compute" do
     end
 
     output 'id' do
-     body_path 'imageId'
+      body_path 'imageId'
     end
 
     output 'name' do
-     body_path 'name'
+      body_path 'name'
     end
 
     output 'platform' do
-     body_path 'platformDetails'
+      body_path 'platformDetails'
     end
 
     output 'state' do
-     body_path 'imageState'
+      body_path 'imageState'
     end
 
     output 'region' do
@@ -1029,7 +1030,7 @@ plugin "aws_compute" do
     end
 
     output 'description' do
-     body_path 'description'
+      body_path 'description'
     end
 
     output 'virtualization_type' do
@@ -1037,21 +1038,21 @@ plugin "aws_compute" do
     end
 
     output 'tags' do
-     body_path 'tagSet'
+      body_path 'tagSet'
     end
 
     output "imageLocation","imageState","imageOwnerId","isPublic","architecture","imageType","kernelId","ramdiskId","imageOwnerAlias","rootDeviceType","rootDeviceName"
 
     polling do
       field_values do
-    end
+      end
       period 60
-	  action 'list'
+      action 'list'
     end
 
- end
+  end
  
-   type "subnets" do
+  type "subnets" do
     href_templates "/?Action=DescribeSubnets&subnetId.1={{//DescribeSubnetsResponse/subnetSet/item/subnetId}}","/?Action=DescribeSubnets&subnetId.1={{//CreateSubnetResponse/subnetId}}"
     provision 'no_operation'
     delete    'no_operation'
@@ -1060,7 +1061,7 @@ plugin "aws_compute" do
       verb "POST"
       path "/?Action=DescribeSubnets"
       output_path "//DescribeSubnetsResponse/subnetSet/item"
-     field "page_size" do
+      field "page_size" do
         type 'string'
         location 'query'
         alias_for 'MaxResults'
@@ -1069,23 +1070,23 @@ plugin "aws_compute" do
     end
 
     output 'id' do
-     body_path 'subnetId'
+      body_path 'subnetId'
     end
 
     output 'name' do
-     body_path 'subnetId'
+      body_path 'subnetId'
     end
 
     output 'state' do
-     body_path 'state'
+      body_path 'state'
     end
 
     output 'region' do
-     body_path 'substring(availabilityZone,0, string-length(availabilityZone))'	
+      body_path 'substring(availabilityZone,0, string-length(availabilityZone))'	
     end
 
     output 'tags' do
-     body_path 'tagSet'
+      body_path 'tagSet'
     end
 
     output "description", "vpcId", "cidrBlock", "availableIpAddressCount", "availabilityZone"
@@ -1094,13 +1095,13 @@ plugin "aws_compute" do
       field_values do
         page_size $page_size
       end
-        period 60
-        action 'list'
+      period 60
+      action 'list'
     end
 
- end
- 
-   type "security_groups" do
+  end
+
+  type "security_groups" do
     href_templates "/?Action=DescribeSecurityGroups&groupId.1={{//DescribeSecurityGroupsResponse/securityGroupInfo/item/groupId}}","/?Action=DescribeSecurityGroups&groupId.1={{//CreateImageResponse/groupId}}"
     provision 'no_operation'
     delete    'no_operation'
@@ -1109,7 +1110,7 @@ plugin "aws_compute" do
       verb "POST"
       path "/?Action=DescribeSecurityGroups"
       output_path "//DescribeSecurityGroupsResponse/securityGroupInfo/item"
-     field "page_size" do
+      field "page_size" do
         type 'string'
         location 'query'
         alias_for 'MaxResults'
@@ -1118,15 +1119,15 @@ plugin "aws_compute" do
     end
 
     output 'id' do
-     body_path 'groupId'
+      body_path 'groupId'
     end
 
     output 'name' do
-     body_path 'groupName'
+      body_path 'groupName'
     end
-	
+
     output 'description' do
-     body_path 'groupDescription'
+      body_path 'groupDescription'
     end	
 
     output "ipPermissions", "vpcId", "tags", "region"
@@ -1135,12 +1136,12 @@ plugin "aws_compute" do
       field_values do
         page_size $page_size
       end
-        period 60
-        action 'list'
+      period 60
+      action 'list'
     end
 
- end
- 
+  end
+
 end
 
 resource_pool "compute_pool" do
