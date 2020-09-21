@@ -10,6 +10,10 @@
     "editor.tabSize": 2,
     "files.associations": {
       "*.plugin": "ruby"
+    },
+    "markdownlint.config": {
+      "default": true,
+      "MD024": false
     }
   },
   "extensions": {
