@@ -153,8 +153,8 @@ plugin "rs_aws_elb" do
       field "name" do
         location "query"
         alias_for "LoadBalancerNames.member.1"
-      end 
-    end 
+      end
+    end
 
     action "list" do
       verb "POST"
