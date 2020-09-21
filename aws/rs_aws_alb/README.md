@@ -26,7 +26,7 @@ The AWS ALB Plugin integrates RightScale Self-Service with the basic functionali
 1. Be sure your RightScale account is SelfService enabled
 1. Follow the Getting Started section to create a Service Account and RightScale Credentials
 1. Navigate to the appropriate SelfService portal
-   - For more details on using the portal review the [SS User Interface Guide](http://docs.rightscale.com/ss/guides/ss_user_interface_guide.html)
+   1. For more details on using the portal review the [SS User Interface Guide](http://docs.rightscale.com/ss/guides/ss_user_interface_guide.html)
 1. In the Design section, use the `Upload CAT` interface to complete the following:
    1. Upload each of packages listed in the Requirements Section
    1. Upload the `application_lb_plugin.rb` file located in this repository
