@@ -5,6 +5,10 @@ short_description "Amazon Web Services - Elastic Load Balancer"
 long_description "Version: 1.2"
 package "plugins/rs_aws_elb"
 import "sys_log"
+info(
+  provider: "AWS",
+  service: "ELB"
+)
 
 plugin "rs_aws_elb" do
   endpoint do
@@ -16,6 +20,20 @@ plugin "rs_aws_elb" do
     query do {
       "Version" => "2012-06-01"
     } end
+  end
+
+  short_description 'AWS-ELB plugin'
+  long_description 'Supports AWS ELB'
+  version '1.2.0'
+
+  documentation_link 'source' do
+    label 'Source'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/aws/rs_aws_elb/aws_elb_plugin.rb'
+  end
+
+  documentation_link 'readme' do
+    label 'readme'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/aws/rs_aws_elb/README.md'
   end
 
   type "elb" do
