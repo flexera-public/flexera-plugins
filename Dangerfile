@@ -10,6 +10,8 @@ renamed_files = (git.renamed_files.collect{|r| r[:before]})
 # remove list of renamed files to prevent errors on files that don't exist
 changed_files = (git.added_files + git.modified_files - renamed_files)
 has_app_changes = changed_files.select{ |file| file.end_with? "plugin" or file.end_with? "rb" and !file.start_with?("tools/") }
+#test cats need to plugin to compile, so compile test doesn't work"
+has_plugin_changes = changed_files.select{ |file| file.end_with? "plugin" or file.end_with? "rb" and !file.start_with?("tools/") and !file.contains?("_test_")}
 has_new_plugin = git.added_files.select{ |file| file.end_with? "plugin" or file.end_with? "rb" and !file.start_with?("tools/") }
 md_files = changed_files.select{ |file| file.end_with? "md" }
 
@@ -57,7 +59,7 @@ has_app_changes.each do |file|
 end
 
 # check the plugin syntax and plugin fields
-has_app_changes.each do |file|
+has_plugin_changes.each do |file|
   cmd = "./tools/bin/compile #{file}"
   plugin  = `#{cmd}`
   json = {}
