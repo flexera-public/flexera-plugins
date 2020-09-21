@@ -17,7 +17,6 @@ before_install:
 
 script:
 - bundle exec danger --verbose
-- bundle exec danger plugins lint --verbose
 
 deploy:
 # generate the active plugin list json file
