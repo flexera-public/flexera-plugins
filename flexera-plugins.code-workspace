@@ -11,5 +11,18 @@
     "files.associations": {
       "*.plugin": "ruby"
     }
+  },
+  "extensions": {
+    "recommendations": [
+      "davidanson.vscode-markdownlint",
+      "formulahendry.code-runner",
+      "jamesls.jmespath-vscode",
+      "rebornix.ruby",
+      "fknop.vscode-npm",
+      "dbaeumer.vscode-eslint",
+      "dotjoshjohnson.xml",
+      "coenraads.bracket-pair-colorizer-2",
+      "EditorConfig.EditorConfig"
+    ]
   }
 }
