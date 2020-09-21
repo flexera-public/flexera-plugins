@@ -2,9 +2,13 @@ name 'rs_azure_containerservices'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Azure Container Services Plugin"
-long_description "Version: 1.1"
+long_description "Version: 1.1.1"
 package "plugins/rs_azure_containerservices"
 import "sys_log"
+info(
+  provider: "Azure",
+  service: "ContainerService"
+)
 
 parameter "subscription_id" do
   type  "string"
@@ -23,6 +27,20 @@ plugin "rs_azure_containerservices" do
     query do {
       'api-version' =>  '2017-01-31'
     } end
+  end
+
+  short_description 'Azure-ContainerService Plugin'
+  long_description 'Supports Azure ContainerService'
+  version '1.1.1'
+
+  documentation_link 'source' do
+    label 'Source'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/azure/rs_azure_containerservices/azure_containerservices_plugin.rb'
+  end
+
+  documentation_link 'readme' do
+    label 'readme'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/azure/rs_azure_containerservices/README.md'
   end
 
   parameter "subscription_id" do

@@ -2,7 +2,7 @@ name 'aws_elb_plugin'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Amazon Web Services - Elastic Load Balancer"
-long_description "Version: 1.2"
+long_description "Version: 1.2.1"
 package "plugins/rs_aws_elb"
 import "sys_log"
 info(
@@ -24,7 +24,7 @@ plugin "rs_aws_elb" do
 
   short_description 'AWS-ELB plugin'
   long_description 'Supports AWS ELB'
-  version '1.2.0'
+  version '1.2.1'
 
   documentation_link 'source' do
     label 'Source'
