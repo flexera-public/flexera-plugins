@@ -13,6 +13,7 @@ before_install:
   --version
 - sudo apt-get install nodejs -y
 - curl -L https://www.npmjs.com/install.sh | sh
+- npm install
 
 script:
 - bundle exec danger --verbose
