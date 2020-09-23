@@ -823,8 +823,287 @@ plugin "aws_compute" do
 
   type "instances" do
     href_templates "/?Action=DescribeInstances&InstanceId.1={{//DescribeInstancesResponse/reservationSet/item/instancesSet/item/instanceId}}"
-    provision 'no_operation'
+    provision 'provision_resource_available_state'
     delete    'no_operation'
+
+    field "additional_info" do
+      alias_for "AdditionalInfo"
+      type "string"
+      location "query"
+    end
+
+    field "bdm_1_device_name" do
+      alias_for "BlockDeviceMapping.1.DeviceName"
+      type "string"
+      location "query"
+    end
+
+    field "bdm_1_virtual_name" do
+      alias_for "BlockDeviceMapping.1.VirtualName"
+      type "string"
+      location "query"
+    end
+
+    field "bdm_1_ebs_delete_on_termination" do
+      alias_for "BlockDeviceMapping.1.Ebs.DeleteOnTermination"
+      type "string"
+      location "query"
+    end
+
+    field "bdm_1_ebs_encrypted" do
+      alias_for "BlockDeviceMapping.1.Ebs.Encrypted"
+      type "string"
+      location "query"
+    end
+
+    field "bdm_1_ebs_iops" do
+      alias_for "BlockDeviceMapping.1.Ebs.Iops"
+      type "string"
+      location "query"
+    end
+
+    field "bdm_1_ebs_kms_key_id" do
+      alias_for "BlockDeviceMapping.1.Ebs.KmsKeyId"
+      type "string"
+      location "query"
+    end
+
+    field "bdm_1_ebs_snapshot_id" do
+      alias_for "BlockDeviceMapping.1.Ebs.SnapshotId"
+      type "string"
+      location "query"
+    end
+
+    field "bdm_1_ebs_volume_size" do
+      alias_for "BlockDeviceMapping.1.Ebs.VolumeSize"
+      type "string"
+      location "query"
+    end
+
+    field "bdm_1_ebs_volume_type" do
+      alias_for "BlockDeviceMapping.1.Ebs.VolumeType"
+      type "string"
+      location "query"
+    end
+
+    field "bdm_1_no_device" do
+      alias_for "BlockDeviceMapping.1.NoDevice"
+      type "string"
+      location "query"
+    end
+
+    field "crs_capacity_reservation_preference" do
+      alias_for "CapacityReservationSpecification.CapacityReservationPreference"
+      type "string"
+      location "query"
+    end
+
+    field "crs_crt_capacity_reservation_id" do
+      alias_for "CapacityReservationSpecification.CapacityReservationTarget.CapacityReservationId"
+      type "string"
+      location "query"
+    end
+
+    field "crs_crt_capacity_reservation_resource_group_arn" do
+      alias_for "CapacityReservationSpecification.CapacityReservationTarget.CapacityReservationResourceGroupArn"
+      type "string"
+      location "query"
+    end
+
+    field "client_token" do
+      alias_for "ClientToken"
+      type "string"
+      location "query"
+    end
+
+    field "cpu_options_core_count" do
+      alias_for "CpuOptions.CoreCount"
+      type "string"
+      location "query"
+    end
+
+    field "cpu_options_threads_per_core" do
+      alias_for "CpuOptions.ThreadsPerCore"
+      type "string"
+      location "query"
+    end
+
+    field "credit_specification_cpu_credits" do
+      alias_for "CreditSpecification.CpuCredits"
+      type "string"
+      location "query"
+    end
+
+    field "disable_api_termination" do
+      alias_for "DisableApiTermination"
+      type "string"
+      location "query"
+    end
+
+    field "ebs_optimized" do
+      alias_for "EbsOptimized"
+      type "string"
+      location "query"
+    end
+
+    field "elastic_gpu_specification_1_type" do
+      alias_for "ElasticGpuSpecification.1.Type"
+      type "string"
+      location "query"
+    end
+
+    field "eia_1_count" do
+      alias_for "ElasticInferenceAccelerator.1.Count"
+      type "string"
+      location "query"
+    end
+
+    field "eia_1_type" do
+      alias_for "ElasticInferenceAccelerator.1.Type"
+      type "string"
+      location "query"
+    end
+
+    field "hibernation_options" do
+      alias_for "HibernationOptions"
+      type "string"
+      location "query"
+    end
+
+    field "iam_instance_profile" do
+      alias_for "IamInstanceProfile"
+      type "string"
+      location "query"
+    end
+
+    field "image_id" do
+      alias_for "ImageId"
+      type "string"
+      location "query"
+    end
+
+    field "instance_initiated_shutdown_behavior" do
+      alias_for "InstanceInitiatedShutdownBehavior"
+      type "string"
+      location "query"
+    end
+
+    field "instance_market_options_market_type" do
+      alias_for "InstanceMarketOptions.MarketType"
+      type "string"
+      location "query"
+    end
+
+    field "instance_market_options_spot_options" do
+      alias_for "InstanceMarketOptions.SpotOptions"
+      type "string"
+      location "query"
+    end
+
+    field "instance_type" do
+      alias_for "InstanceType"
+      type "string"
+      location "query"
+    end
+
+    field "ipv6_address_1" do
+      alias_for "Ipv6Address.1.Ipv6Address"
+      type "string"
+      location "query"
+    end
+
+    field "ipv6_address_count" do
+      alias_for "Ipv6AddressCount"
+      type "string"
+      location "query"
+    end
+
+    field "kernel_id" do
+      alias_for "KernelId"
+      type "string"
+      location "query"
+    end
+
+    field "key_name" do
+      alias_for "KeyName"
+      type "string"
+      location "query"
+    end
+
+    field "launch_template_launch_template_id" do
+      alias_for "LaunchTemplate.LaunchTemplateId"
+      type "string"
+      location "query"
+    end
+
+    field "launch_template_launch_template_name" do
+      alias_for "LaunchTemplate.LaunchTemplateName"
+      type "string"
+      location "query"
+    end
+
+    field "launch_template_version" do
+      alias_for "LaunchTemplate.Version"
+      type "string"
+      location "query"
+    end
+
+    field "license_specification_1_license_configuration_arn" do
+      alias_for "LicenseSpecification.1.LicenseConfigurationArn"
+      type "string"
+      location "query"
+    end
+
+    field "max_count" do
+      alias_for "MaxCount"
+      type "string"
+      location "query"
+    end
+
+    field "metadata_options_http_endpoint" do
+      alias_for "MetadataOptions.HttpEndpoint"
+      type "string"
+      location "query"
+    end
+
+    field "metadata_options_http_put_response_hop_limit" do
+      alias_for "MetadataOptions.HttpPutResponseHopLimit"
+      type "string"
+      location "query"
+    end
+
+    field "metadata_options_http_tokens" do
+      alias_for "MetadataOptions.HttpTokens"
+      type "string"
+      location "query"
+    end
+
+    field "min_count" do
+      alias_for "MinCount"
+      type "string"
+      location "query"
+    end
+
+    field "monitoring_enabled" do
+      alias_for "Monitoring.Enabled"
+      type "string"
+      location "query"
+    end
+
+    field "network_interface_1_"
+    NetworkInterface.N
+    Placement
+    PrivateIpAddress
+    RamdiskId
+    SecurityGroup.N
+    SecurityGroupId.N
+    SubnetId
+    TagSpecification.N
+    UserData
+    action "create" do
+      verb "POST"
+      path "/?Action=RunInstances"
+    end
 
     action "get" do
       verb "POST"
