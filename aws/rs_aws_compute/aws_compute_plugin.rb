@@ -604,7 +604,7 @@ plugin "aws_compute" do
 
   type "volume" do
     href_templates "/?Action=DescribeVolumes&VolumeId.1={{//CreateVolumeResponse/volumeId}}","/?Action=DescribeVolumes&VolumeId.1={{//DescribeVolumesResponse/volumeSet/item/volumeId}}"
-    provision 'provision_volume'
+    provision 'provision_resource_available_state'
     delete    'delete_resource'
 
     field "availability_zone" do
@@ -822,8 +822,8 @@ plugin "aws_compute" do
   end
 
   type "instances" do
-    href_templates "/?Action=DescribeInstances&InstanceId.1={{//DescribeInstancesResponse/reservationSet/item/instancesSet/item/instanceId}}"
-    provision 'provision_resource_available_state'
+    href_templates "/?Action=DescribeInstances&InstanceId.1={{//DescribeInstancesResponse/reservationSet/item/instancesSet/item/instanceId}}","/?Action=DescribeInstances&InstanceId.1={{//RunInstancesResponse/instancesSet/item/instanceId}}"
+    provision 'provision_instance'
     delete    'no_operation'
 
     field "additional_info" do
@@ -1114,14 +1114,11 @@ plugin "aws_compute" do
       location "query"
     end
 
-
     field "network_interface_1_device_index" do
       alias_for "NetworkInterface.1.DeviceIndex"
       type "string"
       location "query"
     end
-
-
     field "network_interface_1_interface_type" do
       alias_for "NetworkInterface.1.InterfaceType"
       type "string"
@@ -1223,13 +1220,61 @@ plugin "aws_compute" do
       type "string"
       location "query"
     end
-    PrivateIpAddress
-    RamdiskId
-    SecurityGroup.N
-    SecurityGroupId.N
-    SubnetId
-    TagSpecification.N
-    UserData
+
+    field "private_ip_address" do
+      alias_for "PrivateIpAddress"
+      type "string"
+      location "query"
+    end
+
+    field "ramdisk_id" do
+      alias_for "RamdiskId"
+      type "string"
+      location "query"
+    end
+
+    field "security_group_1" do
+      alias_for "SecurityGroup.1"
+      type "string"
+      location "query"
+    end
+
+    field "security_group_id_1" do
+      alias_for "SecurityGroupId.1"
+      type "string"
+      location "query"
+    end
+
+    field "subnet_id" do
+      alias_for "SubnetId"
+      type "string"
+      location "query"
+    end
+
+    field "tag_specification_1_resource_type" do
+      alias_for "TagSpecification.1.ResourceType"
+      type "string"
+      location "query"
+    end
+
+    field "tag_specification_1_tag_1_key" do
+      alias_for "TagSpecification.1.Tag.1.Key"
+      type "string"
+      location "query"
+    end
+
+    field "tag_specification_1_tag_1_value" do
+      alias_for "TagSpecification.1.Tag.1.Value"
+      type "string"
+      location "query"
+    end
+
+    field "user_data" do
+      alias_for "UserData"
+      type "string"
+      location "query"
+    end
+
     action "create" do
       verb "POST"
       path "/?Action=RunInstances"
@@ -1300,8 +1345,12 @@ plugin "aws_compute" do
       body_path 'substring(placement.availabilityZone,0, string-length(placement.availabilityZone))'
     end
 
+    output 'instance_state' do
+      body_path "//instanceState/name"
+    end
+
     output 'state' do
-      body_path 'instanceState.name'
+      body_path '//instanceState/name'
     end
 
     output 'tags' do
@@ -1586,6 +1635,31 @@ define provision_resource_available_state(@declaration) return @resource do
   end
 end
 
+define provision_instance(@declaration) return @resource do
+  sub on_error: stop_debugging() do
+    $object = to_object(@declaration)
+    $fields = $object["fields"]
+    $type = $object["type"]
+    $name = $fields['name']
+    call start_debugging()
+    @resource = aws_compute.$type.create($fields)
+    call stop_debugging()
+    $resource = to_object(@resource)
+    call sys_log.detail(join([$type, ": ", to_s($resource)]))
+    @created_resource = aws_compute.$type.show(instance_id: @resource.id)
+    @resource = @created_resource
+    $state = @resource.instance_state
+    while $state != "running" do
+      sleep(10)
+      call sys_log.detail(join(["state: ", $state]))
+      call start_debugging()
+      $state = @resource.instance_state
+      call stop_debugging()
+      call sys_log.detail(join(["instance_state",@instance.instance_state]))
+    end
+  end
+end
+
 define provision_tags(@declaration) return @resource do
   sub on_error: stop_debugging() do
     $object = to_object(@declaration)
@@ -1596,29 +1670,6 @@ define provision_tags(@declaration) return @resource do
     call stop_debugging()
     $vpc = to_object(@resource)
     call sys_log.detail(join(["tags:", to_s($vpc)]))
-  end
-end
-
-define provision_volume(@declaration) return @resource do
-  sub on_error: stop_debugging() do
-    $object = to_object(@declaration)
-    $fields = $object["fields"]
-    $name = $fields['name']
-    call start_debugging()
-    @resource = aws_compute.volume.create($fields)
-    call stop_debugging()
-    $volume = to_object(@resource)
-    call sys_log.detail(join(["volume:", to_s($volume)]))
-    call start_debugging()
-    $state = @resource.status
-    call stop_debugging()
-    while $state != "available" do
-      sleep(10)
-      call sys_log.detail(join(["state: ", $state]))
-      call start_debugging()
-      $state = @resource.status
-      call stop_debugging()
-    end
   end
 end
 
