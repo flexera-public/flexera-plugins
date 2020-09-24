@@ -832,79 +832,79 @@ plugin "aws_compute" do
       location "query"
     end
 
-    field "bdm_1_device_name" do
+    field "block_device_mapping_1_device_name" do
       alias_for "BlockDeviceMapping.1.DeviceName"
       type "string"
       location "query"
     end
 
-    field "bdm_1_virtual_name" do
+    field "block_device_mapping_1_virtual_name" do
       alias_for "BlockDeviceMapping.1.VirtualName"
       type "string"
       location "query"
     end
 
-    field "bdm_1_ebs_delete_on_termination" do
+    field "block_device_mapping_1_ebs_delete_on_termination" do
       alias_for "BlockDeviceMapping.1.Ebs.DeleteOnTermination"
       type "string"
       location "query"
     end
 
-    field "bdm_1_ebs_encrypted" do
+    field "block_device_mapping_1_ebs_encrypted" do
       alias_for "BlockDeviceMapping.1.Ebs.Encrypted"
       type "string"
       location "query"
     end
 
-    field "bdm_1_ebs_iops" do
+    field "block_device_mapping_1_ebs_iops" do
       alias_for "BlockDeviceMapping.1.Ebs.Iops"
       type "string"
       location "query"
     end
 
-    field "bdm_1_ebs_kms_key_id" do
+    field "block_device_mapping_1_ebs_kms_key_id" do
       alias_for "BlockDeviceMapping.1.Ebs.KmsKeyId"
       type "string"
       location "query"
     end
 
-    field "bdm_1_ebs_snapshot_id" do
+    field "block_device_mapping_1_ebs_snapshot_id" do
       alias_for "BlockDeviceMapping.1.Ebs.SnapshotId"
       type "string"
       location "query"
     end
 
-    field "bdm_1_ebs_volume_size" do
+    field "block_device_mapping_1_ebs_volume_size" do
       alias_for "BlockDeviceMapping.1.Ebs.VolumeSize"
       type "string"
       location "query"
     end
 
-    field "bdm_1_ebs_volume_type" do
+    field "block_device_mapping_1_ebs_volume_type" do
       alias_for "BlockDeviceMapping.1.Ebs.VolumeType"
       type "string"
       location "query"
     end
 
-    field "bdm_1_no_device" do
+    field "block_device_mapping_1_no_device" do
       alias_for "BlockDeviceMapping.1.NoDevice"
       type "string"
       location "query"
     end
 
-    field "crs_capacity_reservation_preference" do
+    field "capacity_reservation_specification_capacity_reservation_preference" do
       alias_for "CapacityReservationSpecification.CapacityReservationPreference"
       type "string"
       location "query"
     end
 
-    field "crs_crt_capacity_reservation_id" do
+    field "capacity_reservation_specification_capacity_reservation_target_capacity_reservation_id" do
       alias_for "CapacityReservationSpecification.CapacityReservationTarget.CapacityReservationId"
       type "string"
       location "query"
     end
 
-    field "crs_crt_capacity_reservation_resource_group_arn" do
+    field "capacity_reservation_specification_capacity_reservation_target_capacity_reservation_resource_group_arn" do
       alias_for "CapacityReservationSpecification.CapacityReservationTarget.CapacityReservationResourceGroupArn"
       type "string"
       location "query"
@@ -952,13 +952,13 @@ plugin "aws_compute" do
       location "query"
     end
 
-    field "eia_1_count" do
+    field "elastic_inference_accelerator_1_count" do
       alias_for "ElasticInferenceAccelerator.1.Count"
       type "string"
       location "query"
     end
 
-    field "eia_1_type" do
+    field "elastic_inference_accelerator_1_type" do
       alias_for "ElasticInferenceAccelerator.1.Type"
       type "string"
       location "query"
