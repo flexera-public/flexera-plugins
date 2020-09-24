@@ -824,7 +824,7 @@ plugin "aws_compute" do
   type "instances" do
     href_templates "/?Action=DescribeInstances&InstanceId.1={{//DescribeInstancesResponse/reservationSet/item/instancesSet/item/instanceId}}","/?Action=DescribeInstances&InstanceId.1={{//RunInstancesResponse/instancesSet/item/instanceId}}"
     provision 'provision_instance'
-    delete    'no_operation'
+    delete    'delete_resource'
 
     field "additional_info" do
       alias_for "AdditionalInfo"
