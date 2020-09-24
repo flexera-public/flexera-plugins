@@ -1090,9 +1090,139 @@ plugin "aws_compute" do
       location "query"
     end
 
-    field "network_interface_1_"
-    NetworkInterface.N
-    Placement
+    field "network_interface_1_associate_carrier_ip_address" do
+      alias_for "NetworkInterface.1.AssociateCarrierIpAddress"
+      type "string"
+      location "query"
+    end
+
+    field "network_interface_1_associate_public_ip_address" do
+      alias_for "NetworkInterface.1.AssociatePublicIpAddress"
+      type "string"
+      location "query"
+    end
+
+    field "network_interface_1_delete_on_termination" do
+      alias_for "NetworkInterface.1.DeleteOnTermination"
+      type "string"
+      location "query"
+    end
+
+    field "network_interface_1_description" do
+      alias_for "NetworkInterface.1.Description"
+      type "string"
+      location "query"
+    end
+
+
+    field "network_interface_1_device_index" do
+      alias_for "NetworkInterface.1.DeviceIndex"
+      type "string"
+      location "query"
+    end
+
+
+    field "network_interface_1_interface_type" do
+      alias_for "NetworkInterface.1.InterfaceType"
+      type "string"
+      location "query"
+    end
+    
+    field "network_interface_1_ipv6_address_count" do
+      alias_for "NetworkInterface.1.Ipv6AddressCount"
+      type "string"
+      location "query"
+    end
+
+    field "network_interface_1_ipv6_addresses" do
+      alias_for "NetworkInterface.1.Ipv6Addresses"
+      type "string"
+      location "query"
+    end
+
+    field "network_interface_1_network_interface_id" do
+      alias_for "NetworkInterface.1.NetworkInterfaceId"
+      type "string"
+      location "query"
+    end
+
+    field "network_interface_1_private_ip_address" do
+      alias_for "NetworkInterface.1.PrivateIpAddress"
+      type "string"
+      location "query"
+    end
+
+    field "network_interface_1_private_ip_addresses" do
+      alias_for "NetworkInterface.1.PrivateIpAddresses"
+      type "string"
+      location "query"
+    end
+    
+    field "network_interface_1_secondary_private_ip_address_count" do
+      alias_for "NetworkInterface.1.SecondaryPrivateIpAddressCount"
+      type "string"
+      location "query"
+    end
+
+    field "network_interface_1_groups" do
+      alias_for "NetworkInterface.1.Groups"
+      type "string"
+      location "query"
+    end
+ 
+    field "network_interface_1_subnet_id" do
+      alias_for "NetworkInterface.1.SubnetId"
+      type "string"
+      location "query"
+    end
+
+    field "placement_affinity" do
+      alias_for "Placement.Affinity"
+      type "string"
+      location "query"
+    end
+
+    field "placement_availability_zone" do
+      alias_for "Placement.AvailabilityZone"
+      type "string"
+      location "query"
+    end
+
+    field "placement_group_name" do
+      alias_for "Placement.GroupName"
+      type "string"
+      location "query"
+    end
+
+    field "placement_host_id" do
+      alias_for "Placement.HostId"
+      type "string"
+      location "query"
+    end
+
+    field "placement_host_resource_group_arn" do
+      alias_for "Placement.HostResourceGroupArn"
+      type "string"
+      location "query"
+    end
+
+    field "placement_partition_number" do
+      alias_for "Placement.PartitionNumber"
+      type "string"
+      location "query"
+    end
+
+    field "placement_spread_domain" do
+      alias_for "Placement.SpreadDomain"
+      type "string"
+      location "query"
+    end
+
+    field "placement_tenancy" do
+      alias_for "Placement.Tenancy"
+      type "string"
+      location "query"
+    end
     PrivateIpAddress
     RamdiskId
     SecurityGroup.N
