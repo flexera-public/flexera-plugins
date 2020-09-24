@@ -824,7 +824,7 @@ plugin "aws_compute" do
   type "instances" do
     href_templates "/?Action=DescribeInstances&InstanceId.1={{//DescribeInstancesResponse/reservationSet/item/instancesSet/item/instanceId}}","/?Action=DescribeInstances&InstanceId.1={{//RunInstancesResponse/instancesSet/item/instanceId}}"
     provision 'provision_instance'
-    delete    'delete_resource'
+    delete    'delete_instance'
 
     field "additional_info" do
       alias_for "AdditionalInfo"
@@ -1119,6 +1119,7 @@ plugin "aws_compute" do
       type "string"
       location "query"
     end
+
     field "network_interface_1_interface_type" do
       alias_for "NetworkInterface.1.InterfaceType"
       type "string"
@@ -1280,6 +1281,15 @@ plugin "aws_compute" do
       path "/?Action=RunInstances"
     end
 
+    action "destroy" do
+      verb "POST"
+      path "/?Action=TerminateInstances"
+      field "instance_id" do
+        alias_for "InstanceId.1"
+        location "query"
+      end
+    end
+
     action "get" do
       verb "POST"
       path "/?Action=DescribeInstances&InstanceId.1=$instanceId"
@@ -1330,6 +1340,28 @@ plugin "aws_compute" do
         location "query"
       end
       type "images"
+    end
+
+    action "stop" do
+      verb "POST"
+      path "/?Action=StopInstances"
+      output_path "//StopInstancesResponse/instancesSet/item"
+
+      field "instance_id" do
+        alias_for "InstanceId.1"
+        location "query"
+      end
+    end
+
+    action "start" do
+      verb "POST"
+      path "/?Action=StartInstances"
+      output_path "//StartInstancesResponse/instancesSet/item"
+
+      field "instance_id" do
+        alias_for "InstanceId.1"
+        location "query"
+      end
     end
 
     output "ipAddress","vpcId","imageId","privateDnsName"
@@ -1700,6 +1732,15 @@ define delete_resource(@resource) do
   sub on_error: stop_debugging() do
     call start_debugging()
     @resource.destroy()
+    sleep(30)
+    call stop_debugging()
+  end
+end
+
+define delete_instance(@resource) do
+  sub on_error: stop_debugging() do
+    call start_debugging()
+    @resource.destroy(instance_id: @resource.id)
     sleep(30)
     call stop_debugging()
   end

@@ -8,7 +8,6 @@ parameter "param_region" do
   like $aws_compute.param_region
 end
 
-
 resource "instance", type: "aws_compute.instances" do
   image_id "ami-0b898040803850657"
   instance_type "t2.large"
@@ -27,16 +26,31 @@ operation "launch" do
   definition "generated_launch"
 end
 
+operation "stop" do
+  definition "defn_stop"
+end
+
+operation "start" do
+  definition "defn_start"
+end
+
 operation "terminate" do
   definition "generated_terminate"
 end
-
 
 define generated_launch($param_region, @instance) return @instance do
   call aws_compute.start_debugging()
   sub on_error: aws_compute.stop_debugging() do
     provision(@instance)
   end
+end
+
+define defn_stop(@instance) return @instance do
+  @instance.stop(instance_id: @instance.id)
+end
+
+define defn_start(@instance) return @instance do
+  @instance.start(instance_id: @instance.id)
 end
 
 define generated_terminate(@instance) do
