@@ -8,7 +8,7 @@
       "baseURI": null,
       "ignore": [],
       "preferGET": [],
-      "ignoreRedirects": false,
+      "ignoreRedirects": true,
       "retry": 3,
       "userAgent": "textlint-rule-no-dead-link/1.0"
     }
