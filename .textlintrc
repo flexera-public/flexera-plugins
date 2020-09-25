@@ -1,5 +1,7 @@
 {
   "rules": {
-    "editorconfig": true
+    "editorconfig": {
+      "charset": false
+    }
   }
 }
