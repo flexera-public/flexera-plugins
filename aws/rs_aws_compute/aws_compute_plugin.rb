@@ -1364,6 +1364,26 @@ plugin "aws_compute" do
       end
     end
 
+    action "attach_volume" do
+      verb "POST"
+      path "/?Action=AttachVolume"
+      output_path "//AttachVolumeResponse"
+
+      field "instance_id" do
+        alias_for "InstanceId"
+        location "query"
+      end
+
+      field "volume_id" do
+        alias_for "VolumeId"
+        location "query"
+      end
+
+      field "device" do
+        alias_for "Device"
+        location "query"
+      end
+    end
     output "ipAddress","vpcId","imageId","privateDnsName"
 
     output 'id' do
