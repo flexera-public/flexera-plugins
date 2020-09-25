@@ -275,7 +275,7 @@ Full list of possible actions can be found on the [AWS ALB API Documentation](ht
 
 ## Examples
 
-Please review [plugin.rb](./plugin.rb) for a basic example implementation.
+Please review [alb_test_cat](./alb_test_cat.rb) for a basic example implementation.
 
 ## Known Issues / Limitations
 
@@ -287,4 +287,4 @@ Support for this plugin will be provided though GitHub Issues.
 
 ## License
 
-The AWS ALB Plugin source code is subject to the MIT license, see the [LICENSE](../LICENSE) file.
+The AWS ALB Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.
