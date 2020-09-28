@@ -1656,6 +1656,9 @@ end
 
 resource_pool "compute_pool" do
   plugin $aws_compute
+  parameter_values do
+    region $param_region
+  end
   auth "key", type: "aws" do
     version     4
     service    'ec2'
