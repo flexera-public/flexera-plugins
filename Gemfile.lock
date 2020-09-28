@@ -32,7 +32,8 @@ GEM
     git (1.6.0)
       rchardet (~> 1.8)
     json (2.3.0)
-    kramdown (2.1.0)
+    kramdown (2.3.0)
+      rexml
     kramdown-parser-gfm (1.1.0)
       kramdown (~> 2.0)
     mdl (0.9.0)
@@ -58,6 +59,7 @@ GEM
     rake (12.3.3)
     rb-readline (0.5.5)
     rchardet (1.8.0)
+    rexml (3.2.4)
     sawyer (0.8.2)
       addressable (>= 2.3.5)
       faraday (> 0.8, < 2.0)
