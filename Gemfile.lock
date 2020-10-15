@@ -39,7 +39,11 @@ GEM
       faraday (>= 0.8)
     git (1.7.0)
       rchardet (~> 1.8)
+<<<<<<< HEAD
     json (2.3.1)
+=======
+    json (2.3.0)
+>>>>>>> master
     kramdown (2.3.0)
       rexml
     kramdown-parser-gfm (1.1.0)

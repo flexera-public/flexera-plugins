@@ -40,4 +40,8 @@ define list_elbs() return $object do
   end
   $object = to_object(first(@elbs))
   $object = to_s($object)
+<<<<<<< HEAD
 end
+=======
+end
+>>>>>>> master

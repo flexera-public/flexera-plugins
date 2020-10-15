@@ -84,4 +84,8 @@ define stop_debugging() do
     call sys_log.detail($debug_report)
     $$debugging = false
   end
+<<<<<<< HEAD
 end
+=======
+end
+>>>>>>> master
