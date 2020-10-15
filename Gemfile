@@ -25,3 +25,5 @@ gem "rb-readline", "~> 0.5.5"
 gem "mdl"
 
 gem "danger-textlint"
+
+gem "danger-the_coding_love", "~> 0.0.9"

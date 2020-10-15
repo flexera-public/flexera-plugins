@@ -30,6 +30,9 @@ GEM
       danger (> 2.0)
     danger-textlint (2.0.1)
       danger-plugin-api (~> 1.0)
+    danger-the_coding_love (0.0.9)
+      danger-plugin-api (~> 1.0)
+      nokogiri (>= 1.10.8)
     faraday (1.0.1)
       multipart-post (>= 1.2, < 3)
     faraday-http-cache (2.2.0)
@@ -48,6 +51,7 @@ GEM
       mixlib-config (>= 2.2.1, < 4)
       mixlib-shellout
     method_source (0.9.2)
+    mini_portile2 (2.4.0)
     mixlib-cli (2.1.8)
     mixlib-config (3.0.9)
       tomlrb
@@ -56,6 +60,8 @@ GEM
     multipart-post (2.1.1)
     nap (1.1.0)
     no_proxy_fix (0.1.2)
+    nokogiri (1.10.10)
+      mini_portile2 (~> 2.4.0)
     octokit (4.18.0)
       faraday (>= 0.9)
       sawyer (~> 0.8.0, >= 0.5.3)
@@ -82,6 +88,7 @@ PLATFORMS
 DEPENDENCIES
   danger (~> 8.0.0)
   danger-textlint
+  danger-the_coding_love (~> 0.0.9)
   json (~> 2.1)
   mdl
   pry (~> 0.11.3)
