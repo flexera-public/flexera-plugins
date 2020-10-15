@@ -1384,6 +1384,7 @@ plugin "aws_compute" do
         location "query"
       end
     end
+
     output "ipAddress","vpcId","imageId","privateDnsName"
 
     output 'id' do
