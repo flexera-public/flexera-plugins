@@ -33,8 +33,4 @@ define handle_retries($task_label,$attempts, $max_attempts) do
   else
     raise $_errors
   end
-<<<<<<< HEAD
 end
-=======
-end
->>>>>>> master
