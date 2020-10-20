@@ -8,7 +8,7 @@ The Azure Application Gateway Plugin integrates RightScale Self-Service with the
 
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
-- The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrived the RightScale Credential values identified below.
+- The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrieved the RightScale Credential values identified below.
 - Azure Service Principal (AKA Azure Active Directory Application) with the appropriate permissions to manage resources in the target subscription
 - The following RightScale Credentials
   - `AZURE_APPLICATION_ID`
@@ -37,7 +37,8 @@ The Azure Application Gateway Plugin integrates RightScale Self-Service with the
 
 The Azure Application Gateway Plugin has been packaged as `plugins/rs_azure_application_gateway`. In order to use this plugin you must import this plugin into a CAT.
 
-```
+```ruby
+
 import "plugins/rs_azure_application_gateway"
 ```
 
@@ -58,17 +59,17 @@ For and example of how to use the plugin in your CAT review the [application_gat
 
 ## rs_azure_application_gateway.gateway
 
-#### Supported Fields
+### Supported Fields
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
-|name|Yes|The name of the applicaton gateway.|
+|name|Yes|The name of the application gateway.|
 |resource_group|Yes|Name of resource group in which to launch the Deployment|
 |location|Yes|Datacenter to launch in|
 |properties|Yes|The properties to configure the application gateway.  Refer to the example CAT or the Azure Api.|
 |tags|No|Create Azure tags on the Application Gateway|
 
-#### Supported Actions
+### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
@@ -76,7 +77,7 @@ For and example of how to use the plugin in your CAT review the [application_gat
 | destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/application-gateway/applicationgateways/delete) | Supported |
 | get | [Get](https://docs.microsoft.com/en-us/rest/api/application-gateway/applicationgateways/get)| Supported |
 
-#### Supported Outputs
+### Supported Outputs
 
 - id
 - name

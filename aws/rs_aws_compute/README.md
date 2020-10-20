@@ -2,7 +2,7 @@
 
 ## Overview
 
-The AWS Compute Plugin integrates RightScale Self-Service with the basic functionality of the AWS Compute. 
+The AWS Compute Plugin integrates RightScale Self-Service with the basic functionality of the AWS Compute.
 
 ## Requirements
 
@@ -26,19 +26,20 @@ The AWS Compute Plugin integrates RightScale Self-Service with the basic functio
 1. In the Design section, use the `Upload CAT` interface to complete the following:
    1. Upload each of packages listed in the Requirements Section
    1. Upload the `aws_compute_plugin.rb` file located in this repository
- 
+
 ## How to Use
 
 The Compute Plugin has been packaged as `plugin/rs_aws_compute`. In order to use this plugin you must import this plugin into a CAT.
 
-```
+```ruby
+
 import "plugin/rs_aws_compute"
 ```
 
-For more information on using packages, please refer to the RightScale online documenataion. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
+For more information on using packages, please refer to the RightScale online documentation. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 AWS Compute resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
-The resulting resrouce can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
+The resulting resource can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
 
 ## Supported Resources
 
@@ -51,7 +52,8 @@ The resulting resrouce can be manipulated just like the native RightScale resour
 
 ## Usage
 
-```
+```ruby
+
 #Creates an VPC
 resource "my_vpc", type: "rs_aws_compute.vpc" do
   cidr_block "10.0.0.0/16"
@@ -75,13 +77,11 @@ resource "my_rs_vpc_endpoint", type: "rs_aws_compute.endpoint" do
 end
 ```
 
-#
-
 ## Resources
 
 ## vpc
 
-#### Supported Fields
+### Supported Fields
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
@@ -107,7 +107,7 @@ end
 
 ## endpoint
 
-#### Supported Fields
+### Supported Fields
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
@@ -118,7 +118,7 @@ end
 |private_dns_enabled| No| (Interface endpoint) Indicate whether to associate a private hosted zone with the specified VPC. Default: True |
 |security_group_id_1| No | (Interface endpoint) The ID of one or more security groups to associate with the endpoint network interface. |
 
-## Supported Actions
+### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
@@ -128,13 +128,13 @@ end
 
 ## route_table
 
-#### Supported Fields
+### Supported Fields
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 |vpc_id| Yes | The ID of the VPC in which the endpoint will be used. |
 
-## Supported Actions
+### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
@@ -144,14 +144,14 @@ end
 
 ## nat_gateway
 
-#### Supported Fields
+### Supported Fields
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 |allocation_id| Yes | The allocation ID of an Elastic IP address to associate with the NAT gateway. If the Elastic IP address is associated with another resource, you must first disassociate it. |
 |subnet_id| Yes | The subnet in which to create the NAT gateway.|
 
-## Supported Actions
+### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
@@ -161,14 +161,14 @@ end
 
 ## addresses
 
-#### Supported Fields
+### Supported Fields
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 |allocation_id_1| No | One or more allocation IDs. |
 |public_ip_1| No | One or more Elastic IP addresses|
 
-## Supported Actions
+### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
@@ -176,7 +176,7 @@ end
 
 ## tags
 
-#### Supported Fields
+### Supported Fields
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
@@ -184,7 +184,7 @@ end
 |tag_1_key| Yes | Tag Key |
 |tag_1_value | Yes | Tag Value |
 
-## Supported Actions
+### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
@@ -193,7 +193,7 @@ end
 
 ## volume
 
-#### Supported Fields
+### Supported Fields
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
@@ -205,7 +205,7 @@ end
 | snapshot_id | No | The snapshot from which to create the volume. |
 | volume_type | No | The volume type. This can be gp2 for General Purpose SSD, io1 for Provisioned IOPS SSD, st1 for Throughput Optimized HDD, sc1 for Cold HDD, or standard for Magnetic volumes.  |
 
-## Supported Actions
+### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
@@ -215,7 +215,7 @@ end
 
 ## volume_modification
 
-#### Supported Fields
+### Supported Fields
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
@@ -224,24 +224,24 @@ end
 | size | No | The size of the volume, in GiBs. |
 | volume_type | No | The volume type. This can be gp2 for General Purpose SSD, io1 for Provisioned IOPS SSD, st1 for Throughput Optimized HDD, sc1 for Cold HDD, or standard for Magnetic volumes.  |
 
-## Supported Actions
+### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
 | create | [ModifyVolume](https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_ModifyVolume.html) | Supported |
 | get | [DescribeVolumesModifications](https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeVolumesModifications.html) | Supported |
 
-# Implementation Notes
+## Implementation Notes
 
-- The AWS Compute Plugin makes no attempt to support non-AWS resources. (i.e. Allow the passing the RightScale or other resources as arguments to an VPC resource.) 
+- The AWS Compute Plugin makes no attempt to support non-AWS resources. (i.e. Allow the passing the RightScale or other resources as arguments to an VPC resource.)
 - The most common example might be to pass a RightScale instance to attach it to the VPC or similar. Support for this functionality will need to be implemented in the application CAT.
- 
+
 Full list of possible actions can be found on the [AWS Compute API Documentation](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/Welcome.html)
 
 ## Examples
 
 Please review [compute_plugin_test_cat.rb](./compute_plugin_test_cat.rb) for a basic example implementation.
-	
+
 ## Known Issues / Limitations
 
 ## Getting Help

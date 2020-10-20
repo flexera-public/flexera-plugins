@@ -2,7 +2,7 @@
 
 ## Overview
 
-The AWS ELB Plugin integrates RightScale Self-Service with the basic functionality of the AWS Elastic Load Balancer. 
+The AWS ELB Plugin integrates RightScale Self-Service with the basic functionality of the AWS Elastic Load Balancer.
 
 ## Requirements
 
@@ -17,9 +17,7 @@ The AWS ELB Plugin integrates RightScale Self-Service with the basic functionali
 - The following packages are also required (See the Installation section for details):
   - [sys_log](../../libraries/sys_log.rb)
 
-## Getting Started
-
-**Coming Soon**
+## Getting Started - **Coming Soon**
 
 ## Installation
 
@@ -30,21 +28,21 @@ The AWS ELB Plugin integrates RightScale Self-Service with the basic functionali
 1. In the Design section, use the `Upload CAT` interface to complete the following:
    1. Upload each of packages listed in the Requirements Section
    1. Upload the `aws_elb_plugin.rb` file located in this repository
- 
+
 ## How to Use
 
 The ELB Plugin has been packaged as `plugin/rs_aws_elb`. In order to use this plugin you must import this plugin into a CAT.
 
-```
+```ruby
 import "plugin/rs_aws_elb"
 ```
 
-For more information on using packages, please refer to the RightScale online documenataion. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
+For more information on using packages, please refer to the RightScale online documentation. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 AWS ELB resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
-The resulting resrouce can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
+The resulting resource can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
 
-```
+```ruby
 #Creates an ELB
 resource "my_elb", type: "rs_aws_elb.elb" do
   name "my-elb"
@@ -60,7 +58,7 @@ end
 
 ## Implementation Notes
 
-- The AWS ELB Plugin makes no attempt to support non-AWS resources. (i.e. Allow the passing the RightScale or other resources as arguments to an ELB resource.) 
+- The AWS ELB Plugin makes no attempt to support non-AWS resources. (i.e. Allow the passing the RightScale or other resources as arguments to an ELB resource.)
 - The most common example might be to pass a RightScale instance to attach it to the ELB or similar. Support for this functionality will need to be implemented in the application CAT.
 
 ## Supported Actions
@@ -79,12 +77,13 @@ Full list of possible actions can be found on the [AWS ELB API Documentation](ht
 ## Examples
 
 Please review [elb_plugin.rb](./elb_plugin.rb) for a basic example implementation.
-	
+
 ## Known Issues / Limitations
 
 - Currently only supports a single region.  To support a different region, edit the `host` & `region` fields of the `resource_pool` declaration in the Plugin:
 
-```
+```ruby
+
 resource_pool "elb_pool" do
   plugin $rs_aws_elb
   host "elasticloadbalancing.us-east-1.amazonaws.com"

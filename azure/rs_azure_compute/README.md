@@ -8,7 +8,7 @@ The Azure Compute Plugin integrates RightScale Self-Service with the basic funct
 
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
-- The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrived the RightScale Credential values identified below.
+- The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrieved the RightScale Credential values identified below.
 - Azure Service Principal (AKA Azure Active Directory Application) with the appropriate permissions to manage resources in the target subscription
 - The following RightScale Credentials
   - `AZURE_APPLICATION_ID`
@@ -37,7 +37,8 @@ The Azure Compute Plugin integrates RightScale Self-Service with the basic funct
 
 The Azure Compute Plugin has been packaged as `plugins/rs_azure_compute`. In order to use this plugin you must import this plugin into a CAT.
 
-```
+```ruby
+
 import "plugins/rs_azure_compute"
 ```
 
@@ -54,20 +55,20 @@ The resulting resource can be manipulated just like the native RightScale resour
 
 ## Usage
 
-```
+```ruby
 
 parameter "subscription_id" do
   like $rs_azure_compute.subscription_id
 end
 
-permission "read_creds" do
+permission "read_credentials" do
   actions   "rs_cm.show_sensitive","rs_cm.index_sensitive"
   resources "rs_cm.credentials"
 end
 
 resource "my_availability_set", type: "rs_azure_compute.availability_set" do
   name @@deployment.name
-  resource_group "rs-default-centralus"
+  resource_group "rs-default-central-us"
   location "Central US"
   sku do {
     "name" => "Aligned"
@@ -83,17 +84,17 @@ end
 
 ## availability_set
 
-#### Supported Fields
+### Supported Fields
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 |name|Yes|The name of the availability_set|
 |resource_group|Yes|Name of resource group in which to launch the Deployment|
 |location|Yes|Datacenter to launch in|
-|sku.name|Yes|Specifies whether the availability set is managed or not. Posible values are: Aligned or Classic. An Aligned availability set is managed, Classic is not.|
+|sku.name|Yes|Specifies whether the availability set is managed or not. Possible values are: Aligned or Classic. An Aligned availability set is managed, Classic is not.|
 |properties|No| Hash of availability_set properties(<https://docs.microsoft.com/en-us/rest/api/compute/availabilitysets/availabilitysets-create>)|
 
-#### Supported Actions
+### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
@@ -101,7 +102,7 @@ end
 | destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/compute/availabilitysets/availabilitysets-delete) | Supported |
 | get | [Get](https://docs.microsoft.com/en-us/rest/api/compute/availabilitysets/availabilitysets-get)| Supported |
 
-#### Supported Outputs
+### Supported Outputs
 
 - id
 - name
@@ -112,7 +113,7 @@ end
 
 ## virtualmachine
 
-#### Supported Fields
+### Supported Fields
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
@@ -120,7 +121,7 @@ end
 |resource_group|Yes|Name of resource group in which to launch the Deployment|
 |location|Yes|Datacenter to launch in|
 
-#### Supported Actions
+### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
@@ -133,7 +134,7 @@ end
 | start | [Start](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachines/start) | Supported |
 | instance_view | [Instance View](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachines/instanceview) | Supported |
 
-#### Supported Outputs
+### Supported Outputs
 
 - id
 - name
@@ -144,7 +145,7 @@ end
 
 ## extensions
 
-#### Supported Fields
+### Supported Fields
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
@@ -155,7 +156,7 @@ end
 |properties|Yes|Hash of extension options|
 |protectedSettings|Yes|Private configuration for the Extension that is encrypted. For example,pass a database password to the script. NOTE: This value is not returned on the GET.|
 
-#### Supported Actions
+### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
@@ -163,7 +164,7 @@ end
 | create | [Put](https://docs.microsoft.com/en-us/rest/api/compute/extensions/extensions-add-or-update)|Supported|
 | delete | [Delete](https://docs.microsoft.com/en-us/rest/api/compute/extensions/extensions-delete)| Supported|
 
-#### Supported Outputs
+### Supported Outputs
 
 - id
 - name
@@ -173,7 +174,7 @@ end
 
 ## scale_set
 
-#### Supported Fields
+### Supported Fields
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
@@ -184,7 +185,7 @@ end
 |sku|Yes|The virtual machine scale set sku.|
 |plan|No|Specifies information about the marketplace image used to create the virtual machine. This element is only used for marketplace images. Before you can use a marketplace image from an API, you must enable the image for programmatic use. In the Azure portal, find the marketplace image that you want to use and then click Want to deploy programmatically, Get Started ->. Enter any required information and then click Save.|
 
-#### Supported Actions
+### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
@@ -192,7 +193,7 @@ end
 | create | [Put](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachinescalesets/createorupdate)|Supported|
 | delete | [Delete](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachinescalesets/delete)| Supported|
 
-#### Supported Outputs
+### Supported Outputs
 
 - id
 - identity

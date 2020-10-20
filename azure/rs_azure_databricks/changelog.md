@@ -1,6 +1,5 @@
-Databricks Plugin changelog
+# Databricks Plugin changelog
 
-v1.0
------
+## v1.0
 
 - initial release

@@ -8,7 +8,7 @@ The Azure Storage Account Plugin integrates RightScale Self-Service with the bas
 
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
-- The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrived the RightScale Credential values identified below.
+- The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrieved the RightScale Credential values identified below.
 - Azure Service Principal (AKA Azure Active Directory Application) with the appropriate permissions to manage resources in the target subscription
 - The following RightScale Credentials
   - `AZURE_APPLICATION_ID`
@@ -25,19 +25,20 @@ The Azure Storage Account Plugin integrates RightScale Self-Service with the bas
 1. [Retrieve the Application ID & Authentication Key](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal#get-application-id-and-authentication-key)
 1. Create RightScale Credentials with values that match the Application ID (Credential name: `AZURE_APPLICATION_ID`) & Authentication Key (Credential name: `AZURE_APPLICATION_KEY`)
 1. [Retrieve your Tenant ID](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal#get-tenant-id)
-1. Update `azure_storage_plugin.rb` Plugin with your Tenant ID. 
+1. Update `azure_storage_plugin.rb` Plugin with your Tenant ID.
    - Replace "TENANT_ID" in `token_url "https://login.microsoftonline.com/TENANT_ID/oauth2/token"` with your Tenant ID
 1. Navigate to the appropriate Self-Service portal
    - For more details on using the portal review the [SS User Interface Guide](http://docs.rightscale.com/ss/guides/ss_user_interface_guide.html)
 1. In the Design section, use the `Upload CAT` interface to complete the following:
    1. Upload each of packages listed in the Requirements Section
    1. Upload the `azure_storage_plugin.rb` file located in this repository
- 
+
 ## How to Use
 
 The Azure Storage Account Plugin has been packaged as `plugins/rs_azure_storage`. In order to use this plugin you must import this plugin into a CAT.
 
-```
+```ruby
+
 import "plugins/rs_azure_storage"
 ```
 
@@ -52,19 +53,19 @@ The resulting resource can be manipulated just like the native RightScale resour
 
 ## Usage
 
-```
+```ruby
 
-parameter "subscription_id
+parameter "subscription_id" do
   like $rs_azure_storage.subscription_id
 end
 
-permission "read_creds
+permission "read_credentials" do
   actions   "rs_cm.show_sensitive","rs_cm.index_sensitive"
   resources "rs_cm.credentials"
 end
 
-resource "my_placement_group", type: "placement_group
-  name join(["mypg", last(split(@@deployment.href, "/"))])
+resource "my_placement_group", type: "placement_group" do
+  name join(["my_pg", last(split(@@deployment.href, "/"))])
   description "test placement group"
   cloud "AzureRM Central US"
   cloud_specific_attributes do {
@@ -72,17 +73,17 @@ resource "my_placement_group", type: "placement_group
   } end
 end
 
-operation "launch
- description "Launch the application"
- definition "launch_handler"
+operation "launch" do
+  description "Launch the application"
+  definition "launch_handler"
 end
 
 define launch_handler(@my_placement_group) return @my_placement_group do
   provision(@my_placement_group)
   @pg_st_acct = rs_azure_storage.storage_account.show(name: @my_placement_group.name, resource_group: @@deployment.name )
-  $pgstkeys = @pg_st_acct.list_keys()
-  $s_pgstkeys = to_s($pgstkeys)
-  call sys_log.detail("pgst:" + $s_pgstkeys)
+  $pg_st_keys = @pg_st_acct.list_keys()
+  $s_pg_st_keys = to_s($pg_st_keys)
+  call sys_log.detail("pg_st:" + $s_pg_st_keys)
 end
 ```
 
@@ -90,7 +91,7 @@ end
 
 ## storage_account
 
-#### Supported Fields
+### Supported Fields
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
@@ -100,7 +101,7 @@ end
 |sku|Yes|Required. Gets or sets the sku name
 |properties|Yes| Hash of storage_account properties(<https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts#StorageAccounts_Create>)|
 
-#### Supported Actions
+### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
@@ -111,7 +112,7 @@ end
 | show| [Get](https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts/getproperties)| Supported |
 | list_keys| [Post] (<https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts/listkeys>)| Supported |
 
-#### Supported Outputs
+### Supported Outputs
 
 - id
 - name
@@ -137,15 +138,15 @@ end
 
 ## Implementation Notes
 
-- The Azure Storage Account Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to an SA resource.) 
+- The Azure Storage Account Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to an SA resource.)
 
- 
+
 Full list of possible actions can be found on the [Azure Storage Account API Documentation](https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts)
 
 ## Examples
 
 Please review [storage_test_cat.rb](./storage_test_cat.rb) for a basic example implementation.
-	
+
 ## Known Issues / Limitations
 
 ## Getting Help

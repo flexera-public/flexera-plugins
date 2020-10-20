@@ -41,7 +41,7 @@ This procedure will setup the Credentials required for the Bigtable Plugin to in
 1. Create a credential in the desired RightScale Account with the name of `GOOGLE_BIGTABLE_PLUGIN_ACCOUNT`
 1. Paste the Service Account Id into the value of this credential and save
 1. Extract/Copy the private_key from the JSON downloaded when you created the GCE Service Account
-   - You will need to replace "\n" in the private_key with actual line returns to paste into the credential 
+   - You will need to replace "\n" in the private_key with actual line returns to paste into the credential
 1. Create a credential in the desired RightScale Account with the name of `GOOGLE_BIGTABLE_PLUGIN_PRIVATE_KEY`
 1. Paste the private_key into the value of the credential making sure to replace "\n" with actual line returns and save
 
@@ -54,12 +54,13 @@ This procedure will setup the Credentials required for the Bigtable Plugin to in
 1. In the Design section, use the `Upload CAT` interface to complete the following:
    1. Upload each of packages listed in the Requirements Section
    1. Upload the `gcp_bigtable_plugin.rb` file located in this repository
- 
+
 ## How to Use
 
 The Bigtable Plugin has been packaged as `plugins/bigtable`. In order to use this plugin you must import this plugin into a CAT.
 
-```
+```ruby
+
 import "plugins/bigtable"
 ```
 
@@ -67,7 +68,7 @@ For more information on using packages, please refer to the RightScale online do
 
 ## Implementation Notes
 
-- The Bigtable Plugin makes no attempt to support non-Bigtable resources. (i.e. Allow the passing the RightScale or other resources as arguments to a Bigtable resource.) 
+- The Bigtable Plugin makes no attempt to support non-Bigtable resources. (i.e. Allow the passing the RightScale or other resources as arguments to a Bigtable resource.)
 - The Bigtable Plugin only interacts with the [Bigtable REST Admin API](https://cloud.google.com/bigtable/docs/reference/admin/rest/) and does not interact with any other Google Cloud API.
 
 ## Supported Resources
@@ -78,7 +79,8 @@ For more information on using packages, please refer to the RightScale online do
 
 ## Usage
 
-```
+```ruby
+
 resource "my_instance", type: "bigtable.instances" do
     instance_id join(["rs-",last(split(@@deployment.href, "/"))])
     instance do {
@@ -91,8 +93,8 @@ resource "my_instance", type: "bigtable.instances" do
         "serveNodes" => 3,
         "defaultStorageType => "HDD"
       }
-    } end 
-end 
+    } end
+end
 
 resource "my_cluster", type: "bigtable.clusters" do
     instance_id join(["rs-",last(split(@@deployment.href, "/"))])
@@ -114,8 +116,8 @@ end
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 | instance_id | Yes | The UID of the Bigtable instance |
-| instance | Yes | Object containing the necessary Bigtable Instance fields. See [documentation](https://cloud.google.com/bigtable/docs/reference/admin/rest/v2/projects.instances#Instance) for more deatil | 
-| clusters | Yes (but not required via CAT, can be set via RCL) | Object containing the necessary Bigtable Cluster fields. See [documentation](https://cloud.google.com/bigtable/docs/reference/admin/rest/v2/projects.instances.clusters#Cluster) for more deatil | 
+| instance | Yes | Object containing the necessary Bigtable Instance fields. See [documentation](https://cloud.google.com/bigtable/docs/reference/admin/rest/v2/projects.instances#Instance) for more deatil |
+| clusters | Yes (but not required via CAT, can be set via RCL) | Object containing the necessary Bigtable Cluster fields. See [documentation](https://cloud.google.com/bigtable/docs/reference/admin/rest/v2/projects.instances.clusters#Cluster) for more deatil |
 
 #### Supported Actions
 
@@ -124,7 +126,7 @@ end
 | create | [Create](https://cloud.google.com/bigtable/docs/reference/admin/rest/v2/projects.instances/create) | Supported |
 | destroy | [Delete](https://cloud.google.com/bigtable/docs/reference/admin/rest/v2/projects.instances/delete) | Supported |
 | get & show | [Get](https://cloud.google.com/bigtable/docs/reference/admin/rest/v2/projects.instances/get)| Supported |
-| list | [List](https://cloud.google.com/bigtable/docs/reference/admin/rest/v2/projects.instances/list) | Untested | 
+| list | [List](https://cloud.google.com/bigtable/docs/reference/admin/rest/v2/projects.instances/list) | Untested |
 | update | [Update](https://cloud.google.com/bigtable/docs/reference/admin/rest/v2/projects.instances/update) | Untested |
 
 #### Supported Outputs
@@ -144,7 +146,7 @@ end
 | cluster_id | Yes | The UID of the Bigtable cluster |
 | location | Yes | Zone that the Bigtable cluster should be created in. |
 | serve_nodes | Yes | Number of nodes allocated to the cluster |
-| default_storage_type | No | The type of storage used by the cluster |  
+| default_storage_type | No | The type of storage used by the cluster |
 
 #### Supported Actions
 
@@ -153,7 +155,7 @@ end
 | create | [Create](https://cloud.google.com/bigtable/docs/reference/admin/rest/v2/projects.instances.clusters/create) | Untested |
 | destroy | [Delete](https://cloud.google.com/bigtable/docs/reference/admin/rest/v2/projects.instances.clusters/delete) | Supported |
 | get & show | [Get](https://cloud.google.com/bigtable/docs/reference/admin/rest/v2/projects.instances.clusters/get)| Supported |
-| list | [List](https://cloud.google.com/bigtable/docs/reference/admin/rest/v2/projects.instances.clusters/list) | Untested | 
+| list | [List](https://cloud.google.com/bigtable/docs/reference/admin/rest/v2/projects.instances.clusters/list) | Untested |
 | update | [Update](https://cloud.google.com/bigtable/docs/reference/admin/rest/v2/projects.instances/update) | Untested |
 
 #### Supported Outputs
@@ -171,8 +173,8 @@ end
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 | instance_id | Yes | The UID of the associated Bigtable instance |
-| table_id | Yes | The UID of the Bigtable table | 
-| table | No | Object containing the necessary Bigtable Table fields. See [documentation](https://cloud.google.com/bigtable/docs/reference/admin/rest/v2/projects.instances.tables#Table) for more deatil | 
+| table_id | Yes | The UID of the Bigtable table |
+| table | No | Object containing the necessary Bigtable Table fields. See [documentation](https://cloud.google.com/bigtable/docs/reference/admin/rest/v2/projects.instances.tables#Table) for more deatil |
 | initial_splits | No | Object containing a list of row keys that will be used to split the table into several tables. See [documentation](https://cloud.google.com/bigtable/docs/reference/admin/rest/v2/projects.instances.tables/create#Split) for more detail. |
 
 #### Supported Actions
@@ -182,7 +184,7 @@ end
 | create | [Create](https://cloud.google.com/bigtable/docs/reference/admin/rest/v2/projects.instances.tables/create) | Supported |
 | destroy | [Delete](https://cloud.google.com/bigtable/docs/reference/admin/rest/v2/projects.instances.tables/delete) | Supported |
 | get & show | [Get](https://cloud.google.com/bigtable/docs/reference/admin/rest/v2/projects.instances.tables/get)| Supported |
-| list | [List](https://cloud.google.com/bigtable/docs/reference/admin/rest/v2/projects.instances.tables/list) | Untested | 
+| list | [List](https://cloud.google.com/bigtable/docs/reference/admin/rest/v2/projects.instances.tables/list) | Untested |
 | drop_rows | [dropRowRange](https://cloud.google.com/bigtable/docs/reference/admin/rest/v2/projects.instances.tables/dropRowRange) | Untested |
 | modify_families | [modifyColumnFamilies](https://cloud.google.com/bigtable/docs/reference/admin/rest/v2/projects.instances.tables/modifyColumnFamilies) | Untested |
 

@@ -2,13 +2,13 @@
 
 ## Overview
 
-The Azure Service Diagnostic Settings Plugin integrates RightScale Self-Service with the functionality of the Service Diagnostic Settings resource in the Azure API. 
+The Azure Service Diagnostic Settings Plugin integrates RightScale Self-Service with the functionality of the Service Diagnostic Settings resource in the Azure API.
 
 ## Requirements
 
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
-- The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrived the RightScale Credential values identified below.
+- The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrieved the RightScale Credential values identified below.
 - Azure Service Principal (AKA Azure Active Directory Application) with the appropriate permissions to manage resources in the target subscription
 - The following RightScale Credentials
   - `AZURE_APPLICATION_ID`
@@ -26,19 +26,20 @@ The Azure Service Diagnostic Settings Plugin integrates RightScale Self-Service 
 1. [Retrieve the Application ID & Authentication Key](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal#get-application-id-and-authentication-key)
 1. Create RightScale Credentials with values that match the Application ID (Credential name: `AZURE_APPLICATION_ID`) & Authentication Key (Credential name: `AZURE_APPLICATION_KEY`)
 1. [Retrieve your Tenant ID](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal#get-tenant-id)
-1. Update `rs_azure_diagnostic_settings_plugin.rb` Plugin with your Tenant ID. 
+1. Update `rs_azure_diagnostic_settings_plugin.rb` Plugin with your Tenant ID.
    - Replace "TENANT_ID" in `token_url "https://login.microsoftonline.com/TENANT_ID/oauth2/token"` with your Tenant ID
 1. Navigate to the appropriate Self-Service portal
    - For more details on using the portal review the [SS User Interface Guide](http://docs.rightscale.com/ss/guides/ss_user_interface_guide.html)
 1. In the Design section, use the `Upload CAT` interface to complete the following:
    1. Upload each of packages listed in the Requirements Section
    1. Upload the `rs_azure_diagnostic_settings_plugin.rb` file located in this repository
- 
+
 ## How to Use
 
 The plugin has been packaged as `plugins/rs_azure_diagnostic_settings`. In order to use this plugin you must import this plugin into a CAT.
 
-```
+```ruby
+
 import "plugins/rs_azure_diagnostic_settings"
 ```
 
@@ -50,7 +51,8 @@ For more information on using packages, please refer to the RightScale online do
 
 There is a "subscription_id" Plugin Parameter in the Plugin.  Recommended usage (where the `default` value matches your target Subscription ID):
 
-```
+```ruby
+
 parameter "subscription_id" do
   like $rs_azure_template.subscription_id
   default "12345678-1234-1234-1234-123456789012"
@@ -69,10 +71,10 @@ end
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
-| name | yes | Reference name | 
-| resource_uri | yes | Uri of the resource to configure diagnostic settings on| 
+| name | yes | Reference name |
+| resource_uri | yes | Uri of the resource to configure diagnostic settings on|
 | location | yes | even though its required, the value should be empty |
-| properties | yes | Hash of diagnostic settings (see examples and Azure API documentation for more details) | 
+| properties | yes | Hash of diagnostic settings (see examples and Azure API documentation for more details) |
 
 #### Supported Outputs
 
@@ -84,7 +86,8 @@ end
 Service Diagnostic Settings can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
 The resulting resource can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
 
-```
+```ruby
+
 #Configures AuditEvent logging on a KeyVault
 resource "vault_diagnostic_settings", type: "rs_azure_diagnostic_settings.diagnostic_settings" do
   name join(["diagnostic_settings-",last(split(@@deployment.href, "/"))])
@@ -114,8 +117,8 @@ end
 
 ## Examples
 
-Please review [diagnostic_settings_test_cat.rb](./Adiagnostic_settings_test_cat.rb) for a basic example implementation that creates a Storage Account, Key Vault and configures Diagnostic Settings for Audit Logging.
-	
+Please review [diagnostic_settings_test_cat.rb](./diagnostic_settings_test_cat.rb) for a basic example implementation that creates a Storage Account, Key Vault and configures Diagnostic Settings for Audit Logging.
+
 ## Known Issues / Limitations
 
 - None

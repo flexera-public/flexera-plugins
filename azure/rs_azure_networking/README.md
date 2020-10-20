@@ -8,7 +8,7 @@ The Azure Networking Plugin integrates RightScale Self-Service with the basic fu
 
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
-- The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrived the RightScale Credential values identified below.
+- The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrieved the RightScale Credential values identified below.
 - Azure Service Principal (AKA Azure Active Directory Application) with the appropriate permissions to manage resources in the target subscription
 - The following RightScale Credentials
   - `AZURE_APPLICATION_ID`
@@ -37,7 +37,8 @@ The Azure Networking Plugin integrates RightScale Self-Service with the basic fu
 
 The Azure Networking Plugin has been packaged as `plugins/rs_azure_networking_plugin`. In order to use this plugin you must import this plugin into a CAT.
 
-```
+```ruby
+
 import "plugins/rs_azure_networking_plugin"
 ```
 
@@ -61,7 +62,8 @@ The resulting resource can be manipulated just like the native RightScale resour
 
 ## Usage
 
-```
+```ruby
+
 #Creates an load_balancer
 
 parameter "subscription_id" do
@@ -73,7 +75,7 @@ parameter "resource_group" do
   label "Resource Group"
 end
 
-permission "read_creds" do
+permission "read_credentials" do
   actions   "rs_cm.show_sensitive","rs_cm.index_sensitive"
   resources "rs_cm.credentials"
 end
@@ -105,10 +107,10 @@ resource "my_pub_lb", type: "rs_azure_lb.load_balancer" do
       "properties" => {
          "frontendIPConfiguration" => {
             "id" => join(["/subscriptions/",$subscription_id,"/resourceGroups/",$resource_group,"/providers/Microsoft.Network/loadBalancers/",join(["my-pub-lb-", last(split(@@deployment.href, "/"))]),"/frontendIPConfigurations/ip1"])
-         },  
+         },
          "backendAddressPool" => {
             "id" => join(["/subscriptions/",$subscription_id,"/resourceGroups/",$resource_group,"/providers/Microsoft.Network/loadBalancers/",join(["my-pub-lb-", last(split(@@deployment.href, "/"))]),"/backendAddressPool/pool1"])
-         },  
+         },
          "protocol" => "Http",
          "frontendPort" => 80,
          "backendPort" => 8080,
@@ -119,7 +121,7 @@ resource "my_pub_lb", type: "rs_azure_lb.load_balancer" do
          "idleTimeoutInMinutes" => 4,
          "loadDistribution" => "Default"
       }
-    }  
+    }
   ] end
 
   probes do [
@@ -160,7 +162,7 @@ end
 
 ## rs_azure_lb.load_balancer
 
-#### Supported Fields
+### Supported Fields
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
@@ -174,7 +176,7 @@ end
 |inboundNatPools|No|Defines an external port range for Inbound Nat to a single backend port on NICs associated with this Load Balancer. Inbound Nat Rules are created automatically for each NIC associated with the Load Balancer using an external port from this range. Defining an Inbound Nat Pool on your Load Balancer is mutually exclusive with defining Inbound Nat Rules. Inbound Nat Pools are referenced from Virtual Machine Scale Sets. NICs that are associated with individual Virtual Machines cannot reference an Inbound Nat Pool. They have to reference individual Inbound Nat Rules.|
 |inboundNatRules|No|Collection of Inbound Nat Rules used by this Load Balancer. Defining Inbound Nat Rules on your Load Balancer is mutually exclusive with defining an Inbound Nat Pool. Inbound Nat Pools are referenced from Virtual Machine Scale Sets. NICs that are associated with individual Virtual Machines cannot reference an Inbound Nat Pool. They have to reference individual Inbound Nat Rules.|
 
-#### Supported Actions
+### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
@@ -182,7 +184,7 @@ end
 | destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/network/loadbalancer/delete-a-load-balancer) | Supported |
 | get | [Get](https://docs.microsoft.com/en-us/rest/api/network/loadbalancer/get-information-about-a-load-balancer)| Supported |
 
-#### Supported Outputs
+### Supported Outputs
 
 - id
 - name
@@ -192,7 +194,7 @@ end
 
 ## rs_azure_networking.network
 
-#### Supported Fields
+### Supported Fields
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
@@ -201,7 +203,7 @@ end
 |location|Yes|Datacenter to launch in|
 |properties| Hash of vNet properties|
 
-#### Supported Actions
+### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
@@ -211,7 +213,7 @@ end
 | list | [Get](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/virtualnetworks/list)| Supported |
 | list_all | [Get](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/virtualnetworks/listall)| Supported |
 
-#### Supported Outputs
+### Supported Outputs
 
 - id
 - name
@@ -222,7 +224,7 @@ end
 
 ## rs_azure_networking.subnet
 
-#### Supported Fields
+### Supported Fields
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
@@ -232,7 +234,7 @@ end
 |location|Yes|Datacenter to launch in|
 |properties| Hash of subnet properties|
 
-#### Supported Actions
+### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
@@ -241,7 +243,7 @@ end
 | get | [Get](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/subnets/get)| Supported |
 | list | [Get](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/subnets/list)| Supported |
 
-#### Supported Outputs
+### Supported Outputs
 
 - id
 - name
@@ -252,7 +254,7 @@ end
 
 ## rs_azure_networking.interface
 
-#### Supported Fields
+### Supported Fields
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
@@ -261,7 +263,7 @@ end
 |location|Yes|Datacenter to launch in|
 |properties| Hash of NIC properties|
 
-#### Supported Actions
+### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
@@ -270,7 +272,7 @@ end
 | get | [Get](https://docs.microsoft.com/en-us/rest/api/network/virtualnetwork/get-information-about-a-network-interface-card)| Supported |
 | list | [Get](https://docs.microsoft.com/en-us/rest/api/network/virtualnetwork/list-network-interface-cards-within-a-resource-group)| Supported |
 
-#### Supported Outputs
+### Supported Outputs
 
 - id
 - name
@@ -281,7 +283,7 @@ end
 
 ## rs_azure_networking.peering
 
-#### Supported Fields
+### Supported Fields
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
@@ -295,7 +297,7 @@ end
 |properties.useRemoteGateways|No|If remote gateways can be used on this virtual network. If the flag is set to true, and allowGatewayTransit on remote peering is also true, virtual network will use gateways of remote virtual network for transit. Only one peering can have this flag set to true. This flag cannot be set if virtual network already has a gateway. Defaults to false|
 |properties.allowGatewayTransit|No|If gateway links can be used in remote virtual networking to link to this virtual network. Defaults to false|
 
-#### Supported Actions
+### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
@@ -304,7 +306,7 @@ end
 | get | [Get](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/virtualnetworkpeerings/get)| Supported |
 | list | [Get](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/virtualnetworkpeerings/list)| Supported |
 
-#### Supported Outputs
+### Supported Outputs
 
 - id
 - name
@@ -318,7 +320,7 @@ end
 
 ## rs_azure_networking.public_ip_address
 
-#### Supported Fields
+### Supported Fields
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
@@ -330,7 +332,7 @@ end
 |sku|Yes|Sku of IP|
 
 
-#### Supported Actions
+### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
@@ -339,7 +341,7 @@ end
 | get | [Get](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/publicipaddress(preview)/get)| Supported |
 | list | [Get](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/publicipaddress(preview)/list)| Supported |
 
-#### Supported Outputs
+### Supported Outputs
 
 - id
 - name
@@ -350,7 +352,7 @@ end
 
 ## rs_azure_networking.local_network_gateway
 
-#### Supported Fields
+### Supported Fields
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
@@ -361,7 +363,7 @@ end
 |properties|Yes|Resource Properties|
 
 
-#### Supported Actions
+### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
@@ -370,7 +372,7 @@ end
 | get | [Get](https://docs.microsoft.com/en-us/rest/api/network-gateway/localnetworkgateways/get)| Supported |
 | list | [Get](https://docs.microsoft.com/en-us/rest/api/network-gateway/localnetworkgateways/list)| Supported |
 
-#### Supported Outputs
+### Supported Outputs
 
 - id
 - name
@@ -382,7 +384,7 @@ end
 
 ## rs_azure_networking.virtual_network_gateway
 
-#### Supported Fields
+### Supported Fields
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
@@ -393,7 +395,7 @@ end
 |properties|Yes|Resource Properties|
 
 
-#### Supported Actions
+### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
@@ -402,7 +404,7 @@ end
 | get | [Get](https://docs.microsoft.com/en-us/rest/api/network-gateway/virtualnetworkgateways/get)| Supported |
 | list | [Get](https://docs.microsoft.com/en-us/rest/api/network-gateway/virtualnetworkgateways/list)| Supported |
 
-#### Supported Outputs
+### Supported Outputs
 
 - id
 - name
@@ -413,7 +415,7 @@ end
 
 ## rs_azure_networking.virtual_network_gateway_connections
 
-#### Supported Fields
+### Supported Fields
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
@@ -425,7 +427,7 @@ end
 |sku|Yes|Sku of connection|
 
 
-#### Supported Actions
+### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
@@ -434,7 +436,7 @@ end
 | get | [Get](https://docs.microsoft.com/en-us/rest/api/network-gateway/virtualnetworkgatewayconnections/get)| Supported |
 | list | [Get](https://docs.microsoft.com/en-us/rest/api/network-gateway/virtualnetworkgatewayconnections/list)| Supported |
 
-#### Supported Outputs
+### Supported Outputs
 
 - id
 - name
@@ -445,7 +447,7 @@ end
 
 ## Implementation Notes
 
-- The Azure Networking Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to an LB resource.)  
+- The Azure Networking Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to an LB resource.)
 
 Full list of possible actions can be found on the
 

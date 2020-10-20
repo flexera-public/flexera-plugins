@@ -8,7 +8,7 @@ The AWS IAM Plugin integrates RightScale Self-Service with the basic functionali
 
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
-- The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrived the RightScale Credential values identified below.
+- The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrieved the RightScale Credential values identified below.
 - AWS Account credentials with the appropriate permissions to manage elastic load balancers
 - The following RightScale Credentials
   - `AWS_ACCESS_KEY_ID`
@@ -32,11 +32,12 @@ The AWS IAM Plugin integrates RightScale Self-Service with the basic functionali
 
 The IAM Plugin has been packaged as `plugin/rs_aws_iam`. In order to use this plugin you must import this plugin into a CAT.
 
-```
+```ruby
+
 import "plugin/rs_aws_iam"
 ```
 
-For more information on using packages, please refer to the RightScale online documenataion. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
+For more information on using packages, please refer to the RightScale online documentation. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 ## Supported Resources
 
@@ -46,7 +47,7 @@ For more information on using packages, please refer to the RightScale online do
 
 ## Resource: `role`
 
-#### Supported Fields
+### Supported Fields
 
 **Note:** There are many possible configurations when defining a `role` resource.  While some fields below are not listed as "Required", they may actually be required for your resource,  depending on the value(s) of other field(s). More detailed field documentation is available in-line within the IAM Plugin.
 
@@ -67,9 +68,10 @@ For more information on using packages, please refer to the RightScale online do
 #### Usage
 
 AWS IAM resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
-The resulting resrouce can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
+The resulting resource can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
 
-```
+```ruby
+
 resource "my_role", type: "rs_aws_iam.role" do
   name 'MyTestRole'
   assume_role_policy_document '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"Service":["ec2.amazonaws.com"]},"Action":["sts:AssumeRole"]}]}'
@@ -87,11 +89,11 @@ end
 | get | [GetRole](https://docs.aws.amazon.com/IAM/latest/APIReference/API_GetRole.html) | Supported |
 | attach_policy | [AttachRolePolicy](https://docs.aws.amazon.com/IAM/latest/APIReference/API_AttachRolePolicy.html) | Supported |
 | detach_policy | [DetachRolePolicy](https://docs.aws.amazon.com/IAM/latest/APIReference/API_DetachRolePolicy.html) | Supported |
-| attached_polcies | [ListAttachedRolePolicies](https://docs.aws.amazon.com/IAM/latest/APIReference/API_ListAttachedRolePolicies.html) | Supported |
+| attached_policies | [ListAttachedRolePolicies](https://docs.aws.amazon.com/IAM/latest/APIReference/API_ListAttachedRolePolicies.html) | Supported |
 
 ## Resource: `policy`
 
-#### Supported Fields
+### Supported Fields
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
@@ -100,7 +102,7 @@ end
 | policy_document | yes | The JSON policy document that you want to use as the content for the new policy.|
 | path | no | The path for the policy. |
 
-#### Supported Outputs
+### Supported Outputs
 
 - PolicyName
 - Arn
@@ -109,7 +111,8 @@ end
 
 #### Usage
 
-```
+```ruby
+
 #Creates a new IAM Policy
 resource "my_policy", type: "rs_aws_iam.policy" do
   name "MyTestPolicy"
@@ -130,7 +133,7 @@ end
 
 ## Resource: `instance_profile`
 
-#### Supported Fields
+### Supported Fields
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
@@ -139,7 +142,7 @@ end
 | policy_document | yes | The JSON policy document that you want to use as the content for the new policy.|
 | path | no | The path for the policy. |
 
-#### Supported Outputs
+### Supported Outputs
 
 - PolicyName
 - Arn
@@ -148,7 +151,8 @@ end
 
 #### Usage
 
-```
+```ruby
+
 #Creates a new IAM Instance Profile
 resource "my_instance_profile", type:"rs_aws_iam.instance_profile" do
   name "MyInstanceProfile"

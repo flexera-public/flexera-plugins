@@ -1,6 +1,5 @@
-EKS Plugin changelog
+# EKS Plugin changelog
 
-v1.0
------
+## v1.0
 
 - initial release

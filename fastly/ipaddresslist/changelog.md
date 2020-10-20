@@ -1,7 +1,6 @@
-Fastly Ipaddresslist plugin changelog
+# Fastly Ipaddresslist plugin changelog
 
-v1.0
-----
+## v1.0
 
 - Support for polling ipaddresslist
 

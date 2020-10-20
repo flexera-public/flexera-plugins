@@ -42,7 +42,7 @@ This procedure will setup the Credentials required for the GCE Plugin to interac
 1. Create a credential in the desired RightScale Account with the name of `GOOGLE_SQL_PLUGIN_ACCOUNT`
 1. Paste the Service Account Id into the value of this credential and save
 1. Extract/Copy the private_key from the JSON downloaded when you created the GCE Service Account
-   - You will need to replace "\n" in the private_key with actual line returns to paste into the credential 
+   - You will need to replace "\n" in the private_key with actual line returns to paste into the credential
 1. Create a credential in the desired RightScale Account with the name of `GOOGLE_SQL_PLUGIN_PRIVATE_KEY`
 1. Paste the private_key into the value of the credential making sure to replace "\n" with actual line returns and save
 
@@ -55,20 +55,21 @@ This procedure will setup the Credentials required for the GCE Plugin to interac
 1. In the Design section, use the `Upload CAT` interface to complete the following:
    1. Upload each of packages listed in the Requirements Section
    1. Upload the `google_cloud_sql.rb` file located in this repository
- 
+
 ## How to Use
 
 The Cloud SQL Plugin has been packaged as `plugins/google_sql`. In order to use this plugin you must import this plugin into a CAT.
 
-```
+```ruby
+
 import "plugins/google_sql"
 ```
 
-For more information on using packages, please refer to the RightScale online documenataion. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
+For more information on using packages, please refer to the RightScale online documentation. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 ## Implementation Notes
 
-- The Cloud SQL Plugin makes no attempt to support non-Cloud SQL resources. (i.e. Allow the passing the RightScale or other resources as arguments to a GCE resource.) 
+- The Cloud SQL Plugin makes no attempt to support non-Cloud SQL resources. (i.e. Allow the passing the RightScale or other resources as arguments to a GCE resource.)
 
 ## Supported Resources
 
@@ -80,9 +81,9 @@ See Google documentation [here](https://cloud.google.com/sql/docs/mysql/admin-ap
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
-| name | yes | Instance Name | 
+| name | yes | Instance Name |
 | settings | yes | user settings hash (see sub-value details [here](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances)) |
-| database_version | no | The database engine type and version | 
+| database_version | no | The database engine type and version |
 | failover_replica | no | The name and status of the failover replica |
 | master_instance_name | no | The name of the instance which will act as master in the replication setup |
 | on_premises_configuration | no | on-prem instance configuration hash (see sub-value details [here](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances)) |
@@ -129,9 +130,9 @@ See Google documentation [here](https://cloud.google.com/sql/docs/mysql/admin-ap
 #### Usage
 
 GCP Cloud SQL resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
-The resulting resrouce can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
+The resulting resource can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
 
-```
+```ruby
 #Creates a new SQL Instance
 resource "gsql_instance", type: "cloud_sql.instances" do
   name join([$db_instance_prefix,"-",last(split(@@deployment.href, "/"))])
@@ -142,7 +143,7 @@ resource "gsql_instance", type: "cloud_sql.instances" do
     "activationPolicy" => "ALWAYS",
     "dataDiskSizeGb" => "10",
     "dataDiskType" => "PD_SSD"
-  } end 
+  } end
 end
 ```
 
@@ -167,7 +168,7 @@ end
 
 #### Supported Links
 
-| Link | Resource Type | 
+| Link | Resource Type |
 |------|---------------|
 | databases() | databases |
 | users() | users |
@@ -198,14 +199,15 @@ See Google documentation [here](https://cloud.google.com/sql/docs/mysql/admin-ap
 
 #### Usage
 
-```
+```ruby
+
 # Creates a MySQL DB
 resource "gsql_db", type: "cloud_sql.databases" do
   name $db_name
   instance_name @gsql_instance.name
   collation "utf8_general_ci"
   charset "utf8"
-end 
+end
 ```
 
 #### Supported Actions
@@ -242,13 +244,14 @@ end
 
 #### Usage
 
-```
+```ruby
+
 # Creates a MySQL user
 resource "gsql_user", type: "cloud_sql.users" do
   name "frankel"
   instance_name @gsql_instance.name
   password "RightScale2017"
-end 
+end
 ```
 
 **NOTE:** Due to an API limitation for this resource type, you will not be able to manipulate **users** resources via an RCL Resource Collection (ie. `@user.output`).  For this resource type, the best practice is to get **users** resources and then convert to an object, within a variable (ie. `$user`), and then parse the hash to retrieve outputs.
@@ -287,7 +290,8 @@ end
 
 #### Usage
 
-```
+```ruby
+
 # Backup as a resource
 resource "gsql_backup", type: "cloud_sql.backup_runs" do
   instance_name @gsql_instance.name
@@ -313,7 +317,7 @@ end
 ## Examples
 
 - [cloud_sql_test_cat.rb](./cloud_sql_test_cat.rb)
-	
+
 ## Known Issues / Limitations
 
 - User resources do no support a `get()` call which will make these resources behave a bit differently than standard resource types.  See the note in the Users resource documentation for more information.

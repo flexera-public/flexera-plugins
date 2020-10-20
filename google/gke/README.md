@@ -42,7 +42,7 @@ This procedure will setup the Credentials required for the Bigtable Plugin to in
 1. Create a credential in the desired RightScale Account with the name of `GOOGLE_CONTAINER_ENGINE_ACCOUNT`
 1. Paste the Service Account Id into the value of this credential and save
 1. Extract/Copy the private_key from the JSON downloaded when you created the GCE Service Account
-   - You will need to replace "\n" in the private_key with actual line returns to paste into the credential 
+   - You will need to replace "\n" in the private_key with actual line returns to paste into the credential
 1. Create a credential in the desired RightScale Account with the name of `GOOGLE_CONTAINER_ENGINE_KEY`
 1. Paste the private_key into the value of the credential making sure to replace "\n" with actual line returns and save
 
@@ -55,20 +55,21 @@ This procedure will setup the Credentials required for the Bigtable Plugin to in
 1. In the Design section, use the `Upload CAT` interface to complete the following:
    1. Upload each of packages listed in the Requirements Section
    1. Upload the `gke_plugin.rb` file located in this repository
- 
+
 ## How to Use
 
 The GKE Plugin has been packaged as `plugins/gke`. In order to use this plugin you must import this plugin into a CAT.
 
-```
+```ruby
+
 import "plugins/gke"
 ```
 
-For more information on using packages, please refer to the RightScale online documenataion. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
+For more information on using packages, please refer to the RightScale online documentation. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 ## Implementation Notes
 
-- The GKE Plugin makes no attempt to support non-GKE resources. (i.e. Allow the passing the RightScale or other resources as arguments to a GKE resource.) 
+- The GKE Plugin makes no attempt to support non-GKE resources. (i.e. Allow the passing the RightScale or other resources as arguments to a GKE resource.)
 - The GKE Plugin only interacts with the [GKE REST Admin API](https://cloud.google.com/container-engine/reference/rest/) and does not interact with any other Google Cloud API.
 
 ## Supported Resources
@@ -84,8 +85,8 @@ For more information on using packages, please refer to the RightScale online do
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 | zone | Yes | The name of the Google Compute Engine zone in which the cluster resides. |
-| cluster | Yes | Object containing the necessary GKE Cluster fields. See [documentation](https://cloud.google.com/container-engine/reference/rest/v1/projects.zones.clusters#Cluster) for more deatil | 
-| update | Only required for `update()` action | Object containing the necessary GKE Cluster fields. See [documentation](https://cloud.google.com/container-engine/reference/rest/v1/projects.zones.clusters#Cluster) for more deatil | 
+| cluster | Yes | Object containing the necessary GKE Cluster fields. See [documentation](https://cloud.google.com/container-engine/reference/rest/v1/projects.zones.clusters#Cluster) for more detail |
+| update | Only required for `update()` action | Object containing the necessary GKE Cluster fields. See [documentation](https://cloud.google.com/container-engine/reference/rest/v1/projects.zones.clusters#Cluster) for more detail |
 
 #### Supported Actions
 
@@ -94,14 +95,14 @@ For more information on using packages, please refer to the RightScale online do
 | create | [Create](https://cloud.google.com/container-engine/reference/rest/v1/projects.zones.clusters/create) | Supported |
 | destroy | [Delete](https://cloud.google.com/container-engine/reference/rest/v1/projects.zones.clusters/delete) | Supported |
 | get | [Get](https://cloud.google.com/container-engine/reference/rest/v1/projects.zones.clusters/get)| Supported |
-| list | [List](https://cloud.google.com/container-engine/reference/rest/v1/projects.zones.clusters/list) | Untested | 
+| list | [List](https://cloud.google.com/container-engine/reference/rest/v1/projects.zones.clusters/list) | Untested |
 | update | [Update](https://cloud.google.com/container-engine/reference/rest/v1/projects.zones.clusters/update) | Untested |
 
 #### Supported Outputs
 
 - name
 - description
-- initialNodeCount 
+- initialNodeCount
 - loggingService
 - monitoringService
 - network
@@ -116,7 +117,7 @@ For more information on using packages, please refer to the RightScale online do
 - endpoint
 - initialClusterVersion
 - currentMasterVersion
-- currentNodeVersion 
+- currentNodeVersion
 - createTime
 - status
 - statusMessage

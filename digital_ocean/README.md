@@ -8,7 +8,7 @@ The Digital Ocean Plugin integrates RightScale Self-Service with the basic funct
 
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
-- The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrived the RightScale Credential values identified below.
+- The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrieved the RightScale Credential values identified below.
 - The following RightScale Credentials
   - `DIGITAL_OCEAN_API_KEY`
 - The following packages are also required (See the Installation section for details):
@@ -30,11 +30,12 @@ The Digital Ocean Plugin integrates RightScale Self-Service with the basic funct
 
 The Digital Ocean Plugin has been packaged as `plugins/rs_do`. In order to use this plugin you must import this plugin into a CAT.
 
-```
+```ruby
+
 import "plugins/rs_do"
 ```
 
-For more information on using packages, please refer to the RightScale online documenataion. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
+For more information on using packages, please refer to the RightScale online documentation. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 ## Supported Resources
 
@@ -42,7 +43,8 @@ For more information on using packages, please refer to the RightScale online do
 
 ## Usage
 
-```
+```ruby
+
 resource "my_droplet", type: "rs_do.droplet" do
   name join(["rightscale-",last(split(@@deployment.href, "/"))])
   region "nyc1"

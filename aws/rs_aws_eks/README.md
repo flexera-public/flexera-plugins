@@ -8,7 +8,7 @@ The AWS EKS Plugin integrates RightScale Self-Service with the basic functionali
 
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
-- The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrived the RightScale Credential values identified below.
+- The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrieved the RightScale Credential values identified below.
 - The following RightScale Credentials
   - `AWS_ACCESS_KEY_ID`
   - `AWS_SECRET_ACCESS_KEY`
@@ -29,11 +29,12 @@ The AWS EKS Plugin integrates RightScale Self-Service with the basic functionali
 
 The EKS Plugin has been packaged as `plugins/rs_aws_eks`. In order to use this plugin you must import this plugin into a CAT.
 
-```
+```ruby
+
 import "plugins/rs_aws_eks"
 ```
 
-For more information on using packages, please refer to the RightScale online documenataion. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
+For more information on using packages, please refer to the RightScale online documentation. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 ## Supported Resources
 
@@ -41,9 +42,10 @@ For more information on using packages, please refer to the RightScale online do
 
 ## Usage
 
-```
+```ruby
+
 resource "my_cluster", type: "rs_aws_eks.clusters" do
-  name "my_kube_cluster"
+  name "my_kubernetes_cluster"
   resources_vpc_config do {
     "securityGroupIds" => ["sg-7dad9003"],
     "subnetIds" => ["subnet-b357c2fb","subnet-bb06b7e1"],
@@ -101,9 +103,11 @@ end
 Please review [eks_test_cat.rb](./eks_test_cat.rb) for a basic example implementation.
 
 ## Known Issues / Limitations
-  - - Currently only supports a single region.  To support a different region, edit the `host` & `region` fields of the `resource_pool` declaration in the Plugin:
 
-```
+- Currently only supports a single region.  To support a different region, edit the `host` & `region` fields of the `resource_pool` declaration in the Plugin:
+
+```ruby
+
 resource_pool "rs_aws_eks" do
   plugin $rs_aws_eks
   host "eks.us-east-1.amazonaws.com"

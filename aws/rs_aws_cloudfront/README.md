@@ -8,7 +8,7 @@ The AWS CloudFront Plugin integrates RightScale Self-Service with the basic func
 
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
-- The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrived the RightScale Credential values identified below.
+- The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrieved the RightScale Credential values identified below.
 - AWS Account credentials with the appropriate permissions to manage elastic load balancers
 - The following RightScale Credentials
   - `AWS_ACCESS_KEY_ID`
@@ -31,11 +31,12 @@ The AWS CloudFront Plugin integrates RightScale Self-Service with the basic func
 
 The CloudFront Plugin has been packaged as `plugin/rs_aws_cloudfront`. In order to use this plugin you must import this plugin into a CAT.
 
-```
+```ruby
+
 import "plugin/rs_aws_cloudfront"
 ```
 
-For more information on using packages, please refer to the RightScale online documenataion. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
+For more information on using packages, please refer to the RightScale online documentation. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 ## Supported Resources
 

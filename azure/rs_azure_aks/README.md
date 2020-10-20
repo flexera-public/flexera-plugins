@@ -9,7 +9,7 @@ The Azure Kubernetes Service Plugin integrates RightScale Self-Service with the 
 
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
-- The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrived the RightScale Credential values identified below.
+- The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrieved the RightScale Credential values identified below.
 - Azure Service Principal (AKA Azure Active Directory Application) with the appropriate permissions to manage resources in the target subscription
 - The following RightScale Credentials
   - `AZURE_APPLICATION_ID`
@@ -26,19 +26,20 @@ The Azure Kubernetes Service Plugin integrates RightScale Self-Service with the 
 1. [Retrieve the Application ID & Authentication Key](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal#get-application-id-and-authentication-key)
 1. Create RightScale Credentials with values that match the Application ID (Credential name: `AZURE_APPLICATION_ID`) & Authentication Key (Credential name: `AZURE_APPLICATION_KEY`)
 1. [Retrieve your Tenant ID](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal#get-tenant-id)
-1. Update `azure_aks_plugin.rb` Plugin with your Tenant ID. 
+1. Update `azure_aks_plugin.rb` Plugin with your Tenant ID.
    - Replace "TENANT_ID" in `token_url "https://login.microsoftonline.com/TENANT_ID/oauth2/token"` with your Tenant ID
 1. Navigate to the appropriate Self-Service portal
    - For more details on using the portal review the [SS User Interface Guide](http://docs.rightscale.com/ss/guides/ss_user_interface_guide.html)
 1. In the Design section, use the `Upload CAT` interface to complete the following:
    1. Upload each of packages listed in the Requirements Section
    1. Upload the `azure_aks_plugin.rb` file located in this repository
- 
+
 ## How to Use
 
 The Azure Kubernetes Service Plugin has been packaged as `plugins/rs_azure_aks`. In order to use this plugin you must import this plugin into a CAT.
 
-```
+```ruby
+
 import "plugins/rs_azure_aks"
 ```
 
@@ -53,13 +54,13 @@ The resulting resource can be manipulated just like the native RightScale resour
 
 ## Usage
 
-```
+```ruby
 
 parameter "subscription_id" do
   like $rs_azure_aks.subscription_id
 end
 
-permission "read_creds" do
+permission "read_credentials" do
   actions   "rs_cm.show_sensitive","rs_cm.index_sensitive"
   resources "rs_cm.credentials"
 end
@@ -77,7 +78,7 @@ resource "my_k8s", type: "rs_azure_aks.aks" do
   resource_group @my_resource_group.name
   location "Central US"
   properties do {
-  "dnsPrefix" => join(["dnsprefix-", last(split(@@deployment.href, "/"))]),
+  "dnsPrefix" => join(["dns-prefix-", last(split(@@deployment.href, "/"))]),
    "orchestratorProfile" => {
       "orchestratorType" =>  "Kubernetes"
     },
@@ -85,13 +86,13 @@ resource "my_k8s", type: "rs_azure_aks.aks" do
       "clientId" => cred("AZURE_APPLICATION_ID"),
       "secret" => cred("AZURE_APPLICATION_KEY")
     },
- 
+
     "agentPoolProfiles" =>  [
       {
-        "name" =>  "agentpools",
+        "name" =>  "agent_pools",
         "count" =>  2,
         "vmSize" =>  "Standard_DS2",
-        "dnsPrefix" => join(["dnsprefix-", last(split(@@deployment.href, "/"))]),
+        "dnsPrefix" => join(["dns-prefix-", last(split(@@deployment.href, "/"))]),
         "storageProfile" => 'ManagedDisks',
         "osType" => 'Linux'
       }
@@ -102,7 +103,7 @@ resource "my_k8s", type: "rs_azure_aks.aks" do
       }
     },
     "linuxProfile" => {
-      "adminUsername" =>  "azureuser",
+      "adminUsername" =>  "azure_user",
       "ssh" => {
         "publicKeys" =>  [
           {
@@ -131,7 +132,7 @@ end
 
 ## aks
 
-#### Supported Fields
+### Supported Fields
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
@@ -140,7 +141,7 @@ end
 |location|Yes|Datacenter to launch in|
 |properties|Yes| Properties of the aks service.(<https://docs.microsoft.com/en-us/rest/api/aks/managedclusters/createorupdate>)|
 
-#### Supported Actions
+### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
@@ -148,7 +149,7 @@ end
 | destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/aks/managedclusters/delete) | Supported |
 | get | [Get](https://docs.microsoft.com/en-us/rest/api/aks/managedclusters/get)| Supported |
 
-#### Supported Outputs
+### Supported Outputs
 
 - id
 - name
@@ -161,15 +162,15 @@ end
 
 ## Implementation Notes
 
-- The Azure Kubernetes Service  Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to an AKS resource.) 
+- The Azure Kubernetes Service  Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to an AKS resource.)
 
- 
+
 Full list of possible actions can be found on the [Azure Kubernetes Service  API Documentation](https://docs.microsoft.com/en-us/rest/api/aks/)
 
 ## Examples
 
 Please review [aks_test_cat.rb](./azure_aks_test_cat.rb) for a basic example implementation.
-	
+
 ## Known Issues / Limitations
 
 ## Getting Help

@@ -2,13 +2,13 @@
 
 ## Overview
 
-The AWS MQ Plugin integrates RightScale Self-Service with the basic functionality of the AWS MQ API. 
+The AWS MQ Plugin integrates RightScale Self-Service with the basic functionality of the AWS MQ API.
 
 ## Requirements
 
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
-- The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrived the RightScale Credential values identified below.
+- The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrieved the RightScale Credential values identified below.
 - The following RightScale Credentials
   - `AWS_ACCESS_KEY_ID`
   - `AWS_SECRET_ACCESS_KEY`
@@ -24,16 +24,17 @@ The AWS MQ Plugin integrates RightScale Self-Service with the basic functionalit
 1. In the Design section, use the `Upload CAT` interface to complete the following:
    1. Upload each of packages listed in the Requirements Section
    1. Upload the `aws_lambda_plugin.rb` file located in this repository
- 
+
 ## How to Use
 
 The MQ Plugin has been packaged as `plugins/rs_aws_mq`. In order to use this plugin you must import this plugin into a CAT.
 
-```
+```ruby
+
 import "plugins/rs_aws_mq"
 ```
 
-For more information on using packages, please refer to the RightScale online documenataion. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
+For more information on using packages, please refer to the RightScale online documentation. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 ## Supported Resources
 
@@ -44,7 +45,8 @@ For more information on using packages, please refer to the RightScale online do
 
 ## Usage
 
-```
+```ruby
+
 resource "my_broker", type: "rs_aws_mq.brokers" do
   broker_name join(["RightScale-",last(split(@@deployment.href, "/"))])
   host_instance_type "mq.m4.large"
@@ -77,7 +79,7 @@ end
 | configuration | No | A list of information about the configuration. |
 | creator_request_id | No | The unique ID that the requester receives for the created broker. |
 | deployment_mode | Yes | The deployment mode of the broker. |
-| engine_type | Yes | The type of broker engine. | 
+| engine_type | Yes | The type of broker engine. |
 | engine_version | Yes | The version of the broker engine. |
 | host_instance_type | Yes | The broker's instance type. |
 | maintenance_window_start_time | No | The parameters that determine the WeeklyStartTime. |
@@ -119,7 +121,7 @@ See the [AWS CreateBrokerInput Documentation](https://docs.aws.amazon.com/amazon
 - consoleURL
 - endpoints
 
-#### Links 
+#### Links
 
 - users()
 
@@ -157,7 +159,7 @@ See the [AWS CreateConfigurationInput Documentation](https://docs.aws.amazon.com
 - created
 - latestRevision
 
-#### Links 
+#### Links
 
 - configuration_revisions()
 
@@ -187,7 +189,7 @@ See the [AWS CreateConfigurationInput Documentation](https://docs.aws.amazon.com
 - configurationId
 - data
 
-#### Links 
+#### Links
 
 - configuration()
 
@@ -224,22 +226,24 @@ See the [AWS CreateUserInput Documentation](https://docs.aws.amazon.com/amazon-m
 - groups
 - pending
 
-#### Links 
+#### Links
 
 - broker()
 
 ## Implementation Notes
 
-- The AWS MQ Plugin makes no attempt to support non-AWS resources. (i.e. Allow the passing the RightScale or other resources as arguments to an MQ resource.) 
+- The AWS MQ Plugin makes no attempt to support non-AWS resources. (i.e. Allow the passing the RightScale or other resources as arguments to an MQ resource.)
 
 ## Examples
 
 Please review [mq_test_cat.rb](./mq_test_cat.rb) for a basic example implementation.
-	
-## Known Issues / Limitations
-  - - Currently only supports a single region.  To support a different region, edit the `host` & `region` fields of the `resource_pool` declaration in the Plugin:
 
-```
+## Known Issues / Limitations
+
+- Currently only supports a single region.  To support a different region, edit the `host` & `region` fields of the `resource_pool` declaration in the Plugin:
+
+```ruby
+
 resource_pool "rs_aws_mq" do
   plugin $rs_aws_mq
   host "mq.us-east-1.amazonaws.com"

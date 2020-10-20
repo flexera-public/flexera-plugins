@@ -1,6 +1,5 @@
-Azure Diagnostic Settings Plugin changelog
+# Azure Diagnostic Settings Plugin changelog
 
-v1.0
------
+## v1.0
 
 - initial release

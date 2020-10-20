@@ -2,13 +2,13 @@
 
 ## Overview
 
-The AWS Lambda Plugin integrates RightScale Self-Service with the basic functionality of the AWS Lambda API. 
+The AWS Lambda Plugin integrates RightScale Self-Service with the basic functionality of the AWS Lambda API.
 
 ## Requirements
 
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
-- The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrived the RightScale Credential values identified below.
+- The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrieved the RightScale Credential values identified below.
 - The following RightScale Credentials
   - `AWS_ACCESS_KEY_ID`
   - `AWS_SECRET_ACCESS_KEY`
@@ -24,16 +24,17 @@ The AWS Lambda Plugin integrates RightScale Self-Service with the basic function
 1. In the Design section, use the `Upload CAT` interface to complete the following:
    1. Upload each of packages listed in the Requirements Section
    1. Upload the `aws_lambda_plugin.rb` file located in this repository
- 
+
 ## How to Use
 
 The Lambda Plugin has been packaged as `plugins/rs_aws_lambda`. In order to use this plugin you must import this plugin into a CAT.
 
-```
+```ruby
+
 import "plugins/rs_aws_lambda"
 ```
 
-For more information on using packages, please refer to the RightScale online documenataion. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
+For more information on using packages, please refer to the RightScale online documentation. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 ## Supported Resources
 
@@ -41,7 +42,8 @@ For more information on using packages, please refer to the RightScale online do
 
 ## Usage
 
-```
+```ruby
+
 resource "my_function", type: "rs_aws_lambda.function" do
   function_name last(split(@@deployment.href, "/"))
   description join(["launched from SS - ", last(split(@@deployment.href, "/"))])
@@ -51,7 +53,7 @@ resource "my_function", type: "rs_aws_lambda.function" do
   code do {
     "S3Bucket" => "Bucket_Name",
     "S3Key" => "zip_file.zip"
-  } end  
+  } end
 end
 ```
 
@@ -68,7 +70,7 @@ end
 | description | No | A short, user-defined function description. Lambda does not use this value. Assign a meaningful description as you see fit. |
 | environment | No | The parent object that contains your environment's configuration settings. See [Environment Object Documentation](http://docs.aws.amazon.com/lambda/latest/dg/API_Environment.html) for more information. |
 | function_name | Yes | The name you want to assign to the function you are uploading. |
-| handler | Yes | The function within your code that Lambda calls to begin execution. | 
+| handler | Yes | The function within your code that Lambda calls to begin execution. |
 | kms_key_arn | No | The Amazon Resource Name (ARN) of the KMS key used to encrypt your function's environment variables. If not provided, AWS Lambda will use a default service key. |
 | memory_size | No | The amount of memory, in MB, your Lambda function is given. The default value is 128 MB. The value must be a multiple of 64 MB. |
 | publish | No | This boolean parameter can be used to request AWS Lambda to create the Lambda function and publish a version as an atomic operation. |
@@ -118,8 +120,8 @@ end
 
 ## Implementation Notes
 
-- The AWS Lambda Plugin makes no attempt to support non-AWS resources. (i.e. Allow the passing the RightScale or other resources as arguments to an Lambda resource.) 
- 
+- The AWS Lambda Plugin makes no attempt to support non-AWS resources. (i.e. Allow the passing the RightScale or other resources as arguments to an Lambda resource.)
+
 Full list of possible actions can be found on the [AWS Lambda API Documentation](http://docs.aws.amazon.com/lambda/latest/dg/API_Reference.html)
 
 ## Examples
@@ -127,11 +129,13 @@ Full list of possible actions can be found on the [AWS Lambda API Documentation]
 Please review [lambda_test_cat.rb](./lambda_test_cat.rb) for a basic example implementation.
 
 See the [lambda-optima-markups](https://github.com/rs-services/lambda-optima-markups) repo for a more complex example implementation.
-	
-## Known Issues / Limitations
-  - - Currently only supports a single region.  To support a different region, edit the `host` & `region` fields of the `resource_pool` declaration in the Plugin:
 
-```
+## Known Issues / Limitations
+
+- Currently only supports a single region.  To support a different region, edit the `host` & `region` fields of the `resource_pool` declaration in the Plugin:
+
+```ruby
+
 resource_pool "rs_aws_lambda" do
   plugin $rs_aws_lambda
   host "lambda.us-east-1.amazonaws.com"

@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Infoblox IPAM plugin integrates RightScale Self-Service with the basic functionality of the Infoblox IPAM API. 
+The Infoblox IPAM plugin integrates RightScale Self-Service with the basic functionality of the Infoblox IPAM API.
 
 ## TO-DOs
 
@@ -36,12 +36,13 @@ The Infoblox IPAM plugin integrates RightScale Self-Service with the basic funct
 1. In the Design section, use the `Upload CAT` interface to complete the following:
    1. Upload each of packages listed in the Requirements Section
    1. Upload the `infoblox_ipam.plugin.rb` file located in this repository
- 
+
 ### How to Use
 
 The  Plugin has been packaged as `plugins/rs_infoblox_ipam`. To use this plugin you must import this plugin into a CAT.
 
-```
+```ruby
+
 import "plugins/rs_infoblox_ipam"
 ```
 
@@ -53,9 +54,10 @@ For more information on using packages, please refer to the RightScale online do
 
 ## Resource: `record:host`
 
-#### Usage
+### Usage
 
-```
+```ruby
+
 parameter "param_hostname" do
     label "Host Name"
     type "string"
@@ -86,7 +88,7 @@ end
 | ipv4addrs | no(yes) | array of hashes | empty | Must declare an ipv4addrs or an ipv6addrs. This field is an array of hashes declaring the address to use. This string can be used to get the next available IP: [{ "ipv4addr":"func:nextavailableip:10.1.124.0/24" }]. To get a specific IP use this: [{ "ipv4addr":"10.1.124.53" }] |
 | ipv6addrs | no | array of hashes | empty | Must declare at least an ipv4addrs or an ipv6addrs. This field is constructed the same as ipv4addrs but with "ipv6addrs" in it. |
 | aliases | no | array of strings | empty | This is a list of aliases for the host. The aliases must be in FQDN format. This value can be in unicode format. |
-| allow_telnet | no | boolean | false | This field controls whether the credential is used for both the Telnet and SSH credentials. If set to False, the credential is used only for SSH. 
+| allow_telnet | no | boolean | false | This field controls whether the credential is used for both the Telnet and SSH credentials. If set to False, the credential is used only for SSH.
 | comment | no | string | empty | Comment for the record; maximum 256 characters. |
 | configure_for_dns | no | boolean | true | When configure_for_dns is false, the host does not have parent zone information. |
 | device_description | no | string | empty | The description of the device.
@@ -126,8 +128,8 @@ See [test_infoblox_ipam.cat.rb](./test_infoblox_ipam.cat.rb) for an example deca
 
 ## Known Issues / Limitations
 
-- The outputs only support single IP address assignments. 
-- Some of the more esoteric inputs supported by the API are not supported by the plugin. For example the credentials-oriented fields such as "cli_credentials" are not supported. 
+- The outputs only support single IP address assignments.
+- Some of the more esoteric inputs supported by the API are not supported by the plugin. For example the credentials-oriented fields such as "cli_credentials" are not supported.
 
 ## Getting Help
 

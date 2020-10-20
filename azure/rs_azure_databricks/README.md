@@ -25,19 +25,20 @@ The Azure Databricks Plugin integrates RightScale Self-Service with the basic fu
 1. [Retrieve the Application ID & Authentication Key](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal#get-application-id-and-authentication-key)
 1. Create RightScale Credentials with values that match the Application ID (Credential name: `AZURE_APPLICATION_ID`) & Authentication Key (Credential name: `AZURE_APPLICATION_KEY`)
 1. [Retrieve your Tenant ID](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal#get-tenant-id)
-1. Update `azure_databricks_plugin.rb` Plugin with your Tenant ID. 
+1. Update `azure_databricks_plugin.rb` Plugin with your Tenant ID.
    - Replace "TENANT_ID" in `token_url "https://login.microsoftonline.com/TENANT_ID/oauth2/token"` with your Tenant ID
 1. Navigate to the appropriate Self-Service portal
    - For more details on using the portal review the [SS User Interface Guide](http://docs.rightscale.com/ss/guides/ss_user_interface_guide.html)
 1. In the Design section, use the `Upload CAT` interface to complete the following:
    1. Upload each of packages listed in the Requirements Section
    1. Upload the `azure_databricks_plugin.rb` file located in this repository
- 
+
 ## How to Use
 
 The Azure Databricks Plugin has been packaged as `plugins/rs_azure_databricks`. In order to use this plugin you must import this plugin into a CAT.
 
-```
+```ruby
+
 import "plugins/rs_azure_databricks"
 ```
 
@@ -52,29 +53,30 @@ The resulting resource can be manipulated just like the native RightScale resour
 
 ## Usage
 
-```
+```ruby
+
 resource "databricks", type: "rs_azure_databricks.workspace" do
   name join(["databricks-",last(split(@@deployment.href, "/"))])
   resource_group $resource_group
-  location "centralus"
+  location "central us"
   sku do {
     "name" => "trial"
   } end
   properties do {
     "managedResourceGroupId" => join(["/subscriptions/",$subscription_id,"/resourceGroups/databricks-foo-test"])
-  } end 
+  } end
   tags do {
-      "costcenter" => "12345",
-      "envrionment" => "dev",
+      "cost_center" => "12345",
+      "environment" => "dev",
       "department" => "engineering"
   } end
-end 
+end
 
 ```
 
 ## Resources
 
-### workspace 
+### workspace
 
 #### Supported Fields
 
@@ -117,13 +119,13 @@ end
 
 ## Implementation Notes
 
-- The Azure Databricks Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to a Databricks resource.) 
+- The Azure Databricks Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to a Databricks resource.)
 
 
 ## Examples
 
 Please review [databricks_test_cat.rb](./databricks_test_cat.rb) for a basic example implementation.
-	
+
 ## Known Issues / Limitations
 
 ## Getting Help

@@ -1,11 +1,9 @@
-ALB Plugin changelog
+# ALB Plugin changelog
 
-v1.1
------
+## v1.1
 
 - adding Content-Type header and setting to application/xml
-v1.0
 
------
+## v1.0
 
 - initial release

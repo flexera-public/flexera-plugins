@@ -43,7 +43,7 @@ This procedure will setup the Credentials required for the GCE Plugin to interac
 1. Create a credential in the desired RightScale Account with the name of `GCE_PLUGIN_ACCOUNT`
 1. Paste the Service Account Id into the value of this credential and save
 1. Extract/Copy the private_key from the JSON downloaded when you created the GCE Service Account
-   - You will need to replace "\n" in the private_key with actual line returns to paste into the credential 
+   - You will need to replace "\n" in the private_key with actual line returns to paste into the credential
 1. Create a credential in the desired RightScale Account with the name of `GCE_PLUGIN_PRIVATE_KEY`
 1. Paste the private_key into the value of the credential making sure to replace "\n" with actual line returns and save
 
@@ -56,12 +56,13 @@ This procedure will setup the Credentials required for the GCE Plugin to interac
 1. In the Design section, use the `Upload CAT` interface to complete the following:
    1. Upload each of packages listed in the Requirements Section
    1. Upload the `gce_dm_plugin.rb` file located in this repository
- 
+
 ## How to Use
 
 The Google Deployment Manager has been packaged as `plugins/GDM_dm`. In order to use this plugin you must import this plugin into a CAT.
 
-```
+```ruby
+
 import "plugins/GDM_dm"
 ```
 
@@ -77,9 +78,9 @@ See Google documentation [here](https://cloud.google.com/deployment-manager/docs
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
-| name | yes | 	Name of the resource; provided by the client when the resource is created. The name must be 1-63 characters long, and comply with RFC1035. Specifically, the name must be 1-63 characters long and match the regular expression [a-z]([-a-z0-9]*[a-z0-9])? which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.| 
+| name | yes | 	Name of the resource; provided by the client when the resource is created. The name must be 1-63 characters long, and comply with RFC1035. Specifically, the name must be 1-63 characters long and match the regular expression [a-z]([-a-z0-9]*[a-z0-9])? which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.|
 | target | yes | [Input Only] The parameters that define your deployment, including the deployment configuration and relevant templates.|
-| labels | no | Map of labels; provided by the client when the resource is created or updated. Specifically: Label keys must be between 1 and 63 characters long and must conform to the following regular expression: [a-z]([-a-z0-9]*[a-z0-9])? Label values must be between 0 and 63 characters long and must conform to the regular expression ([a-z]([-a-z0-9]*[a-z0-9])?)?  | 
+| labels | no | Map of labels; provided by the client when the resource is created or updated. Specifically: Label keys must be between 1 and 63 characters long and must conform to the following regular expression: [a-z]([-a-z0-9]*[a-z0-9])? Label values must be between 0 and 63 characters long and must conform to the regular expression ([a-z]([-a-z0-9]*[a-z0-9])?)?  |
 
 #### Supported Outputs
 
@@ -112,7 +113,8 @@ See Google documentation [here](https://cloud.google.com/deployment-manager/docs
 A Google Deployment can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
 The resulting resrouce can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
 
-```
+```ruby
+
 #Creates a new Google Deployment
 resource "GDM_dm_deployment", type: "GDM_dm.deployment" do
   name join(["beyondtrust-",last(split(@@deployment.href, "/"))])
@@ -172,7 +174,7 @@ end
 ## Examples
 
 - [gce_dm_test_cat.rb](./gce_dm_test_cat.rb)
-	
+
 ## Known Issues / Limitations
 
 ## Getting Help

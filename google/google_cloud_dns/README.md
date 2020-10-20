@@ -41,7 +41,7 @@ This procedure will setup the Credentials required for the GCE Plugin to interac
 1. Create a credential in the desired RightScale Account with the name of `GOOGLE_DNS_PLUGIN_ACCOUNT`
 1. Paste the Service Account Id into the value of this credential and save
 1. Extract/Copy the private_key from the JSON downloaded when you created the GCE Service Account
-   - You will need to replace "\n" in the private_key with actual line returns to paste into the credential 
+   - You will need to replace "\n" in the private_key with actual line returns to paste into the credential
 1. Create a credential in the desired RightScale Account with the name of `GOOGLE_DNS_PLUGIN_PRIVATE_KEY`
 1. Paste the private_key into the value of the credential making sure to replace "\n" with actual line returns and save
 
@@ -54,12 +54,13 @@ This procedure will setup the Credentials required for the GCE Plugin to interac
 1. In the Design section, use the `Upload CAT` interface to complete the following:
    1. Upload each of packages listed in the Requirements Section
    1. Upload the `google_cloud_dns.rb` file located in this repository
- 
+
 ## How to Use
 
 The Cloud DNS Plugin has been packaged as `plugins/googledns`. In order to use this plugin you must import this plugin into a CAT.
 
-```
+```ruby
+
 import "plugins/googledns"
 ```
 
@@ -67,7 +68,7 @@ For more information on using packages, please refer to the RightScale online do
 
 ## Implementation Notes
 
-- The Cloud DNS Plugin makes no attempt to support non-Cloud DNS resources. (i.e. Allow the passing the RightScale or other resources as arguments to a GCE resource.) 
+- The Cloud DNS Plugin makes no attempt to support non-Cloud DNS resources. (i.e. Allow the passing the RightScale or other resources as arguments to a GCE resource.)
 
 ## Supported Resources
 
@@ -77,9 +78,9 @@ For more information on using packages, please refer to the RightScale online do
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
-| name | yes | Zone Name | 
+| name | yes | Zone Name |
 | description | no | Zone Description |
-| dns_name | yes | Zone DNS Name | 
+| dns_name | yes | Zone DNS Name |
 | nameserver_set | no | Nameservers to use for the newly created Zone. If left empty, nameservers will be auto-populated by GCP |
 
 #### Supported Outputs
@@ -98,7 +99,8 @@ For more information on using packages, please refer to the RightScale online do
 GCP Cloud DNS resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
 The resulting resrouce can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
 
-```
+```ruby
+
 #Creates a new EFS File System
 resource "my_zone", type: clouddns.managedZone do
   name "zoneA"
@@ -117,7 +119,7 @@ resource "my_zone", type: clouddns.managedZone do
 
 #### Supported Links
 
-| Link | Resource Type | 
+| Link | Resource Type |
 |------|---------------|
 | project() | project |
 | resourceRecordSets() | resourceRecordSet |
@@ -139,19 +141,20 @@ See Google documentation [here](https://cloud.google.com/dns/records/json-record
 
 - kind
 - name
-- type 
-- ttl 
+- type
+- ttl
 - rrdatas
 
 #### Usage
 
-```
+```ruby
+
 # Creates an Address Record
 resource "my_recordset", type: "clouddns.resourceRecordSet" do
-    name "foobar.example.com."
-    ttl 300
-    type "A"
-    rrdatas "192.168.1.33"
+  name "foobar.example.com."
+  ttl 300
+  type "A"
+  rrdatas "192.168.1.33"
 end
 ```
 
@@ -167,7 +170,7 @@ end
 
 #### Supported Links
 
-| Link | Resource Type | 
+| Link | Resource Type |
 |------|---------------|
 | project() | project |
 | managedZone() | managedZone |
@@ -208,7 +211,7 @@ N/A
 
 - [test_cat-record_only.rb](./test_cat-record_only.rb)
 - [test_cat-zone&record.rb](./test_cat-zone&record.rb)
-	
+
 ## Known Issues / Limitations
 
 - Project resources only allow a GET actions, which will return DNS Quotas allowed for the associated GCP Project.

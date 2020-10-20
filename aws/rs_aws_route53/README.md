@@ -8,7 +8,7 @@ The AWS Route53 Plugin integrates RightScale Self-Service with the basic functio
 
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
-- The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrived the RightScale Credential values identified below.
+- The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrieved the RightScale Credential values identified below.
 - AWS Account credentials with the appropriate permissions to manage elastic load balancers
 - The following RightScale Credentials
   - `AWS_ACCESS_KEY_ID`
@@ -16,9 +16,7 @@ The AWS Route53 Plugin integrates RightScale Self-Service with the basic functio
 - The following packages are also required (See the Installation section for details):
   - [sys_log](sys_log.rb)
 
-## Getting Started
-
-**Coming Soon**
+## Getting Started - **Coming Soon**
 
 ## Installation
 
@@ -34,11 +32,12 @@ The AWS Route53 Plugin integrates RightScale Self-Service with the basic functio
 
 The Route53 Plugin has been packaged as `plugin/rs_aws_route53`. In order to use this plugin you must import this plugin into a CAT.
 
-```
+```ruby
+
 import "plugin/rs_aws_route53"
 ```
 
-For more information on using packages, please refer to the RightScale online documenataion. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
+For more information on using packages, please refer to the RightScale online documentation. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 ## Supported Resources
 
@@ -62,12 +61,13 @@ For more information on using packages, please refer to the RightScale online do
 AWS Route53 resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
 The resulting resource can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
 
-```
+```ruby
+
 #Creates a new Route 53 Hosted Zone
-resource "hostedzone", type: "rs_aws_route53.hosted_zone" do
+resource "hosted_zone", type: "rs_aws_route53.hosted_zone" do
   create_hosted_zone_request do {
     "xmlns" => "https://route53.amazonaws.com/doc/2013-04-01/",
-    "Name" => [ join([first(split(uuid(),'-')), ".rsps.com"]) ],
+    "Name" => [ join([first(split(uuid(),'-')), ".example.com"]) ],
     "CallerReference" => [ uuid() ]
   } end
 end
@@ -90,8 +90,8 @@ end
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
-| hosted_zone_id | yes | id from the hosted_zone resource |  
-| change_resource_record_sets_request | yes | an object describing the records to change.  see example  |  
+| hosted_zone_id | yes | id from the hosted_zone resource |
+| change_resource_record_sets_request | yes | an object describing the records to change.  see example  |
 | action | no | the action for the record set. 'CREATE', 'UPSERT','DELETE'.  Defaults to 'UPSERT' |
 
 #### Supported Outputs
@@ -107,10 +107,11 @@ end
 AWS Route53 resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
 The resulting resource can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
 
-```
+```ruby
+
 #ResourceRecordSets
 resource "record", type: "rs_aws_route53.resource_recordset" do
-  hosted_zone_id @hostedzone.Id
+  hosted_zone_id @hosted_zone.Id
   action 'UPSERT'
   comment 'some comment about the record'
   resource_record_sets do {
@@ -120,7 +121,7 @@ resource "record", type: "rs_aws_route53.resource_recordset" do
         "Change"=>[
           "Action"=>["UPSERT"],
           "ResourceRecordSet"=>[
-          "Name"=>[join(["myname",".",@hostedzone.Name])],
+          "Name"=>[join(["my-name",".",@hosted_zone.Name])],
           "Type"=>["A"],
           "TTL"=>["300"],
           "ResourceRecords"=>[
@@ -159,7 +160,8 @@ use a terminate operation to remove the resource_record_set.  See example CAT [r
 
 ## Resource Pool
 
-```
+```ruby
+
 resource_pool "route53" do
   plugin $rs_aws_route53
   host "route53.amazonaws.com"
