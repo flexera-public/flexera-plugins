@@ -10,8 +10,6 @@ renamed_files = (git.renamed_files.collect{|r| r[:before]})
 # remove list of renamed files to prevent errors on files that don't exist
 changed_files = (git.added_files + git.modified_files - renamed_files)
 has_app_changes = changed_files.select{ |file| file.end_with? "plugin" or file.end_with? "rb" and !file.start_with?("tools/") }
-#test cats need to plugin to compile, so compile test doesn't work"
-has_plugin_changes = changed_files.select{ |file| file.end_with? "plugin" or file.end_with? "rb" and !file.start_with?("tools/") and !file.include?("_test_")}
 has_new_plugin = git.added_files.select{ |file| file.end_with? "plugin" or file.end_with? "rb" and !file.start_with?("tools/") }
 md_files = changed_files.select{ |file| file.end_with? "md" }
 
@@ -36,6 +34,20 @@ fail 'Please add labels to this Pull Request' if github.pr_labels.empty?
 
 # check markdown of .md files with markdown lint
 # .md files should follow these rules https://github.com/markdownlint/markdownlint/blob/master/docs/RULES.md
+mdl = nil
+md_files.each do |file|
+  if file == 'README.md'
+    # MD024  Multiple headers with the same content
+    # MD013 disable line length
+    mdl = `mdl -r "~MD024","~MD013" #{file}`
+  else
+    # use .mdlrc rules
+    mdl = `mdl #{file}`
+  end
+  if !mdl.empty?
+    fail mdl
+  end
+end
 
 # check for lowercase files and directories
 has_app_changes.each do |file|
@@ -45,7 +57,7 @@ has_app_changes.each do |file|
 end
 
 # check the plugin syntax and plugin fields
-has_plugin_changes.each do |file|
+has_app_changes.each do |file|
   cmd = "./tools/bin/compile #{file}"
   plugin  = `#{cmd}`
   json = {}
@@ -71,6 +83,3 @@ has_plugin_changes.each do |file|
     end
   end
 end
-
-# Lint added and modified files only
-textlint.lint
