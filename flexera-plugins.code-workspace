@@ -39,6 +39,7 @@
       "Instancetemplates",
       "Ipaddresslist",
       "Kubernetes",
+      "Loadbalancer",
       "MYSQLS",
       "Machinetypes",
       "PGSQLB",
@@ -72,6 +73,7 @@
       "enablevpcclassiclinkdnssupport",
       "enduser",
       "etag",
+      "gcloud",
       "gsql",
       "idempotency",
       "instport",
@@ -102,6 +104,7 @@
       "vcpus",
       "virtualmachine",
       "vnet",
+      "webservers",
       "wstunnel"
     ]
   },

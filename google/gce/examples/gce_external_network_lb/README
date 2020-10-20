@@ -11,7 +11,7 @@ This example uses the `gce_plugin` to configure an [External Network LoadBalance
 
 - Installation of the `gce_plugin` plugin. For details see the gce_plugin [README.md](../../README.md)
 - The `RightLink_10_6_0_GCE_Ubuntu_16` Server Template
-- Fully configured GCE network/security_goups to launch the ServerTemplate with.
+- Fully configured GCE network/security_groups to launch the ServerTemplate with.
 - The following RightScale Credentials must exist with the appropriate values
   - `GCE_PLUGIN_ACCOUNT`
   - `GCE_PLUGIN_PKJSON`
@@ -44,13 +44,13 @@ A `right_st` download of this ServerTemplate has been provided in the RightLink_
 
 1. Be sure your RightScale account is SelfService enabled
 1. Follow the Getting Started section to upload the ServerTemplate, create the Rightscale Credentials and configure the GCE Network.
-   - The Security Group must expose access to port 80 in order for the healthchecks and exteranl traffic to browse the site
+   - The Security Group must expose access to port 80 in order for the healthchecks and external traffic to browse the site
 1. Navigate to the appropriate SelfService portal
    - For more details on using the portal review the [SS User Interface Guide](http://docs.rightscale.com/ss/guides/ss_user_interface_guide.html)
 1. In the Design section, use the `Upload CAT` interface to complete the following:
    1. Upload each of packages listed in the Requirements Section
    1. Upload the `gce_external_network_lb.rb` file located in this repository
- 
+
 ## How to Use
 
 ### Launch
@@ -59,7 +59,7 @@ This will create all the GCE resources and launch an array of webservers.
 
 1. Launch the `GCE External Network LB` application CAT
    - For more details on using the portal review the [SS User Interface Guide](http://docs.rightscale.com/ss/guides/ss_user_interface_guide.html)
-1. Set the paramaters
+1. Set the parameters
    - Use the name of the network/subnet/security groups created in the `Getting Started` section.
 
 ### Terminate
@@ -68,9 +68,9 @@ This will remove all the GCE resources and terminate the array of webservers.
 
 ## Implementation Notes
 
-- RightScale no longer maintains images for every cloud. The provided ServerTemplate uses the latest available Ubuntu 16.04 image, however this may be depricated at any time which would deem this template non-funcational. If you run into issues launching this template due to the image no longer being available please create a github ticket or notify #plugins channel.
+- RightScale no longer maintains images for every cloud. The provided ServerTemplate uses the latest available Ubuntu 16.04 image, however this may be deprecated at any time which would deem this template non-functional. If you run into issues launching this template due to the image no longer being available please create a github ticket or notify #plugins channel.
 - This example currently doesn't handle networking. This must already be in place to use this CAT.
-	
+
 ## Getting Help
 
 Support for this example will be provided though GitHub Issues and the RightScale public slack channel #plugins.
