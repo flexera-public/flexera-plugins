@@ -85,4 +85,6 @@ has_app_changes.each do |file|
 end
 
 # Lint added and modified files only
+
+textlint.max_severity = "warn"
 textlint.lint
