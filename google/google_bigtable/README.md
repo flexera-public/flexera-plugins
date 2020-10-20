@@ -1,9 +1,11 @@
 # GCP Bigtable Plugin
 
 ## Overview
+
 The GCP Bigtable Plugin consumes the Google Bigtable Admin API and exposes the supported resources to RightScale Self-Service. This allows for easy extension of a Self-Service Cloud Application to create, delete, and manage Bigtable resources.
 
 ## Requirements
+
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
 - `admin`, `ss_enduser`, & `ss_designer` roles on a RightScale account with Self-Service enabled
@@ -17,8 +19,11 @@ The GCP Bigtable Plugin consumes the Google Bigtable Admin API and exposes the s
   - [sys_log](../../libraries/sys_log.rb)
 
 ## Getting Started
+
 ### Creating a GCP Service Account
+
 This procedure will create a GCE Service account with the appropriate permissions to use this plugin.
+
 1. Review the [Using OAuth 2.0 for Server to Server Applications](https://developers.google.com/identity/protocols/OAuth2ServiceAccount) documentation.
 1. Follow the section named _Creating a service account_
     - Roles needs to include:
@@ -27,8 +32,11 @@ This procedure will create a GCE Service account with the appropriate permission
    - Enabling G Suite Domain-wide Delegation is not required
    - Furnish a new private key selecting the JSON option
 1. Download the Private Key and record the Service account ID (These will be stored in a RightScale Credential in a future step)
+
 ### Creating the RightScale Credentials
+
 This procedure will setup the Credentials required for the Bigtable Plugin to interact with the Bigtable Admin API
+
 1. Review the [Credentials](http://docs.rightscale.com/cm/dashboard/design/credentials/index.html) documentation.
 1. Create a credential in the desired RightScale Account with the name of `GOOGLE_BIGTABLE_PLUGIN_ACCOUNT`
 1. Paste the Service Account Id into the value of this credential and save
@@ -38,6 +46,7 @@ This procedure will setup the Credentials required for the Bigtable Plugin to in
 1. Paste the private_key into the value of the credential making sure to replace "\n" with actual line returns and save
 
 ## Installation
+
 1. Be sure your RightScale account has Self-Service enabled
 1. Follow the Getting Started section to create a Service Account and RightScale Credentials
 1. Navigate to the appropriate Self-Service portal
@@ -47,22 +56,28 @@ This procedure will setup the Credentials required for the Bigtable Plugin to in
    1. Upload the `gcp_bigtable_plugin.rb` file located in this repository
  
 ## How to Use
+
 The Bigtable Plugin has been packaged as `plugins/bigtable`. In order to use this plugin you must import this plugin into a CAT.
+
 ```
 import "plugins/bigtable"
 ```
+
 For more information on using packages, please refer to the RightScale online documenataion. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 ## Implementation Notes
+
 - The Bigtable Plugin makes no attempt to support non-Bigtable resources. (i.e. Allow the passing the RightScale or other resources as arguments to a Bigtable resource.) 
 - The Bigtable Plugin only interacts with the [Bigtable REST Admin API](https://cloud.google.com/bigtable/docs/reference/admin/rest/) and does not interact with any other Google Cloud API.
 
 ## Supported Resources
- - instances
- - clusters
- - tables
+
+- instances
+- clusters
+- tables
 
 ## Usage
+
 ```
 resource "my_instance", type: "bigtable.instances" do
     instance_id join(["rs-",last(split(@@deployment.href, "/"))])
@@ -91,8 +106,11 @@ end
 ```
 
 ## Resources
+
 ### instances
+
 #### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 | instance_id | Yes | The UID of the Bigtable instance |
@@ -110,13 +128,16 @@ end
 | update | [Update](https://cloud.google.com/bigtable/docs/reference/admin/rest/v2/projects.instances/update) | Untested |
 
 #### Supported Outputs
+
 - name
 - displayName
 - state
 - type
 
 ### clusters
+
 #### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 | instance_id | Yes | The UID of the associated Bigtable instance | |
@@ -136,6 +157,7 @@ end
 | update | [Update](https://cloud.google.com/bigtable/docs/reference/admin/rest/v2/projects.instances/update) | Untested |
 
 #### Supported Outputs
+
 - name
 - location
 - state
@@ -143,7 +165,9 @@ end
 - defaultStorageType
 
 ### tables
+
 #### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 | instance_id | Yes | The UID of the associated Bigtable instance |
@@ -163,6 +187,7 @@ end
 | modify_families | [modifyColumnFamilies](https://cloud.google.com/bigtable/docs/reference/admin/rest/v2/projects.instances.tables/modifyColumnFamilies) | Untested |
 
 #### Supported Outputs
+
 - name
 - location
 - state
@@ -170,11 +195,14 @@ end
 - defaultStorageType
 
 ## Examples
+
 Please review [bigtable_test_cat.rb](./bigtable_test_cat.rb) for a basic example implementation.
 
 ## Getting Help
+
 Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.
-Visit http://chat.rightscale.com/ to join!
+Visit <http://chat.rightscale.com/> to join!
 
 ## License
+
 The GCP Bigtable Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.

@@ -1,12 +1,16 @@
 # GCE Plugin
+
 ## Notes
+
 - Some of the resources in this plugin have not been tested. See the [Supported Resources](#supported-resources) section for details.
 - Due to the nature and scope of this plugin, not all use cases may be supported as is. Please see the [Getting Help](#getting-help) section for details on requesting additional functionality.
 
 ## Overview
+
 The GCE Plugin consumes the Google Compute v1 API and exposes the supported resources to RightScale SelfService. This allows for easy extension of a SelfService Cloud Application to use GCE resources not natively supported in RightScale.
 
 ## Requirements
+
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
 - Admin rights to a RightScale account with SelfService enabled
@@ -20,8 +24,11 @@ The GCE Plugin consumes the Google Compute v1 API and exposes the supported reso
   - [sys_log](../../libraries/sys_log.rb)
 
 ## Getting Started
+
 ### Creating a GCE Service Account
+
 This procedure will create a GCE Service account with the appropriate permissions to use this plugin.
+
 1. Review the [Using OAuth 2.0 for Server to Server Applications](https://developers.google.com/identity/protocols/OAuth2ServiceAccount) documenatation.
 1. Follow the section named _Creating a service account_
     - Roles needs to include:
@@ -32,8 +39,11 @@ This procedure will create a GCE Service account with the appropriate permission
    - Enabling G Suite Domain-wide Delegation is not required
    - Furnish a new private key selecting the JSON option
 1. Download the Private Key and record the Service account ID (These will be stored in a RightScale Credential in a future step)
+
 ### Creating the RightScale Credentials
+
 This procedure will setup the Credentials required for the GCE Plugin to interact with the GCE API
+
 1. Review the [Credentials](http://docs.rightscale.com/cm/dashboard/design/credentials/index.html) documentation.
 1. Create a credential in the desired RightScale Account with the name of `GCE_PLUGIN_ACCOUNT`
 1. Paste the Service Account Id into the value of this credential and save
@@ -43,6 +53,7 @@ This procedure will setup the Credentials required for the GCE Plugin to interac
 1. Paste the private_key into the value of the credential making sure to replace "\n" with actual line returns and save
 
 ## Installation
+
 1. Be sure your RightScale account is SelfService enabled
 1. Follow the Getting Started section to create a Service Account and RightScale Credentials
 1. Navigate to the appropriate SelfService portal
@@ -52,14 +63,18 @@ This procedure will setup the Credentials required for the GCE Plugin to interac
    1. Upload the `gce_plugin.rb` file located in this repository
  
 ## How to Use
+
 The GCE Plugin has been packaged as `plugin/gce`. In order to use this plugin you must import this plugin into a CAT.
+
 ```
 import "plugins/gce"
 ```
+
 For more information on using packages, please refer to the RightScale online documenataion. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 GCE resources can now be created by specifying a resource declaration with the desired fields. See the Supported Resources section for a full list.
 The resulting resrouce can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
+
 ```
 #Creates a globalAddress
 resource "my_address", type: "gce.globalAddress" do
@@ -69,10 +84,12 @@ end
 ```
 
 ## Implementation Notes
+
 - The GCE Plugin makes no attempt to support non-GCE resources. (i.e. Allow the passing the RightScale or other resources as arguments to a GCE resource.) 
- - The most common example might be to pass a RightScale instance as an argument to add to a GCE instancePool or similar. Support for this functionality will need to be implemented in the application CAT.
+- The most common example might be to pass a RightScale instance as an argument to add to a GCE instancePool or similar. Support for this functionality will need to be implemented in the application CAT.
 
 ## Supported Resources
+
 | ResourceName | Type | Support Level |
 |--------------|:----:|:-------------:|
 | [Addresses](https://cloud.google.com/compute/docs/reference/latest/addresses) | gce.addresses | Supported |
@@ -122,17 +139,21 @@ end
 | [Zones](https://cloud.google.com/compute/docs/reference/latest/zones) | gce.zones | Untested |
 
 ## Examples
+
 - [GCE External Network LoadBalancer](examples/gce_external_network_lb/README.md)
 	
 ## Known Issues / Limitations
+
 - List and AggregatedList actions cause an error when no results are returned.
 - Delete/Provision produce a 404 error if the operation returns an error.
 - actions which return a JSON response that isn't a resource is untested.
 - Outputs support only top level JSON nodes so return responses with JSON subnodes have been removed with the top level node containing the full JSON. (Untested)
 
 ## Getting Help
+
 Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.
-Visit http://chat.rightscale.com/ to join!
+Visit <http://chat.rightscale.com/> to join!
 
 ## License
+
 The GCE Plugin source code is subject to the MIT license, see the [LICENSE](../LICENSE) file.

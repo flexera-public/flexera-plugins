@@ -1,9 +1,11 @@
 # Azure Databricks Plugin
 
 ## Overview
+
 The Azure Databricks Plugin integrates RightScale Self-Service with the basic functionality of the Azure Databricks  API.
 
 ## Requirements
+
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
 - The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrieve the RightScale Credential values identified below.
@@ -15,6 +17,7 @@ The Azure Databricks Plugin integrates RightScale Self-Service with the basic fu
   - [sys_log](../../libraries/sys_log.rb)
 
 ## Installation
+
 1. Be sure your RightScale account has Self-Service enabled
 1. Connect AzureRM Cloud credentials to your RightScale account (if not already completed)
 1. Follow steps to [Create an Azure Active Directory Application](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal#create-an-azure-active-directory-application)
@@ -31,19 +34,24 @@ The Azure Databricks Plugin integrates RightScale Self-Service with the basic fu
    1. Upload the `azure_databricks_plugin.rb` file located in this repository
  
 ## How to Use
+
 The Azure Databricks Plugin has been packaged as `plugins/rs_azure_databricks`. In order to use this plugin you must import this plugin into a CAT.
+
 ```
 import "plugins/rs_azure_databricks"
 ```
+
 For more information on using packages, please refer to the RightScale online documentation. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 Azure Databricks resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
 The resulting resource can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
 
 ## Supported Resources
- - workspaces
+
+- workspaces
 
 ## Usage
+
 ```
 resource "databricks", type: "rs_azure_databricks.workspace" do
   name join(["databricks-",last(split(@@deployment.href, "/"))])
@@ -65,8 +73,11 @@ end
 ```
 
 ## Resources
+
 ### workspace 
+
 #### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 |name|Yes|The name of the Databricks Workspace in the specified subscription and resource group.|
@@ -84,6 +95,7 @@ end
 | get & show | [Get](https://docs.microsoft.com/en-us/rest/api/databricks/workspaces/get)| Supported |
 
 #### Supported Outputs
+
 - id
 - name
 - location
@@ -104,17 +116,21 @@ end
 - workspaceUrl
 
 ## Implementation Notes
+
 - The Azure Databricks Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to a Databricks resource.) 
 
 
 ## Examples
+
 Please review [databricks_test_cat.rb](./databricks_test_cat.rb) for a basic example implementation.
 	
 ## Known Issues / Limitations
 
 ## Getting Help
+
 Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel `#plugins`.
-Visit http://chat.rightscale.com/ to join!
+Visit <http://chat.rightscale.com/> to join!
 
 ## License
+
 The Azure Databricks Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.

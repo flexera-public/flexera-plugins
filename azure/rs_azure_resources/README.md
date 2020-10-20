@@ -1,9 +1,11 @@
 # Azure ARM Resource Plugin
 
 ## Overview
+
 The Azure ARM Resource Plugin integrates RightScale Self-Service with the basic functionality of the Resources resource in the Azure API. 
 
 ## Requirements
+
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
 - The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrived the RightScale Credential values identified below.
@@ -16,6 +18,7 @@ The Azure ARM Resource Plugin integrates RightScale Self-Service with the basic 
 
 
 ## Installation
+
 1. Be sure your RightScale account has Self-Service enabled
 1. Connect AzureRM Cloud credentials to your RightScale account (if not already completed)
 1. Follow steps to [Create an Azure Active Directory Application](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal#create-an-azure-active-directory-application)
@@ -32,33 +35,44 @@ The Azure ARM Resource Plugin integrates RightScale Self-Service with the basic 
    1. Upload the `rs_azure_resource.rb` file located in this repository
  
 ## How to Use
+
 The ARM Resource Plugin has been packaged as `plugins/rs_azure_resource`. In order to use this plugin you must import this plugin into a CAT.
+
 ```
 import "plugins/rs_azure_resource"
 ```
+
 For more information on using packages, please refer to the RightScale online documenataion. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 ## Plugin Parameters
+
 ### subscription_id
+
 There is a "subscription_id" Plugin Parameter in the ARM Template Plugin.  Recommended usage (where the `default` value matches your target Subscription ID):
+
 ```
 parameter "subscription_id" do
   like $rs_azure_resource.subscription_id
   default "12345678-1234-1234-1234-123456789012"
 end
 ```
+
 **Note:** `default` is not a required field.  You could, instead, elect to populate this parameter at every CloudApp Launch.
 
 ## Supported Resources
+
 None - This release only supports use of the plugin via RCL.
 
 #### Supported Fields
+
 N/A
 
 #### Usage
+
 N/A
 
 #### Supported Actions
+
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
 | update | [Create Or Update By Id](https://docs.microsoft.com/en-us/rest/api/resources/resources/createorupdatebyid) | Supported |
@@ -69,16 +83,20 @@ N/A
 
 
 ## Examples
+
 Please review [arm_resource_test_cat.rb](./arm_resource_test_cat.rb) for a basic example implementation.
 	
 ## Known Issues / Limitations
+
 - This plugin only supports working with resources in RCL. It does not support provisioning CAT resources.
 
 ## Getting Help
+
 Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.
-Visit http://chat.rightscale.com/ to join!
+Visit <http://chat.rightscale.com/> to join!
 
 ## License
+
 The Azure ARM Resource Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.
 
 

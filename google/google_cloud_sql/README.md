@@ -1,9 +1,11 @@
 # GCP Cloud SQL Plugin
 
 ## Overview
+
 The GCP Cloud SQL Plugin consumes the Google Cloud SQL API and exposes the supported resources to RightScale Self-Service. This allows for easy extension of a Self-Service Cloud Application to create, delete, and manage Cloud SQL resources.
 
 ## Requirements
+
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
 - `admin`, `ss_enduser`, & `ss_designer` roles on a RightScale account with Self-Service enabled
@@ -18,8 +20,11 @@ The GCP Cloud SQL Plugin consumes the Google Cloud SQL API and exposes the suppo
 - Enable the Google Cloud SQL API on your Project. Refer to [Google Documentation](https://cloud.google.com/sql/docs/mysql/admin-api/#activating_the_api) for more information.
 
 ## Getting Started
+
 ### Creating a GCP Service Account
+
 This procedure will create a GCE Service account with the appropriate permissions to use this plugin.
+
 1. Review the [Using OAuth 2.0 for Server to Server Applications](https://developers.google.com/identity/protocols/OAuth2ServiceAccount) documentation.
 1. Follow the section named _Creating a service account_
     - Roles needs to include:
@@ -28,8 +33,11 @@ This procedure will create a GCE Service account with the appropriate permission
    - Enabling G Suite Domain-wide Delegation is not required
    - Furnish a new private key selecting the JSON option
 1. Download the Private Key and record the Service account ID (These will be stored in a RightScale Credential in a future step)
+
 ### Creating the RightScale Credentials
+
 This procedure will setup the Credentials required for the GCE Plugin to interact with the GCE API
+
 1. Review the [Credentials](http://docs.rightscale.com/cm/dashboard/design/credentials/index.html) documentation.
 1. Create a credential in the desired RightScale Account with the name of `GOOGLE_SQL_PLUGIN_ACCOUNT`
 1. Paste the Service Account Id into the value of this credential and save
@@ -39,6 +47,7 @@ This procedure will setup the Credentials required for the GCE Plugin to interac
 1. Paste the private_key into the value of the credential making sure to replace "\n" with actual line returns and save
 
 ## Installation
+
 1. Be sure your RightScale account has Self-Service enabled
 1. Follow the Getting Started section to create a Service Account and RightScale Credentials
 1. Navigate to the appropriate Self-Service portal
@@ -48,17 +57,23 @@ This procedure will setup the Credentials required for the GCE Plugin to interac
    1. Upload the `google_cloud_sql.rb` file located in this repository
  
 ## How to Use
+
 The Cloud SQL Plugin has been packaged as `plugins/google_sql`. In order to use this plugin you must import this plugin into a CAT.
+
 ```
 import "plugins/google_sql"
 ```
+
 For more information on using packages, please refer to the RightScale online documenataion. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 ## Implementation Notes
+
 - The Cloud SQL Plugin makes no attempt to support non-Cloud SQL resources. (i.e. Allow the passing the RightScale or other resources as arguments to a GCE resource.) 
 
 ## Supported Resources
+
 ### instances
+
 #### Supported Fields
 
 See Google documentation [here](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/instances#resource)
@@ -85,6 +100,7 @@ See Google documentation [here](https://cloud.google.com/sql/docs/mysql/admin-ap
 | export_context | `export()` |
 
 #### Supported Outputs
+
 - kind
 - selfLink
 - name
@@ -111,8 +127,10 @@ See Google documentation [here](https://cloud.google.com/sql/docs/mysql/admin-ap
 - suspensionReason
 
 #### Usage
+
 GCP Cloud SQL resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
 The resulting resrouce can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
+
 ```
 #Creates a new SQL Instance
 resource "gsql_instance", type: "cloud_sql.instances" do
@@ -155,6 +173,7 @@ end
 | users() | users |
 
 ### databases
+
 #### Supported Fields
 
 See Google documentation [here](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/databases#resource)
@@ -200,7 +219,9 @@ end
 | update | [update](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/databases/update) | Untested
 
 ### users
+
 #### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 | instance_name | yes | SQL Instance name |
@@ -229,6 +250,7 @@ resource "gsql_user", type: "cloud_sql.users" do
   password "RightScale2017"
 end 
 ```
+
 **NOTE:** Due to an API limitation for this resource type, you will not be able to manipulate **users** resources via an RCL Resource Collection (ie. `@user.output`).  For this resource type, the best practice is to get **users** resources and then convert to an object, within a variable (ie. `$user`), and then parse the hash to retrieve outputs.
 
 #### Supported Actions
@@ -241,12 +263,15 @@ end
 | update | [update](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/users/update) | Untested
 
 ### backup_runs
+
 #### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 | instance_name | yes | SQL Instance name |
 
 #### Supported Outputs
+
 - kind
 - id
 - selfLink
@@ -286,14 +311,18 @@ end
 | list | [list](https://cloud.google.com/sql/docs/mysql/admin-api/v1beta4/backupRuns/list) | Supported
 
 ## Examples
+
 - [cloud_sql_test_cat.rb](./cloud_sql_test_cat.rb)
 	
 ## Known Issues / Limitations
+
 - User resources do no support a `get()` call which will make these resources behave a bit differently than standard resource types.  See the note in the Users resource documentation for more information.
 
 ## Getting Help
+
 Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.
-Visit http://chat.rightscale.com/ to join!
+Visit <http://chat.rightscale.com/> to join!
 
 ## License
+
 The GCE Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.

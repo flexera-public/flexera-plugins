@@ -1,9 +1,11 @@
 # AWS RDS Plugin
 
 ## Overview
+
 The AWS RDS Plugin integrates RightScale Self-Service with the basic functionality of the AWS Relational Database Service API. 
 
 ## Requirements
+
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
 - The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrived the RightScale Credential values identified below.
@@ -15,9 +17,11 @@ The AWS RDS Plugin integrates RightScale Self-Service with the basic functionali
   - [sys_log](../../libraries/sys_log.rb)
 
 ## Getting Started
+
 **Coming Soon**
 
 ## Installation
+
 1. Be sure your RightScale account has Self-Service enabled
 1. Connect AWS Cloud credentials to your RightScale account (if not already completed)
 1. Navigate to the appropriate Self-Service portal
@@ -27,19 +31,24 @@ The AWS RDS Plugin integrates RightScale Self-Service with the basic functionali
    1. Upload the `aws_rds_plugin.rb` file located in this repository
  
 ## How to Use
+
 The RDS Plugin has been packaged as `plugin/rs_aws_rds`. In order to use this plugin you must import this plugin into a CAT.
+
 ```
 import "plugin/rs_aws_rds"
 ```
+
 For more information on using packages, please refer to the RightScale online documenataion. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 ## Supported Resources
- -  db_instance
- -  db_subnet_group
+
+-  db_instance
+-  db_subnet_group
 
 ## Resource: `db_instance`
 
 #### Supported Fields
+
 **Note:** There are many possible configurations when defining a `db_instance` resource.  While some fields below are not listed as "Required", they may actually be required for your resource,  depending on the value(s) of other field(s). More detailed field documentation is available in-line within the RDS Plugin.
 
 | Field Name | Required? | Description |
@@ -91,6 +100,7 @@ For more information on using packages, please refer to the RightScale online do
 **Only required if restoring a DB Instance from a Snapshot
 
 #### Supported Outputs
+
 - BackupRetentionPeriod
 - MultiAZ
 - DBInstanceStatus
@@ -112,8 +122,10 @@ For more information on using packages, please refer to the RightScale online do
 - endpoint_port
 
 #### Usage
+
 AWS RDS resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
 The resulting resrouce can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
+
 ```
 #Creates a new RDS DB Instance
 resource "my_rds", type: "rs_aws_rds.db_instance" do
@@ -143,6 +155,7 @@ end
 ```
 
 There are 2 options when destroying a `db_instance` resource:
+
 - Take a final snapshot and then delete the resource
 - Skip taking a final snapshot and then delete the resource
 
@@ -175,6 +188,7 @@ end
 ## Resource: `db_subnet_group`
 
 #### Supported Fields
+
 **Note:** There are many possible configurations when defining a `db_subnet_group` resource.  While some fields below are not listed as "Required", they may actually be required for your resource,  depending on the value(s) of other field(s). More detailed field documentation is available in-line within the RDS Plugin.
 
 | Field Name | Required? | Description |
@@ -185,12 +199,14 @@ end
 | subnet2 | yes | The EC2 Subnet IDs for the DB subnet group. |
 
 #### Supported Outputs
+
 - DBSubnetGroupDescription
 - DBSubnetGroupName
 - name
 
 
 #### Usage
+
 ```
 #Creates a new RDS DB Instance
 resource "drupal_rds_subnet_group", type: "rs_aws_rds.db_subnet_groups" do
@@ -212,11 +228,14 @@ end
 Full list of possible actions can be found on the [AWS RDS API Documentation](http://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_Operations.html)
 
 ## Examples
+
 Please review [rds_test_cat.rb](./rds_test_cat.rb) for a basic example implementation.
 	
 ## Known Issues / Limitations
+
 - Currently only supports CRUD functions.
 - Currently only supports a single region.  To support a different region, edit the `host` & `region` fields of the `resource_pool` declaration in the Plugin:
+
 ```
 resource_pool "rds" do
   plugin $rs_aws_rds
@@ -232,10 +251,12 @@ end
 ```
 
 ## Getting Help
+
 Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.
-Visit http://chat.rightscale.com/ to join!
+Visit <http://chat.rightscale.com/> to join!
 
 ## License
+
 The AWS RDS Plugin source code is subject to the MIT license, see the [LICENSE](../LICENSE) file.
 
 

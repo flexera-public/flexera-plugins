@@ -1,9 +1,11 @@
 # AWS CFT Plugin
 
 ## Overview
+
 The AWS CFT Plugin integrates RightScale Self-Service with the basic functionality of the AWS CloudFormation API. 
 
 ## Requirements
+
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
 - The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrived the RightScale Credential values identified below.
@@ -17,6 +19,7 @@ The AWS CFT Plugin integrates RightScale Self-Service with the basic functionali
 ## Getting Started
 
 ### Installation
+
 1. Be sure your RightScale account has Self-Service enabled
 1. Connect AWS Cloud credentials to your RightScale account (if not already completed)
 1. Navigate to the appropriate Self-Service portal
@@ -26,19 +29,24 @@ The AWS CFT Plugin integrates RightScale Self-Service with the basic functionali
    1. Upload the `aws_cft_plugin.rb` file located in this repository
  
 ### How to Use
+
 The CFT Plugin has been packaged as `plugins/rs_aws_cft`. In order to use this plugin you must import this plugin into a CAT.
+
 ```
 import "plugins/rs_aws_cft"
 ```
+
 For more information on using packages, please refer to the RightScale online documenataion. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 ## Supported Resources
+
 - stack
 - resources (no provision capabilities)
 
 ## Resource: `stack`
 
 #### Supported Fields
+
 **Note:** There are many possible configurations when defining a `stack` resource.  While some fields below are not listed as "Required", they may actually be required for your resource,  depending on the value(s) of other field(s). More detailed API documentation is available [here](hhttp://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/Welcome.html).
 
 | Field Name | Required? | Description |
@@ -65,6 +73,7 @@ For more information on using packages, please refer to the RightScale online do
 `**` One of `template_body` OR `template_url` are required, but both cannot be supplied in the same `stack` resource. 
 
 #### Supported Outputs
+
 - StackName
 - StackId
 - CreationTime
@@ -74,8 +83,10 @@ For more information on using packages, please refer to the RightScale online do
 - OutputValue
 
 #### Usage
+
 AWS CFT resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
 The resulting resrouce can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
+
 ```
 #Creates a new CloudFormation Stack
 resource "my_stack", type: "rs_aws_cft.stack" do
@@ -113,6 +124,7 @@ end
 ## Resource: `resources`
 
 #### Supported Fields
+
 **Reminder:** `create()` is not a supported action on this resource type.  The fields below can be used to filter specific Stack Resources via `get()` & `show()` actions.
 
 | Field Name | Required? | Description |
@@ -122,6 +134,7 @@ end
 | physical_resource_id | no | Physical Resource ID to filter | 
 
 #### Supported Outputs
+
 - StackName
 - StackId
 - Timestamp
@@ -156,6 +169,7 @@ end
 ```
 
 #### Supported Links
+
 | Link | Associated Resource | RCL Example |
 |------|---------------------|---------|
 | stack() | stack | `@stack = rs_aws_cft.resources.show(stack_name: "cft-12345", logical_resource_id: "my_cloudfront_distribution").stack()` |
@@ -169,10 +183,13 @@ end
 
 
 ## Examples
+
 Please review [cft_test_cat.rb](./cft_test_cat.rb) for a basic example implementation.
 	
 ## Known Issues / Limitations
+
 - Currently only supports a single region.  To support a different region, edit the `host` & `region` fields of the `resource_pool` declaration in the Plugin:
+
 ```
 resource_pool "rs_aws_cft" do
   plugin $rs_aws_cft
@@ -188,8 +205,10 @@ end
 ```
 
 ## Getting Help
+
 Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.
-Visit http://chat.rightscale.com/ to join!
+Visit <http://chat.rightscale.com/> to join!
 
 ## License
+
 The AWS EFS Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.

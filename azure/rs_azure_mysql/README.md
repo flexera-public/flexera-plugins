@@ -1,9 +1,11 @@
 # Azure Database for MySQL Plugin
 
 ## Overview
+
 The Azure Database for MySQL Plugin integrates RightScale Self-Service with the basic functionality of the Azure Database for MySQL service.
 
 ## Requirements
+
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
 - The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrived the RightScale Credential values identified below.
@@ -15,6 +17,7 @@ The Azure Database for MySQL Plugin integrates RightScale Self-Service with the 
   - [sys_log](../../libraries/sys_log.rb)
 
 ## Installation
+
 1. Be sure your RightScale account has Self-Service enabled
 1. Connect AzureRM Cloud credentials to your RightScale account (if not already completed)
 1. Follow steps to [Create an Azure Active Directory Application](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal#create-an-azure-active-directory-application)
@@ -31,20 +34,25 @@ The Azure Database for MySQL Plugin integrates RightScale Self-Service with the 
    1. Upload the `azure_mysql_plugin.rb` file located in this repository
  
 ## How to Use
+
 The Azure Database for MySQL Plugin has been packaged as `plugins/rs_azure_mysql`. In order to use this plugin you must import this plugin into a CAT.
+
 ```
 import "plugins/rs_azure_mysql"
 ```
+
 For more information on using packages, please refer to the RightScale online documentation. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 Azure MySQL Database resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
 The resulting resource can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
 
 ## Supported Resources
- - mysql_server
- - firewall_rule
+
+- mysql_server
+- firewall_rule
 
 ## Usage
+
 ```
 #Creates an MySQL Server
 
@@ -87,15 +95,19 @@ end
 
 
 ```
+
 ## Resources
+
 ## mysql_server
+
 #### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 |name|Yes|The name of the MySQL server.|
 |resource_group|Yes|Name of resource group in which to launch the Deployment|
 |location|Yes|Datacenter to launch in|
-|properties|Yes|Hash of SQL Server properties (https://docs.microsoft.com/en-us/rest/api/mysql/)|
+|properties|Yes|Hash of SQL Server properties (<https://docs.microsoft.com/en-us/rest/api/mysql/>)|
 
 #### Supported Actions
 
@@ -106,6 +118,7 @@ end
 | get | [Get](https://docs.microsoft.com/en-us/rest/api/mysql/servers#Servers_Get)| Supported |
 
 #### Supported Outputs
+
 - "id"
 - "name"
 - "type"
@@ -120,14 +133,16 @@ end
 - "userVisibleState"
 
 ## firewall_rule
+
 #### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 |name|Yes|The name of the sql server.|
 |resource_group|Yes|Name of resource group in which to launch the Deployment|
 |location|Yes|Datacenter to launch in|
 |server_name|Yes|Server to create the fw rule on|
-|properties|Yes|Hash of FirewallRule properties (https://docs.microsoft.com/en-us/rest/api/sql/firewallrules)|
+|properties|Yes|Hash of FirewallRule properties (<https://docs.microsoft.com/en-us/rest/api/sql/firewallrules>)|
 
 #### Supported Actions
 
@@ -138,6 +153,7 @@ end
 | get | [Get](https://docs.microsoft.com/en-us/rest/api/sql/firewallrules#FirewallRules_Get)| Supported |
 
 #### Supported Outputs
+
 - "id"
 - "name"
 - "type"
@@ -145,17 +161,22 @@ end
 - "endIpAddress"
 
 ## Implementation Notes
+
 - The Azure Database for MySQL Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to an MySQL resource.) 
  
 Full list of possible actions can be found on the [Azure Database for MySQL API Documentation](https://docs.microsoft.com/en-us/rest/api/mysql/)
+
 ## Examples
+
 Please review [mysql_test_cat.rb](./mysql_test_cat.rb) for a basic example implementation.
 	
 ## Known Issues / Limitations
 
 ## Getting Help
+
 Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.
-Visit http://chat.rightscale.com/ to join!
+Visit <http://chat.rightscale.com/> to join!
 
 ## License
+
 The Azure SQL Database Plugin source code is subject to the MIT license, see the [LICENSE](../LICENSE) file.

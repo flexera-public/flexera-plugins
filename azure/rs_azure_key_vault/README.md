@@ -1,9 +1,11 @@
 # Azure Key Vault Plugin
 
 ## Overview
+
 The Azure Key Vault Plugin integrates RightScale Self-Service with the basic functionality of the Azure Key Vault API.
 
 ## Requirements
+
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
 - The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrived the RightScale Credential values identified below.
@@ -15,6 +17,7 @@ The Azure Key Vault Plugin integrates RightScale Self-Service with the basic fun
   - [sys_log](../../libraries/sys_log.rb)
 
 ## Installation
+
 1. Be sure your RightScale account has Self-Service enabled
 1. Connect AzureRM Cloud credentials to your RightScale account (if not already completed)
 1. Follow steps to [Create an Azure Active Directory Application](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal#create-an-azure-active-directory-application)
@@ -31,19 +34,24 @@ The Azure Key Vault Plugin integrates RightScale Self-Service with the basic fun
    1. Upload the `azure_keyvault_plugin.rb` file located in this repository
  
 ## How to Use
+
 The Azure Key Vault Plugin has been packaged as `plugins/rs_azure_keyvault`. In order to use this plugin you must import this plugin into a CAT.
+
 ```
 import "plugins/rs_azure_keyvault"
 ```
+
 For more information on using packages, please refer to the RightScale online documentation. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 Azure Key Vault resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
 The resulting resource can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
 
 ## Supported Resources
- - vaults
+
+- vaults
 
 ## Usage
+
 ```
 resource "my_vault", type: "rs_azure_keyvault.vaults" do
   name join(["myvault-",last(split(@@deployment.href, "/"))])
@@ -66,8 +74,11 @@ end
 ```
 
 ## Resources
+
 ### vaults 
+
 #### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 |name|Yes|The name of the Key Vault in the specified subscription and resource group.|
@@ -86,6 +97,7 @@ end
 | list by resource group | [List By Resource Group](https://docs.microsoft.com/en-us/rest/api/keyvault/keyvaultpreview/vaults/listbyresourcegroup) | Supported |
 
 #### Supported Outputs
+
 - id
 - name
 - location
@@ -102,20 +114,25 @@ end
 - vault_uri
 
 ## Implementation Notes
+
 - The Azure Key Vault Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to a Key Vault resource.) 
 
  
 Full list of possible actions can be found on the [Azure Key Vault API Documentation](https://docs.microsoft.com/en-us/rest/api/keyvault/)
 
 ## Examples
+
 Please review [keyvault_test_cat.rb](./keyvault_test_cat.rb) for a basic example implementation.
 	
 ## Known Issues / Limitations
+
 - Currently only supports Vault resources due to API endpoint challenges with Key/Cert/Secret resources
 
 ## Getting Help
+
 Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel `#plugins`.
-Visit http://chat.rightscale.com/ to join!
+Visit <http://chat.rightscale.com/> to join!
 
 ## License
+
 The Azure Key Vault Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.

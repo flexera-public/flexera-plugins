@@ -1,9 +1,11 @@
 # Fastly ipaddresslist
 
 ## Overview
+
 The Fastly ipaddresslist plugin integrates RightScale Self-Service with the basic functionality of the Fastly Public Ip LIst. 
 
 ## Requirements
+
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
 - The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrived the RightScale Credential values identified below.
@@ -13,6 +15,7 @@ The Fastly ipaddresslist plugin integrates RightScale Self-Service with the basi
 ## Getting Started
 
 ### Installation
+
 1. Modify the plugin file itself and insert your wstunnel token in the resource_pool section.
 1. Navigate to the appropriate Self-Service portal
    - For more details on using the portal review the [SS User Interface Guide](http://docs.rightscale.com/ss/guides/ss_user_interface_guide.html)
@@ -21,20 +24,25 @@ The Fastly ipaddresslist plugin integrates RightScale Self-Service with the basi
    1. Upload the `fastly_ipaddress_plugin.rb` file located in this repository
  
 ### How to Use
+
 The  Plugin has been packaged as `plugins/rs_rs_fastly_ipaddress`. To use this plugin you must import this plugin into a CAT.
+
 ```
 import "sys_log"
 import "plugins/rs_fastly_ipaddress"
 
 ```
+
 For more information on using packages, please refer to the RightScale online documenataion. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 ## Supported Resources
+
 - public_ip_list
 
 ## Resource: `public_ip_list`
 
 #### Usage
+
 ```
 output "addresses" do
   label "Host IPv4 Address"
@@ -60,21 +68,27 @@ end
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
-| show | https://api.fastly.com/public-ip-list | supported |
+| show | <https://api.fastly.com/public-ip-list> | supported |
 
 #### Supported Outputs
+
 - "addresses" - list of fastly public ips
 
 #### Supported Links
+
 NONE
 
 ## Examples
+
 See [test_fastly_ipaddress.cat.rb](./test_fastly_ipaddress.cat.cat.rb) for an example decalaration.
 
 ## Known Issues / Limitations
+
 ## Getting Help
+
 Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.
-Visit http://chat.rightscale.com/ to join!
+Visit <http://chat.rightscale.com/> to join!
 
 ## License
+
 The source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.

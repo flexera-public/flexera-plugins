@@ -1,9 +1,11 @@
 # Google Cloud Deployment Plugin
 
 ## Overview
+
 The Google Cloud Deployment plugin consumes the Google Deployment Manager API and exposes the supported resources to RightScale Self-Service. This allows for easy extension of a Self-Service Cloud Application to create, delete, and manage Google Deployment Managers.
 
 ## Requirements
+
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
 - `admin`, `ss_enduser`, & `ss_designer` roles on a RightScale account with Self-Service enabled
@@ -18,8 +20,11 @@ The Google Cloud Deployment plugin consumes the Google Deployment Manager API an
 - Enable the Google Deployment Manager API on your Project. Refer to [Google Documentation](https://console.developers.google.com/apis/library/deploymentmanager.googleapis.com) for more information.
 
 ## Getting Started
+
 ### Creating a GDM Service Account
+
 This procedure will create a GCE Service account with the appropriate permissions to use this plugin.
+
 1. Review the [Using OAuth 2.0 for Server to Server Applications](https://developers.google.com/identity/protocols/OAuth2ServiceAccount) documentation.
 1. Follow the section named _Creating a service account_
     - Roles needs to include:
@@ -29,8 +34,11 @@ This procedure will create a GCE Service account with the appropriate permission
    - Enabling G Suite Domain-wide Delegation is not required
    - Furnish a new private key selecting the JSON option
 1. Download the Private Key and record the Service account ID (These will be stored in a RightScale Credential in a future step)
+
 ### Creating the RightScale Credentials
+
 This procedure will setup the Credentials required for the GCE Plugin to interact with the GCE API
+
 1. Review the [Credentials](http://docs.rightscale.com/cm/dashboard/design/credentials/index.html) documentation.
 1. Create a credential in the desired RightScale Account with the name of `GCE_PLUGIN_ACCOUNT`
 1. Paste the Service Account Id into the value of this credential and save
@@ -40,6 +48,7 @@ This procedure will setup the Credentials required for the GCE Plugin to interac
 1. Paste the private_key into the value of the credential making sure to replace "\n" with actual line returns and save
 
 ## Installation
+
 1. Be sure your RightScale account has Self-Service enabled
 1. Follow the Getting Started section to create a Service Account and RightScale Credentials
 1. Navigate to the appropriate Self-Service portal
@@ -49,14 +58,19 @@ This procedure will setup the Credentials required for the GCE Plugin to interac
    1. Upload the `gce_dm_plugin.rb` file located in this repository
  
 ## How to Use
+
 The Google Deployment Manager has been packaged as `plugins/GDM_dm`. In order to use this plugin you must import this plugin into a CAT.
+
 ```
 import "plugins/GDM_dm"
 ```
+
 For more information on using packages, please refer to the RightScale online documenataion. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 ## Supported Resources
+
 ### deployments
+
 #### Supported Fields
 
 See Google documentation [here](https://cloud.google.com/deployment-manager/docs/reference/latest/deployments)
@@ -68,6 +82,7 @@ See Google documentation [here](https://cloud.google.com/deployment-manager/docs
 | labels | no | Map of labels; provided by the client when the resource is created or updated. Specifically: Label keys must be between 1 and 63 characters long and must conform to the following regular expression: [a-z]([-a-z0-9]*[a-z0-9])? Label values must be between 0 and 63 characters long and must conform to the regular expression ([a-z]([-a-z0-9]*[a-z0-9])?)?  | 
 
 #### Supported Outputs
+
 - kind
 - id
 - creationTimestamp
@@ -93,8 +108,10 @@ See Google documentation [here](https://cloud.google.com/deployment-manager/docs
 - description
 
 #### Usage
+
 A Google Deployment can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
 The resulting resrouce can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
+
 ```
 #Creates a new Google Deployment
 resource "GDM_dm_deployment", type: "GDM_dm.deployment" do
@@ -153,13 +170,16 @@ end
 | show | [show](https://cloud.google.com/deployment-manager/docs/reference/latest/deployments/get) | Untested |
 
 ## Examples
+
 - [gce_dm_test_cat.rb](./gce_dm_test_cat.rb)
 	
 ## Known Issues / Limitations
 
 ## Getting Help
+
 Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.
-Visit http://chat.rightscale.com/ to join!
+Visit <http://chat.rightscale.com/> to join!
 
 ## License
+
 The GDM Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.

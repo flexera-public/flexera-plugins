@@ -1,10 +1,12 @@
 # Azure Container Services Plugin
 
 ## Overview
+
 The Azure Container Services Plugin integrates RightScale Self-Service with the basic functionality of the Azure Storage Account
 **WARNING: Do not use the enclosed ssh key for production **
 
 ## Requirements
+
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
 - The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrived the RightScale Credential values identified below.
@@ -16,6 +18,7 @@ The Azure Container Services Plugin integrates RightScale Self-Service with the 
   - [sys_log](../../libraries/sys_log.rb)
 
 ## Installation
+
 1. Be sure your RightScale account has Self-Service enabled
 1. Connect AzureRM Cloud credentials to your RightScale account (if not already completed)
 1. Follow steps to [Create an Azure Active Directory Application](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal#create-an-azure-active-directory-application)
@@ -32,19 +35,24 @@ The Azure Container Services Plugin integrates RightScale Self-Service with the 
    1. Upload the `azure_containerservices_plugin.rb` file located in this repository
  
 ## How to Use
+
 The Azure Container Services Plugin has been packaged as `plugins/rs_azure_containerservices`. In order to use this plugin you must import this plugin into a CAT.
+
 ```
 import "plugins/rs_azure_containerservices"
 ```
+
 For more information on using packages, please refer to the RightScale online documentation. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 Azure Container Servicesresources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
 The resulting resource can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
 
 ## Supported Resources
- - containerservice
+
+- containerservice
 
 ## Usage
+
 ```
 
 parameter "subscription_id" do
@@ -114,15 +122,19 @@ define launch_handler(@my_resource_group,@my_container) return @my_resource_grou
   call stop_debugging()
 end
 ```
+
 ## Resources
+
 ## containerservice
+
 #### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 |name|Yes|The name of the container service in the specified subscription and resource group.|
 |resource_group|Yes|The name of the resource group.|
 |location|Yes|Datacenter to launch in|
-|properties|Yes| Properties of the container service.(https://docs.microsoft.com/en-us/rest/api/compute/containerservices#ContainerServices_CreateOrUpdate)|
+|properties|Yes| Properties of the container service.(<https://docs.microsoft.com/en-us/rest/api/compute/containerservices#ContainerServices_CreateOrUpdate>)|
 
 #### Supported Actions
 
@@ -133,6 +145,7 @@ end
 | get | [Get](https://docs.microsoft.com/en-us/rest/api/compute/containerservices#ContainerServices_Get)| Supported |
 
 #### Supported Outputs
+
 - id
 - name
 - type
@@ -143,18 +156,23 @@ end
 - provisioningState
 
 ## Implementation Notes
+
 - The Azure Container Services Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to an Container Services resource.) 
 
  
 Full list of possible actions can be found on the [Azure Container Services API Documentation](https://docs.microsoft.com/en-us/rest/api/compute/containerservices)
+
 ## Examples
+
 Please review [containerservices_test_cat.rb](./containerservices_test_cat.rb) for a basic example implementation.
 	
 ## Known Issues / Limitations
 
 ## Getting Help
+
 Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel `#plugins`.
-Visit http://chat.rightscale.com/ to join!
+Visit <http://chat.rightscale.com/> to join!
 
 ## License
+
 The Azure Container Services Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.

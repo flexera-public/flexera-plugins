@@ -1,9 +1,11 @@
 # Azure CosmosDB Plugin
 
 ## Overview
+
 The Azure CosmosDB Plugin integrates RightScale Self-Service with the basic functionality of the Azure CosmosDB Account API.
 
 ## Requirements
+
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
 - The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrived the RightScale Credential values identified below.
@@ -15,6 +17,7 @@ The Azure CosmosDB Plugin integrates RightScale Self-Service with the basic func
   - [sys_log](../../libraries/sys_log.rb)
 
 ## Installation
+
 1. Be sure your RightScale account has Self-Service enabled
 1. Connect AzureRM Cloud credentials to your RightScale account (if not already completed)
 1. Follow steps to [Create an Azure Active Directory Application](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal#create-an-azure-active-directory-application)
@@ -31,19 +34,24 @@ The Azure CosmosDB Plugin integrates RightScale Self-Service with the basic func
    1. Upload the `azure_cosmosdb_plugin.rb` file located in this repository
  
 ## How to Use
+
 The Azure CosmosDB Plugin has been packaged as `plugins/rs_azure_cosmosdb`. In order to use this plugin you must import this plugin into a CAT.
+
 ```
 import "plugins/rs_azure_cosmosdb"
 ```
+
 For more information on using packages, please refer to the RightScale online documentation. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 Azure CosmosDB resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
 The resulting resource can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
 
 ## Supported Resources
- - db_account
+
+- db_account
 
 ## Usage
+
 ```
 resource "cosmosdb", type: "rs_azure_cosmosdb.db_account" do
   name join(["cosmosdb-",last(split(@@deployment.href, "/"))])
@@ -78,8 +86,11 @@ end
 ```
 
 ## Resources
+
 ### vaults 
+
 #### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 |name|Yes|The name of the CosmosDB Account in the specified subscription and resource group.|
@@ -98,6 +109,7 @@ end
 | get & show | [Get](https://docs.microsoft.com/en-us/rest/api/cosmos-db-resource-provider/databaseaccounts/get)| Supported |
 
 #### Supported Outputs
+
 - id
 - name
 - location
@@ -116,20 +128,25 @@ end
 - virtualNetworkRules
 
 ## Implementation Notes
+
 - The Azure CosmosDB Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to a CosmosDB resource.) 
 
  
 Full list of possible actions can be found on the [Azure CosmosDB Accounts API Documentation](https://docs.microsoft.com/en-us/rest/api/cosmos-db-resource-provider/databaseaccounts)
 
 ## Examples
+
 Please review [cosmosdb_test_cat.rb](./cosmosdb_test_cat.rb) for a basic example implementation.
 	
 ## Known Issues / Limitations
+
 - Currently only supports Database Account resources due to API endpoint challenge with Database resources
 
 ## Getting Help
+
 Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel `#plugins`.
-Visit http://chat.rightscale.com/ to join!
+Visit <http://chat.rightscale.com/> to join!
 
 ## License
+
 The Azure CosmosDB Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.

@@ -1,9 +1,11 @@
 # Azure Storage Account Plugin
 
 ## Overview
+
 The Azure Storage Account Plugin integrates RightScale Self-Service with the basic functionality of the Azure Storage Account
 
 ## Requirements
+
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
 - The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrived the RightScale Credential values identified below.
@@ -15,6 +17,7 @@ The Azure Storage Account Plugin integrates RightScale Self-Service with the bas
   - [sys_log](../../libraries/sys_log.rb)
 
 ## Installation
+
 1. Be sure your RightScale account has Self-Service enabled
 1. Connect AzureRM Cloud credentials to your RightScale account (if not already completed)
 1. Follow steps to [Create an Azure Active Directory Application](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal#create-an-azure-active-directory-application)
@@ -31,19 +34,24 @@ The Azure Storage Account Plugin integrates RightScale Self-Service with the bas
    1. Upload the `azure_storage_plugin.rb` file located in this repository
  
 ## How to Use
+
 The Azure Storage Account Plugin has been packaged as `plugins/rs_azure_storage`. In order to use this plugin you must import this plugin into a CAT.
+
 ```
 import "plugins/rs_azure_storage"
 ```
+
 For more information on using packages, please refer to the RightScale online documentation. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 Azure Storage Account resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
 The resulting resource can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
 
 ## Supported Resources
- - storage_account
+
+- storage_account
 
 ## Usage
+
 ```
 
 parameter "subscription_id
@@ -77,16 +85,20 @@ define launch_handler(@my_placement_group) return @my_placement_group do
   call sys_log.detail("pgst:" + $s_pgstkeys)
 end
 ```
+
 ## Resources
+
 ## storage_account
+
 #### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 |name|Yes|The name of the storage_account The name of the storage account within the specified resource group. Storage account names must be between 3 and 24 characters in length and use numbers and lower-case letters only.|
 |resource_group|Yes|Name of resource group in which to create the storage_account|
 |location|Yes|Datacenter to launch in|
 |sku|Yes|Required. Gets or sets the sku name
-|properties|Yes| Hash of storage_account properties(https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts#StorageAccounts_Create)|
+|properties|Yes| Hash of storage_account properties(<https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts#StorageAccounts_Create>)|
 
 #### Supported Actions
 
@@ -97,8 +109,10 @@ end
 | destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts/delete) | Supported |
 | get | [Get](https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts/getproperties)| Supported |
 | show| [Get](https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts/getproperties)| Supported |
-| list_keys| [Post] (https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts/listkeys)| Supported |
+| list_keys| [Post] (<https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts/listkeys>)| Supported |
+
 #### Supported Outputs
+
 - id
 - name
 - type
@@ -122,18 +136,23 @@ end
 
 
 ## Implementation Notes
+
 - The Azure Storage Account Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to an SA resource.) 
 
  
 Full list of possible actions can be found on the [Azure Storage Account API Documentation](https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts)
+
 ## Examples
+
 Please review [storage_test_cat.rb](./storage_test_cat.rb) for a basic example implementation.
 	
 ## Known Issues / Limitations
 
 ## Getting Help
+
 Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel `#plugins`.
-Visit http://chat.rightscale.com/ to join!
+Visit <http://chat.rightscale.com/> to join!
 
 ## License
+
 The Azure Storage Account Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.

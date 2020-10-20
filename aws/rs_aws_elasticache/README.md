@@ -1,9 +1,11 @@
 # AWS ElastiCache Plugin
 
 ## Overview
+
 The AWS ElastiCache Plugin integrates RightScale Self-Service with the basic functionality of the AWS ElastiCache API. 
 
 ## Requirements
+
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
 - The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrived the RightScale Credential values identified below.
@@ -15,6 +17,7 @@ The AWS ElastiCache Plugin integrates RightScale Self-Service with the basic fun
   - [sys_log](../../libraries/sys_log.rb)
 
 ## Installation
+
 1. Be sure your RightScale account has Self-Service enabled
 1. Connect AWS Cloud credentials to your RightScale account (if not already completed)
 1. Navigate to the appropriate Self-Service portal
@@ -24,19 +27,24 @@ The AWS ElastiCache Plugin integrates RightScale Self-Service with the basic fun
    1. Upload the `aws_elasticache_plugin.rb` file located in this repository
  
 ## How to Use
+
 The ElastiCache Plugin has been packaged as `plugin/rs_aws_elasticache`. In order to use this plugin you must import this plugin into a CAT.
+
 ```
 import "plugin/rs_aws_elasticache"
 ```
+
 For more information on using packages, please refer to the RightScale online documenataion. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 ## Supported Resources
- - cluster
- - parameter_group
- - security_group
- - subnet_group
+
+- cluster
+- parameter_group
+- security_group
+- subnet_group
 
 ## Usage
+
 ```
 resource "my_param_group", type: "rs_aws_elasticache.parameter_group" do
   cache_parameter_group_name last(split(@@deployment.href, "/"))
@@ -75,8 +83,11 @@ end
 ```
 
 ## Resources
+
 ### cluster
+
 #### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 | cache_cluster_id | Yes | The node group (shard) identifier |
@@ -112,6 +123,7 @@ end
 | node_id_1..5 | No | A list of cache node IDs to reboot. Only available on `reboot()` | 
 
 #### Supported Actions
+
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
 | create | [CreateCacheCluster](http://docs.aws.amazon.com/AmazonElastiCache/latest/APIReference/API_CreateCacheCluster.html) | Supported |
@@ -121,6 +133,7 @@ end
 | reboot | [RebootCacheCluster](http://docs.aws.amazon.com/AmazonElastiCache/latest/APIReference/API_RebootCacheCluster.html) | Untested |
 
 #### Outputs
+
 - CacheClusterId
 - CacheClusterStatus
 - ClientDownloadLandingPage
@@ -139,7 +152,9 @@ end
 - NotificationArn
 
 ### parameter_group
+
 #### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 | cache_parameter_group_family | Yes | The name of the cache parameter group family that the cache parameter group can be used with. |
@@ -150,6 +165,7 @@ end
 | reset_all_parameters | No | If true, all parameters in the cache parameter group are reset to their default values. If false, only the parameters listed by ParameterNameValues are reset to their default values. Only available on `reset()` |
 
 #### Supported Actions
+
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
 | create | [CreateCacheParameterGroup](http://docs.aws.amazon.com/AmazonElastiCache/latest/APIReference/API_CreateCacheParameterGroup.html) | Supported |
@@ -159,12 +175,15 @@ end
 | reset | [ResetCacheParameterGroup](http://docs.aws.amazon.com/AmazonElastiCache/latest/APIReference/API_ResetCacheParameterGroup.html) | Untested |
 
 #### Outputs
+
 - CacheParameterGroupName
 - CacheParameterGroupFamily
 - Description
 
 ### security_group
+
 #### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 | cache_security_group_name | Yes | A name for the cache security group. This value is stored as a lowercase string. |
@@ -174,6 +193,7 @@ end
 
 
 #### Supported Actions
+
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
 | create | [CreateCacheSecurityGroup](http://docs.aws.amazon.com/AmazonElastiCache/latest/APIReference/API_CreateCacheSecurityGroup.html) | Supported |
@@ -183,6 +203,7 @@ end
 | revoke_ingress | [RevokeCacheSecurityGroupIngress](http://docs.aws.amazon.com/AmazonElastiCache/latest/APIReference/API_RevokeCacheSecurityGroupIngress.html) | Untested |
 
 #### Outputs
+
 - CacheSecurityGroupName
 - OwnerId
 - Description
@@ -190,7 +211,9 @@ end
 - EC2SecurityGroupOwnerId
 
 ### subnet_group
+
 #### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 | cache_subnet_group_name | Yes | A name for the cache subnet group. This value is stored as a lowercase string. |
@@ -199,6 +222,7 @@ end
 | subnet_id_2..5 | No | A list of VPC subnet IDs for the cache subnet group. |
 
 #### Supported Actions
+
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
 | create | [CreateCacheSubnetGroup](http://docs.aws.amazon.com/AmazonElastiCache/latest/APIReference/API_CreateCacheSubnetGroup.html) | Supported |
@@ -207,6 +231,7 @@ end
 | update | [ModifyCacheSubnetGroup](http://docs.aws.amazon.com/AmazonElastiCache/latest/APIReference/API_ModifyCacheSubnetGroup.html) | Untested |
 
 #### Outputs
+
 - VpcId
 - CacheSubnetGroupDescription
 - CacheSubnetGroupName
@@ -214,15 +239,18 @@ end
 - SubnetAvailabilityZone
 
 ## Implementation Notes
+
 - The AWS ElastiCache Plugin makes no attempt to support non-AWS resources. (i.e. Allow the passing the RightScale or other resources as arguments to an ElastiCache resource.) 
  
 Full list of possible actions can be found on the [AWS ElastiCache API Documentation](http://docs.aws.amazon.com/AmazonElastiCache/latest/APIReference/Welcome.html)
 
 ## Examples
+
 Please review [elasticache_test_cat.rb](./elasticache_test_cat.rb) for a basic example implementation.
 	
 ## Known Issues / Limitations
-- - Currently only supports a single region.  To support a different region, edit the `host` & `region` fields of the `resource_pool` declaration in the Plugin:
+  - - Currently only supports a single region.  To support a different region, edit the `host` & `region` fields of the `resource_pool` declaration in the Plugin:
+
 ```
 resource_pool "rs_aws_elasticache" do
   plugin $rs_aws_elasticache
@@ -238,8 +266,10 @@ end
 ```
 
 ## Getting Help
+
 Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.
-Visit http://chat.rightscale.com/ to join!
+Visit <http://chat.rightscale.com/> to join!
 
 ## License
+
 The AWS ElastiCache Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.

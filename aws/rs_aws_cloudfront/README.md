@@ -1,9 +1,11 @@
 # AWS CloudFront Plugin
 
 ## Overview
+
 The AWS CloudFront Plugin integrates RightScale Self-Service with the basic functionality of the AWS Elastic File System API.
 
 ## Requirements
+
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
 - The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrived the RightScale Credential values identified below.
@@ -16,6 +18,7 @@ The AWS CloudFront Plugin integrates RightScale Self-Service with the basic func
 
 
 ## Installation
+
 1. Be sure your RightScale account has Self-Service enabled
 1. Connect AWS Cloud credentials to your RightScale account (if not already completed)
 1. Navigate to the appropriate Self-Service portal
@@ -25,13 +28,17 @@ The AWS CloudFront Plugin integrates RightScale Self-Service with the basic func
    1. Upload the `aws_cloudfront_plugin.rb` file located in this repository
 
 ## How to Use
+
 The CloudFront Plugin has been packaged as `plugin/rs_aws_cloudfront`. In order to use this plugin you must import this plugin into a CAT.
+
 ```
 import "plugin/rs_aws_cloudfront"
 ```
+
 For more information on using packages, please refer to the RightScale online documenataion. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 ## Supported Resources
+
 ### distribution
 
 #### Supported Fields
@@ -41,6 +48,7 @@ For more information on using packages, please refer to the RightScale online do
 |distribution_config| yes | [See Documentation](https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_CreateDistribution.html#cloudfront-CreateDistribution-request-DistributionConfig)
 
 #### Supported Outputs
+
 - ActiveTrustedSigners
 - ARN
 - DistributionConfig
@@ -62,13 +70,16 @@ For more information on using packages, please refer to the RightScale online do
 | update() | [UpdateDistribution](https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_UpdateDistribution.html) | supported
 
 ## Examples
+
 Please review [cloudfront_test_cat.rb](./cloudfront_test_cat.rb) for a basic example implementation.
 
 ## Getting Help
+
 Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.
-Visit http://chat.rightscale.com/ to join!
+Visit <http://chat.rightscale.com/> to join!
 
 ## License
+
 The AWS cloudfront Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.
 
 

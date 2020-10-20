@@ -1,9 +1,11 @@
 # Azure Redis Cache Plugin
 
 ## Overview
+
 The Azure Redis Cache Plugin integrates RightScale Self-Service with the basic functionality of the Azure Redis Cache service.
 
 ## Requirements
+
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
 - The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrived the RightScale Credential values identified below.
@@ -15,6 +17,7 @@ The Azure Redis Cache Plugin integrates RightScale Self-Service with the basic f
   - [sys_log](../../libraries/sys_log.rb)
 
 ## Installation
+
 1. Be sure your RightScale account has Self-Service enabled
 1. Connect AzureRM Cloud credentials to your RightScale account (if not already completed)
 1. Follow steps to [Create an Azure Active Directory Application](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal#create-an-azure-active-directory-application)
@@ -31,21 +34,26 @@ The Azure Redis Cache Plugin integrates RightScale Self-Service with the basic f
    1. Upload the `azure_mysql_plugin.rb` file located in this repository
  
 ## How to Use
+
 The Azure Redis Cache Plugin has been packaged as `plugins/rs_azure_redis`. In order to use this plugin you must import this plugin into a CAT.
+
 ```
 import "plugins/rs_azure_redis"
 ```
+
 For more information on using packages, please refer to the RightScale online documentation. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 Azure Redis Cache resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
 The resulting resource can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
 
 ## Supported Resources
- - cache
- - firewall_rule
- - patch_schedule
+
+- cache
+- firewall_rule
+- patch_schedule
 
 ## Usage
+
 ```
 #Creates a Redis Cache
 
@@ -105,15 +113,19 @@ resource "patch_schedule", type: "rs_azure_redis.patch_schedule" do
   } end
 end
 ```
+
 ## Resources
+
 ## cache
+
 #### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 |name|Yes|The name of the Redis server.|
 |resource_group|Yes|Name of resource group in which to launch the Deployment|
 |location|Yes|Datacenter to launch in|
-|properties|Yes|Hash of Redis Cache properties (https://docs.microsoft.com/en-us/rest/api/redis/redis)|
+|properties|Yes|Hash of Redis Cache properties (<https://docs.microsoft.com/en-us/rest/api/redis/redis>)|
 
 #### Supported Actions
 
@@ -129,6 +141,7 @@ end
 | regeneratekey | [RegenerateKey](https://docs.microsoft.com/en-us/rest/api/redis/redis#Redis_RegenerateKey)| Untested |
 
 #### Supported Outputs
+
 - "id"
 - "name"
 - "type"
@@ -149,14 +162,16 @@ end
 - "sslPort"
 
 ## firewall_rule
+
 #### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 |name|Yes|The name of the Redis Server FW Rule.|
 |resource_group|Yes|Name of resource group in which to launch the Deployment|
 |location|Yes|Datacenter to launch in|
 |server_name|Yes|Server to create the fw rule on|
-|properties|Yes|Hash of FirewallRule properties (https://docs.microsoft.com/en-us/rest/api/redis/redisfirewallrule)|
+|properties|Yes|Hash of FirewallRule properties (<https://docs.microsoft.com/en-us/rest/api/redis/redisfirewallrule>)|
 
 #### Supported Actions
 
@@ -167,6 +182,7 @@ end
 | get | [Get](https://docs.microsoft.com/en-us/rest/api/redis/redisfirewallrule#FirewallRule_Get)| Supported |
 
 #### Supported Outputs
+
 - "id"
 - "name"
 - "type"
@@ -174,13 +190,15 @@ end
 - "endIP"
 
 ## patch_schedule
+
 #### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 |resource_group|Yes|Name of resource group in which to launch the Deployment|
 |location|Yes|Datacenter to launch in|
 |server_name|Yes|Server to create the patch schedule on|
-|properties|Yes|Hash of Patch Schedule properties (https://docs.microsoft.com/en-us/rest/api/redis/patchschedules)|
+|properties|Yes|Hash of Patch Schedule properties (<https://docs.microsoft.com/en-us/rest/api/redis/patchschedules>)|
 
 #### Supported Actions
 
@@ -191,6 +209,7 @@ end
 | get | [Get](https://docs.microsoft.com/en-us/rest/api/redis/patchschedules#PatchSchedules_Get)| Supported |
 
 #### Supported Outputs
+
 - "id"
 - "name"
 - "type"
@@ -198,17 +217,22 @@ end
 - "scheduleEntries"
 
 ## Implementation Notes
+
 - The Azure Redis Cache Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to a Redis Cache resource.) 
  
 Full list of possible actions can be found on the [Azure Redis Cache API Documentation](https://docs.microsoft.com/en-us/rest/api/redis/redis)
+
 ## Examples
+
 Please review [redis_test_cat.rb](./redis_test_cat.rb) for a basic example implementation.
 	
 ## Known Issues / Limitations
 
 ## Getting Help
+
 Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.
-Visit http://chat.rightscale.com/ to join!
+Visit <http://chat.rightscale.com/> to join!
 
 ## License
+
 The Azure Redis Cache Plugin source code is subject to the MIT license, see the [LICENSE](../LICENSE) file.

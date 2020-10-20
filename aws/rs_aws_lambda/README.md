@@ -1,9 +1,11 @@
 # AWS Lambda Plugin
 
 ## Overview
+
 The AWS Lambda Plugin integrates RightScale Self-Service with the basic functionality of the AWS Lambda API. 
 
 ## Requirements
+
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
 - The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrived the RightScale Credential values identified below.
@@ -14,6 +16,7 @@ The AWS Lambda Plugin integrates RightScale Self-Service with the basic function
   - [sys_log](../../libraries/sys_log.rb)
 
 ## Installation
+
 1. Be sure your RightScale account has Self-Service enabled
 1. Connect AWS Cloud credentials to your RightScale account (if not already completed)
 1. Navigate to the appropriate Self-Service portal
@@ -23,16 +26,21 @@ The AWS Lambda Plugin integrates RightScale Self-Service with the basic function
    1. Upload the `aws_lambda_plugin.rb` file located in this repository
  
 ## How to Use
+
 The Lambda Plugin has been packaged as `plugins/rs_aws_lambda`. In order to use this plugin you must import this plugin into a CAT.
+
 ```
 import "plugins/rs_aws_lambda"
 ```
+
 For more information on using packages, please refer to the RightScale online documenataion. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 ## Supported Resources
+
 - function
 
 ## Usage
+
 ```
 resource "my_function", type: "rs_aws_lambda.function" do
   function_name last(split(@@deployment.href, "/"))
@@ -48,8 +56,11 @@ end
 ```
 
 ## Resources
+
 ### function
+
 #### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 | code | Yes | The code for the Lambda function. See [FunctionCode Object Documentation](http://docs.aws.amazon.com/lambda/latest/dg/API_FunctionCode.html) for more information. |
@@ -69,6 +80,7 @@ end
 | vpc_config | No | If your Lambda function accesses resources in a VPC, you provide this parameter identifying the list of security group IDs and subnet IDs. These must belong to the same VPC. You must provide at least one security group and one subnet ID. See [VpcConfig Object Documentation](http://docs.aws.amazon.com/lambda/latest/dg/API_VpcConfig.html) for more information. |
 
 #### Supported Actions
+
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
 | create | [CreateFunction](http://docs.aws.amazon.com/lambda/latest/dg/API_CreateFunction.html) | Supported |
@@ -81,6 +93,7 @@ end
 | invoke | [Invoke](http://docs.aws.amazon.com/lambda/latest/dg/API_Invoke.html) | Supported |
 
 #### Outputs
+
 - CodeSha256
 - CodeSize
 - Description
@@ -104,17 +117,20 @@ end
 - VpcId
 
 ## Implementation Notes
+
 - The AWS Lambda Plugin makes no attempt to support non-AWS resources. (i.e. Allow the passing the RightScale or other resources as arguments to an Lambda resource.) 
  
 Full list of possible actions can be found on the [AWS Lambda API Documentation](http://docs.aws.amazon.com/lambda/latest/dg/API_Reference.html)
 
 ## Examples
+
 Please review [lambda_test_cat.rb](./lambda_test_cat.rb) for a basic example implementation.
 
 See the [lambda-optima-markups](https://github.com/rs-services/lambda-optima-markups) repo for a more complex example implementation.
 	
 ## Known Issues / Limitations
-- - Currently only supports a single region.  To support a different region, edit the `host` & `region` fields of the `resource_pool` declaration in the Plugin:
+  - - Currently only supports a single region.  To support a different region, edit the `host` & `region` fields of the `resource_pool` declaration in the Plugin:
+
 ```
 resource_pool "rs_aws_lambda" do
   plugin $rs_aws_lambda
@@ -130,8 +146,10 @@ end
 ```
 
 ## Getting Help
+
 Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.
-Visit http://chat.rightscale.com/ to join!
+Visit <http://chat.rightscale.com/> to join!
 
 ## License
+
 The AWS Lambda Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.

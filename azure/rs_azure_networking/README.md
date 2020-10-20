@@ -1,9 +1,11 @@
 # Azure Networking Plugin
 
 ## Overview
+
 The Azure Networking Plugin integrates RightScale Self-Service with the basic functionality of the Azure Load Balancer, network interface and network peering.
 
 ## Requirements
+
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
 - The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrived the RightScale Credential values identified below.
@@ -15,6 +17,7 @@ The Azure Networking Plugin integrates RightScale Self-Service with the basic fu
   - [sys_log](../../libraries/sys_log.rb)
 
 ## Installation
+
 1. Be sure your RightScale account has Self-Service enabled
 1. Connect AzureRM Cloud credentials to your RightScale account (if not already completed)
 1. Follow steps to [Create an Azure Active Directory Application](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal#create-an-azure-active-directory-application)
@@ -31,28 +34,33 @@ The Azure Networking Plugin integrates RightScale Self-Service with the basic fu
    1. Upload the `rs_azure_networking_plugin.rb` file located in this repository
 
 ## How to Use
+
 The Azure Networking Plugin has been packaged as `plugins/rs_azure_networking_plugin`. In order to use this plugin you must import this plugin into a CAT.
+
 ```
 import "plugins/rs_azure_networking_plugin"
 ```
+
 For more information on using packages, please refer to the RightScale online documentation. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 Azure Load Balancer, network interface and network peering resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
 The resulting resource can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
 
 ## Supported Resources
- - rs_azure_lb.load_balancer
- - rs_azure_networking.subnet
- - rs_azure_networking.vnet
- - rs_azure_networking.interface
- - rs_azure_networking.network
- - rs_azure_networking.peering
- - rs_azure_networking.public_ip_address
- - rs_azure_networking.local_network_gateway
- - rs_azure_networking.virtual_network_gateway
- - rs_azure_networking.virtual_network_gateway_connections
+
+- rs_azure_lb.load_balancer
+- rs_azure_networking.subnet
+- rs_azure_networking.vnet
+- rs_azure_networking.interface
+- rs_azure_networking.network
+- rs_azure_networking.peering
+- rs_azure_networking.public_ip_address
+- rs_azure_networking.local_network_gateway
+- rs_azure_networking.virtual_network_gateway
+- rs_azure_networking.virtual_network_gateway_connections
 
 ## Usage
+
 ```
 #Creates an load_balancer
 
@@ -149,8 +157,11 @@ end
 ```
 
 ## Resources
+
 ## rs_azure_lb.load_balancer
+
 #### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 |name|Yes|The name of the load_balancer.|
@@ -172,6 +183,7 @@ end
 | get | [Get](https://docs.microsoft.com/en-us/rest/api/network/loadbalancer/get-information-about-a-load-balancer)| Supported |
 
 #### Supported Outputs
+
 - id
 - name
 - type
@@ -179,13 +191,16 @@ end
 - kind
 
 ## rs_azure_networking.network
+
 #### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 |name|Yes|The name of the vnet.|
 |resource_group|Yes|Name of resource group in which to launch the Deployment|
 |location|Yes|Datacenter to launch in|
 |properties| Hash of vNet properties|
+
 #### Supported Actions
 
 | Action | API Implementation | Support Level |
@@ -197,6 +212,7 @@ end
 | list_all | [Get](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/virtualnetworks/listall)| Supported |
 
 #### Supported Outputs
+
 - id
 - name
 - type
@@ -205,7 +221,9 @@ end
 - tags
 
 ## rs_azure_networking.subnet
+
 #### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 |name|Yes|The name of the NIC.|
@@ -213,6 +231,7 @@ end
 |vnet_name|Yes|Name of the vNet that contains the subnet|
 |location|Yes|Datacenter to launch in|
 |properties| Hash of subnet properties|
+
 #### Supported Actions
 
 | Action | API Implementation | Support Level |
@@ -223,6 +242,7 @@ end
 | list | [Get](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/subnets/list)| Supported |
 
 #### Supported Outputs
+
 - id
 - name
 - type
@@ -231,13 +251,16 @@ end
 - tags
 
 ## rs_azure_networking.interface
+
 #### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 |name|Yes|The name of the NIC.|
 |resource_group|Yes|Name of resource group in which to launch the Deployment|
 |location|Yes|Datacenter to launch in|
 |properties| Hash of NIC properties|
+
 #### Supported Actions
 
 | Action | API Implementation | Support Level |
@@ -248,6 +271,7 @@ end
 | list | [Get](https://docs.microsoft.com/en-us/rest/api/network/virtualnetwork/list-network-interface-cards-within-a-resource-group)| Supported |
 
 #### Supported Outputs
+
 - id
 - name
 - type
@@ -256,7 +280,9 @@ end
 - tags
 
 ## rs_azure_networking.peering
+
 #### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 |name|Yes|The name of the peering.|
@@ -279,6 +305,7 @@ end
 | list | [Get](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/virtualnetworkpeerings/list)| Supported |
 
 #### Supported Outputs
+
 - id
 - name
 - allowVirtualNetworkAccess
@@ -290,7 +317,9 @@ end
 - provisioningState
 
 ## rs_azure_networking.public_ip_address
+
 #### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 |name|Yes|The name of the public IP address.|
@@ -311,6 +340,7 @@ end
 | list | [Get](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/publicipaddress(preview)/list)| Supported |
 
 #### Supported Outputs
+
 - id
 - name
 - location
@@ -319,7 +349,9 @@ end
 - properties
 
 ## rs_azure_networking.local_network_gateway
+
 #### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 |name|Yes|The name of the local network gateway.|
@@ -339,6 +371,7 @@ end
 | list | [Get](https://docs.microsoft.com/en-us/rest/api/network-gateway/localnetworkgateways/list)| Supported |
 
 #### Supported Outputs
+
 - id
 - name
 - location
@@ -348,7 +381,9 @@ end
 - properties
 
 ## rs_azure_networking.virtual_network_gateway
+
 #### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 |name|Yes|The name of the virtual network gateway address.|
@@ -368,6 +403,7 @@ end
 | list | [Get](https://docs.microsoft.com/en-us/rest/api/network-gateway/virtualnetworkgateways/list)| Supported |
 
 #### Supported Outputs
+
 - id
 - name
 - location
@@ -376,7 +412,9 @@ end
 - properties
 
 ## rs_azure_networking.virtual_network_gateway_connections
+
 #### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 |name|Yes|The name of the virtual network gateway connection.|
@@ -397,6 +435,7 @@ end
 | list | [Get](https://docs.microsoft.com/en-us/rest/api/network-gateway/virtualnetworkgatewayconnections/list)| Supported |
 
 #### Supported Outputs
+
 - id
 - name
 - location
@@ -405,9 +444,11 @@ end
 - properties
 
 ## Implementation Notes
+
 - The Azure Networking Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to an LB resource.)  
 
 Full list of possible actions can be found on the
+
 - [Azure Load Balancer API Documentation](https://docs.microsoft.com/en-us/rest/api/network/loadbalancer/)
 - [Azure Network Interface Card API Documentation](https://docs.microsoft.com/en-us/rest/api/network/virtualnetwork/network-interface-cards)
 - [Azure Virtual Network Peerings](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/virtualnetworkpeerings)
@@ -415,7 +456,9 @@ Full list of possible actions can be found on the
 - [Azure Subnets](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/subnets)
 
 ## Examples
+
 Please review
+
 - [lb_test_cat.rb](./lb_test_cat.rb) for a basic load balancer example implementation.
 - [peering_test_cat.rb](./peering_test_cat.rb) for a basic network peering example.
 - [nsg_to_subnet_test_cat.rb](./nsg_to_subnet_test_cat.rb) for an example of attaching a Network Security Group to a subnet
@@ -424,8 +467,10 @@ Please review
 ## Known Issues / Limitations
 
 ## Getting Help
+
 Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel `#plugins`.
-Visit http://chat.rightscale.com/ to join!
+Visit <http://chat.rightscale.com/> to join!
 
 ## License
+
 The Azure Networking Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.
