@@ -5,11 +5,11 @@
   "main": "",
   "scripts": {
     "textlint": "textlint",
-    "textlint:fix": "textlint --fix"
+    "textlint:fix": "textlint --fix",
+    "markdownlint": "markdownlint-cli2 \"**/*.md\" \"#node_modules\""
   },
   "dependencies": {
     "markdownlint": "^0.21.0",
-    "markdownlint-cli2": "0.0.10",
     "textlint": "^11.7.6",
     "textlint-filter-rule-allowlist": "^2.0.1",
     "textlint-filter-rule-comments": "^1.2.2",
@@ -26,5 +26,9 @@
   "bugs": {
     "url": "https://github.com/flexera/flexera-plugins/issues"
   },
-  "homepage": "https://github.com/flexera/flexera-plugins#readme"
+  "homepage": "https://github.com/flexera/flexera-plugins#readme",
+  "devDependencies": {
+    "markdownlint-cli": "^0.24.0",
+    "markdownlint-cli2": "0.0.10"
+  }
 }
