@@ -83,3 +83,6 @@ has_app_changes.each do |file|
     end
   end
 end
+
+# Lint added and modified files only
+textlint.lint
