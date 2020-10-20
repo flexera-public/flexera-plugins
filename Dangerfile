@@ -36,7 +36,7 @@ fail 'Please add labels to this Pull Request' if github.pr_labels.empty?
 
 # check markdown of .md files with markdown lint
 # .md files should follow these rules https://github.com/markdownlint/markdownlint/blob/master/docs/RULES.md
-mdl = `npm run-script markdownlint`
+mdl = `./node_modules/.bin/markdownlint-cli2 "**/*.md" "#node_modules"`
 
 if !mdl.empty?
   fail mdl

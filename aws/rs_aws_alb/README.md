@@ -127,7 +127,7 @@ end
 |tag_value_5|No|The value of the tag|
 |tag_key_5|No|The key of the tag|
 
-#### Supported Actions
+### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
@@ -137,7 +137,7 @@ end
 | register_target | RegisterTargets | Untested |
 | deregister_target | DeregisterTargets | Untested |
 
-#### Supported Outputs
+### Supported Outputs
 
 - "LoadBalancerArn"
 - "Scheme"
@@ -213,7 +213,7 @@ end
 |unhealthy_threshold_count|No|The number of consecutive health check failures required before considering a target unhealthy. The default is 2.|
 |vpc_id|Yes|The identifier of the virtual private cloud (VPC).|
 
-#### Supported Actions
+### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
@@ -221,7 +221,7 @@ end
 | destroy | DeleteTargetGroup | Supported |
 | list | DescribeTargetGroups | Supported |
 
-#### Supported Outputs
+### Supported Outputs
 
 - "TargetGroupArn"
 - "HealthCheckTimeoutSeconds"
