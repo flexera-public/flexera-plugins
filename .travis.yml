@@ -12,22 +12,16 @@ before_install:
 - mkdir -p tmp && wget --no-check-certificate https://binaries.rightscale.com/rsbin/rsc/v8/rsc-linux-amd64.tgz
   && tar zxvf rsc-linux-amd64.tgz -C tmp;mv tmp/rsc/rsc . && chmod +x ./rsc && ./rsc
   --version
-- curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
-- sudo apt-get install nodejs -y
-- curl -L https://www.npmjs.com/install.sh | sh
-- npm install
-
-script:
-- bundle exec danger --verbose
-- node -v
 - echo $NVM_DIR;
 - nvm --version;
 - nvm install $NODE_VERSION
 - nvm use $NODE_VERSION
 - node -v
-- find / -name node
-- ./node_modules/.bin/markdownlint-cli2 "**/*.md" "#node_modules"
-# - find . -path ./node_modules -prune -false -o -path ./.github -prune -false -o -name '*.md' -exec node node_modules/markdownlint-cli2/markdownlint-cli2.js {} \;
+- npm install
+
+script:
+- bundle exec danger --verbose
+- ./node_modules/.bin/markdownlint-cli2 "**/*.md" "#node_modules" "#bundle"
 
 deploy:
 # generate the active plugin list json file
@@ -37,7 +31,7 @@ deploy:
 - provider: s3
   bucket: rs-policysync-tool
   region: us-east-1
-  skip_cleanup: true
+  cleanup: false
   local_dir: "$TRAVIS_BUILD_DIR/$WORK_DIR/dist"
   acl: public_read
   access_key_id: "$PLUGIN_SYNC_TOOL_S3_AWS_ACCESS_KEY_ID"
