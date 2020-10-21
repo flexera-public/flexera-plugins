@@ -68,15 +68,15 @@ parameter "param_domain" do
     type "string"
 end
 
-parameter "param_cidrblock" do
+parameter "param_cidr_block" do
   label "Network CIDR to Use"
   type "string"
 end
 
 # Creates a host record with the next available IP address.
-resource "hostrecord", type: "rs_infoblox_ipam.record_host" do
+resource "host_record", type: "rs_infoblox_ipam.record_host" do
     name join([$param_hostname,".",$param_domain])
-    ipv4addrs [{ ipv4addr:join(["func:nextavailableip:",$param_cidrblock]) }]
+    ipv4addrs [{ ipv4addr:join(["func:nextavailableip:",$param_cidr_block]) }]
 end
 ```
 
@@ -97,7 +97,7 @@ end
 | device_vendor | no | string | empty | The vendor of the device. |
 | disable | no | boolean | false | Determines if the record is disabled or not. False means that the record is enabled. |
 | disable_discovery | no | false | Determines if the discovery for the record is disabled or not. False means that the discovery is enabled. |
-| dns_aliases | no | array of strings | empty | The list of aliases for the host in punycode format. The name is a default dns name. |
+| dns_aliases | no | array of strings | empty | The list of aliases for the host in `punycode` format. The name is a default dns name. |
 | use_ttl | no | boolean | false | Use flag for ttl parameter. If not used, default ttl is used for records. |
 | ttl | no | number | empty | The Time To Live (TTL) value for record. A 32-bit unsigned integer that represents the duration, in seconds, for which the record is valid (cached). Zero indicates that the record should not be cached. |
 
