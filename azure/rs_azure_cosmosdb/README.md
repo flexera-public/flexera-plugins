@@ -106,9 +106,9 @@ end
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
-| create & update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/cosmos-db-resource-provider/databaseaccounts/createorupdate) | Supported |
-| destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/cosmos-db-resource-provider/databaseaccounts/delete) | Supported |
-| get & show | [Get](https://docs.microsoft.com/en-us/rest/api/cosmos-db-resource-provider/databaseaccounts/get)| Supported |
+| create & update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/cosmos-db/create-a-database) | Supported |
+| destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/cosmos-db/delete-a-database) | Supported |
+| get & show | [Get](https://docs.microsoft.com/en-us/rest/api/cosmos-db/get-a-database)| Supported |
 
 #### Supported Outputs
 
@@ -133,7 +133,7 @@ end
 
 - The Azure CosmosDB Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to a CosmosDB resource.)
 
-Full list of possible actions can be found on the [Azure CosmosDB Accounts API Documentation](https://docs.microsoft.com/en-us/rest/api/cosmos-db-resource-provider/databaseaccounts)
+Full list of possible actions can be found on the [Azure CosmosDB Documentation](https://docs.microsoft.com/en-us/rest/api/cosmos-db/)
 
 ## Examples
 
