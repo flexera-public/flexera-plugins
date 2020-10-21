@@ -35,18 +35,10 @@ fail 'Please add labels to this Pull Request' if github.pr_labels.empty?
 # check markdown of .md files with markdown lint
 # .md files should follow these rules https://github.com/markdownlint/markdownlint/blob/master/docs/RULES.md
 mdl = nil
-md_files.each do |file|
-  if file == 'README.md'
-    # MD024  Multiple headers with the same content
-    # MD013 disable line length
-    mdl = `mdl -r "~MD024","~MD013" #{file}`
-  else
-    # use .mdlrc rules
-    mdl = `mdl #{file}`
-  end
-  if !mdl.empty?
-    fail mdl
-  end
+
+mdl = `./node_modules/.bin/markdownlint-cli2 "**/*.md" "#node_modules"`
+if !mdl.empty?
+  fail mdl
 end
 
 # check for lowercase files and directories
