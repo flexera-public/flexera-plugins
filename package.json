@@ -6,8 +6,8 @@
   "scripts": {
     "textlint": "textlint",
     "textlint:fix": "textlint --fix",
-    "markdownlint-cli2": "markdownlint-cli2 \"**/*.md\" \"#node_modules\"",
-    "markdownlint": "markdownlint '**/*.md' --ignore node_modules"
+    "markdownlint-cli2": "markdownlint-cli2 \"**/*.md\" \"#node_modules\" \"#bundle\"",
+    "markdownlint": "markdownlint '**/*.md' --ignore node_modules --ignore bundle"
   },
   "dependencies": {
     "markdownlint": "^0.21.0",
