@@ -92,11 +92,6 @@ Please review [arm_resource_test_cat.rb](./arm_resource_test_cat.rb) for a basic
 
 - This plugin only supports working with resources in RCL. It does not support provisioning CAT resources.
 
-## Getting Help
-
-Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.
-Visit <http://chat.rightscale.com/> to join!
-
 ## License
 
 The Azure ARM Resource Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.

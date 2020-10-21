@@ -144,11 +144,6 @@ Please review [cosmosdb_test_cat.rb](./cosmosdb_test_cat.rb) for a basic example
 
 - Currently only supports Database Account resources due to API endpoint challenge with Database resources
 
-## Getting Help
-
-Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel `#plugins`.
-Visit <http://chat.rightscale.com/> to join!
-
 ## License
 
 The Azure CosmosDB Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.

@@ -230,11 +230,6 @@ Please review [redis_test_cat.rb](./redis_test_cat.rb) for a basic example imple
 
 ## Known Issues / Limitations
 
-## Getting Help
-
-Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.
-Visit <http://chat.rightscale.com/> to join!
-
 ## License
 
 The Azure Redis Cache Plugin source code is subject to the MIT license, see the [LICENSE](../LICENSE) file.

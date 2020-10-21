@@ -130,11 +130,6 @@ Please review [keyvault_test_cat.rb](./keyvault_test_cat.rb) for a basic example
 
 - Currently only supports Vault resources due to API endpoint challenges with Key/Cert/Secret resources
 
-## Getting Help
-
-Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel `#plugins`.
-Visit <http://chat.rightscale.com/> to join!
-
 ## License
 
 The Azure Key Vault Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.
