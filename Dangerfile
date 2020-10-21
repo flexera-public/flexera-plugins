@@ -32,15 +32,6 @@ fail 'Please provide a summary of your Pull Request.' if github.pr_body.length <
 
 fail 'Please add labels to this Pull Request' if github.pr_labels.empty?
 
-# check markdown of .md files with markdown lint
-# .md files should follow these rules https://github.com/markdownlint/markdownlint/blob/master/docs/RULES.md
-mdl = nil
-
-mdl = `./node_modules/.bin/markdownlint-cli2 "**/*.md" "#node_modules"`
-if !mdl.empty?
-  fail mdl
-end
-
 # check for lowercase files and directories
 has_app_changes.each do |file|
   if file.scan(/^[a-z0-9.\/_-]+$/).empty?
