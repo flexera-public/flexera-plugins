@@ -64,7 +64,7 @@ The Bigtable Plugin has been packaged as `plugins/bigtable`. In order to use thi
 import "plugins/bigtable"
 ```
 
-For more information on using packages, please refer to the RightScale online documenataion. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
+For more information on using packages, please refer to the RightScale online documentation. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 ## Implementation Notes
 
@@ -116,8 +116,8 @@ end
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 | instance_id | Yes | The UID of the Bigtable instance |
-| instance | Yes | Object containing the necessary Bigtable Instance fields. See [documentation](https://cloud.google.com/bigtable/docs/reference/admin/rest/v2/projects.instances#Instance) for more deatil |
-| clusters | Yes (but not required via CAT, can be set via RCL) | Object containing the necessary Bigtable Cluster fields. See [documentation](https://cloud.google.com/bigtable/docs/reference/admin/rest/v2/projects.instances.clusters#Cluster) for more deatil |
+| instance | Yes | Object containing the necessary Bigtable Instance fields. See [documentation](https://cloud.google.com/bigtable/docs/reference/admin/rest/v2/projects.instances#Instance) for more detail |
+| clusters | Yes (but not required via CAT, can be set via RCL) | Object containing the necessary Bigtable Cluster fields. See [documentation](https://cloud.google.com/bigtable/docs/reference/admin/rest/v2/projects.instances.clusters#Cluster) for more detail |
 
 #### Supported Actions
 
@@ -174,7 +174,7 @@ end
 |------------|-----------|-------------|
 | instance_id | Yes | The UID of the associated Bigtable instance |
 | table_id | Yes | The UID of the Bigtable table |
-| table | No | Object containing the necessary Bigtable Table fields. See [documentation](https://cloud.google.com/bigtable/docs/reference/admin/rest/v2/projects.instances.tables#Table) for more deatil |
+| table | No | Object containing the necessary Bigtable Table fields. See [documentation](https://cloud.google.com/bigtable/docs/reference/admin/rest/v2/projects.instances.tables#Table) for more detail |
 | initial_splits | No | Object containing a list of row keys that will be used to split the table into several tables. See [documentation](https://cloud.google.com/bigtable/docs/reference/admin/rest/v2/projects.instances.tables/create#Split) for more detail. |
 
 #### Supported Actions
@@ -199,11 +199,6 @@ end
 ## Examples
 
 Please review [bigtable_test_cat.rb](./bigtable_test_cat.rb) for a basic example implementation.
-
-## Getting Help
-
-Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.
-Visit <http://chat.rightscale.com/> to join!
 
 ## License
 

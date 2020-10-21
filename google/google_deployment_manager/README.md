@@ -177,11 +177,6 @@ end
 
 ## Known Issues / Limitations
 
-## Getting Help
-
-Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.
-Visit <http://chat.rightscale.com/> to join!
-
 ## License
 
 The GDM Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.

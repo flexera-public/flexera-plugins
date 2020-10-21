@@ -277,11 +277,6 @@ See [Examples](./examples).
 - The NSX API doesn't provide enough information for Self-Service to identify a Rule as a resource. They can be created using a resource block but will not be listed as a resource nor can they be manipulated after creation. Deletion of the firewall section will remove the rule on termination if you are folloing the implementation notes.
 - Layer2Sections has not been fully implemented due to a limitation in NSX API which doesn't allow Self-Service to distinguish between a layer2 and a layer3 resource. It's possible to use either, but not both at the same time. A future update will correct this limitation.
 
-## Getting Help
-
-Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel `#plugins`.
-Visit <http://chat.rightscale.com/> to join!
-
 ## License
 
 The VMWare NSX Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.

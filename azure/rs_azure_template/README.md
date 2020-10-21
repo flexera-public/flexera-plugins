@@ -133,12 +133,6 @@ Please review [ARM_template_test_CAT.rb](./ARM_template_test_CAT.rb) for a basic
 - When attempting to pass the template in-line (ie. by using the "template" key in the "properties" hash, Azure refuses the "$schema" node due to request encoding.  It is recommended to host your ARM Templates in Blob Storage.  This limitation does not affect passing parameters in-line, as seen in the example CAT.
 - Due to the way that Azure handles the Delete Deployment API call, the underlying resources are not automatically deleted when a `destroy()` action is called on a rs_azure_template.deployment resource
 
-
-## Getting Help
-
-Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.
-Visit <http://chat.rightscale.com/> to join!
-
 ## License
 
 The Azure ARM Template Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.

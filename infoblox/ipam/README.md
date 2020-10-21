@@ -131,11 +131,6 @@ See [test_infoblox_ipam.cat.rb](./test_infoblox_ipam.cat.rb) for an example deca
 - The outputs only support single IP address assignments.
 - Some of the more esoteric inputs supported by the API are not supported by the plugin. For example the credentials-oriented fields such as "cli_credentials" are not supported.
 
-## Getting Help
-
-Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.
-Visit <http://chat.rightscale.com/> to join!
-
 ## License
 
 The Infoblox IPAM Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.

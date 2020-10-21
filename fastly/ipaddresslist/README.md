@@ -86,11 +86,6 @@ See [test_fastly_ipaddress.cat.rb](./test_fastly_ipaddress.cat.cat.rb) for an ex
 
 ## Known Issues / Limitations
 
-## Getting Help
-
-Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.
-Visit <http://chat.rightscale.com/> to join!
-
 ## License
 
 The source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.

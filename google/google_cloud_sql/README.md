@@ -322,11 +322,6 @@ end
 
 - User resources do no support a `get()` call which will make these resources behave a bit differently than standard resource types.  See the note in the Users resource documentation for more information.
 
-## Getting Help
-
-Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.
-Visit <http://chat.rightscale.com/> to join!
-
 ## License
 
 The GCE Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.
