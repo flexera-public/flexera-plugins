@@ -17,7 +17,7 @@ before_install:
 
 script:
 - bundle exec danger --verbose
-- ./node_modules/.bin/markdownlint '**/*.md' --ignore node_modules
+- npm run-script markdownlint
 
 deploy:
 # generate the active plugin list json file
