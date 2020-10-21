@@ -58,7 +58,8 @@ end
 
 # check the plugin syntax and plugin fields
 has_app_changes.each do |file|
-  puts "Checking CAT #{file}")
+  puts "Checking CAT #{file}"
+  message("Checking CAT #{file}")
   cmd = "./tools/bin/compile #{file}"
   plugin  = `#{cmd}`
   json = {}

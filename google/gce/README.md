@@ -142,7 +142,7 @@ end
 
 ## Examples
 
-- [GCE External Network LoadBalancer](examples/gce_external_network_lb/README.md)
+- [GCE External Network LoadBalancer](examples/gce_external_network_lb/README)
 
 ## Known Issues / Limitations
 
