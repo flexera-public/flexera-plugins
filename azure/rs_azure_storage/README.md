@@ -135,11 +135,9 @@ end
 - accessTier
 - supportsHttpsTrafficOnly
 
-
 ## Implementation Notes
 
 - The Azure Storage Account Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to an SA resource.)
-
 
 Full list of possible actions can be found on the [Azure Storage Account API Documentation](https://docs.microsoft.com/en-us/rest/api/storagerp/storageaccounts)
 

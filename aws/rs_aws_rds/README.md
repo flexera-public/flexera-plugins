@@ -41,8 +41,8 @@ For more information on using packages, please refer to the RightScale online do
 
 ## Supported Resources
 
--  db_instance
--  db_subnet_group
+- db_instance
+- db_subnet_group
 
 ## Resource: `db_instance`
 
@@ -205,7 +205,6 @@ end
 - DBSubnetGroupName
 - name
 
-
 #### Usage
 
 ```ruby
@@ -256,7 +255,3 @@ end
 ## License
 
 The AWS RDS Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.
-
-
-
-

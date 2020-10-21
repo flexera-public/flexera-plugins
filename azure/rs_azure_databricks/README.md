@@ -121,7 +121,6 @@ end
 
 - The Azure Databricks Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to a Databricks resource.)
 
-
 ## Examples
 
 Please review [databricks_test_cat.rb](./databricks_test_cat.rb) for a basic example implementation.

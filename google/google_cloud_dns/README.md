@@ -167,7 +167,6 @@ end
 | get | [list](https://cloud.google.com/dns/api/v1/resourceRecordSets/list) | Supported
 | list | [list](https://cloud.google.com/dns/api/v1/resourceRecordSets/list) | Supported
 
-
 #### Supported Links
 
 | Link | Resource Type |

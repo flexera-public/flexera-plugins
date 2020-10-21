@@ -76,7 +76,7 @@ Full list of possible actions can be found on the [AWS ELB API Documentation](ht
 
 ## Examples
 
-Please review [elb_plugin.rb](./elb_plugin.rb) for a basic example implementation.
+Please review [elb_plugin.rb](./aws_elb_plugin.rb) for a basic example implementation.
 
 ## Known Issues / Limitations
 

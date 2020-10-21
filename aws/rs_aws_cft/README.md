@@ -184,7 +184,6 @@ end
 | get | [DescribeStackResource](http://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_DescribeStackResources.html) | Supported |
 | show | [DescribeStackResources](http://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_DescribeStackResources.html) | Supported |
 
-
 ## Examples
 
 Please review [cft_test_cat.rb](./cft_in_s3.cat.rb) for a basic example implementation.

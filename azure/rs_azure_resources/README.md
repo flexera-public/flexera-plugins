@@ -16,7 +16,6 @@ The Azure ARM Resource Plugin integrates RightScale Self-Service with the basic 
 - The following packages are also required (See the Installation section for details):
   - [sys_log](../../libraries/sys_log.rb)
 
-
 ## Installation
 
 1. Be sure your RightScale account has Self-Service enabled
@@ -83,7 +82,6 @@ N/A
 | list | [List](https://docs.microsoft.com/en-us/rest/api/resources/resources/list) | Supported |
 | listbyresourcegroup | [List By Resource Group](https://docs.microsoft.com/en-us/rest/api/resources/resources/listbyresourcegroup) | Supported |
 
-
 ## Examples
 
 Please review [arm_resource_test_cat.rb](./arm_resource_test_cat.rb) for a basic example implementation.
@@ -95,6 +93,3 @@ Please review [arm_resource_test_cat.rb](./arm_resource_test_cat.rb) for a basic
 ## License
 
 The Azure ARM Resource Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.
-
-
-

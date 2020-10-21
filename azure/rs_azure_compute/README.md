@@ -211,7 +211,6 @@ end
 
 - The Azure Compute Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to an LB resource.)
 
-
 Full list of possible actions can be found on the [Azure Compute API Documentation](https://docs.microsoft.com/en-us/rest/api/network/loadbalancer/)
 
 ## Examples

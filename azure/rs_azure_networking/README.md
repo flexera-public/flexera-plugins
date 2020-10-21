@@ -331,7 +331,6 @@ end
 |properties|Yes|Resource Properties|
 |sku|Yes|Sku of IP|
 
-
 ### Supported Actions
 
 | Action | API Implementation | Support Level |
@@ -361,7 +360,6 @@ end
 |resource_group|Yes|Name of resource group in which the network resides|
 |location|Yes|Resource location.|
 |properties|Yes|Resource Properties|
-
 
 ### Supported Actions
 
@@ -394,7 +392,6 @@ end
 |location|Yes|Resource location.|
 |properties|Yes|Resource Properties|
 
-
 ### Supported Actions
 
 | Action | API Implementation | Support Level |
@@ -425,7 +422,6 @@ end
 |location|Yes|Resource location.|
 |properties|Yes|Resource Properties|
 |sku|Yes|Sku of connection|
-
 
 ### Supported Actions
 

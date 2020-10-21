@@ -53,7 +53,7 @@ The resulting resource can be manipulated just like the native RightScale resour
 
 ## Usage
 
-For and example of how to use the plugin in your CAT review the [application_gateway_cat.rb](./application_gateway_cat.rb) for a reference
+For and example of how to use the plugin in your CAT review the [application_gateway_cat.rb](./application_gateway_test_cat.rb) for a reference
 
 ## Resources
 
@@ -89,8 +89,7 @@ For and example of how to use the plugin in your CAT review the [application_gat
 
 Please review
 
-- [application_gateway_cat.rb](./application_gateway_cat.rb) for a basic application gateway reference
-
+- [application_gateway_cat.rb](./application_gateway_test_cat.rb) for a basic application gateway reference
 
 ## Known Issues / Limitations
 

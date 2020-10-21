@@ -193,7 +193,6 @@ end
 | ec2_security_group_name | No | The Amazon EC2 security group to be authorized for ingress to the cache security group. Only available on `authorize_ingress()` & `revoke_ingress()` |
 | ec2_security_group_owner_id | No | The AWS account number of the Amazon EC2 security group owner. Only available on `authorize_ingress()` & `revoke_ingress()` |
 
-
 #### Supported Actions
 
 | Action | API Implementation | Support Level |

@@ -161,7 +161,6 @@ end
 
 - The Azure PostgreSQL Database Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to an PostgreSQL resource.)
 
-
 Full list of possible actions can be found on the [Azure PostgreSQL Database API Documentation](https://docs.microsoft.com/en-us/rest/api/postgresql/)
 
 ## Examples

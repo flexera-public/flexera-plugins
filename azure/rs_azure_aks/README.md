@@ -3,7 +3,7 @@
 ## Overview
 
 The Azure Kubernetes Service Plugin integrates RightScale Self-Service with the basic functionality of the Azure Kubernetes Service
-**WARNING: Do not use the enclosed ssh key for production **
+**WARNING: Do not use the enclosed ssh key for production**
 
 ## Requirements
 
@@ -163,7 +163,6 @@ end
 ## Implementation Notes
 
 - The Azure Kubernetes Service  Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to an AKS resource.)
-
 
 Full list of possible actions can be found on the [Azure Kubernetes Service  API Documentation](https://docs.microsoft.com/en-us/rest/api/aks/)
 

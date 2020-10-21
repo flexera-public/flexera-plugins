@@ -173,15 +173,15 @@ end
 |resource_group|Yes|Name of resource group in which to launch the Deployment|
 |location|Yes|Datacenter to launch in|
 |server_name|Yes|Server to create the fw rule on|
-|properties|Yes|Hash of FirewallRule properties (<https://docs.microsoft.com/en-us/rest/api/redis/redisfirewallrule>)|
+|properties|Yes|Hash of FirewallRule properties (<https://docs.microsoft.com/en-us/rest/api/redis/firewallrules>)|
 
 ### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
-| create&update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/redis/redisfirewallrule#FirewallRule_CreateOrUpdate) | Supported |
-| destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/redis/redisfirewallrule#FirewallRule_Delete) | Supported |
-| get | [Get](https://docs.microsoft.com/en-us/rest/api/redis/redisfirewallrule#FirewallRule_Get)| Supported |
+| create&update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/redis/firewallrules#FirewallRule_CreateOrUpdate) | Supported |
+| destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/redis/firewallrules#FirewallRule_Delete) | Supported |
+| get | [Get](https://docs.microsoft.com/en-us/rest/api/redis/firewallrules#FirewallRule_Get)| Supported |
 
 ### Supported Outputs
 

@@ -119,7 +119,6 @@ end
 
 - The Azure Key Vault Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to a Key Vault resource.)
 
-
 Full list of possible actions can be found on the [Azure Key Vault API Documentation](https://docs.microsoft.com/en-us/rest/api/keyvault/)
 
 ## Examples

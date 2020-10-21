@@ -16,7 +16,6 @@ The Azure ARM Template Plugin integrates RightScale Self-Service with the basic 
 - The following packages are also required (See the Installation section for details):
   - [sys_log](../../libraries/sys_log.rb)
 
-
 ## Installation
 
 1. Be sure your RightScale account has Self-Service enabled
@@ -122,8 +121,6 @@ end
 | list | [ListDeploymentByResourceGroup](https://docs.microsoft.com/en-us/rest/api/resources/deployments#Deployments_ListByResourceGroup) | Supported |
 | validate_template | [ValidateTemplate](https://docs.microsoft.com/en-us/rest/api/resources/deployments#Deployments_Validate) | Supported |
 
-
-
 ## Examples
 
 Please review [ARM_template_test_CAT.rb](./ARM_template_test_CAT.rb) for a basic example implementation.
@@ -136,6 +133,3 @@ Please review [ARM_template_test_CAT.rb](./ARM_template_test_CAT.rb) for a basic
 ## License
 
 The Azure ARM Template Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.
-
-
-

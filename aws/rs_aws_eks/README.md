@@ -70,7 +70,6 @@ end
 | role_arn | yes | The Amazon Resource Name (ARN) of the IAM role that provides permissions for Amazon EKS to make calls to other AWS API operations on your behalf.|
 | version | no | The desired Kubernetes version for your cluster. If you do not specify a value here, the latest version available in Amazon EKS is used. |
 
-
 #### Supported Actions
 
 | Action | API Implementation | Support Level |
@@ -92,7 +91,6 @@ end
 - version
 - name
 - resourcesVpcConfig
-
 
 ## Implementation Notes
 

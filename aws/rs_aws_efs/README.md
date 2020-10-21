@@ -143,7 +143,6 @@ end
 | destroy | [DeleteMountTarget](http://docs.aws.amazon.com/efs/latest/ug/API_DeleteMountTarget.html) | Supported |
 | list & get | [DescribeMountTargets](http://docs.aws.amazon.com/efs/latest/ug/API_DescribeMountTargets.html) | Supported |
 
-
 ## Examples
 
 Please review [efs_test_cat.rb](./efs_test_cat.rb) for a basic example implementation.
@@ -176,7 +175,3 @@ end
 ## License
 
 The AWS EFS Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.
-
-
-
-

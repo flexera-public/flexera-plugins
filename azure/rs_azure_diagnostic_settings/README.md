@@ -16,7 +16,6 @@ The Azure Service Diagnostic Settings Plugin integrates RightScale Self-Service 
 - The following packages are also required (See the Installation section for details):
   - [sys_log](../../libraries/sys_log.rb)
 
-
 ## Installation
 
 1. Be sure your RightScale account has Self-Service enabled
@@ -126,6 +125,3 @@ Please review [diagnostic_settings_test_cat.rb](./diagnostic_settings_test_cat.r
 ## License
 
 The Azure Service Diagnostic Settings Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.
-
-
-

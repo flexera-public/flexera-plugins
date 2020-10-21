@@ -16,7 +16,6 @@ The AWS CloudFront Plugin integrates RightScale Self-Service with the basic func
 - The following packages are also required (See the Installation section for details):
   - [sys_log](../../libraries/sys_log.rb)
 
-
 ## Installation
 
 1. Be sure your RightScale account has Self-Service enabled
@@ -77,7 +76,3 @@ Please review [cloudfront_test_cat.rb](./cloudfront_test_cat.rb) for a basic exa
 ## License
 
 The AWS cloudfront Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.
-
-
-
-

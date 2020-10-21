@@ -231,7 +231,6 @@ end
 | name | yes | user name |
 | password | yes | password for the user |
 
-
 #### Supported Outputs
 
 - etag

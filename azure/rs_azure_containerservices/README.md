@@ -3,7 +3,7 @@
 ## Overview
 
 The Azure Container Services Plugin integrates RightScale Self-Service with the basic functionality of the Azure Storage Account
-**WARNING: Do not use the enclosed ssh key for production **
+**WARNING: Do not use the enclosed ssh key for production**
 
 ## Requirements
 
@@ -135,15 +135,15 @@ end
 |name|Yes|The name of the container service in the specified subscription and resource group.|
 |resource_group|Yes|The name of the resource group.|
 |location|Yes|Datacenter to launch in|
-|properties|Yes| Properties of the container service.(<https://docs.microsoft.com/en-us/rest/api/compute/containerservices#ContainerServices_CreateOrUpdate>)|
+|properties|Yes| Properties of the container service.(<https://docs.microsoft.com/en-us/rest/api/container-service/containerservices/createorupdate>)|
 
 ### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
-| create||update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/compute/containerservices#ContainerServices_CreateOrUpdate) | Supported |
-| destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/compute/containerservices#ContainerServices_Delete) | Supported |
-| get | [Get](https://docs.microsoft.com/en-us/rest/api/compute/containerservices#ContainerServices_Get)| Supported |
+| create||update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/container-service/containerservices/createorupdate) | Supported |
+| destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/container-service/containerservices/delete) | Supported |
+| get | [Get](https://docs.microsoft.com/en-us/rest/api/container-service/containerservices/get)| Supported |
 
 ### Supported Outputs
 
@@ -160,8 +160,7 @@ end
 
 - The Azure Container Services Plugin makes no attempt to support non-Azure resources. (i.e. Allow the passing the RightScale or other resources as arguments to an Container Services resource.)
 
-
-Full list of possible actions can be found on the [Azure Container Services API Documentation](https://docs.microsoft.com/en-us/rest/api/compute/containerservices)
+Full list of possible actions can be found on the [Azure Container Services API Documentation](https://docs.microsoft.com/en-us/rest/api/container-service/)
 
 ## Examples
 

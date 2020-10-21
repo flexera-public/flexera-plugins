@@ -17,7 +17,6 @@ The AWS IAM Plugin integrates RightScale Self-Service with the basic functionali
   - [sys_log](../../libraries/sys_log.rb)
   - [plugin_generics](../../libraries/plugin_generics.rb)
 
-
 ## Installation
 
 1. Be sure your RightScale account has Self-Service enabled
@@ -108,7 +107,6 @@ end
 - Arn
 - PolicyArn
 
-
 #### Usage
 
 ```ruby
@@ -148,7 +146,6 @@ end
 - Arn
 - PolicyArn
 
-
 #### Usage
 
 ```ruby
@@ -168,7 +165,6 @@ end
 | destroy | [DeletePolicy](https://docs.aws.amazon.com/IAM/latest/APIReference/API_DeleteInstanceProfile.html) | Supported |
 | get | [GetPolicy](https://docs.aws.amazon.com/IAM/latest/APIReference/API_GetInstanceProfile.html) | Supported |
 | add_role| [AddRoleToInstanceProfile](https://docs.aws.amazon.com/IAM/latest/APIReference/API_AddRoleToInstanceProfile.html) | Supported |
-
 
 ## Examples
 

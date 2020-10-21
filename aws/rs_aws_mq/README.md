@@ -217,7 +217,6 @@ See the [AWS CreateUserInput Documentation](https://docs.aws.amazon.com/amazon-m
 | list | [GET /v1/brokers/broker-id/users](https://docs.aws.amazon.com/amazon-mq/latest/api-reference/rest-api-user.html) | Untested |
 | update | [PUT /v1/brokers/broker-id/users/username](https://docs.aws.amazon.com/amazon-mq/latest/api-reference/rest-api-user.html) | Untested |
 
-
 #### Outputs
 
 - brokerId

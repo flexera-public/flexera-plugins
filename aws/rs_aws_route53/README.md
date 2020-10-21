@@ -14,7 +14,7 @@ The AWS Route53 Plugin integrates RightScale Self-Service with the basic functio
   - `AWS_ACCESS_KEY_ID`
   - `AWS_SECRET_ACCESS_KEY`
 - The following packages are also required (See the Installation section for details):
-  - [sys_log](sys_log.rb)
+  - [sys_log](../../libraries/sys_log.rb)
 
 ## Getting Started - **Coming Soon**
 
@@ -50,7 +50,6 @@ For more information on using packages, please refer to the RightScale online do
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 | create_hosted_zone_request | yes | An object describing the zone to be created.  See example |
-
 
 #### Supported Outputs
 
@@ -101,7 +100,6 @@ end
 - Comment
 - SubmittedAt
 
-
 #### Usage
 
 AWS Route53 resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
@@ -146,7 +144,6 @@ end
 | Create | [ChangeResourceRecordSets](https://docs.aws.amazon.com/Route53/latest/APIReference/API_ChangeResourceRecordSets.html) | Supported |
 | destroy | must use terminate operation.  See Limitations below. | Not Supported |
 | get |  | Not Supported |
-
 
 ## Examples
 
