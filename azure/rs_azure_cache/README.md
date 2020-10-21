@@ -232,4 +232,4 @@ Please review [redis_test_cat.rb](./redis_test_cat.rb) for a basic example imple
 
 ## License
 
-The Azure Redis Cache Plugin source code is subject to the MIT license, see the [LICENSE](../LICENSE) file.
+The Azure Redis Cache Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.
