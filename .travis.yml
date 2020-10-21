@@ -18,7 +18,9 @@ before_install:
 
 script:
 - bundle exec danger --verbose
-- ./node_modules/.bin/markdownlint-cli2 "**/*.md" "#node_modules"
+- node -v
+# - ./node_modules/.bin/markdownlint-cli2 "**/*.md" "#node_modules"
+- find . -path ./node_modules -prune -false -o -path ./.github -prune -false -o -name '*.md' -exec node node_modules/markdownlint-cli2/markdownlint-cli2.js {} \;
 
 deploy:
 # generate the active plugin list json file
