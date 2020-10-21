@@ -66,7 +66,7 @@ end
 
 #### Supported Fields
 
-**Note:** There are many possible configurations when defining a `diagnostic_settings` resource.  More detailed API documentation is available [here](https://docs.microsoft.com/en-us/rest/api/monitor/servicediagnosticsettings).
+**Note:** There are many possible configurations when defining a `diagnostic_settings` resource.  More detailed API documentation is available [here](https://docs.microsoft.com/en-us/rest/api/monitor/diagnosticsettings/createorupdate).
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
@@ -110,9 +110,9 @@ end
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
-| create & update | [Service Diagnostic Settings - CreateOrUpdate](https://docs.microsoft.com/en-us/rest/api/monitor/servicediagnosticsettings/createorupdate) | Supported |
-| get | [Service Diagnostic Settings - Get](https://docs.microsoft.com/en-us/rest/api/monitor/servicediagnosticsettings/get) | Supported |
-| update | [Service Diagnostic Settings - Update](https://docs.microsoft.com/en-us/rest/api/monitor/servicediagnosticsettings/update) | Supported |
+| create & update | [Service Diagnostic Settings - CreateOrUpdate](https://docs.microsoft.com/en-us/rest/api/monitor/diagnosticsettings/createorupdate) | Supported |
+| get | [Service Diagnostic Settings - Get](https://docs.microsoft.com/en-us/rest/api/monitor/diagnosticsettings/get) | Supported |
+| update | [Service Diagnostic Settings - Update](https://docs.microsoft.com/en-us/rest/api/monitor/diagnosticsettings/createorupdate) | Supported |
 
 ## Examples
 

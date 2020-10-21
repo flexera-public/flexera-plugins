@@ -335,10 +335,10 @@ end
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
-| create&update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/publicipaddress(preview)/createorupdate) | Supported |
-| destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/publicipaddress(preview)/delete) | Supported |
-| get | [Get](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/publicipaddress(preview)/get)| Supported |
-| list | [Get](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/publicipaddress(preview)/list)| Supported |
+| create&update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/publicipaddresses/createorupdate) | Supported |
+| destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/publicipaddresses/delete) | Supported |
+| get | [Get](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/publicipaddresses/get)| Supported |
+| list | [Get](https://docs.microsoft.com/en-us/rest/api/virtualnetwork/publicipaddresses/list)| Supported |
 
 ### Supported Outputs
 

@@ -96,7 +96,7 @@ end
 | create & update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/keyvault/vaults/createorupdate) | Supported |
 | destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/keyvault/vaults/delete) | Supported |
 | get & show | [Get](https://docs.microsoft.com/en-us/rest/api/keyvault/vaults/get)| Supported |
-| list by resource group | [List By Resource Group](https://docs.microsoft.com/en-us/rest/api/keyvault/keyvaultpreview/vaults/listbyresourcegroup) | Supported |
+| list by resource group | [List By Resource Group](https://docs.microsoft.com/en-us/rest/api/keyvault/vaults/listbyresourcegroup) | Supported |
 
 #### Supported Outputs
 

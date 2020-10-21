@@ -99,16 +99,16 @@ end
 |resource_group|Yes|The name of the resource group.|
 |location|Yes|Datacenter to launch in|
 |kind|Yes|Indicates the type of database account. This can only be set at database account creation.|
-|properties|Yes| Properties of the [CosmosDB Account object](https://docs.microsoft.com/en-us/rest/api/cosmos-db-resource-provider/databaseaccounts/createorupdate#databaseaccount)|
+|properties|Yes| Properties of the [CosmosDB Account object](https://docs.microsoft.com/en-us/rest/api/cosmos-db-resource-provider/2020-04-01/databaseaccounts/createorupdate)|
 |tags|No|Tag values|
 
 #### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
-| create & update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/cosmos-db/create-a-database) | Supported |
-| destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/cosmos-db/delete-a-database) | Supported |
-| get & show | [Get](https://docs.microsoft.com/en-us/rest/api/cosmos-db/get-a-database)| Supported |
+| create & update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/cosmos-db-resource-provider/2020-04-01/databaseaccounts/createorupdate) | Supported |
+| destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/cosmos-db-resource-provider/2020-04-01/databaseaccounts/delete) | Supported |
+| get & show | [Get](https://docs.microsoft.com/en-us/rest/api/cosmos-db-resource-provider/2020-04-01/databaseaccounts/get)| Supported |
 
 #### Supported Outputs
 

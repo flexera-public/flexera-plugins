@@ -323,14 +323,14 @@ end
 |location|Yes|Datacenter to launch in|
 |server_name|Yes|Server the database is on|
 |database_name|Yes|database to configure auditing-policy on|
-|properties|Yes|Hash of Auditing Policy properties (<https://docs.microsoft.com/en-us/rest/api/sql/blob%20auditing%20policies>)|
+|properties|Yes|Hash of Auditing Policy properties (<https://docs.microsoft.com/en-us/rest/api/sql/database%20auditing%20settings/createorupdate>)|
 
 ### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
-| create&update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/sql/blob%20auditing%20policies#Databases_CreateOrUpdateBlobAuditingPolicy) | Supported |
-| get | [Get](https://docs.microsoft.com/en-us/rest/api/sql/blob%20auditing%20policies#Databases_GetBlobAuditingPolicy)| Supported |
+| create&update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/sql/database%20auditing%20settings/createorupdate) | Supported |
+| get | [Get](https://docs.microsoft.com/en-us/rest/api/sql/database%20auditing%20settings/get)| Supported |
 
 ### Supported Outputs
 
@@ -358,14 +358,14 @@ end
 |location|Yes|Datacenter to launch in|
 |server_name|Yes|Server the database is on|
 |database_name|Yes|database to security_policy on|
-|properties|Yes|Hash of Security Policy properties (<https://docs.microsoft.com/en-us/rest/api/sql/database%20security%20policies>)|
+|properties|Yes|Hash of Security Policy properties (<https://docs.microsoft.com/en-us/rest/api/sql/serversecurityalertpolicies/createorupdate>)|
 
 ### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
-| create&update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/sql/database%20security%20policies#Databases_CreateOrUpdateThreatDetectionPolicy) | Supported |
-| get | [Get](https://docs.microsoft.com/en-us/rest/api/sql/database%20security%20policies#Databases_GetThreatDetectionPolicy)| Supported |
+| create&update | [Create Or Update](https://docs.microsoft.com/en-us/rest/api/sql/serversecurityalertpolicies/createorupdate) | Supported |
+| get | [Get](https://docs.microsoft.com/en-us/rest/api/sql/serversecurityalertpolicies/get)| Supported |
 
 ### Supported Outputs
 
