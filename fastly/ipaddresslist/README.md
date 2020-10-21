@@ -82,7 +82,7 @@ NONE
 
 ## Examples
 
-See [test_fastly_ipaddress.cat.rb](./test_fastly_ipaddress.cat.cat.rb) for an example declaration.
+See [test_fastly_ipaddress.cat.rb](./test_fastly_ipaddress.cat.rb) for an example declaration.
 
 ## Known Issues / Limitations
 
