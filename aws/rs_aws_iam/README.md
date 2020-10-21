@@ -178,11 +178,6 @@ Please review [iam_test_cat.rb](./iam_test_cat.rb) for a basic example implement
 
 - Currently only supports a few actions from the IAM functions.
 
-## Getting Help
-
-Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.
-Visit <http://chat.rightscale.com/> to join!
-
 ## License
 
-The AWS IAM Plugin source code is subject to the MIT license, see the [LICENSE](../LICENSE) file.
+The AWS IAM Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.

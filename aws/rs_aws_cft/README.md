@@ -187,7 +187,7 @@ end
 
 ## Examples
 
-Please review [cft_test_cat.rb](./cft_test_cat.rb) for a basic example implementation.
+Please review [cft_test_cat.rb](./cft_in_s3.cat.rb) for a basic example implementation.
 
 ## Known Issues / Limitations
 
@@ -207,11 +207,6 @@ resource_pool "rs_aws_cft" do
   end
 end
 ```
-
-## Getting Help
-
-Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.
-Visit <http://chat.rightscale.com/> to join!
 
 ## License
 

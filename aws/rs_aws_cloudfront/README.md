@@ -74,11 +74,6 @@ For more information on using packages, please refer to the RightScale online do
 
 Please review [cloudfront_test_cat.rb](./cloudfront_test_cat.rb) for a basic example implementation.
 
-## Getting Help
-
-Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.
-Visit <http://chat.rightscale.com/> to join!
-
 ## License
 
 The AWS cloudfront Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.

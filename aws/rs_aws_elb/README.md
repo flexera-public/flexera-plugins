@@ -97,11 +97,6 @@ resource_pool "elb_pool" do
 end
 ```
 
-## Getting Help
-
-Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.
-Visit <http://chat.rightscale.com/> to join!
-
 ## License
 
-The AWS ELB Plugin source code is subject to the MIT license, see the [LICENSE](../LICENSE) file.
+The AWS ELB Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.

@@ -13,7 +13,7 @@ The VMWare NSX Plugin integrates RightScale Self-Service with the VMWare NSX add
   - <http://docs.rightscale.com/faq/wstunnel_setup.html>
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
-- The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrived the RightScale Credential values identified below.
+- The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrieved the RightScale Credential values identified below.
 - The following RightScale Credentials
   - `NSX_USER`
   - `NSX_PASSWORD`
@@ -67,7 +67,7 @@ See the [examples](./examples) directory within this repo to see specific exampl
 
 ```ruby
 
-permission "read_creds" do
+permission "read_credentials" do
   actions   "rs_cm.show_sensitive","rs_cm.index_sensitive"
   resources "rs_cm.credentials"
 end
@@ -84,13 +84,13 @@ end
 resource 'stack_security_tag', type: 'nsx.security_tag' do
   # Tag to be applied to web1 dynamically associates it with web1_security_group
   name join([$stack_name,"-","stack-st"])
-  description join(["stack_secuirty_tag for ",$stack_name,"."])
+  description join(["stack_security_tag for ",$stack_name,"."])
 end
 
 resource 'stack_security_group', type: 'nsx.security_group' do
   # Security Group composed of web1_security_tag instances used in firewall rules
   name join([$stack_name,"-","stack-sg"])
-  description join(["stack_secuirty_group for ",$stack_name,"."])
+  description join(["stack_security_group for ",$stack_name,"."])
   dynamicMemberDefinition do {
 'dynamicSet' => {
 'operator' => 'OR',
@@ -116,7 +116,7 @@ end
 |name|Yes|Name of the resource.|
 |description|No|Description for the resource.|
 |scope|Yes|For the scopeId use globalroot-0 for non-universal security groups and universalroot-0 for universal security groups.|
-|isUniversal|Yes|Set to true when creating a univeral Security Group.|
+|isUniversal|Yes|Set to true when creating a universal Security Group.|
 |inheritanceAllowed|No|Set to true to allow inheritance.|
 
 #### Supported Actions
@@ -274,7 +274,7 @@ See [Examples](./examples).
 
 ## Known Issues / Limitations
 
-- The NSX API doesn't provide enough information for Self-Service to identify a Rule as a resource. They can be created using a resource block but will not be listed as a resource nor can they be manipulated after creation. Deletion of the firewall section will remove the rule on termination if you are folloing the implementation notes.
+- The NSX API doesn't provide enough information for Self-Service to identify a Rule as a resource. They can be created using a resource block but will not be listed as a resource nor can they be manipulated after creation. Deletion of the firewall section will remove the rule on termination if you are following the implementation notes.
 - Layer2Sections has not been fully implemented due to a limitation in NSX API which doesn't allow Self-Service to distinguish between a layer2 and a layer3 resource. It's possible to use either, but not both at the same time. A future update will correct this limitation.
 
 ## License

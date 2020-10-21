@@ -26,7 +26,7 @@ end
 
 operation 'list_elb' do
   definition 'list_elbs'
-  output_mappings do{
+  output_mappings do {
     $list_elb => $object
   } end
 end
@@ -40,8 +40,4 @@ define list_elbs() return $object do
   end
   $object = to_object(first(@elbs))
   $object = to_s($object)
-<<<<<<< HEAD
 end
-=======
-end
->>>>>>> master
