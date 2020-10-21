@@ -166,7 +166,7 @@ Full list of possible actions can be found on the [Azure PostgreSQL Database API
 
 ## Examples
 
-Please review [sql_test_cat.rb](./sql_test_cat.rb) for a basic example implementation.
+Please review [sql_test_cat.rb](./pgsql_test_cat.rb) for a basic example implementation.
 
 ## Known Issues / Limitations
 

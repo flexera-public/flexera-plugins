@@ -12,8 +12,8 @@ The Digital Ocean Plugin integrates RightScale Self-Service with the basic funct
 - The following RightScale Credentials
   - `DIGITAL_OCEAN_API_KEY`
 - The following packages are also required (See the Installation section for details):
-  - [sys_log](../../libraries/sys_log.rb)
-  - [plugin_generics](../../libraries/plugin_generics.rb)
+  - [sys_log](../libraries/sys_log.rb)
+  - [plugin_generics](../libraries/plugin_generics.rb)
 
 ## Installation
 
@@ -117,4 +117,4 @@ Please review [digital_ocean_test_cat.rb](./digital_ocean_test_cat.rb) for a bas
 
 ## License
 
-The Digital Ocean Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.
+The Digital Ocean Plugin source code is subject to the MIT license, see the [LICENSE](../LICENSE) file.

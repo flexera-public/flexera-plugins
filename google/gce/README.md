@@ -153,4 +153,4 @@ end
 
 ## License
 
-The GCE Plugin source code is subject to the MIT license, see the [LICENSE](../LICENSE) file.
+The GCE Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.

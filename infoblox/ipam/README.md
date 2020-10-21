@@ -13,7 +13,7 @@ The Infoblox IPAM plugin integrates RightScale Self-Service with the basic funct
 
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
-- The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrived the RightScale Credential values identified below.
+- The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrieved the RightScale Credential values identified below.
 - Infoblox service account credentials with the appropriate permissions to manage IPAM entries.
   - The Infoblox service account MUST be enabled for API access. There is a user account setting in Infoblox to enable this.
   - The Infoblox service account must have write permissions to the zone(s) being used for the host name.
@@ -46,7 +46,7 @@ The  Plugin has been packaged as `plugins/rs_infoblox_ipam`. To use this plugin 
 import "plugins/rs_infoblox_ipam"
 ```
 
-For more information on using packages, please refer to the RightScale online documenataion. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
+For more information on using packages, please refer to the RightScale online documentation. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 ## Supported Resources
 
@@ -124,7 +124,7 @@ NONE
 
 ## Examples
 
-See [test_infoblox_ipam.cat.rb](./test_infoblox_ipam.cat.rb) for an example decalaration and use of the list_by_name and search actions.
+See [test_infoblox_ipam.cat.rb](./test_infoblox_ipam.cat.rb) for an example declaration and use of the list_by_name and search actions.
 
 ## Known Issues / Limitations
 

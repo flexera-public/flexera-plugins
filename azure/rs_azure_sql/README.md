@@ -398,4 +398,4 @@ Please review [sql_test_cat.rb](./sql_test_cat.rb) for a basic example implement
 
 ## License
 
-The Azure SQL Database Plugin source code is subject to the MIT license, see the [LICENSE](../LICENSE) file.
+The Azure SQL Database Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.
