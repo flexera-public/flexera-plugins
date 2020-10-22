@@ -1,9 +1,9 @@
-Key Vault Plugin changelog
+# Key Vault Plugin changelog
 
-v1.1
------
+## v1.1
+
 - Added the `listbyresourcegroup` action
 
-v1.0
------
+## v1.0
+
 - initial release

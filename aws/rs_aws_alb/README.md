@@ -1,9 +1,11 @@
 # AWS ALB Plugin
 
 ## Overview
-The AWS ALB Plugin integrates RightScale Self-Service with the basic functionality of the AWS Application Load Balancer. 
+
+The AWS ALB Plugin integrates RightScale Self-Service with the basic functionality of the AWS Application Load Balancer.
 
 ## Requirements
+
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
 - Admin rights to a RightScale account with SelfService enabled
@@ -16,35 +18,42 @@ The AWS ALB Plugin integrates RightScale Self-Service with the basic functionali
   - [sys_log](../../libraries/sys_log.rb)
 
 ## Getting Started
-**Coming Soon**
+
+### Coming Soon
 
 ## Installation
+
 1. Be sure your RightScale account is SelfService enabled
 1. Follow the Getting Started section to create a Service Account and RightScale Credentials
 1. Navigate to the appropriate SelfService portal
-   - For more details on using the portal review the [SS User Interface Guide](http://docs.rightscale.com/ss/guides/ss_user_interface_guide.html)
+   1. For more details on using the portal review the [SS User Interface Guide](http://docs.rightscale.com/ss/guides/ss_user_interface_guide.html)
 1. In the Design section, use the `Upload CAT` interface to complete the following:
    1. Upload each of packages listed in the Requirements Section
    1. Upload the `application_lb_plugin.rb` file located in this repository
- 
+
 ## How to Use
+
 The AWS ALB Plugin has been packaged as `plugins/rs_aws_alb`. In order to use this plugin you must import this plugin into a CAT.
-```
+
+```ruby
 import "plugins/rs_aws_alb"
 ```
-For more information on using packages, please refer to the RightScale online documenataion. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
+
+For more information on using packages, please refer to the RightScale online documentation. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 AWS ALB resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
-The resulting resrouce can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
+The resulting resource can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
 
 ## Supported Resources
- -  load_balancer
- -  target_group
- -  listener
- -  rule
+
+- load_balancer
+- target_group
+- listener
+- rule
 
 ## Usage
-```
+
+```ruby
 #Creates an ALB
 parameter "lb_name" do
   label "ALB Name"
@@ -77,7 +86,7 @@ resource "my_listener", type: "rs_aws_alb.listener" do
   load_balancer_arn @my_alb.LoadBalancerArn
   port 80
   protocol "HTTP"
-end 
+end
 
 resource "my_rule", type: "rs_aws_alb.rule" do
   action1_target_group_arn @my_tg.TargetGroupArn
@@ -89,9 +98,13 @@ resource "my_rule", type: "rs_aws_alb.rule" do
 end
 
 ```
+
 ## Resources
+
 ## load_balancer
-#### Supported Fields
+
+### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 |name|Yes|The name of the load balancer.|
@@ -114,7 +127,7 @@ end
 |tag_value_5|No|The value of the tag|
 |tag_key_5|No|The key of the tag|
 
-#### Supported Actions
+### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
@@ -124,7 +137,8 @@ end
 | register_target | RegisterTargets | Untested |
 | deregister_target | DeregisterTargets | Untested |
 
-#### Supported Outputs
+### Supported Outputs
+
 - "LoadBalancerArn"
 - "Scheme"
 - "LoadBalancerName"
@@ -138,7 +152,9 @@ end
 - "SecurityGroup"
 
 ## rule
-#### Supported Fields
+
+### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 |priority|Yes|The priority for the rule. A listener can't have multiple rules with the same priority.|
@@ -150,7 +166,7 @@ end
 |action3_target_group_arn|No|The Amazon Resource Name (ARN) of the target group.|
 |action3_type|No|An action. Each action has the type forward and specifies a target group.|
 |condition1_field|Yes|The name of the field. The possible values are `host-header` and `path-pattern`.|
-|condition1_value1|Yes|the condition of value: http://docs.aws.amazon.com/elasticloadbalancing/latest/APIReference/API_RuleCondition.html|
+|condition1_value1|Yes|the condition of value: [API_RuleCondition](http://docs.aws.amazon.com/elasticloadbalancing/latest/APIReference/API_RuleCondition.html)|
 |condition1_value2|No|the condition of value|
 |condition1_value3|No|the condition of value|
 |condition2_field|No|The name of the field. The possible values are `host-header` and `path-pattern`.|
@@ -162,7 +178,7 @@ end
 |condition3_value2|No|the condition of value|
 |condition3_value3|No|the condition of value|
 
-#### Supported Actions
+### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
@@ -170,16 +186,18 @@ end
 | destroy | DeleteRule | Supported |
 | list | DescribeRules | Supported |
 
-#### Supported Outputs
+### Supported Outputs
+
 - "Priority"
 - "RuleArn"
 - "TargetGroupArn"
 - "ConditionField"
 - "ConditionValue"
 
-
 ## target_group
-#### Supported Fields
+
+### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 |health_check_interval_seconds|No|The approximate amount of time, in seconds, between health checks of an individual target. |
@@ -195,7 +213,7 @@ end
 |unhealthy_threshold_count|No|The number of consecutive health check failures required before considering a target unhealthy. The default is 2.|
 |vpc_id|Yes|The identifier of the virtual private cloud (VPC).|
 
-#### Supported Actions
+### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
@@ -203,23 +221,25 @@ end
 | destroy | DeleteTargetGroup | Supported |
 | list | DescribeTargetGroups | Supported |
 
-#### Supported Outputs
- - "TargetGroupArn"
- - "HealthCheckTimeoutSeconds"
- - "HealthCheckPort"
- - "TargetGroupName"
- - "HealthCheckProtocol"
- - "HealthCheckPath"
- - "Protocol"
- - "Port"
- - "VpcId"
- - "HealthyThresholdCount"
- - "HealthCheckIntervalSeconds"
- - "UnhealthyThresholdCount"
+### Supported Outputs
 
+- "TargetGroupArn"
+- "HealthCheckTimeoutSeconds"
+- "HealthCheckPort"
+- "TargetGroupName"
+- "HealthCheckProtocol"
+- "HealthCheckPath"
+- "Protocol"
+- "Port"
+- "VpcId"
+- "HealthyThresholdCount"
+- "HealthCheckIntervalSeconds"
+- "UnhealthyThresholdCount"
 
 ## listener
-#### Supported Fields
+
+### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 |certificate_arn|No|The Amazon Resource Name (ARN) of the certificate.|
@@ -230,7 +250,7 @@ end
 |protocol|Yes|The protocol for connections from clients to the load balancer.(Valid Values: HTTP | HTTPS)|
 |ssl_policy|No|The security policy that defines which ciphers and protocols are supported. The default is the current predefined security policy.|
 
-#### Supported Actions
+### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
@@ -238,28 +258,33 @@ end
 | destroy | DeleteListeners | Supported |
 | list | DescribeListeners | Supported |
 
-#### Supported Outputs
- - "LoadBalancerArn"
- - "Protocol"
- - "Port"
- - "ListenerArn"
- - "TargetGroupArn" 
+### Supported Outputs
 
+- "LoadBalancerArn"
+- "Protocol"
+- "Port"
+- "ListenerArn"
+- "TargetGroupArn"
 
 ## Implementation Notes
-- The AWS ALB Plugin makes no attempt to support non-AWS resources. (i.e. Allow the passing the RightScale or other resources as arguments to an ALB resource.) 
- - The most common example might be to pass a RightScale instance to attach it to the ALB or similar. Support for this functionality will need to be implemented in the application CAT.
- 
+
+- The AWS ALB Plugin makes no attempt to support non-AWS resources. (i.e. Allow the passing the RightScale or other resources as arguments to an ALB resource.)
+- The most common example might be to pass a RightScale instance to attach it to the ALB or similar. Support for this functionality will need to be implemented in the application CAT.
+
 Full list of possible actions can be found on the [AWS ALB API Documentation](http://docs.aws.amazon.com/elasticloadbalancing/latest/APIReference/Welcome.html)
+
 ## Examples
-Please review [plugin.rb](./plugin.rb) for a basic example implementation.
-	
+
+Please review [alb_test_cat](./alb_test_cat.rb) for a basic example implementation.
+
 ## Known Issues / Limitations
+
 - Currently only supports CRUD and instance register/deregister functions.
 
 ## Getting Help
-Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.
-Visit http://chat.rightscale.com/ to join!
+
+Support for this plugin will be provided though GitHub Issues.
 
 ## License
-The AWS ALB Plugin source code is subject to the MIT license, see the [LICENSE](../LICENSE) file.
+
+The AWS ALB Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.
