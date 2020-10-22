@@ -1,5 +1,5 @@
-AWS IAM Plugin Changelog
- 
-v1.0
------
+# AWS IAM Plugin Changelog
+
+## v1.0
+
 - initial release

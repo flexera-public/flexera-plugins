@@ -5,6 +5,7 @@ This repository contains the library of open source Flexera CMP plugins.
 ## Released Plugins
 
 ### Amazon Web Services
+
 - [AWS Elastic Load Balancer (Classic LB)](./aws/rs_aws_elb/)
 - [AWS Elastic Load Balancer (Application LB)](./aws/rs_aws_alb/)
 - [AWS Elastic File System](./aws/rs_aws_efs/)
@@ -52,6 +53,7 @@ This repository contains the library of open source Flexera CMP plugins.
 - [Fastly IP Address](./fastly/ipaddresslist/)
 
 ### Infoblox
+
 - [Infoblox IPAM Appliance](./infoblox/ipam/)
 
 ### VMWare
