@@ -1,12 +1,14 @@
 # AWS IAM Plugin
 
 ## Overview
+
 The AWS IAM Plugin integrates RightScale Self-Service with the basic functionality of the AWS Identify and Access Management API.
 
 ## Requirements
+
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
-- The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrived the RightScale Credential values identified below.
+- The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrieved the RightScale Credential values identified below.
 - AWS Account credentials with the appropriate permissions to manage elastic load balancers
 - The following RightScale Credentials
   - `AWS_ACCESS_KEY_ID`
@@ -15,8 +17,8 @@ The AWS IAM Plugin integrates RightScale Self-Service with the basic functionali
   - [sys_log](../../libraries/sys_log.rb)
   - [plugin_generics](../../libraries/plugin_generics.rb)
 
-
 ## Installation
+
 1. Be sure your RightScale account has Self-Service enabled
 1. Connect AWS Cloud credentials to your RightScale account (if not already completed)
 1. Navigate to the appropriate Self-Service portal
@@ -26,20 +28,26 @@ The AWS IAM Plugin integrates RightScale Self-Service with the basic functionali
    1. Upload the `aws_iam_plugin.rb` file located in this repository
 
 ## How to Use
+
 The IAM Plugin has been packaged as `plugin/rs_aws_iam`. In order to use this plugin you must import this plugin into a CAT.
-```
+
+```ruby
+
 import "plugin/rs_aws_iam"
 ```
-For more information on using packages, please refer to the RightScale online documenataion. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
+
+For more information on using packages, please refer to the RightScale online documentation. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 ## Supported Resources
- - role
- - policy
- - instance_profile
+
+- role
+- policy
+- instance_profile
 
 ## Resource: `role`
 
-#### Supported Fields
+### Supported Fields
+
 **Note:** There are many possible configurations when defining a `role` resource.  While some fields below are not listed as "Required", they may actually be required for your resource,  depending on the value(s) of other field(s). More detailed field documentation is available in-line within the IAM Plugin.
 
 | Field Name | Required? | Description |
@@ -53,12 +61,16 @@ For more information on using packages, please refer to the RightScale online do
 | policies | no | Attaches the specified managed policy to the specified IAM role. When you attach a managed policy to a role, the managed policy becomes part of the role's permission (access) policy. |
 
 #### Supported Outputs
+
 - RoleName
 
 #### Usage
+
 AWS IAM resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
-The resulting resrouce can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
-```
+The resulting resource can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
+
+```ruby
+
 resource "my_role", type: "rs_aws_iam.role" do
   name 'MyTestRole'
   assume_role_policy_document '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"Service":["ec2.amazonaws.com"]},"Action":["sts:AssumeRole"]}]}'
@@ -76,11 +88,12 @@ end
 | get | [GetRole](https://docs.aws.amazon.com/IAM/latest/APIReference/API_GetRole.html) | Supported |
 | attach_policy | [AttachRolePolicy](https://docs.aws.amazon.com/IAM/latest/APIReference/API_AttachRolePolicy.html) | Supported |
 | detach_policy | [DetachRolePolicy](https://docs.aws.amazon.com/IAM/latest/APIReference/API_DetachRolePolicy.html) | Supported |
-| attached_polcies | [ListAttachedRolePolicies](https://docs.aws.amazon.com/IAM/latest/APIReference/API_ListAttachedRolePolicies.html) | Supported |
+| attached_policies | [ListAttachedRolePolicies](https://docs.aws.amazon.com/IAM/latest/APIReference/API_ListAttachedRolePolicies.html) | Supported |
 
 ## Resource: `policy`
 
-#### Supported Fields
+### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 | name | yes |  The friendly name of the policy. |
@@ -88,14 +101,16 @@ end
 | policy_document | yes | The JSON policy document that you want to use as the content for the new policy.|
 | path | no | The path for the policy. |
 
-#### Supported Outputs
+### Supported Outputs
+
 - PolicyName
 - Arn
 - PolicyArn
 
-
 #### Usage
-```
+
+```ruby
+
 #Creates a new IAM Policy
 resource "my_policy", type: "rs_aws_iam.policy" do
   name "MyTestPolicy"
@@ -116,7 +131,8 @@ end
 
 ## Resource: `instance_profile`
 
-#### Supported Fields
+### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 | name | yes |  The friendly name of the policy. |
@@ -124,14 +140,16 @@ end
 | policy_document | yes | The JSON policy document that you want to use as the content for the new policy.|
 | path | no | The path for the policy. |
 
-#### Supported Outputs
+### Supported Outputs
+
 - PolicyName
 - Arn
 - PolicyArn
 
-
 #### Usage
-```
+
+```ruby
+
 #Creates a new IAM Instance Profile
 resource "my_instance_profile", type:"rs_aws_iam.instance_profile" do
   name "MyInstanceProfile"
@@ -148,16 +166,14 @@ end
 | get | [GetPolicy](https://docs.aws.amazon.com/IAM/latest/APIReference/API_GetInstanceProfile.html) | Supported |
 | add_role| [AddRoleToInstanceProfile](https://docs.aws.amazon.com/IAM/latest/APIReference/API_AddRoleToInstanceProfile.html) | Supported |
 
-
 ## Examples
+
 Please review [iam_test_cat.rb](./iam_test_cat.rb) for a basic example implementation.
 
 ## Known Issues / Limitations
+
 - Currently only supports a few actions from the IAM functions.
 
-## Getting Help
-Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.
-Visit http://chat.rightscale.com/ to join!
-
 ## License
-The AWS IAM Plugin source code is subject to the MIT license, see the [LICENSE](../LICENSE) file.
+
+The AWS IAM Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.

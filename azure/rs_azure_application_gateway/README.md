@@ -1,12 +1,14 @@
 # Azure Application Gateway Plugin
 
 ## Overview
+
 The Azure Application Gateway Plugin integrates RightScale Self-Service with the basic functionality.
 
 ## Requirements
+
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
-- The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrived the RightScale Credential values identified below.
+- The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrieved the RightScale Credential values identified below.
 - Azure Service Principal (AKA Azure Active Directory Application) with the appropriate permissions to manage resources in the target subscription
 - The following RightScale Credentials
   - `AZURE_APPLICATION_ID`
@@ -15,6 +17,7 @@ The Azure Application Gateway Plugin integrates RightScale Self-Service with the
   - [sys_log](../../libraries/sys_log.rb)
 
 ## Installation
+
 1. Be sure your RightScale account has Self-Service enabled
 1. Connect AzureRM Cloud credentials to your RightScale account (if not already completed)
 1. Follow steps to [Create an Azure Active Directory Application](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal#create-an-azure-active-directory-application)
@@ -31,33 +34,42 @@ The Azure Application Gateway Plugin integrates RightScale Self-Service with the
    1. Upload the `rs_azure_application_gateway.rb` file located in this repository
 
 ## How to Use
+
 The Azure Application Gateway Plugin has been packaged as `plugins/rs_azure_application_gateway`. In order to use this plugin you must import this plugin into a CAT.
-```
+
+```ruby
+
 import "plugins/rs_azure_application_gateway"
 ```
+
 For more information on using packages, please refer to the RightScale online documentation. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 Azure Application Gateway resource can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
 The resulting resource can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
 
 ## Supported Resources
- - rs_azure_application_gateway.gateway
+
+- rs_azure_application_gateway.gateway
 
 ## Usage
-For and example of how to use the plugin in your CAT review the [application_gateway_cat.rb](./application_gateway_cat.rb) for a reference
+
+For and example of how to use the plugin in your CAT review the [application_gateway_cat.rb](./application_gateway_test_cat.rb) for a reference
 
 ## Resources
+
 ## rs_azure_application_gateway.gateway
-#### Supported Fields
+
+### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
-|name|Yes|The name of the applicaton gateway.|
+|name|Yes|The name of the application gateway.|
 |resource_group|Yes|Name of resource group in which to launch the Deployment|
 |location|Yes|Datacenter to launch in|
 |properties|Yes|The properties to configure the application gateway.  Refer to the example CAT or the Azure Api.|
 |tags|No|Create Azure tags on the Application Gateway|
 
-#### Supported Actions
+### Supported Actions
 
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
@@ -65,7 +77,8 @@ For and example of how to use the plugin in your CAT review the [application_gat
 | destroy | [Delete](https://docs.microsoft.com/en-us/rest/api/application-gateway/applicationgateways/delete) | Supported |
 | get | [Get](https://docs.microsoft.com/en-us/rest/api/application-gateway/applicationgateways/get)| Supported |
 
-#### Supported Outputs
+### Supported Outputs
+
 - id
 - name
 - type
@@ -73,15 +86,13 @@ For and example of how to use the plugin in your CAT review the [application_gat
 - kind
 
 ## Examples
-Please review
-- [application_gateway_cat.rb](./application_gateway_cat.rb) for a basic application gateway reference
 
+Please review
+
+- [application_gateway_cat.rb](./application_gateway_test_cat.rb) for a basic application gateway reference
 
 ## Known Issues / Limitations
 
-## Getting Help
-Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel `#plugins`.
-Visit http://chat.rightscale.com/ to join!
-
 ## License
+
 The Azure Networking Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.

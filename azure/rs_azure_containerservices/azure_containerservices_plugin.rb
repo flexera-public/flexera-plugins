@@ -2,9 +2,13 @@ name 'rs_azure_containerservices'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Azure Container Services Plugin"
-long_description "Version: 1.1"
+long_description "Version: 1.1.1"
 package "plugins/rs_azure_containerservices"
 import "sys_log"
+info(
+  provider: "Azure",
+  service: "ContainerService"
+)
 
 parameter "subscription_id" do
   type  "string"
@@ -25,6 +29,20 @@ plugin "rs_azure_containerservices" do
     } end
   end
 
+  short_description 'Azure-ContainerService Plugin'
+  long_description 'Supports Azure ContainerService'
+  version '1.1.1'
+
+  documentation_link 'source' do
+    label 'Source'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/azure/rs_azure_containerservices/azure_containerservices_plugin.rb'
+  end
+
+  documentation_link 'readme' do
+    label 'readme'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/azure/rs_azure_containerservices/README.md'
+  end
+
   parameter "subscription_id" do
     type  "string"
     label "subscription_id"
@@ -38,7 +56,7 @@ plugin "rs_azure_containerservices" do
     field "resource_group" do
       type "string"
       location "path"
-    end 
+    end
 
     field "name" do
       type "string"
@@ -77,7 +95,7 @@ plugin "rs_azure_containerservices" do
 
       field "resource_group" do
         location "path"
-      end 
+      end
 
       field "name" do
         location "path"
@@ -209,7 +227,7 @@ end
 define delete_resource(@declaration) do
   call start_debugging()
   $delete_count = 0
-  sub on_error: handle_retries($delete_count) do 
+  sub on_error: handle_retries($delete_count) do
     $delete_count = $delete_count + 1
     @declaration.destroy()
   end

@@ -21,7 +21,6 @@ plugin "rs_azure_compute" do
     default_host "https://management.azure.com/"
     default_scheme "https"
     query do {
-      # 'api-version' =>  '2016-04-30-preview'
       'api-version' =>  '2017-12-01'
     } end
   end

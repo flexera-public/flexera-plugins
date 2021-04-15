@@ -46,7 +46,7 @@ plugin "aws_compute" do
     type 'string'
     label 'AWS Region'
     default 'us-east-1'
-    allowed_values "us-east-1","us-east-2","us-west-1","us-west-2","ap-south-1","ap-northeast-2","ap-southeast-1","ap-southeast-2","ap-northeast-1","ca-central-1","eu-central-1","eu-west-1","eu-west-2","eu-west-3", "sa-east-1","eu-north-1"	
+    allowed_values "us-east-1","us-east-2","us-west-1","us-west-2","ap-south-1","ap-northeast-2","ap-southeast-1","ap-southeast-2","ap-northeast-1","ca-central-1","eu-central-1","eu-west-1","eu-west-2","eu-west-3", "sa-east-1","eu-north-1"
     description 'The region in which the resources are created'
   end
 
@@ -57,15 +57,15 @@ plugin "aws_compute" do
     description 'The maximum results count for each page of AWS data received.'
   end
 
-  endpoint do
-      default_host 'ec2.$region.amazonaws.com'
-      default_scheme 'https'
-      path '/'
-      query do {
-      'Version' => '2016-11-15'
-      } end
-      request_content_type 'application/x-www-form-urlencoded; charset=utf-8'
-  end
+    endpoint do
+        default_host 'ec2.$region.amazonaws.com'
+        default_scheme 'https'
+        path '/'
+        query do {
+        'Version' => '2016-11-15'
+        } end
+        request_content_type 'application/x-www-form-urlencoded; charset=utf-8'
+    end
 
   type "vpc" do
     # HREF is set to the correct template in the provision definition due to a lack of usable fields in the response to build the href
@@ -411,7 +411,7 @@ plugin "aws_compute" do
     output "natGatewayAddressSet" do
       type "array"
     end
-	
+
     output 'id' do
      body_path 'natGatewayId'
     end
@@ -447,7 +447,7 @@ plugin "aws_compute" do
           location 'query'
           alias_for 'MaxResults'
       end
-      pagination $aws_pagination	  
+      pagination $aws_pagination
     end
 
     polling do
@@ -457,7 +457,6 @@ plugin "aws_compute" do
       period 60
       action 'list'
     end
-	
   end
 
   type "addresses" do
@@ -1125,7 +1124,7 @@ plugin "aws_compute" do
       type "string"
       location "query"
     end
-    
+
     field "network_interface_1_ipv6_address_count" do
       alias_for "NetworkInterface.1.Ipv6AddressCount"
       type "string"
@@ -1155,7 +1154,7 @@ plugin "aws_compute" do
       type "string"
       location "query"
     end
-    
+
     field "network_interface_1_secondary_private_ip_address_count" do
       alias_for "NetworkInterface.1.SecondaryPrivateIpAddressCount"
       type "string"
@@ -1167,7 +1166,7 @@ plugin "aws_compute" do
       type "string"
       location "query"
     end
- 
+
     field "network_interface_1_subnet_id" do
       alias_for "NetworkInterface.1.SubnetId"
       type "string"
@@ -1562,7 +1561,7 @@ plugin "aws_compute" do
     end
 
   end
- 
+
   type "subnets" do
     href_templates "/?Action=DescribeSubnets&subnetId.1={{//DescribeSubnetsResponse/subnetSet/item/subnetId}}","/?Action=DescribeSubnets&subnetId.1={{//CreateSubnetResponse/subnetId}}"
     provision 'no_operation'
@@ -1577,7 +1576,7 @@ plugin "aws_compute" do
         location 'query'
         alias_for 'MaxResults'
       end
-      pagination $aws_pagination	  
+      pagination $aws_pagination
     end
 
     output 'id' do
@@ -1593,7 +1592,7 @@ plugin "aws_compute" do
     end
 
     output 'region' do
-      body_path 'substring(availabilityZone,0, string-length(availabilityZone))'	
+      body_path 'substring(availabilityZone,0, string-length(availabilityZone))'
     end
 
     output 'tags' do
@@ -1626,7 +1625,7 @@ plugin "aws_compute" do
         location 'query'
         alias_for 'MaxResults'
       end
-      pagination $aws_pagination	  
+      pagination $aws_pagination
     end
 
     output 'id' do
@@ -1639,7 +1638,7 @@ plugin "aws_compute" do
 
     output 'description' do
       body_path 'groupDescription'
-    end	
+    end
 
     output "ipPermissions", "vpcId", "tags", "region"
 
