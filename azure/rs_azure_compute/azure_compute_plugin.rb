@@ -550,12 +550,6 @@ plugin "azure_compute" do
       verb "GET"
     end
 
-    action "update" do
-      type "disks"
-      path "$href"
-      verb "PATCH"
-    end
-
     action "list" do
       type "disks"
       path "/subscriptions/$subscription_id/providers/Microsoft.Compute/disks"
