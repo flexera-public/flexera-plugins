@@ -457,10 +457,10 @@ Full list of possible actions can be found on the
 
 Please review
 
-- [lb_test_cat.rb](./lb_test_cat.rb) for a basic load balancer example implementation.
-- [peering_test_cat.rb](./peering_test_cat.rb) for a basic network peering example.
-- [nsg_to_subnet_test_cat.rb](./nsg_to_subnet_test_cat.rb) for an example of attaching a Network Security Group to a subnet
-- [vnet_dns_test_cat.rb](./vnet_dns_test_cat.rb) for an example of setting custom dns servers and tags on a vnet
+- [lb_test_cat.rb](../rs_azure_networking/lb_test_cat.rb) for a basic load balancer example implementation.
+- [peering_test_cat.rb](../rs_azure_networking/peering_test_cat.rb) for a basic network peering example.
+- [nsg_to_subnet_test_cat.rb](../rs_azure_networking/nsg_to_subnet_test_cat.rb) for an example of attaching a Network Security Group to a subnet
+- [vnet_dns_test_cat.rb](../rs_azure_networking/vnet_dns_test_cat.rb) for an example of setting custom dns servers and tags on a vnet
 
 ## Known Issues / Limitations
 
