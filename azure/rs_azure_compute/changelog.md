@@ -1,5 +1,9 @@
 # Compute Plugin changelog
 
+## v2.0 (05-14-2021)
+
+- Updating for additional fields
+
 ## v1.5 (04-26-2018)
 
 - Adding ScaleSets to compute
