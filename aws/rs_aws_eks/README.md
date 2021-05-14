@@ -1,12 +1,14 @@
 # AWS EKS Plugin
 
 ## Overview
+
 The AWS EKS Plugin integrates RightScale Self-Service with the basic functionality of the AWS EKS API.
 
 ## Requirements
+
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
-- The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrived the RightScale Credential values identified below.
+- The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrieved the RightScale Credential values identified below.
 - The following RightScale Credentials
   - `AWS_ACCESS_KEY_ID`
   - `AWS_SECRET_ACCESS_KEY`
@@ -14,6 +16,7 @@ The AWS EKS Plugin integrates RightScale Self-Service with the basic functionali
   - [sys_log](../../libraries/sys_log.rb)
 
 ## Installation
+
 1. Be sure your RightScale account has Self-Service enabled
 1. Connect AWS Cloud credentials to your RightScale account (if not already completed)
 1. Navigate to the appropriate Self-Service portal
@@ -23,19 +26,26 @@ The AWS EKS Plugin integrates RightScale Self-Service with the basic functionali
    1. Upload the `aws_eks_plugin.rb` file located in this repository
 
 ## How to Use
+
 The EKS Plugin has been packaged as `plugins/rs_aws_eks`. In order to use this plugin you must import this plugin into a CAT.
-```
+
+```ruby
+
 import "plugins/rs_aws_eks"
 ```
-For more information on using packages, please refer to the RightScale online documenataion. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
+
+For more information on using packages, please refer to the RightScale online documentation. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 ## Supported Resources
+
 - clusters
 
 ## Usage
-```
+
+```ruby
+
 resource "my_cluster", type: "rs_aws_eks.clusters" do
-  name "my_kube_cluster"
+  name "my_kubernetes_cluster"
   resources_vpc_config do {
     "securityGroupIds" => ["sg-7dad9003"],
     "subnetIds" => ["subnet-b357c2fb","subnet-bb06b7e1"],
@@ -47,8 +57,11 @@ end
 ```
 
 ## Resources
+
 ### clusters
+
 #### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 | client_request_token | no | Unique, case-sensitive identifier you provide to ensure the idempotency of the request. |
@@ -57,8 +70,8 @@ end
 | role_arn | yes | The Amazon Resource Name (ARN) of the IAM role that provides permissions for Amazon EKS to make calls to other AWS API operations on your behalf.|
 | version | no | The desired Kubernetes version for your cluster. If you do not specify a value here, the latest version available in Amazon EKS is used. |
 
-
 #### Supported Actions
+
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
 | create | [CreateCluster](https://docs.aws.amazon.com/eks/latest/APIReference/API_CreateCluster.html) | Supported |
@@ -67,6 +80,7 @@ end
 | list | [ListClusters](https://docs.aws.amazon.com/eks/latest/APIReference/API_ListClusters.html) | Untested |
 
 #### Outputs
+
 - endpoint
 - status
 - createdAt
@@ -78,16 +92,20 @@ end
 - name
 - resourcesVpcConfig
 
-
 ## Implementation Notes
+
 - The AWS EKS Plugin makes no attempt to support non-AWS resources. (i.e. Allow the passing the RightScale or other resources as arguments to an EKS resource.)
 
 ## Examples
+
 Please review [eks_test_cat.rb](./eks_test_cat.rb) for a basic example implementation.
 
 ## Known Issues / Limitations
-- - Currently only supports a single region.  To support a different region, edit the `host` & `region` fields of the `resource_pool` declaration in the Plugin:
-```
+
+- Currently only supports a single region.  To support a different region, edit the `host` & `region` fields of the `resource_pool` declaration in the Plugin:
+
+```ruby
+
 resource_pool "rs_aws_eks" do
   plugin $rs_aws_eks
   host "eks.us-east-1.amazonaws.com"
@@ -101,9 +119,6 @@ resource_pool "rs_aws_eks" do
 end
 ```
 
-## Getting Help
-Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.
-Visit http://chat.rightscale.com/ to join!
-
 ## License
+
 The AWS EKS Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.

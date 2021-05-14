@@ -2,9 +2,13 @@ name 'rs_azure_storage'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Azure Storage Plugin"
-long_description "Version: 1.1"
+long_description "Version: 1.1.1"
 package "plugins/rs_azure_storage"
 import "sys_log"
+info(
+  provider: "Azure",
+  service: "Storage"
+)
 
 parameter "subscription_id" do
   type  "string"
@@ -25,6 +29,20 @@ plugin "rs_azure_storage" do
     } end
   end
 
+  short_description 'Azure-Storage Plugin'
+  long_description 'Supports Azure Storage'
+  version '1.1.1'
+
+  documentation_link 'source' do
+    label 'Source'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/azure/rs_azure_storage/azure_storage_plugin.rb'
+  end
+
+  documentation_link 'readme' do
+    label 'readme'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/azure/rs_azure_storage/README.md'
+  end
+
   parameter "subscription_id" do
     type  "string"
     label "subscription_id"
@@ -38,7 +56,7 @@ plugin "rs_azure_storage" do
     field "resource_group" do
       type "string"
       location "path"
-    end 
+    end
 
     field "name" do
       type "string"
@@ -93,7 +111,7 @@ plugin "rs_azure_storage" do
 
       field "resource_group" do
         location "path"
-      end 
+      end
 
       field "name" do
         location "path"
@@ -184,7 +202,7 @@ resource_pool "rs_azure_storage" do
         client_id cred("AZURE_APPLICATION_ID")
         client_secret cred("AZURE_APPLICATION_KEY")
         additional_params do {
-          "resource" => "https://management.azure.com/"     
+          "resource" => "https://management.azure.com/"
         } end
       end
     end

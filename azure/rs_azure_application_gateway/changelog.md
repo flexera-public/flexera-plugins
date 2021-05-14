@@ -1,5 +1,5 @@
-Azure Appliation Gateway Plugin changelog
+# Azure Application Gateway Plugin changelog
 
-v1.0
------
+## v1.0
+
 - initial release
