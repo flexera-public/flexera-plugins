@@ -13,7 +13,7 @@ gem "rake", "~> 12.3"
 gem "json", "~> 2.1"
 
 # Added at 2018-06-19 14:10:27 -0500 by rshade:
-gem "danger", "~> 6.0.0"
+gem "danger", "= 8.0.5"
 
 # Added at 2018-06-21 16:01:06 -0500 by rshade:
 gem "pry", "~> 0.11.3"
@@ -23,3 +23,6 @@ gem "rb-readline", "~> 0.5.5"
 
 # Markdownlint
 gem "mdl"
+
+gem "danger-textlint"
+

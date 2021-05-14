@@ -1,0 +1,19 @@
+{
+  "rules": {
+    "editorconfig": {
+      "charset": false
+    },
+    "no-dead-link": {
+      "checkRelative": true,
+      "baseURI": null,
+      "ignore": [],
+      "preferGET": [],
+      "ignoreRedirects": true,
+      "retry": 3,
+      "userAgent": "textlint-rule-no-dead-link/1.0"
+    }
+  },
+  "filters": {
+    "comments": true
+  }
+}
