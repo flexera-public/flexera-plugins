@@ -43,6 +43,7 @@ define generated_launch($param_region, @instance) return @instance do
   sub on_error: aws_compute.stop_debugging() do
     provision(@instance)
   end
+  call aws_compute.stop_debugging()
 end
 
 define defn_stop(@instance) return @instance do
