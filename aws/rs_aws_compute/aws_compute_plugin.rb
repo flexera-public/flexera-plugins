@@ -462,7 +462,7 @@ plugin "aws_compute" do
   type "addresses" do
     href_templates "/?Action=DescribeAddresses&AllocationId.1={{//DescribeAddressesResponse/addressesSet/item/allocationId}}","/?Action=DescribeAddresses&AllocationId.1={{//AllocateAddressResponse/allocationId}}"
     provision 'provision_address'
-    delete    'delete_address'
+    delete    'delete_resource'
 
     field "allocation_id_1" do
       alias_for "AllocationId.1"
@@ -1421,8 +1421,8 @@ plugin "aws_compute" do
 
   type "snapshots" do
     href_templates "/?Action=DescribeSnapshots&SnapshotId.1={{//DescribeSnapshotsResponse/snapshotSet/item/snapshotId}}"
-    provision 'no_operation'
-    delete    'no_operation'
+    provision 'provision_resource_available_state'
+    delete    'delete_resource'
 
     action "get" do
       verb "POST"
@@ -1564,8 +1564,8 @@ plugin "aws_compute" do
 
   type "subnets" do
     href_templates "/?Action=DescribeSubnets&subnetId.1={{//DescribeSubnetsResponse/subnetSet/item/subnetId}}","/?Action=DescribeSubnets&subnetId.1={{//CreateSubnetResponse/subnetId}}"
-    provision 'no_operation'
-    delete    'no_operation'
+    provision 'provision_resource_available_state'
+    delete    'delete_resource'
 
     action "list" do
       verb "POST"
@@ -1613,8 +1613,8 @@ plugin "aws_compute" do
 
   type "security_groups" do
     href_templates "/?Action=DescribeSecurityGroups&groupId.1={{//DescribeSecurityGroupsResponse/securityGroupInfo/item/groupId}}","/?Action=DescribeSecurityGroups&groupId.1={{//CreateImageResponse/groupId}}"
-    provision 'no_operation'
-    delete    'no_operation'
+    provision 'provision_resource_available_state'
+    delete    'delete_resource'
 
     action "list" do
       verb "POST"
@@ -1665,6 +1665,32 @@ resource_pool "compute_pool" do
     region     $param_region
     access_key cred('AWS_ACCESS_KEY_ID')
     secret_key cred('AWS_SECRET_ACCESS_KEY')
+  end
+end
+
+define provision_tags(@declaration) return @resource do
+  sub on_error: stop_debugging() do
+    $object = to_object(@declaration)
+    $fields = $object["fields"]
+    $name = $fields['name']
+    call start_debugging()
+    @resource = aws_compute.tags.create($fields)
+    call stop_debugging()
+    $vpc = to_object(@resource)
+    call sys_log.detail(join(["tags:", to_s($vpc)]))
+  end
+end
+
+define provision_sg(@declaration) return @resource do
+  sub on_error: stop_debugging() do
+    $object = to_object(@declaration)
+    $fields = $object["fields"]
+    $name = $fields['name']
+    call start_debugging()
+    @resource = aws_compute.security_groups.create($fields)
+    call stop_debugging()
+    $provisioned_object = to_object(@resource)
+    call sys_log.detail(join(["sg:", to_s($provisioned_object)]))
   end
 end
 
@@ -1731,19 +1757,6 @@ define provision_instance(@declaration) return @resources do
   end
 end
 
-define provision_tags(@declaration) return @resource do
-  sub on_error: stop_debugging() do
-    $object = to_object(@declaration)
-    $fields = $object["fields"]
-    $name = $fields['name']
-    call start_debugging()
-    @resource = aws_compute.tags.create($fields)
-    call stop_debugging()
-    $vpc = to_object(@resource)
-    call sys_log.detail(join(["tags:", to_s($vpc)]))
-  end
-end
-
 define provision_volume_modification(@declaration) return @resource do
   sub on_error: stop_debugging() do
     $object = to_object(@declaration)
@@ -1764,6 +1777,18 @@ define provision_volume_modification(@declaration) return @resource do
       $state = @resource.modificationState
       call stop_debugging()
     end
+  end
+end
+
+define provision_address(@declaration) return @resource do
+  sub on_error: stop_debugging() do
+    $object = to_object(@declaration)
+    $fields = $object["fields"]
+    call start_debugging()
+    @resource = aws_compute.addresses.create($fields)
+    call stop_debugging()
+    $provisioned_object = to_object(@resource)
+    call sys_log.detail(join(["eip: ", to_s($provisioned_object)]))
   end
 end
 
@@ -1803,28 +1828,6 @@ define delete_nat_gateway(@nat_gateways) do
         $state = @nat_gateway.state
         call stop_debugging()
       end
-      call stop_debugging()
-    end
-  end
-end
-
-define provision_address(@declaration) return @resource do
-  sub on_error: stop_debugging() do
-    $object = to_object(@declaration)
-    $fields = $object["fields"]
-    call start_debugging()
-    @resource = aws_compute.addresses.create($fields)
-    call stop_debugging()
-    $provisioned_object = to_object(@resource)
-    call sys_log.detail(join(["eip: ", to_s($provisioned_object)]))
-  end
-end
-
-define delete_address(@addresses) do
-  foreach @address in @addresses do
-    sub on_error: stop_debugging() do
-      call start_debugging()
-      @address.destroy()
       call stop_debugging()
     end
   end
