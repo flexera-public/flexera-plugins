@@ -1668,24 +1668,32 @@ resource_pool "compute_pool" do
   end
 end
 
-define provision_resource_available_state(@declaration) return @resource do
-  sub on_error: stop_debugging() do
-    $object = to_object(@declaration)
-    $fields = $object["fields"]
-    $type = $object["type"]
-    $name = $fields['name']
-    call start_debugging()
-    @resource = aws_compute.$type.create($fields)
-    call stop_debugging()
-    $resource = to_object(@resource)
-    call sys_log.detail(join([$type, ": ", to_s($resource)]))
-    $state = @resource.state
-    while $state != "available" do
-      sleep(10)
-      call sys_log.detail(join(["state: ", $state]))
+define provision_resource_available_state(@declaration) return @resources do
+  $object = to_object(@declaration)
+  $fields = $object["fields"]
+  $type = $object["type"]
+  $name = $fields['name']
+  $counter = 1
+  $copies = $object["copies"]
+  call sys_log.detail(join(["copies: ", $copies]))
+  @resources = aws_compute.$type.empty()
+  while $counter <= $copies do
+    sub on_error: stop_debugging() do
       call start_debugging()
-      $state = @resource.state
+      @resource = aws_compute.$type.create($fields)
       call stop_debugging()
+      $resource = to_object(@resource)
+      call sys_log.detail(join([$type, ": ", to_s($resource)]))
+      $state = @resource.state
+      while $state != "available" do
+        sleep(10)
+        call sys_log.detail(join(["state: ", $state]))
+        call start_debugging()
+        $state = @resource.state
+        call stop_debugging()
+      end
+      @resources = @resources + @resource
+      $counter = $counter + 1
     end
   end
 end
