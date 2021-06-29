@@ -57,15 +57,15 @@ plugin "aws_compute" do
     description 'The maximum results count for each page of AWS data received.'
   end
 
-    endpoint do
-        default_host 'ec2.$region.amazonaws.com'
-        default_scheme 'https'
-        path '/'
-        query do {
-        'Version' => '2016-11-15'
-        } end
-        request_content_type 'application/x-www-form-urlencoded; charset=utf-8'
-    end
+  endpoint do
+      default_host 'ec2.$region.amazonaws.com'
+      default_scheme 'https'
+      path '/'
+      query do {
+      'Version' => '2016-11-15'
+      } end
+      request_content_type 'application/x-www-form-urlencoded; charset=utf-8'
+  end
 
   type "vpc" do
     # HREF is set to the correct template in the provision definition due to a lack of usable fields in the response to build the href
@@ -460,9 +460,9 @@ plugin "aws_compute" do
   end
 
   type "addresses" do
-    href_templates "/?Action=DescribeAddresses&AllocationId.1={{//DescribeAddressesResponse/addressesSet/item/allocationId}}"
-    provision 'no_operation'
-    delete    'no_operation'
+    href_templates "/?Action=DescribeAddresses&AllocationId.1={{//DescribeAddressesResponse/addressesSet/item/allocationId}}","/?Action=DescribeAddresses&AllocationId.1={{//AllocateAddressResponse/allocationId}}"
+    provision 'provision_address'
+    delete    'delete_address'
 
     field "allocation_id_1" do
       alias_for "AllocationId.1"
@@ -1690,27 +1690,35 @@ define provision_resource_available_state(@declaration) return @resource do
   end
 end
 
-define provision_instance(@declaration) return @resource do
-  sub on_error: stop_debugging() do
-    $object = to_object(@declaration)
-    $fields = $object["fields"]
-    $type = $object["type"]
-    $name = $fields['name']
-    call start_debugging()
-    @resource = aws_compute.$type.create($fields)
-    call stop_debugging()
-    $resource = to_object(@resource)
-    call sys_log.detail(join([$type, ": ", to_s($resource)]))
-    @created_resource = aws_compute.$type.show(instance_id: @resource.id)
-    @resource = @created_resource
-    $state = @resource.instance_state
-    while $state != "running" do
-      sleep(10)
-      call sys_log.detail(join(["state: ", $state]))
+define provision_instance(@declaration) return @resources do
+  $object = to_object(@declaration)
+  call sys_log.detail(to_s($object))
+  $fields = $object["fields"]
+  $type = $object["type"]
+  $name = $fields['name']
+  $counter = 1
+  $copies = $object["copies"]
+  call sys_log.detail(join(["copies: ", $copies]))
+  @resources = aws_compute.$type.empty()
+  while $counter <= $copies do
+    sub on_error: stop_debugging() do
       call start_debugging()
-      $state = @resource.instance_state
+      @resource = aws_compute.$type.create($fields)
       call stop_debugging()
-      call sys_log.detail(join(["instance_state",@instance.instance_state]))
+      $resource = to_object(@resource)
+      call sys_log.detail(join([$type, ": ", to_s($resource)]))
+      @created_resource = aws_compute.$type.show(instance_id: @resource.id)
+      @resource = @created_resource
+      $state = @resource.instance_state
+      while $state != "running" do
+        sleep(10)
+        call sys_log.detail(join(["state: ", $state]))
+        call start_debugging()
+        $state = @resource.instance_state
+        call stop_debugging()
+      end
+      @resources = @resources + @resource
+      $counter = $counter + 1
     end
   end
 end
@@ -1751,21 +1759,25 @@ define provision_volume_modification(@declaration) return @resource do
   end
 end
 
-define delete_resource(@resource) do
-  sub on_error: stop_debugging() do
-    call start_debugging()
-    @resource.destroy()
-    sleep(30)
-    call stop_debugging()
+define delete_resource(@resources) do
+  foreach @resource in @resources do
+    sub on_error: stop_debugging() do
+      call start_debugging()
+      @resource.destroy()
+      sleep(30)
+      call stop_debugging()
+    end
   end
 end
 
-define delete_instance(@resource) do
-  sub on_error: stop_debugging() do
-    call start_debugging()
-    @resource.destroy(instance_id: @resource.id)
-    sleep(30)
-    call stop_debugging()
+define delete_instance(@resources) do
+  foreach @resource in @resources do
+    sub on_error: stop_debugging() do
+      call start_debugging()
+      @resource.destroy(instance_id: @resource.id)
+      sleep(30)
+      call stop_debugging()
+    end
   end
 end
 
@@ -1782,6 +1794,26 @@ define delete_nat_gateway(@nat_gateway) do
       $state = @nat_gateway.state
       call stop_debugging()
     end
+    call stop_debugging()
+  end
+end
+
+define provision_address(@declaration) return @resource do
+  sub on_error: stop_debugging() do
+    $object = to_object(@declaration)
+    $fields = $object["fields"]
+    call start_debugging()
+    @resource = aws_compute.addresses.create($fields)
+    call stop_debugging()
+    $provisioned_object = to_object(@resource)
+    call sys_log.detail(join(["eip: ", to_s($provisioned_object)]))
+  end
+end
+
+define delete_address(@address) do
+  sub on_error: stop_debugging() do
+    call start_debugging()
+    @address.destroy()
     call stop_debugging()
   end
 end

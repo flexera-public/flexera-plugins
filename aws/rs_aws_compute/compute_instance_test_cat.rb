@@ -8,7 +8,13 @@ parameter "param_region" do
   like $aws_compute.param_region
 end
 
-resource "instance", type: "aws_compute.instances" do
+parameter "param_instance_count" do
+  label "Instance Count"
+  type "number"
+  default 2
+end
+
+resource "instance", type: "aws_compute.instances", copies: $param_instance_count do
   image_id "ami-0b898040803850657"
   instance_type "t2.large"
   subnet_id "subnet-e7eb98ac"
@@ -22,6 +28,10 @@ resource "instance", type: "aws_compute.instances" do
   tag_specification_1_tag_1_value @@deployment.name
 end
 
+output_set "output_instance_ids" do
+  label "Instance Id"
+  default_value @instance.id
+end
 operation "launch" do
   definition "generated_launch"
 end
@@ -39,11 +49,7 @@ operation "terminate" do
 end
 
 define generated_launch($param_region, @instance) return @instance do
-  call aws_compute.start_debugging()
-  sub on_error: aws_compute.stop_debugging() do
-    provision(@instance)
-  end
-  call aws_compute.stop_debugging()
+  provision(@instance)
 end
 
 define defn_stop(@instance) return @instance do
