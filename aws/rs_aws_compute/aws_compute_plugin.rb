@@ -1781,20 +1781,22 @@ define delete_instance(@resources) do
   end
 end
 
-define delete_nat_gateway(@nat_gateway) do
-  sub on_error: stop_debugging() do
-    call start_debugging()
-    @nat_gateway.destroy()
-    sleep(30)
-    $state = @nat_gateway.state
-    while $state != "deleted" do
-      sleep(10)
-      call sys_log.detail(join(["state: ", $state]))
+define delete_nat_gateway(@nat_gateways) do
+  foreach @nat_gateway in @nat_gateways do
+    sub on_error: stop_debugging() do
       call start_debugging()
+      @nat_gateway.destroy()
+      sleep(30)
       $state = @nat_gateway.state
+      while $state != "deleted" do
+        sleep(10)
+        call sys_log.detail(join(["state: ", $state]))
+        call start_debugging()
+        $state = @nat_gateway.state
+        call stop_debugging()
+      end
       call stop_debugging()
     end
-    call stop_debugging()
   end
 end
 
@@ -1810,11 +1812,13 @@ define provision_address(@declaration) return @resource do
   end
 end
 
-define delete_address(@address) do
-  sub on_error: stop_debugging() do
-    call start_debugging()
-    @address.destroy()
-    call stop_debugging()
+define delete_address(@addresses) do
+  foreach @address in @addresses do
+    sub on_error: stop_debugging() do
+      call start_debugging()
+      @address.destroy()
+      call stop_debugging()
+    end
   end
 end
 
