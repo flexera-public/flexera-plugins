@@ -461,7 +461,7 @@ plugin "aws_compute" do
 
   type "addresses" do
     href_templates "/?Action=DescribeAddresses&AllocationId.1={{//DescribeAddressesResponse/addressesSet/item/allocationId}}","/?Action=DescribeAddresses&AllocationId.1={{//AllocateAddressResponse/allocationId}}"
-    provision 'provision_address'
+    provision 'provision_resources_no_check'
     delete    'delete_resource'
 
     field "allocation_id_1" do
@@ -541,7 +541,7 @@ plugin "aws_compute" do
 
   type "tags" do
     href_templates "/?Action=DescribeTags&Filter.1.Name=key&Filter.1.Value={{//DescribeTagsResponse/tagSet/item/key}}&Filter.2.Name=value&Filter.2.Value={{//DescribeTagsResponse/tagSet/item/value}}&Filter.3.Name=resource-id&Filter.3.Value.1={{//DescribeTagsResponse/tagSet/item/resourceId}}","/?Action=DescribeTags&Filter.1.Name=key&Filter.1.Value=$tag_1_key&Filter.2.Name=value&Filter.2.Value=$tag_1_value&Filter.3.Name=resource-id&Filter.3.Value.1=$resource_id_1"
-    provision 'provision_tags'
+    provision 'provision_resources_no_check'
     delete    'delete_resource'
 
     field "resource_id_1" do
@@ -1668,29 +1668,24 @@ resource_pool "compute_pool" do
   end
 end
 
-define provision_tags(@declaration) return @resource do
-  sub on_error: stop_debugging() do
-    $object = to_object(@declaration)
-    $fields = $object["fields"]
-    $name = $fields['name']
-    call start_debugging()
-    @resource = aws_compute.tags.create($fields)
-    call stop_debugging()
-    $vpc = to_object(@resource)
-    call sys_log.detail(join(["tags:", to_s($vpc)]))
-  end
-end
-
-define provision_sg(@declaration) return @resource do
-  sub on_error: stop_debugging() do
-    $object = to_object(@declaration)
-    $fields = $object["fields"]
-    $name = $fields['name']
-    call start_debugging()
-    @resource = aws_compute.security_groups.create($fields)
-    call stop_debugging()
-    $provisioned_object = to_object(@resource)
-    call sys_log.detail(join(["sg:", to_s($provisioned_object)]))
+define provision_resources_no_check(@declaration) return @resources do
+  $object = to_object(@declaration)
+  $fields = $object["fields"]
+  $name = $fields['name']
+  $type = $object["type"]
+  $counter = 1
+  $copies = $object["copies"]
+  @resources = aws_compute.$type.empty()
+  while $counter <= $copies do
+    sub on_error: stop_debugging() do
+      call start_debugging()
+      @resource = aws_compute.$type.create($fields)
+      call stop_debugging()
+      $object = to_object(@resource)
+      call sys_log.detail(join([$type, ":", to_s($object)]))
+      @resources = @resources + @resource
+      $counter = $counter + 1
+    end
   end
 end
 
@@ -1701,7 +1696,6 @@ define provision_resource_available_state(@declaration) return @resources do
   $name = $fields['name']
   $counter = 1
   $copies = $object["copies"]
-  call sys_log.detail(join(["copies: ", $copies]))
   @resources = aws_compute.$type.empty()
   while $counter <= $copies do
     sub on_error: stop_debugging() do
@@ -1777,18 +1771,6 @@ define provision_volume_modification(@declaration) return @resource do
       $state = @resource.modificationState
       call stop_debugging()
     end
-  end
-end
-
-define provision_address(@declaration) return @resource do
-  sub on_error: stop_debugging() do
-    $object = to_object(@declaration)
-    $fields = $object["fields"]
-    call start_debugging()
-    @resource = aws_compute.addresses.create($fields)
-    call stop_debugging()
-    $provisioned_object = to_object(@resource)
-    call sys_log.detail(join(["eip: ", to_s($provisioned_object)]))
   end
 end
 
