@@ -1,9 +1,8 @@
 name "Plugin: Azure Template"
-# Version: 1.3
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Azure - ARM Template"
-long_description "Version: 1.2"
+long_description "Version: 1.3"
 package "plugins/azure_template"
 import "sys_log"
 
@@ -302,33 +301,44 @@ end
 
 define provision_resource(@declaration) return @resource do
   sub on_error: stop_debugging() do
-    call start_debugging()
     $object = to_object(@declaration)
     $fields = $object["fields"]
     $type = $object["type"]
     call sys_log.set_task_target(@@deployment)
     call sys_log.summary(join(["Provision ", $type]))
     call sys_log.detail($object)
+    call start_debugging()
     @operation = azure_template.$type.create($fields)
+    call stop_debugging()
     call sys_log.detail(to_object(@operation))
-    sleep(5)
+    sleep(10)
+    call start_debugging()
     @resource = @operation.get()
-    sleep(5)
+    sleep(10)
     $status = @resource.provisioningState
+    call stop_debugging()
     sub on_error: skip, timeout: 60m do
       while $status == "Running" || $status == "Accepted" do
+        call start_debugging()
         $status = @resource.provisioningState
+        call stop_debugging()
         call sys_log.detail(join(["Status: ", $status]))
         sleep(10)
       end
     end
-    
-    $status = @resource.provisioningState
+
+    $status_counter = 0
+    sub on_error: handle_retries($status_counter) do
+      call start_debugging()
+      $status = @resource.provisioningState
+      call stop_debugging()
+    end
+
     if $status != "Succeeded"
       raise "Azure Deployment was not successfully provisioned.  See audit entry and/or Azure Activity Log for more information"
     end
+
     call sys_log.detail(to_object(@resource))
-    call stop_debugging()
   end
 end
 
@@ -350,5 +360,18 @@ define stop_debugging() do
     $debug_report = complete_debug_report()
     call sys_log.detail($debug_report)
     $$debugging = false
+  end
+end
+
+define handle_retries($attempts) do
+  if $attempts <= 3
+    sleep(10*to_n($attempts))
+    call sys_log.set_task_target(@@deployment)
+    call sys_log.summary("error:")
+    call sys_log.detail("error:"+$_error["type"] + ": " + $_error["message"])
+    log_error($_error["type"] + ": " + $_error["message"])
+    $_error_behavior = "retry"
+  else
+    raise $_errors
   end
 end
