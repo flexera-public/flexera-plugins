@@ -5,10 +5,19 @@ short_description "Azure SQL Plugin"
 long_description "Version: 1.1"
 package "plugins/rs_azure_sql"
 import "sys_log"
+info(
+  provider: "Azure",
+  service: "SQL"
+  )
 
 parameter "subscription_id" do
   type  "string"
   label "Subscription ID"
+end
+
+parameter "tenant_id" do
+  type "string"
+  label "Tenant ID"
 end
 
 permission "read_creds" do
@@ -17,6 +26,21 @@ permission "read_creds" do
 end
 
 plugin "rs_azure_sql" do
+
+  short_description 'Azure SQL'
+  long_description 'Azure SQL'
+  version '1.1.0'
+
+  documentation_link 'source' do
+    label 'Source'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/azure/rs_azure_sql/azure_sql_plugin.rb'
+  end
+
+  documentation_link 'readme' do
+    label 'Readme'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/azure/rs_azure_sql/README.md'
+  end
+
   endpoint do
     default_host "https://management.azure.com/"
     default_scheme "https"
@@ -25,6 +49,11 @@ plugin "rs_azure_sql" do
   parameter "subscription_id" do
     type  "string"
     label "subscription_id"
+  end
+
+  parameter "tenant_id" do
+    type "string"
+    label "Tenant ID"
   end
 
   type "sql_server" do
@@ -45,7 +74,7 @@ plugin "rs_azure_sql" do
     field "resource_group" do
       type "string"
       location "path"
-    end 
+    end
 
     field "name" do
       type "string"
@@ -149,7 +178,7 @@ plugin "rs_azure_sql" do
     field "resource_group" do
       type "string"
       location "path"
-    end 
+    end
 
     field "name" do
       type "string"
@@ -178,7 +207,7 @@ plugin "rs_azure_sql" do
       path "$href"
       verb "DELETE"
     end
-    
+
     action "pause" do
       type "databases"
       path "$href/pause"
@@ -204,7 +233,7 @@ plugin "rs_azure_sql" do
 
       field "resource_group" do
         location "path"
-      end 
+      end
 
       field "name" do
         location "path"
@@ -327,7 +356,7 @@ plugin "rs_azure_sql" do
       path "$href"
       verb "DELETE"
     end
-    
+
     action "list_activity" do
       path "$href/operationResults"
       verb "GET"
@@ -339,7 +368,7 @@ plugin "rs_azure_sql" do
     output "status" do
       body_path "properties.status"
     end
-    
+
     output "percentComplete" do
       body_path "properties.percentComplete"
     end
@@ -363,7 +392,7 @@ plugin "rs_azure_sql" do
     field "resource_group" do
       type "string"
       location "path"
-    end 
+    end
 
     field "name" do
       type "string"
@@ -394,7 +423,7 @@ plugin "rs_azure_sql" do
       path "$href"
       verb "DELETE"
     end
-    
+
     action "list" do
       path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/firewallRules?api-version=2014-04-01"
       verb "GET"
@@ -406,7 +435,7 @@ plugin "rs_azure_sql" do
     output "startIpAddress" do
       body_path "properties.startIpAddress"
     end
-    
+
     output "endIpAddres" do
       body_path "properties.endIpAddress"
     end
@@ -430,7 +459,7 @@ plugin "rs_azure_sql" do
     field "resource_group" do
       type "string"
       location "path"
-    end 
+    end
 
     field "name" do
       type "string"
@@ -460,7 +489,7 @@ plugin "rs_azure_sql" do
     action "get_database" do
       path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/elasticPools/$name/databases/$database_name?api-version=2014-04-01"
       verb "GET"
-      
+
       field "database_name" do
         location "path"
       end
@@ -478,7 +507,7 @@ plugin "rs_azure_sql" do
 
       field "resource_group" do
         location "path"
-      end 
+      end
 
       field "name" do
         location "path"
@@ -538,7 +567,7 @@ plugin "rs_azure_sql" do
     field "resource_group" do
       type "string"
       location "path"
-    end 
+    end
 
     field "name" do
       type "string"
@@ -586,7 +615,7 @@ plugin "rs_azure_sql" do
     field "resource_group" do
       type "string"
       location "path"
-    end 
+    end
 
     field "name" do
       type "string"
@@ -671,7 +700,7 @@ plugin "rs_azure_sql" do
     field "resource_group" do
       type "string"
       location "path"
-    end 
+    end
 
     field "name" do
       type "string"
@@ -739,15 +768,16 @@ resource_pool "rs_azure_sql" do
     plugin $rs_azure_sql
     parameter_values do
       subscription_id $subscription_id
+      tenant_id $tenant_id
     end
 
     auth "azure_auth", type: "oauth2" do
-      token_url "https://login.microsoftonline.com/AZURE_TENANT_ID/oauth2/token"
+      token_url join(["https://login.microsoftonline.com/", $tenant_id, "/oauth2/token"])
       grant type: "client_credentials" do
         client_id cred("AZURE_APPLICATION_ID")
         client_secret cred("AZURE_APPLICATION_KEY")
         additional_params do {
-          "resource" => "https://management.azure.com/"     
+          "resource" => "https://management.azure.com/"
         } end
       end
     end
@@ -783,7 +813,7 @@ define provision_resource(@declaration) return @resource do
         call sys_log.detail(join(["Status: ", $status]))
         sleep(10)
       end
-    end 
+    end
     call sys_log.detail(to_object(@resource))
     call stop_debugging()
   end
@@ -918,7 +948,7 @@ define provision_failover_group(@declaration) return @resource do
     call sys_log.detail(to_object(@operation))
     call start_debugging()
     @resource = @operation.get()
-    call stop_debugging() 
+    call stop_debugging()
     call sys_log.detail(to_object(@resource))
   end
 end
@@ -948,8 +978,8 @@ define provision_security_policy(@declaration) return @resource do
         call sys_log.detail(join(["Status: ", $status]))
         sleep(10)
       end
-    end 
-    call stop_debugging() 
+    end
+    call stop_debugging()
     call sys_log.detail(to_object(@resource))
   end
 end
@@ -979,8 +1009,8 @@ define provision_auditing_policy(@declaration) return @resource do
         call sys_log.detail(join(["Status: ", $status]))
         sleep(10)
       end
-    end 
-    call stop_debugging() 
+    end
+    call stop_debugging()
     call sys_log.detail(to_object(@resource))
   end
 end
