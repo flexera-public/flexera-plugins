@@ -5,6 +5,10 @@ short_description "Azure SQL Plugin"
 long_description "Version: 1.1"
 package "plugins/rs_azure_sql"
 import "sys_log"
+info(
+  provider: "Azure",
+  service: "SQL"
+  )
 
 parameter "subscription_id" do
   type  "string"
@@ -22,6 +26,21 @@ permission "read_creds" do
 end
 
 plugin "rs_azure_sql" do
+
+  short_description 'Azure SQL'
+  long_description 'Azure SQL'
+  version '1.1.0'
+
+  documentation_link 'source' do
+    label 'Source'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/azure/rs_azure_sql/azure_sql_plugin.rb'
+  end
+
+  documentation_link 'readme' do
+    label 'Readme'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/azure/rs_azure_sql/README.md'
+  end
+
   endpoint do
     default_host "https://management.azure.com/"
     default_scheme "https"
