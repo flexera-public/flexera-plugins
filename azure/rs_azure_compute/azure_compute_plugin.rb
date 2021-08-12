@@ -695,6 +695,7 @@ define provision_resource(@declaration) return @resource do
   $name = $fields["name"]
   $resource_group = $fields["resource_group"]
   call sys_log.set_task_target(@@deployment)
+  task_label(join(["Provision ", $type]))
   call sys_log.summary(join(["Provision ", $type]))
   call sys_log.detail($object)
   @operation = azure_compute.$type.empty()
