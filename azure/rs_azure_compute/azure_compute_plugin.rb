@@ -607,6 +607,14 @@ plugin "azure_compute" do
       body_path "properties.provisioningState"
     end
 
+    output 'disk_state' do
+      body_path "properties.diskState"
+    end
+
+    output 'status' do
+      body_path "properties.diskState"
+    end
+
     polling do
       field_values do
       end
@@ -799,7 +807,9 @@ end
 
 define delete_resource(@declaration) do
   call start_debugging()
-  sub on_error: skip do
+  $delete_resource_retry = 0
+  sub on_error: handle_retries($delete_resource_retry) do
+    call start_debugging()
     @declaration.destroy()
   end
   call stop_debugging()
@@ -814,6 +824,18 @@ define no_operation(@declaration) do
   $object = to_object(@declaration)
   call sys_log.detail("declaration:" + to_s($object))
 end
+
+define handle_retries($attempts) do
+  if $attempts < 3
+    $_error_behavior = "retry"
+    call stop_debugging()
+    sleep(60)
+  else
+    call stop_debugging()
+    $_error_behavior = "skip"
+  end
+end
+
 
 define start_debugging() do
   if $$debugging == false || logic_and($$debugging != false, $$debugging != true)
