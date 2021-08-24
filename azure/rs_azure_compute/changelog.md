@@ -1,5 +1,10 @@
 # Compute Plugin changelog
 
+## v2.0.1(08-23-2021)
+
+- Updating api versions
+- Adding additional api methods
+
 ## v2.0 (05-14-2021)
 
 - Updating for additional fields
