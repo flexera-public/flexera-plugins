@@ -2,17 +2,23 @@ name 'Azure Compute Test CAT'
 rs_ca_ver 20161221
 short_description "Azure Compute - Test CAT"
 import "sys_log"
-import "plugins/rs_azure_compute"
+import "azure/cloud_parameters"
+import "plugins/azure_compute"
+import "plugins/rs_azure_networking"
+
+parameter "tenant_id" do
+  like $cloud_parameters.tenant_id
+end
 
 parameter "subscription_id" do
-  like $rs_azure_compute.subscription_id
+  like $cloud_parameters.subscription_id
 end
 
 parameter "vmSize" do
   label "VirtualMachine Sizes"
   type "string"
-  allowed_values "Standard_F1","Standard_F2","Standard_F4","Standard_F8","Standard_F16"
-  default "Standard_F1"
+  allowed_values "Standard_DS1_v2"
+  default "Standard_DS1_v2"
 end
 
 permission "read_creds" do
@@ -28,51 +34,69 @@ output "vm_sizes" do
   label "Available VM Sizes"
 end
 
-resource "my_availability_group", type: "rs_azure_compute.availability_set" do
-  name @@deployment.name
+resource "azure_nic", type: "rs_azure_networking.interface" do
+  name join(['linux-', last(split(@@deployment.href,"/"))])
+  location "Central US"
   resource_group "rs-default-centralus"
-  location "Central US"
-  sku do {
-    "name" => "Aligned"
-  } end
   properties do {
-      "platformUpdateDomainCount" => 5,
-      "platformFaultDomainCount" => 3
+    "ipConfigurations": [{
+      "name": "ipconfig1",
+      "properties": {
+        "privateIPAllocationMethod": "Dynamic",
+        "privateIPAddressVersion": "IPv4",
+        "primary": true,
+        "subnet": {
+          "id": join(["subscriptions/", $subscription_id, "/resourceGroups/rs-default-centralus/providers/Microsoft.Network/virtualNetworks/ARM-CentralUS/subnets/default"])
+        }
+      }
+    }]
   } end
 end
 
-resource "deployment_availability_group", type: "rs_azure_compute.availability_set" do
-  name @@deployment.name
-  resource_group @@deployment.name
+resource "server1", type: "azure_compute.virtualmachine" do
+  name join(['win-', last(split(@@deployment.href,"/"))])
   location "Central US"
-  sku do {
-    "name" => "Aligned"
-  } end
+  resource_group "rs-default-centralus"
   properties do {
-      "platformUpdateDomainCount" => 5,
-      "platformFaultDomainCount" => 3
+    "hardwareProfile": {
+      "vmSize": $vmSize
+    },
+    "osProfile": {
+      "adminUsername": "rs-admin",
+      "adminPassword": "Flexera1234!",
+      "secrets": [],
+      "computerName": "myVM",
+      "linuxConfiguration": {
+        "disablePasswordAuthentication": false
+      }
+    },
+    "storageProfile": {
+      "imageReference": {
+        "sku": "16.04-LTS",
+        "publisher": "Canonical",
+        "version": "latest",
+        "offer": "UbuntuServer"
+      },
+      "osDisk": {
+        "caching": "ReadWrite",
+        "managedDisk": {
+          "storageAccountType": "Premium_LRS"
+        },
+        "name": join(["myVMosdisk", last(split(@@deployment.href,"/"))]),
+        "createOption": "FromImage"
+      }
+    },
+    "networkProfile": {
+      "networkInterfaces": [{
+        "id": @azure_nic.id
+      }]
+    }
   } end
 end
 
-resource "server1", type: "server" do
-  name join(["server1-", last(split(@@deployment.href, "/"))])
-  cloud "AzureRM Central US"
-  server_template "RightLink 10.6.0 Linux Base"
-  multi_cloud_image_href "/api/multi_cloud_images/423486003"
-  network "ARM-CentralUS"
-  subnets "default"
-  instance_type $vmSize
-  security_groups "Default"
-  associate_public_ip_address true
-  cloud_specific_attributes do {
-    "availability_set" => @my_availability_group.name
-  }
-  end
-end
-
-resource "my_vm_extension", type: "rs_azure_compute.extensions" do
+resource "my_vm_extension", type: "azure_compute.extensions" do
   name join(["easy-", last(split(@@deployment.href, "/"))])
-  resource_group @@deployment.name
+  resource_group "rs-default-centralus"
   location "Central US"
   virtualMachineName @server1.name
   properties do {
@@ -81,8 +105,8 @@ resource "my_vm_extension", type: "rs_azure_compute.extensions" do
     "typeHandlerVersion" => "1.5",
     "autoUpgradeMinorVersion" => true,
     "settings" => {
-       "fileUris" => [ "https://s3.amazonaws.com/rightscale-services/scripts/easy.sh" ],
-       "commandToExecute" => "sh easy.sh"
+       "fileUris" => [ "https://s3.amazonaws.com/rightscale-services/scripts/nginx.sh" ],
+       "commandToExecute" => "sh nginx.sh"
     }
   } end
 end
@@ -101,30 +125,11 @@ operation "change_size" do
   definition "supersize_me"
 end
 
-define launch_handler(@my_availability_group,@server1,@my_vm_extension,@deployment_availability_group) return @my_availability_group,@my_availability_group,@server1,@my_vm_extension,@deployment_availability_group,$vms,$vmss do
+define launch_handler($tenant_id, $subscription_id, @azure_nic, @server1, @my_vm_extension) return @server1,@my_vm_extension,$vms,$vmss do
   call start_debugging()
-  provision(@my_availability_group)
+  provision(@azure_nic)
   provision(@server1)
   provision(@my_vm_extension)
-  $object = to_object(@deployment_availability_group)
-  $fields = $object["fields"]
-  $name = $fields["name"]
-  $resource_group = $fields["resource_group"]
-  @deployment_ag = rs_azure_compute.availability_set.show(resource_group: $resource_group, name: $name)
-  $vms = to_s(@my_availability_group.virtualmachines)
-  $vms = $vms + to_s(@deployment_ag.virtualmachines)
-  call sys_log.detail("vms:" + to_s($vms))
-  @vm=rs_azure_compute.virtualmachine.show(resource_group: $resource_group, virtualMachineName: @server1.name)
-  $vmss = @vm.vmSizes()
-  call sys_log.detail("sizes:" + to_s($vmss))
-  $vmss=to_s($vmss)
-  $vm_object=to_object(@vm)
-  $vm_fields=$vm_object["details"][0]
-  $vm_fields["properties"]["diagnosticsProfile"]={}
-  $vm_fields["properties"]["diagnosticsProfile"]["bootDiagnostics"]={}
-  $vm_fields["properties"]["diagnosticsProfile"]["bootDiagnostics"]["enabled"] = true
-  $vm_fields["properties"]["diagnosticsProfile"]["bootDiagnostics"]["storageUri"] = "https://rsimagesncus.blob.core.windows.net"
-  @vm.update($vm_fields)
   call stop_debugging()
 end
 

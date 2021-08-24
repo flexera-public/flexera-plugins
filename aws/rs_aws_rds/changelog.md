@@ -1,4 +1,4 @@
-# Changelog
+# RDS Plugin changelog
 
 ## v2.0
 
