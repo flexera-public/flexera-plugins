@@ -2018,7 +2018,10 @@ define provision_resources_no_check(@declaration) return @resources do
   $name = $fields['name']
   $type = $object["type"]
   $counter = 1
-  $copies = $object["copies"]
+  $copies = 1
+  if contains?(keys($object),["copies"])
+    $copies = $object["copies"]
+  end
   @resources = aws_compute.$type.empty()
   while $counter <= $copies do
     sub on_error: stop_debugging() do
@@ -2050,7 +2053,6 @@ define provision_resource_completed_state(@declaration) return @resources do
   if contains?(keys($object),["copies"])
     $copies = $object["copies"]
   end
-  call sys_log.detail(join(["Copies: ", $copies, '-', $object["copies"], '\\n']))
   @resources = aws_compute.$type.empty()
   while $counter <= $copies do
     sub on_error: stop_debugging() do
