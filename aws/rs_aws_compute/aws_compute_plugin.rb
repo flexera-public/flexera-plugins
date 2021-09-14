@@ -1732,7 +1732,7 @@ plugin "aws_compute" do
 
   type "security_groups" do
     href_templates "/?Action=DescribeSecurityGroups&GroupId.1={{//DescribeSecurityGroupsResponse/securityGroupInfo/item/groupId}}","/?Action=DescribeSecurityGroups&GroupId.1={{//CreateImageResponse/groupId}}","/?Action=DescribeSecurityGroups&GroupId.1={{//CreateSecurityGroupResponse/groupId}}"
-    provision 'provision_resource_available_state'
+    provision 'provision_resources_no_check'
     delete    'delete_resource'
 
     field "vpc_id" do
