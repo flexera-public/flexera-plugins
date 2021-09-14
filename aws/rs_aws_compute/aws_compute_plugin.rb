@@ -30,7 +30,7 @@ plugin "aws_compute" do
 
   short_description 'AWS-EC2 plugin'
   long_description 'Supports AWS EC2'
-  version '2.1.0'
+  version '2.1.1'
 
   documentation_link 'source' do
     label 'Source'
@@ -476,9 +476,21 @@ plugin "aws_compute" do
       location "query"
     end
 
+    field "domain" do
+      alias_for "Domain"
+      type "string"
+      location "query"
+    end
+
+    action "create" do
+      verb "POST"
+      path "/?Action=AllocateAddress"
+      output_path "//AllocateAddressResponse"
+    end
+
     action "get" do
       verb "POST"
-      path "/?Action=DescribeAddresses"
+      path "$href"
       output_path "//DescribeAddressesResponse/addressesSet/item"
     end
 
@@ -496,13 +508,59 @@ plugin "aws_compute" do
         location "query"
       end
     end
+
     action "list" do
       verb "POST"
       path "/?Action=DescribeAddresses"
       output_path "//DescribeAddressesResponse/addressesSet/item"
     end
 
-    output 'instance_id'
+  action "associate" do
+      verb "POST"
+      path "/?Action=AssociateAddress"
+      output_path "//AssociateAddressResponse"
+
+      field "instance_id" do
+        alias_for "InstanceId"
+        type "string"
+        location "query"
+      end
+
+      field "allocation_id" do
+        alias_for "AllocationId"
+        type "string"
+        location "query"
+      end
+    end
+
+    action "disassociate" do
+      verb "POST"
+      path "/?Action=DisassociateAddress"
+
+      field "association_id" do
+        alias_for "AssociationId"
+        type "string"
+        location "query"
+      end
+
+    end
+
+    action "destroy" do
+      verb "POST"
+      path "$href?Action=ReleaseAddress"
+    end
+
+    output 'instance_id' do
+      body_path 'instanceId'
+    end
+
+    output 'allocation_id' do
+      body_path 'allocationId'
+    end
+
+    output "public_ip" do
+      body_path "publicIp"
+    end
 
     output 'name' do
      body_path 'publicIp'
@@ -525,6 +583,10 @@ plugin "aws_compute" do
 
     output "domain" do
       type "simple_element"
+    end
+
+    output "association_id" do
+      body_path "associationId"
     end
 
     output "allocationId" do
@@ -606,6 +668,12 @@ plugin "aws_compute" do
     provision 'provision_resource_available_state'
     delete    'delete_resource'
 
+    field "instance_id" do
+      alias_for "Filter.1.attachment.instance-id"
+      type "string"
+      location "query"
+    end
+
     field "availability_zone" do
       alias_for "AvailabilityZone"
       type "string"
@@ -675,11 +743,25 @@ plugin "aws_compute" do
       verb "POST"
       path "/?Action=DescribeVolumes"
       output_path "//DescribeVolumesResponse/volumeSet/item"
+
       field "page_size" do
         type 'string'
         location 'query'
         alias_for 'MaxResults'
       end
+
+      field "filter_1_name" do
+        alias_for "Filter.1.Name"
+        type "string"
+        location "query"
+      end
+
+      field "filter_1_value" do
+        alias_for "Filter.1.Value"
+        type "string"
+        location "query"
+      end
+
      pagination $aws_pagination
     end
 
@@ -821,7 +903,7 @@ plugin "aws_compute" do
   end
 
   type "instances" do
-    href_templates "/?Action=DescribeInstances&InstanceId.1={{//DescribeInstancesResponse/reservationSet/item/instancesSet/item/instanceId}}","/?Action=DescribeInstances&InstanceId.1={{//RunInstancesResponse/instancesSet/item/instanceId}}"
+    href_templates "/?Action=DescribeInstances&InstanceId.1={{//DescribeInstancesResponse/reservationSet/item/instancesSet/item/instanceId}}","/?Action=DescribeInstances&InstanceId.1={{//RunInstancesResponse/instancesSet/item/instanceId}}","/?Action=DescribeInstances&InstanceId.1={{//TerminateInstancesResponse/instancesSet/item/instanceId}}"
     provision 'provision_instance'
     delete    'delete_instance'
 
@@ -1420,9 +1502,39 @@ plugin "aws_compute" do
   end
 
   type "snapshots" do
-    href_templates "/?Action=DescribeSnapshots&SnapshotId.1={{//DescribeSnapshotsResponse/snapshotSet/item/snapshotId}}"
-    provision 'provision_resource_available_state'
+    href_templates "/?Action=DescribeSnapshots&SnapshotId.1={{//DescribeSnapshotsResponse/snapshotSet/item/snapshotId}}","/?Action=DescribeSnapshots&SnapshotId.1={{//CreateSnapshotResponse/snapshotId}}"
+    provision 'provision_resource_completed_state'
     delete    'delete_resource'
+
+    field "volume_id" do
+      alias_for "VolumeId"
+      type "string"
+      location "query"
+    end
+
+    field "snapshot_description" do
+      alias_for "Description"
+      type "string"
+      location "query"
+    end
+
+    field "snapshot_resource_type" do
+      alias_for "TagSpecification.1.ResourceType"
+      type "string"
+      location "query"
+    end
+
+    field "snapshot_name_key" do
+      alias_for "TagSpecification.1.Tag.1.Key"
+      type "string"
+      location "query"
+    end
+
+    field "snapshot_name_value" do
+      alias_for "TagSpecification.1.Tag.1.Value"
+      type "string"
+      location "query"
+    end
 
     action "get" do
       verb "POST"
@@ -1445,12 +1557,19 @@ plugin "aws_compute" do
       verb "POST"
       path "/?Action=DescribeSnapshots"
       output_path "//DescribeSnapshotsResponse/snapshotSet/item"
-     field "page_size" do
+
+      field "page_size" do
         type 'string'
         location 'query'
         alias_for 'MaxResults'
       end
       pagination $aws_pagination
+    end
+
+    action "create" do
+      verb "POST"
+      path "/?Action=CreateSnapshot"
+      output_path "//CreateSnapshotResponse"
     end
 
     output "volumeId","startTime"
@@ -1612,9 +1731,33 @@ plugin "aws_compute" do
   end
 
   type "security_groups" do
-    href_templates "/?Action=DescribeSecurityGroups&groupId.1={{//DescribeSecurityGroupsResponse/securityGroupInfo/item/groupId}}","/?Action=DescribeSecurityGroups&groupId.1={{//CreateImageResponse/groupId}}"
-    provision 'provision_resource_available_state'
+    href_templates "/?Action=DescribeSecurityGroups&GroupId.1={{//DescribeSecurityGroupsResponse/securityGroupInfo/item/groupId}}","/?Action=DescribeSecurityGroups&GroupId.1={{//CreateImageResponse/groupId}}","/?Action=DescribeSecurityGroups&GroupId.1={{//CreateSecurityGroupResponse/groupId}}"
+    provision 'provision_resources_no_check'
     delete    'delete_resource'
+
+    field "vpc_id" do
+      alias_for "VpcId"
+      type "string"
+      location "query"
+    end
+
+    field "group_name" do
+      alias_for "GroupName"
+      type "string"
+      location "query"
+    end
+
+    field "group_description" do
+      alias_for "GroupDescription"
+      type "string"
+      location "query"
+    end
+
+    action "create" do
+      verb "POST"
+      path "/?Action=CreateSecurityGroup"
+      output_path "//CreateSecurityGroupResponse"
+    end
 
     action "list" do
       verb "POST"
@@ -1626,6 +1769,53 @@ plugin "aws_compute" do
         alias_for 'MaxResults'
       end
       pagination $aws_pagination
+    end
+    action "destroy" do
+      verb "POST"
+      path "$href?Action=DeleteSecurityGroup"
+    end
+
+    action "authorize_ingress" do
+      verb "POST"
+      path "/?Action=AuthorizeSecurityGroupIngress"
+      output_path "//AuthorizeSecurityGroupIngressResponse"
+
+      field "cidr_ip" do
+        alias_for "CidrIp"
+        type "string"
+        location "query"
+      end
+
+      field "group_id" do
+        alias_for "GroupId"
+        type "string"
+        location "query"
+      end
+
+      field "protocol" do
+        alias_for "IpProtocol"
+        type "string"
+        location "query"
+      end
+
+      field "from_port" do
+        alias_for "FromPort"
+        type "number"
+        location "query"
+      end
+
+      field "to_port" do
+        alias_for "ToPort"
+        type "number"
+        location "query"
+      end
+
+    end
+
+    action "get" do
+      verb "POST"
+      path "$href"
+      output_path "//DescribeSecurityGroupsResponse/securityGroupInfo/item"
     end
 
     output 'id' do
@@ -1668,34 +1858,16 @@ resource_pool "compute_pool" do
   end
 end
 
-define provision_resources_no_check(@declaration) return @resources do
-  $object = to_object(@declaration)
-  $fields = $object["fields"]
-  $name = $fields['name']
-  $type = $object["type"]
-  $counter = 1
-  $copies = $object["copies"]
-  @resources = aws_compute.$type.empty()
-  while $counter <= $copies do
-    sub on_error: stop_debugging() do
-      call start_debugging()
-      @resource = aws_compute.$type.create($fields)
-      call stop_debugging()
-      $object = to_object(@resource)
-      call sys_log.detail(join([$type, ":", to_s($object)]))
-      @resources = @resources + @resource
-      $counter = $counter + 1
-    end
-  end
-end
-
 define provision_resource_available_state(@declaration) return @resources do
   $object = to_object(@declaration)
   $fields = $object["fields"]
   $type = $object["type"]
   $name = $fields['name']
   $counter = 1
-  $copies = $object["copies"]
+  $copies = 1
+  if contains?(keys($object),["copies"])
+    $copies = $object["copies"]
+  end
   @resources = aws_compute.$type.empty()
   while $counter <= $copies do
     sub on_error: stop_debugging() do
@@ -1712,6 +1884,7 @@ define provision_resource_available_state(@declaration) return @resources do
         $state = @resource.state
         call stop_debugging()
       end
+      call sys_log.detail(join(["Resource: ", $type, "State: ", $state, " - Finished"]))
       @resources = @resources + @resource
       $counter = $counter + 1
     end
@@ -1725,7 +1898,10 @@ define provision_instance(@declaration) return @resources do
   $type = $object["type"]
   $name = $fields['name']
   $counter = 1
-  $copies = $object["copies"]
+  $copies = 1
+  if contains?(keys($object),["copies"])
+    $copies = $object["copies"]
+  end
   call sys_log.detail(join(["copies: ", $copies]))
   @resources = aws_compute.$type.empty()
   while $counter <= $copies do
@@ -1735,9 +1911,11 @@ define provision_instance(@declaration) return @resources do
       call stop_debugging()
       $resource = to_object(@resource)
       call sys_log.detail(join([$type, ": ", to_s($resource)]))
+      call start_debugging()
       @created_resource = aws_compute.$type.show(instance_id: @resource.id)
       @resource = @created_resource
       $state = @resource.instance_state
+      call stop_debugging()
       while $state != "running" do
         sleep(10)
         call sys_log.detail(join(["state: ", $state]))
@@ -1831,5 +2009,68 @@ define stop_debugging() do
     $debug_report = complete_debug_report()
     call sys_log.detail($debug_report)
     $$debugging = false
+  end
+end
+
+define provision_resources_no_check(@declaration) return @resources do
+  $object = to_object(@declaration)
+  $fields = $object["fields"]
+  $name = $fields['name']
+  $type = $object["type"]
+  $counter = 1
+  $copies = 1
+  if contains?(keys($object),["copies"])
+    $copies = $object["copies"]
+  end
+  @resources = aws_compute.$type.empty()
+  while $counter <= $copies do
+    sub on_error: stop_debugging() do
+      call start_debugging()
+      @resource = aws_compute.$type.create($fields)
+      call stop_debugging()
+      $object = to_object(@resource)
+      call sys_log.detail(join([$type, ":", to_s($object)]))
+      @resources = @resources + @resource
+      $counter = $counter + 1
+    end
+  end
+end
+
+define create_declaration($type, $fields, $copies) return @declaration do
+  $declaration = {"namespace": "aws_compute", "type": $type, "fields": $fields, "copies": $copies}
+  call sys_log.detail($declaration)
+  @declaration = $declaration
+end
+
+define provision_resource_completed_state(@declaration) return @resources do
+  $object = to_object(@declaration)
+  $fields = $object["fields"]
+  $type = $object["type"]
+  $name = $fields['name']
+  $counter = 1
+  call sys_log.detail(to_s($object))
+  $copies = 1
+  if contains?(keys($object),["copies"])
+    $copies = $object["copies"]
+  end
+  @resources = aws_compute.$type.empty()
+  while $counter <= $copies do
+    sub on_error: stop_debugging() do
+      call start_debugging()
+      @resource = aws_compute.$type.create($fields)
+      call stop_debugging()
+      $resource = to_object(@resource)
+      call sys_log.detail(join([$type, ": ", to_s($resource)]))
+      $state = @resource.state
+      while $state != "completed" do
+        sleep(10)
+        call sys_log.detail(join(["state: ", $state]))
+        call start_debugging()
+        $state = @resource.state
+        call stop_debugging()
+      end
+      @resources = @resources + @resource
+      $counter = $counter + 1
+    end
   end
 end
