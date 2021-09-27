@@ -1,8 +1,8 @@
-name 'rs_azure_sql'
-type 'plugin'
+name "Plugin: Azure SQL"
+type "plugin"
 rs_ca_ver 20161221
 short_description "Azure SQL Plugin"
-long_description "Version: 1.1"
+long_description "Version: 1.5"
 package "plugins/rs_azure_sql"
 import "sys_log"
 info(
@@ -81,6 +81,11 @@ plugin "rs_azure_sql" do
       location "path"
     end
 
+    field "tags" do
+      type "composite"
+      location "body"
+    end
+
     action "create" do
       type "sql_server"
       path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$name?api-version=2014-04-01"
@@ -105,7 +110,7 @@ plugin "rs_azure_sql" do
       verb "DELETE"
     end
 
-    output "id","name","type","location","kind"
+    output "id","name","type","location","kind","tags"
 
     output "fullyQualifiedDomainName" do
       body_path "properties.fullyQualifiedDomainName"
@@ -190,6 +195,11 @@ plugin "rs_azure_sql" do
       location "path"
     end
 
+    field "tags" do
+      type "composite"
+      location "body"
+    end
+
     action "create" do
       type "databases"
       path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/databases/$name?api-version=2014-04-01"
@@ -244,7 +254,7 @@ plugin "rs_azure_sql" do
       end
     end
 
-    output "id","name","type","location","kind"
+    output "id","name","type","location","kind","tags"
 
     output "edition" do
       body_path "properties.edition"
@@ -342,6 +352,11 @@ plugin "rs_azure_sql" do
       location "path"
     end
 
+    field "tags" do
+      type "composite"
+      location "body"
+    end
+
     action "create" do
       path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/databases/$database_name/transparentDataEncryption/current?api-version=2014-04-01"
       verb "PUT"
@@ -363,7 +378,7 @@ plugin "rs_azure_sql" do
       output_path "properties.percentComplete"
     end
 
-    output "id","name"
+    output "id","name","tags"
 
     output "status" do
       body_path "properties.status"
@@ -404,6 +419,11 @@ plugin "rs_azure_sql" do
       location "path"
     end
 
+    field "tags" do
+      type "composite"
+      location "body"
+    end
+
     action "create" do
       path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/firewallRules/$name?api-version=2014-04-01"
       verb "PUT"
@@ -430,7 +450,7 @@ plugin "rs_azure_sql" do
       output_path "properties.percentComplete"
     end
 
-    output "id","name","type","location","kind"
+    output "id","name","type","location","kind","tags"
 
     output "startIpAddress" do
       body_path "properties.startIpAddress"
@@ -469,6 +489,11 @@ plugin "rs_azure_sql" do
     field "server_name" do
       type "string"
       location "path"
+    end
+
+    field "tags" do
+      type "composite"
+      location "body"
     end
 
     action "create" do
@@ -518,7 +543,7 @@ plugin "rs_azure_sql" do
       end
     end
 
-    output "id","name","type","location","kind"
+    output "id","name","type","location","kind","tags"
 
     output "creationDate" do
       body_path "properties.creationDate"
@@ -579,6 +604,11 @@ plugin "rs_azure_sql" do
       location "path"
     end
 
+    field "tags" do
+      type "composite"
+      location "body"
+    end
+
     action "create" do
       path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/failoverGroups/$name?api-version=2015-05-01-preview"
       verb "PUT"
@@ -594,7 +624,7 @@ plugin "rs_azure_sql" do
       verb "DELETE"
     end
 
-    output "id","name","type","location","kind"
+    output "id","name","type","location","kind","tags"
   end
 
   type "security_policy" do
@@ -632,6 +662,11 @@ plugin "rs_azure_sql" do
       location "path"
     end
 
+    field "tags" do
+      type "composite"
+      location "body"
+    end
+
     action "create" do
       path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/databases/$database_name/securityAlertPolicies/$name?api-version=2014-04-01"
       verb "PUT"
@@ -647,7 +682,7 @@ plugin "rs_azure_sql" do
       verb "DELETE"
     end
 
-    output "id","name","type","location","kind"
+    output "id","name","type","location","kind","tags"
 
     output "state" do
       body_path "properties.state"
@@ -717,6 +752,11 @@ plugin "rs_azure_sql" do
       location "path"
     end
 
+    field "tags" do
+      type "composite"
+      location "body"
+    end
+
     action "create" do
       path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Sql/servers/$server_name/databases/$database_name/auditingSettings/$name?api-version=2015-05-01-preview"
       verb "PUT"
@@ -732,7 +772,7 @@ plugin "rs_azure_sql" do
       verb "DELETE"
     end
 
-    output "id","name","type","location","kind"
+    output "id","name","type","location","kind","tags"
 
     output "state" do
       body_path "properties.state"
