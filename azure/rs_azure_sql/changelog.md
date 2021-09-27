@@ -1,5 +1,9 @@
 # SQL Plugin changelog
 
+## v1.5
+
+- Updated from service-clients
+
 ## v1.2
 
 - Adding tenant_id as a parameter
