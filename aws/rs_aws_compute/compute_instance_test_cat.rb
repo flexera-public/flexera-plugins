@@ -43,6 +43,7 @@ output_set "output_instance_ids" do
   label "Instance Id"
   default_value @instances.id
 end
+
 operation "launch" do
   definition "generated_launch"
 end
