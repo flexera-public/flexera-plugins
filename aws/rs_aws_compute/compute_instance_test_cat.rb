@@ -15,10 +15,6 @@ parameter "param_instance_count" do
 end
 
 credentials "auth_aws" do
-  like $aws_compute
-end
-
-credentials "auth_s3" do
   schemes "aws","aws_sts"
   label "AWS"
   description "Select the AWS Credential from the list"
@@ -60,12 +56,8 @@ operation "terminate" do
   definition "generated_terminate"
 end
 
-define generated_launch($param_region, @instances, $auth_aws, $auth_s3) return @instances do
+define generated_launch($param_region, @instances, $auth_aws) return @instances do
   provision(@instances)
-  $file = http_get({
-    url: "https://s3.amazonaws.com/1-rs-policy-list/5f4e5f5f63ba400001f1b095.json",
-    auth: $auth_s3
-  })
 end
 
 define defn_stop(@instances) return @instances do
