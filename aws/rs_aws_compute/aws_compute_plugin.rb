@@ -1844,18 +1844,19 @@ plugin "aws_compute" do
 
 end
 
+credentials "auth_aws" do
+  schemes "aws","aws_sts"
+  label "AWS"
+  description "Select the AWS Credential from the list"
+  tags "provider=aws"
+end
+
 resource_pool "compute_pool" do
   plugin $aws_compute
   parameter_values do
     region $param_region
   end
-  auth "key", type: "aws" do
-    version     4
-    service    'ec2'
-    region     $param_region
-    access_key cred('AWS_ACCESS_KEY_ID')
-    secret_key cred('AWS_SECRET_ACCESS_KEY')
-  end
+  auth $auth_aws
 end
 
 define provision_resource_available_state(@declaration) return @resources do
