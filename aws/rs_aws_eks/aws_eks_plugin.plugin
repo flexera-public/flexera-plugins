@@ -4,6 +4,10 @@ short_description 'Amazon Web Services (AWS) - Amazon Elastic Kubernetes Service
 rs_ca_ver 20161221
 package "aws_eks"
 import "sys_log"
+info(
+  provider: "AWS",
+  service: "EKS"
+)
 
 pagination 'aws_pagination' do
   get_page_marker do
