@@ -1,6 +1,5 @@
 dist/
 .DS_Store
-.vscode/
 *.log
 **/*.json
 *.js
