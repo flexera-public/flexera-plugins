@@ -30,7 +30,7 @@ plugin "aws_compute" do
 
   short_description 'AWS-EC2 plugin'
   long_description 'Supports AWS EC2'
-  version '2.1.1'
+  version '3.0.0'
 
   documentation_link 'source' do
     label 'Source'

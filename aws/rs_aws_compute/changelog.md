@@ -1,5 +1,9 @@
 # changelog
 
+## v3.0.0
+
+- Support for credential service
+
 ## v2.1.1
 
 - Adding snapshot create

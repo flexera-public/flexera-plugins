@@ -4,15 +4,15 @@
 
 The Azure Compute Plugin integrates RightScale Self-Service with the basic functionality of the Azure Compute
 
+## Prerequisites
+
+This plugin uses [credentials](https://docs.flexera.com/flexera/EN/Automation/ManagingCredentialsExternal.htm) for connecting to the cloud -- in order to apply this plugin you must have a credential registered in the system that is compatible with this plugin. If there are no credentials listed when you apply the plugin, please contact your cloud admin and ask them to register a credential that is compatible with this plugin. The information below should be consulted when creating the credential.
+
 ## Requirements
 
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
 - The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrieved the RightScale Credential values identified below.
-- Azure Service Principal (AKA Azure Active Directory Application) with the appropriate permissions to manage resources in the target subscription
-- The following RightScale Credentials
-  - `AZURE_APPLICATION_ID`
-  - `AZURE_APPLICATION_KEY`
 - The following packages are also required (See the Installation section for details):
   - [sys_log](../../libraries/sys_log.rb)
 
