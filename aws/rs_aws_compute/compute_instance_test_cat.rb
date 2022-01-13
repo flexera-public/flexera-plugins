@@ -14,6 +14,13 @@ parameter "param_instance_count" do
   default 2
 end
 
+credentials "auth_aws" do
+  schemes "aws","aws_sts"
+  label "AWS"
+  description "Select the AWS Credential from the list"
+  tags "provider=aws"
+end
+
 resource "instances", type: "aws_compute.instances", copies: $param_instance_count do
   image_id "ami-0b898040803850657"
   instance_type "t2.large"
@@ -32,6 +39,7 @@ output_set "output_instance_ids" do
   label "Instance Id"
   default_value @instances.id
 end
+
 operation "launch" do
   definition "generated_launch"
 end
@@ -48,7 +56,7 @@ operation "terminate" do
   definition "generated_terminate"
 end
 
-define generated_launch($param_region, @instances) return @instances do
+define generated_launch($param_region, @instances, $auth_aws) return @instances do
   provision(@instances)
 end
 

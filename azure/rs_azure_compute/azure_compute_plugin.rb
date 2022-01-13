@@ -39,7 +39,7 @@ plugin "azure_compute" do
 
   short_description 'Azure Compute'
   long_description 'Azure Compute'
-  version '2.0.1'
+  version '3.0.0'
 
   documentation_link 'source' do
     label 'Source'
@@ -657,23 +657,20 @@ plugin "azure_compute" do
   end
 end
 
-resource_pool "azure_compute" do
-    plugin $azure_compute
-    parameter_values do
-      subscription_id $subscription_id
-      tenant_id $tenant_id
-    end
+credentials "azure_auth" do
+  schemes "oauth2"
+  label "Azure"
+  description "Select the Azure Resource Manager Credential from the list."
+  tags "provider=azure_rm"
+end
 
-    auth "azure_auth", type: "oauth2" do
-      token_url join(["https://login.microsoftonline.com/",$tenant_id,"/oauth2/token"])
-      grant type: "client_credentials" do
-        client_id cred("AZURE_APPLICATION_ID")
-        client_secret cred("AZURE_APPLICATION_KEY")
-        additional_params do {
-          "resource" => "https://management.azure.com/"
-        } end
-      end
-    end
+resource_pool "azure_compute" do
+  plugin $azure_compute
+  parameter_values do
+    subscription_id $subscription_id
+    tenant_id $tenant_id
+  end
+  auth $azure_auth
 end
 
 define skip_known_error() do
