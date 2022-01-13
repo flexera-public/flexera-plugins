@@ -7,7 +7,8 @@
       "checkRelative": true,
       "baseURI": null,
       "ignore": [
-        "storageAccount_name.blob.core.windows.net"
+        "https://storageAccount_name.blob.core.windows.net/?comp=list",
+        "https://storageAccount_name.blob.core.windows.net/container_name&comp=list&restype=container"
       ],
       "preferGET": [],
       "ignoreRedirects": true,
