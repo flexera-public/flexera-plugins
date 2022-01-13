@@ -4,16 +4,16 @@
 
 The AWS Compute Plugin integrates Flexera Self-Service with the basic functionality of the AWS Compute.
 
+## Prerequisites
+
+This plugin uses [credentials](https://docs.flexera.com/flexera/EN/Automation/ManagingCredentialsExternal.htm) for connecting to the cloud -- in order to apply this plugin you must have a credential registered in the system that is compatible with this plugin. If there are no credentials listed when you apply the plugin, please contact your cloud admin and ask them to register a credential that is compatible with this plugin. The information below should be consulted when creating the credential.
+
 ## Requirements
 
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
 - Admin rights to a Flexera account with SelfService enabled
   - Admin is needed to set/retrieve the Flexera Credentials for the Compute API.
-- AWS Account credentials with the appropriate permissions to manage elastic load balancers
-- The following Flexera Credentials
-  - `AWS_ACCESS_KEY_ID`
-  - `AWS_SECRET_ACCESS_KEY`
 - The following packages are also required (See the Installation section for details):
   - [sys_log](../../libraries/sys_log.rb)
 
@@ -240,7 +240,7 @@ Full list of possible actions can be found on the [AWS Compute API Documentation
 
 ## Examples
 
-Please review [compute_plugin_test_cat.rb](./compute_plugin_test_cat.rb) for a basic example implementation.
+Please review [compute_instance_test_cat.rb](./compute_instance_test_cat.rb) for a basic example implementation.
 
 ## Known Issues / Limitations
 

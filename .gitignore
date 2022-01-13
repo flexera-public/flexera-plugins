@@ -1,6 +1,5 @@
 dist/
 .DS_Store
-.vscode/
 *.log
 **/*.json
 *.js
@@ -9,3 +8,4 @@ node_modules/
 !package.json
 !package-lock.json
 !.markdownlint.json
+!.vscode/settings.json
