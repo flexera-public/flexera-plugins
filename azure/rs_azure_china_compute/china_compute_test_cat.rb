@@ -3,8 +3,8 @@ rs_ca_ver 20161221
 short_description "Azure Compute - Test CAT"
 import "sys_log"
 import "azure/cloud_parameters"
-import "plugins/azure_compute"
-import "plugins/rs_azure_networking"
+import "plugins/azure_china_compute", as: "azure_compute"
+import "plugins/azure_china_networking", as: "rs_azure_networking"
 
 parameter "tenant_id" do
   like $cloud_parameters.tenant_id
@@ -12,6 +12,12 @@ end
 
 parameter "subscription_id" do
   like $cloud_parameters.subscription_id
+end
+
+parameter "param_resource_group" do
+  label "Resource Group"
+  type "string"
+  default "FLEXERA-POC"
 end
 
 parameter "vmSize" do
@@ -36,8 +42,8 @@ end
 
 resource "azure_nic", type: "rs_azure_networking.interface" do
   name join(['linux-', last(split(@@deployment.href,"/"))])
-  location "Central US"
-  resource_group "rs-default-centralus"
+  location "China East"
+  resource_group "FLEXERA-POC"
   properties do {
     "ipConfigurations": [{
       "name": "ipconfig1",
@@ -46,7 +52,7 @@ resource "azure_nic", type: "rs_azure_networking.interface" do
         "privateIPAddressVersion": "IPv4",
         "primary": true,
         "subnet": {
-          "id": join(["subscriptions/", $subscription_id, "/resourceGroups/rs-default-centralus/providers/Microsoft.Network/virtualNetworks/ARM-CentralUS/subnets/default"])
+          "id": join(["subscriptions/", $subscription_id, "/resourceGroups/FLEXERA-POC/providers/Microsoft.Network/virtualNetworks/AADS/subnets/default"])
         }
       }
     }]
@@ -55,8 +61,8 @@ end
 
 resource "server1", type: "azure_compute.virtualmachine" do
   name join(['win-', last(split(@@deployment.href,"/"))])
-  location "Central US"
-  resource_group "rs-default-centralus"
+  location "China East"
+  resource_group "FLEXERA-POC"
   properties do {
     "hardwareProfile": {
       "vmSize": $vmSize
@@ -96,8 +102,8 @@ end
 
 resource "my_vm_extension", type: "azure_compute.extensions" do
   name join(["easy-", last(split(@@deployment.href, "/"))])
-  resource_group "rs-default-centralus"
-  location "Central US"
+  resource_group "FLEXERA-POC"
+  location "China East"
   virtualMachineName @server1.name
   properties do {
     "publisher" => "Microsoft.OSTCExtensions",
