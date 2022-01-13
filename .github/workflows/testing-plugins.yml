@@ -34,3 +34,5 @@ jobs:
           ./node_modules/.bin/markdownlint-cli2 "**/*.md" "#node_modules" "#bundle" "#vendor"
         env:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ACCOUNT_ID: ${{ secrets.ACCOUNT_ID }}
+          REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}

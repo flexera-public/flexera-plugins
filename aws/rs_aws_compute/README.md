@@ -240,7 +240,7 @@ Full list of possible actions can be found on the [AWS Compute API Documentation
 
 ## Examples
 
-Please review [compute_plugin_test_cat.rb](./compute_plugin_test_cat.rb) for a basic example implementation.
+Please review [compute_instance_test_cat.rb](./compute_instance_test_cat.rb) for a basic example implementation.
 
 ## Known Issues / Limitations
 
