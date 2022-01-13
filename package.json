@@ -13,6 +13,7 @@
     "markdownlint": "^0.21.0",
     "markdownlint-cli": "^0.24.0",
     "markdownlint-cli2": "0.0.10",
+    "markdown-it": ">=12.3.2",
     "textlint": "^12.0.0-beta.3",
     "textlint-filter-rule-allowlist": "^2.0.1",
     "textlint-filter-rule-comments": "^1.2.2",
