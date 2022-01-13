@@ -215,7 +215,7 @@ Full list of possible actions can be found on the [Azure Compute API Documentati
 
 ## Examples
 
-Please review [compute_test_cat.rb](./rs_azure_compute/compute_test_cat.rb) for a basic example implementation.
+Please review [compute_test_cat.rb](./rs_azure_china_compute/china_compute_test_cat.rb) for a basic example implementation.
 
 ## Known Issues / Limitations
 
