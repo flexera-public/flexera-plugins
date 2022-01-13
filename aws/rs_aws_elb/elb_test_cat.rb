@@ -26,7 +26,7 @@ end
 
 operation 'list_elb' do
   definition 'list_elbs'
-  output_mappings do{
+  output_mappings do {
     $list_elb => $object
   } end
 end
