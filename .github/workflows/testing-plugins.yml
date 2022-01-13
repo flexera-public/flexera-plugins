@@ -1,4 +1,4 @@
-name: Test Policies
+name: Test Plugins
 
 on:
   push:
@@ -9,8 +9,8 @@ on:
       - master
 
 jobs:
-  policy_test:
-    name: "Policy Test"
+  plugin_test:
+    name: "plugin Test"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
