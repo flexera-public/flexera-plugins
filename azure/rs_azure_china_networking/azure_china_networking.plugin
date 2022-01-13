@@ -5,6 +5,10 @@ short_description "Azure Networking Plugin"
 long_description "Version: 1.5"
 package "plugins/azure_china_networking"
 import "sys_log"
+info(
+  provider: "Azure",
+  service: "Networking"
+  )
 
 parameter "tenant_id" do
   type "string"
@@ -22,6 +26,20 @@ permission "read_creds" do
 end
 
 plugin "rs_azure_networking" do
+  short_description 'Azure Compute'
+  long_description 'Azure Compute'
+  version '2.0.0'
+
+  documentation_link 'source' do
+    label 'Source'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/azure/rs_azure_compute/azure_compute_plugin.rb'
+  end
+
+  documentation_link 'readme' do
+    label 'Readme'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/azure/rs_azure_compute/README.md'
+  end
+
   endpoint do
     default_host "https://management.chinacloudapi.cn"
     default_scheme "https"
@@ -283,7 +301,7 @@ plugin "rs_azure_networking" do
 
       output_path "value[*]"
     end
-    
+
     action "list_all" do
       path "/subscriptions/$subscription_id/providers/Microsoft.Network/virtualNetworks"
       verb "GET"
