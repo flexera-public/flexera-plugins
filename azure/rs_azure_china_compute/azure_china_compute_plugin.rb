@@ -1,9 +1,9 @@
-name 'Plugin: Azure Compute'
+name 'Azure China Compute'
 type 'plugin'
 rs_ca_ver 20161221
 short_description "Azure Compute"
 long_description ""
-package "plugins/azure_compute"
+package "plugins/azure_china_compute"
 import "sys_log"
 info(
   provider: "Azure",
@@ -39,31 +39,31 @@ plugin "azure_compute" do
 
   short_description 'Azure Compute'
   long_description 'Azure Compute'
-  version '3.0.0'
+  version '2.0.0'
 
   documentation_link 'source' do
     label 'Source'
     url 'https://github.com/flexera/flexera-plugins/blob/master/azure/rs_azure_compute/azure_compute_plugin.rb'
   end
-
+  
   documentation_link 'readme' do
     label 'Readme'
     url 'https://github.com/flexera/flexera-plugins/blob/master/azure/rs_azure_compute/README.md'
   end
 
   endpoint do
-    default_host "https://management.azure.com/"
+    default_host "https://management.chinacloudapi.cn"
     default_scheme "https"
     query do {
-      'api-version' =>  '2021-03-01'
+      'api-version' =>  '2019-07-01'
     } end
   end
-
+  
   parameter "tenant_id" do
     type "string"
     label "Tenant ID"
   end
-
+  
   parameter "subscription_id" do
     type  "string"
     label "subscription_id"
@@ -178,11 +178,6 @@ plugin "azure_compute" do
       location "body"
     end
 
-    field "tags" do
-      type "composite"
-      location "body"
-    end
-
     action "create" do
       type "virtualmachine"
       path "/subscriptions/$subscription_id/resourceGroups/$resource_group/providers/Microsoft.Compute/virtualMachines/$name"
@@ -226,8 +221,8 @@ plugin "azure_compute" do
       type "virtualmachine"
       path "/subscriptions/$subscription_id/providers/Microsoft.Compute/virtualMachines"
       verb "GET"
-      pagination $azure_pagination
-      output_path "value[*]"
+      pagination $azure_pagination  
+      output_path "value[*]"  
     end
 
     action "stop" do
@@ -248,6 +243,12 @@ plugin "azure_compute" do
       verb "PATCH"
     end
 
+    action "patch" do
+      type "virtualmachine"
+      path "$href"
+      verb "PATCH"
+    end
+
     action "vmSizes" do
       verb "GET"
       path "$href/vmSizes"
@@ -260,8 +261,8 @@ plugin "azure_compute" do
     end
 
     polling do
-      field_values do
-      end
+      field_values do   
+      end    
       period 60
       action 'list_all'
     end
@@ -320,11 +321,6 @@ plugin "azure_compute" do
     end
 
     field "protectedSettings" do
-      type "composite"
-      location "body"
-    end
-
-    field "tags" do
       type "composite"
       location "body"
     end
@@ -404,11 +400,6 @@ plugin "azure_compute" do
       location "body"
     end
 
-    field "tags" do
-      type "composite"
-      location "body"
-    end
-
     action "create" do
       type "scale_set"
       verb "PUT"
@@ -450,7 +441,7 @@ plugin "azure_compute" do
       body_path "properties.provisioningState"
     end
   end
-
+  
    type "snapshots" do
     href_templates "{{value[*].properties.sourceUniqueId}}"
     provision "no_operation"
@@ -461,7 +452,7 @@ plugin "azure_compute" do
       path "/subscriptions/$subscription_id/providers/Microsoft.Compute/snapshots"
       verb "GET"
       output_path "value[*]"
-      pagination $azure_pagination
+      pagination $azure_pagination    
     end
 
     output 'id' do
@@ -498,7 +489,7 @@ plugin "azure_compute" do
 
     polling do
       field_values do
-      end
+      end  
       period 60
       action 'list'
     end
@@ -565,6 +556,12 @@ plugin "azure_compute" do
       verb "GET"
     end
 
+    action "patch" do
+      type "disks"
+      path "$href"
+      verb "PATCH"
+    end
+
     action "update" do
       type "disks"
       path "$href"
@@ -576,7 +573,7 @@ plugin "azure_compute" do
       path "/subscriptions/$subscription_id/providers/Microsoft.Compute/disks"
       verb "GET"
       output_path "value[*]"
-      pagination $azure_pagination
+      pagination $azure_pagination    
     end
 
     action "destroy" do
@@ -609,12 +606,12 @@ plugin "azure_compute" do
 
     polling do
       field_values do
-      end
+      end  
       period 60
       action 'list'
     end
   end
-
+  
    type "images" do
     href_templates "{{value[*].name}}"
     provision "no_operation"
@@ -627,7 +624,7 @@ plugin "azure_compute" do
       output_path "value[*]"
       pagination $azure_pagination
     end
-
+  
     output 'id' do
      body_path 'id'
     end
@@ -646,31 +643,34 @@ plugin "azure_compute" do
 
     output 'tags' do
      body_path 'tags'
-    end
+    end  
 
     polling do
       field_values do
-    end
+    end  
       period 60
     action 'list'
     end
-  end
-end
-
-credentials "azure_auth" do
-  schemes "oauth2"
-  label "Azure"
-  description "Select the Azure Resource Manager Credential from the list."
-  tags "provider=azure_rm"
+  end 
 end
 
 resource_pool "azure_compute" do
-  plugin $azure_compute
-  parameter_values do
-    subscription_id $subscription_id
-    tenant_id $tenant_id
-  end
-  auth $azure_auth
+    plugin $azure_compute
+    parameter_values do
+      subscription_id $subscription_id
+      tenant_id $tenant_id
+    end
+
+    auth "azure_auth", type: "oauth2" do
+      token_url join(["https://login.chinacloudapi.cn/",$tenant_id,"/oauth2/token"])
+      grant type: "client_credentials" do
+        client_id cred("AZURE_CHINA_APPLICATION_ID")
+        client_secret cred("AZURE_CHINA_APPLICATION_KEY")
+        additional_params do {
+          "resource" => "https://management.chinacloudapi.cn/"
+        } end
+      end
+    end
 end
 
 define skip_known_error() do
@@ -825,4 +825,3 @@ define stop_debugging() do
     $$debugging = false
   end
 end
-

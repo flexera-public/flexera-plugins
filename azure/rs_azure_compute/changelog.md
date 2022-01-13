@@ -1,6 +1,10 @@
 # Compute Plugin changelog
 
-## v2.0.1(08-23-2021)
+## v3.0.0
+
+- Support for credential service
+
+## v2.0.1 (08-23-2021)
 
 - Updating api versions
 - Adding additional api methods

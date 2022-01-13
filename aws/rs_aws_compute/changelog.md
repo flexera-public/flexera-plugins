@@ -1,5 +1,15 @@
 # changelog
 
+## v3.0.0
+
+- Support for credential service
+
+## v2.1.1
+
+- Adding snapshot create
+- Adding addresses support
+- Adding security group create
+
 ## v2.1.0
 
 - Supporting copies, cleaning up provision.
