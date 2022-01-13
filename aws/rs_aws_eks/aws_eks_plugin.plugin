@@ -192,7 +192,7 @@ plugin "aws_eks" do
      body_path '@'
     end
     output 'cluster_name' do
-     body_path $cluster_name
+      body_path "$cluster_name"
     end
     polling do
      field_values do
