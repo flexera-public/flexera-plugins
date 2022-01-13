@@ -8,6 +8,17 @@ parameter "subscription_id" do
   like $rs_azure_sql.subscription_id
 end
 
+parameter 'resource_group' do
+  label "resource group"
+  type "string"
+end
+
+parameter "param_location" do
+  label "location"
+  type "string"
+  default "West Europe"
+end
+
 output "databases" do
   label "Databases"
   category "Databases"
@@ -43,8 +54,8 @@ end
 
 resource "sql_server", type: "rs_azure_sql.sql_server" do
   name join(["my-sql-server-", last(split(@@deployment.href, "/"))])
-  resource_group "DF-Testing"
-  location "Central US"
+  resource_group $resource_group
+  location $param_location
   properties do {
       "version" => "12.0",
       "administratorLogin" =>"superdbadmin",
@@ -54,25 +65,25 @@ end
 
 resource "database", type: "rs_azure_sql.databases" do
   name "sample-database"
-  resource_group "DF-Testing"
-  location "Central US"
+  resource_group $resource_group
+  location $param_location
   server_name @sql_server.name
 end
 
 resource "transparent_data_encryption", type: "rs_azure_sql.transparent_data_encryption" do
-  resource_group "DF-Testing"
-  location "Central US"
+  resource_group $resource_group
+  location $param_location
   server_name @sql_server.name
   database_name @database.name
   properties do {
-    "status" => "Disabled"
+    "stat" => "Disabled"
   } end
 end
 
 resource "firewall_rule", type: "rs_azure_sql.firewall_rule" do
   name "sample-firewall-rule"
-  resource_group "DF-Testing"
-  location "Central US"
+  resource_group $resource_group
+  location $param_location
   server_name @sql_server.name
   properties do {
     "startIpAddress" => "0.0.0.1",
@@ -82,15 +93,15 @@ end
 
 resource "elastic_pool", type: "rs_azure_sql.elastic_pool" do
   name "sample-elastic-pool"
-  resource_group "DF-Testing"
-  location "Central US"
+  resource_group $resource_group
+  location $param_location
   server_name @sql_server.name
 end
 
 resource "auditing_policy", type: "rs_azure_sql.auditing_policy" do
   name "sample-auditing-policy"
-  resource_group "DF-Testing"
-  location "Central US"
+  resource_group $resource_group
+  location $param_location
   server_name @sql_server.name
   database_name @database.name
   properties do {
@@ -102,8 +113,8 @@ end
 
 resource "security_policy", type: "rs_azure_sql.security_policy" do
   name "sample-security-policy"
-  resource_group "DF-Testing"
-  location "Central US"
+  resource_group $resource_group
+  location $param_location
   server_name @sql_server.name
   database_name @database.name
   properties do {
@@ -138,7 +149,7 @@ define launch_handler(@sql_server,@database,@transparent_data_encryption,@firewa
     @databases = @sql_server.databases()
     $db_link_output = to_s(to_object(@databases))
     call sys_log.detail("getting firewall link")
-    @firewall_rules = @sql_server.firewall_rules() 
+    @firewall_rules = @sql_server.firewall_rules()
     $firewall_rules_link_output  = to_s(to_object(@firewall_rules))
     call sys_log.detail("getting failover link")
     @failover_groups = @sql_server.failover_groups()

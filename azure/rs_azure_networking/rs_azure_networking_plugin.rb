@@ -5,6 +5,15 @@ short_description "Azure Networking Plugin"
 long_description "Version: 1.5"
 package "plugins/rs_azure_networking"
 import "sys_log"
+info(
+  provider: "Azure",
+  service: "Networking"
+  )
+
+parameter "tenant_id" do
+  type "string"
+  label "Tenant ID"
+end
 
 parameter "subscription_id" do
   type  "string"
@@ -17,12 +26,31 @@ permission "read_creds" do
 end
 
 plugin "rs_azure_networking" do
+  short_description 'Azure Compute'
+  long_description 'Azure Compute'
+  version '2.0.0'
+
+  documentation_link 'source' do
+    label 'Source'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/azure/rs_azure_compute/azure_compute_plugin.rb'
+  end
+
+  documentation_link 'readme' do
+    label 'Readme'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/azure/rs_azure_compute/README.md'
+  end
+
   endpoint do
     default_host "https://management.azure.com/"
     default_scheme "https"
     query do {
       'api-version' =>  '2018-11-01'
     } end
+  end
+
+  parameter "tenant_id" do
+    type "string"
+    label "Tenant ID"
   end
 
   parameter "subscription_id" do
@@ -267,7 +295,7 @@ plugin "rs_azure_networking" do
 
       output_path "value[*]"
     end
-    
+
     action "list_all" do
       path "/subscriptions/$subscription_id/providers/Microsoft.Network/virtualNetworks"
       verb "GET"
@@ -743,10 +771,11 @@ resource_pool "rs_azure_networking" do
     plugin $rs_azure_networking
     parameter_values do
       subscription_id $subscription_id
+      tenant_id $tenant_id
     end
 
     auth "azure_auth", type: "oauth2" do
-      token_url "https://login.microsoftonline.com/TENANT_ID/oauth2/token"
+      token_url join(["https://login.microsoftonline.com/",$tenant_id,"/oauth2/token"])
       grant type: "client_credentials" do
         client_id cred("AZURE_APPLICATION_ID")
         client_secret cred("AZURE_APPLICATION_KEY")
@@ -764,7 +793,7 @@ resource_pool "rs_azure_lb" do
     end
 
     auth "azure_auth", type: "oauth2" do
-      token_url "https://login.microsoftonline.com/TENANT_ID/oauth2/token"
+      token_url join(["https://login.microsoftonline.com/",$tenant_id,"/oauth2/token"])
       grant type: "client_credentials" do
         client_id cred("AZURE_APPLICATION_ID")
         client_secret cred("AZURE_APPLICATION_KEY")
