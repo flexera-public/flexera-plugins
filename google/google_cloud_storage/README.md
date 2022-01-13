@@ -61,7 +61,7 @@ In the Design section, use the `Upload CAT` interface to complete the following:
 
 The Cloud DNS Plugin has been packaged as `plugins/google_cloud_storage`. In order to use this plugin you must import this plugin into a CAT.
 
-```
+```ruby
 import "plugins/google_cloud_storage"
 ```
 
@@ -81,7 +81,7 @@ For more information on using packages, please refer to the RightScale online do
 
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
-| projectId | Yes | Project identifier for which storage bucket details are fetched | 
+| projectId | Yes | Project identifier for which storage bucket details are fetched |
 
 #### Supported Outputs for resource storage_buckets
 
@@ -89,7 +89,7 @@ For more information on using packages, please refer to the RightScale online do
 - id
 - region
 - updated
-- labels 
+- labels
 - storage class
 
 #### Usage for resource storage_buckets
@@ -104,7 +104,7 @@ Google Cloud storage bucket resources details are fetched using this. See the Su
 
 #### Supported Links for resource storage_buckets
 
-| Link | Resource Type | 
+| Link | Resource Type |
 |------|---------------|
 | bucket_permission() | bucket_permission |
 | bucket_size() | bucket_size |
@@ -167,8 +167,7 @@ N/A
 
 ## Getting Help
 
-Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.
-Visit <http://chat.rightscale.com/> to join!
+Support for this plugin will be provided though GitHub Issues.
 
 ## License
 
