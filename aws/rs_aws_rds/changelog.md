@@ -1,5 +1,9 @@
 # RDS Plugin changelog
 
+## v2.0
+
+- Support for Resource Browser.
+
 ## v1.5 (05-12-2018)
 
 - bugfix: changed summary to "RDS Plugin" instead of inserting 255+ characters in the error msg.
