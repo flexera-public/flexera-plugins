@@ -8,4 +8,4 @@ node_modules/
 !package.json
 !package-lock.json
 !.markdownlint.json
-!.vscode/settings.json
+!.vscode/*.json
