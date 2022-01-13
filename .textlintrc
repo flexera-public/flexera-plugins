@@ -6,7 +6,9 @@
     "no-dead-link": {
       "checkRelative": true,
       "baseURI": null,
-      "ignore": [],
+      "ignore": [
+        "storageAccount_name.blob.core.windows.net"
+      ],
       "preferGET": [],
       "ignoreRedirects": true,
       "retry": 3,

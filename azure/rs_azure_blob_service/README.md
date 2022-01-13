@@ -26,7 +26,7 @@ Be sure your RightScale account has Self-Service enabled
 1. [Retrieve the Application ID & Authentication Key](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal#get-application-id-and-authentication-key)
 1. Create RightScale Credentials with values that match the Application ID (Credential name: `AZURE_APPLICATION_ID`) & Authentication Key (Credential name: `AZURE_APPLICATION_KEY`)
 1. [Retrieve your Tenant ID](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal#get-tenant-id)
-1. Update `azure_blob_service.plugin` Plugin with your Tenant ID. 
+1. Update `azure_blob_service.plugin` Plugin with your Tenant ID.
    1. Replace "TENANT_ID" in `token_url "https://login.microsoftonline.com/TENANT_ID/oauth2/token"` with your Tenant ID
 1. Navigate to the appropriate Self-Service portal
    1. For more details on using the portal review the [SS User Interface Guide](http://docs.rightscale.com/ss/guides/ss_user_interface_guide.html)
@@ -38,7 +38,7 @@ Be sure your RightScale account has Self-Service enabled
 
 The Azure Blob Service Plugin has been packaged as `plugins/rs_azure_blob_service`. In order to use this plugin you must import this plugin into a CAT.
 
-```
+```ruby
 import "plugins/azure_blob_service"
 ```
 
@@ -115,8 +115,7 @@ N/A
 
 ## Getting Help
 
-Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.
-Visit <http://chat.rightscale.com/> to join!
+Support for this plugin will be provided though GitHub Issues
 
 ## License
 
