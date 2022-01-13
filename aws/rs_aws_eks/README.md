@@ -94,7 +94,7 @@ end
 
 ## Implementation Notes
 
-- The AWS EKS Plugin makes no attempt to support non-AWS resources. (i.e. Allow the passing the RightScale or other resources as arguments to an EKS resource.)
+- The AWS EKS Plugin makes no attempt to support non-AWS resources. (i.e. Allow the passing the Flexera or other resources as arguments to an EKS resource.)
 
 ## Examples
 

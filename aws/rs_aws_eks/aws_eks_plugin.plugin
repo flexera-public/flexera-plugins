@@ -67,7 +67,7 @@ plugin "aws_eks" do
   type "clusters" do
     href_templates "{{cluster.name}}"
     provision "provision_resource"
-    delete    "delete_resource"	
+    delete    "delete_resource"
 
 
     field "client_request_token" do
@@ -125,14 +125,14 @@ plugin "aws_eks" do
     action "list" do
       verb "GET"
       path "/clusters/$cluster_name"
-	  field "page_size" do 
-          type 'string' 
-        location 'query' 
-        alias_for 'MaxResults' 
+      field "page_size" do
+          type 'string'
+        location 'query'
+        alias_for 'MaxResults'
       end
       field "cluster_name" do
         location "path"
-      end	  
+      end
     end
 
     output_path "cluster"
@@ -141,7 +141,7 @@ plugin "aws_eks" do
     polling do
      field_values do
        cluster_name parent_field('name')
-     end    
+     end
        period 60
 	   	  action 'list'
 		  parent 'clustersname'
@@ -157,22 +157,22 @@ plugin "aws_eks" do
     end
 
     output_path 'clusters'
-	
+
     output 'name' do
      body_path '@'
     end
-	
+
    polling do
      field_values do
-     end    
+     end
        period 60
 	   action 'list'
     end
   end
- 
+
   type "nodegroupname" do
     href_templates "{{nodegroups[]}}"
- 
+
    field "cluster_name" do
       location "path"
       type "string"
@@ -187,23 +187,23 @@ plugin "aws_eks" do
     end
 
     output_path "nodegroups"
-	
+
     output 'name' do
      body_path '@'
     end
     output 'cluster_name' do
      body_path $cluster_name
-    end	
+    end
     polling do
      field_values do
        cluster_name parent_field('name')
-     end    
+     end
        period 60
 	   	  action 'list'
 		  parent 'clustersname'
     end
   end
- 
+
    type "nodegroups" do
     href_templates "{{nodegroups.name}}"
 
@@ -309,7 +309,7 @@ plugin "aws_eks" do
       end
       field "node_name" do
         location "path"
-      end	  
+      end
       output_path "nodegroup[*]"
     end
 
@@ -318,7 +318,7 @@ plugin "aws_eks" do
     polling do
       field_values do
         cluster_name parent_field('cluster_name')
-        node_name parent_field('name')		
+        node_name parent_field('name')
       end
       parent 'nodegroupname'
       period 60
