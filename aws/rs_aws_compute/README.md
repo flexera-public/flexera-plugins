@@ -2,25 +2,25 @@
 
 ## Overview
 
-The AWS Compute Plugin integrates RightScale Self-Service with the basic functionality of the AWS Compute.
+The AWS Compute Plugin integrates Flexera Self-Service with the basic functionality of the AWS Compute.
+
+## Prerequisites
+
+This plugin uses [credentials](https://docs.flexera.com/flexera/EN/Automation/ManagingCredentialsExternal.htm) for connecting to the cloud -- in order to apply this plugin you must have a credential registered in the system that is compatible with this plugin. If there are no credentials listed when you apply the plugin, please contact your cloud admin and ask them to register a credential that is compatible with this plugin. The information below should be consulted when creating the credential.
 
 ## Requirements
 
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
-- Admin rights to a RightScale account with SelfService enabled
-  - Admin is needed to set/retrieve the RightScale Credentials for the Compute API.
-- AWS Account credentials with the appropriate permissions to manage elastic load balancers
-- The following RightScale Credentials
-  - `AWS_ACCESS_KEY_ID`
-  - `AWS_SECRET_ACCESS_KEY`
+- Admin rights to a Flexera account with SelfService enabled
+  - Admin is needed to set/retrieve the Flexera Credentials for the Compute API.
 - The following packages are also required (See the Installation section for details):
   - [sys_log](../../libraries/sys_log.rb)
 
 ## Installation
 
-1. Be sure your RightScale account is SelfService enabled
-1. Follow the Getting Started section to create a Service Account and RightScale Credentials
+1. Be sure your Flexera account is SelfService enabled
+1. Follow the Getting Started section to create a Service Account and Flexera Credentials
 1. Navigate to the appropriate SelfService portal
    - For more details on using the portal review the [SS User Interface Guide](http://docs.rightscale.com/ss/guides/ss_user_interface_guide.html)
 1. In the Design section, use the `Upload CAT` interface to complete the following:
@@ -36,10 +36,10 @@ The Compute Plugin has been packaged as `plugin/rs_aws_compute`. In order to use
 import "plugin/rs_aws_compute"
 ```
 
-For more information on using packages, please refer to the RightScale online documentation. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
+For more information on using packages, please refer to the Flexera online documentation. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 AWS Compute resources can now be created by specifying a resource declaration with the desired fields. See the Supported Actions section for a full list of supported actions.
-The resulting resource can be manipulated just like the native RightScale resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
+The resulting resource can be manipulated just like the native Flexera resources in RCL and CAT. See the Examples Section for more examples and complete CAT's.
 
 ## Supported Resources
 
@@ -233,14 +233,14 @@ end
 
 ## Implementation Notes
 
-- The AWS Compute Plugin makes no attempt to support non-AWS resources. (i.e. Allow the passing the RightScale or other resources as arguments to an VPC resource.)
-- The most common example might be to pass a RightScale instance to attach it to the VPC or similar. Support for this functionality will need to be implemented in the application CAT.
+- The AWS Compute Plugin makes no attempt to support non-AWS resources. (i.e. Allow the passing the Flexera or other resources as arguments to an VPC resource.)
+- The most common example might be to pass a Flexera instance to attach it to the VPC or similar. Support for this functionality will need to be implemented in the application CAT.
 
 Full list of possible actions can be found on the [AWS Compute API Documentation](http://docs.aws.amazon.com/AWSEC2/latest/APIReference/Welcome.html)
 
 ## Examples
 
-Please review [compute_plugin_test_cat.rb](./compute_plugin_test_cat.rb) for a basic example implementation.
+Please review [compute_instance_test_cat.rb](./compute_instance_test_cat.rb) for a basic example implementation.
 
 ## Known Issues / Limitations
 

@@ -1,5 +1,14 @@
 # SQL Plugin changelog
 
+## v1.5
+
+- Updated from service-clients
+
+## v1.2
+
+- Adding tenant_id as a parameter
+- cleaning up test cat
+
 ## v1.1
 
 - adding links to server plugin(`databases`, `firewall_rules`, `failover_groups`, `elastic_pools`)
