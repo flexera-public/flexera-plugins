@@ -73,7 +73,6 @@ plugin "aws_eks" do
     provision "provision_resource"
     delete    "delete_resource"
 
-
     field "client_request_token" do
       alias_for "clientRequestToken"
       type "string"
@@ -131,7 +130,7 @@ plugin "aws_eks" do
       verb "GET"
       path "/clusters/$cluster_name"
       field "page_size" do
-          type 'string'
+        type 'string'
         location 'query'
         alias_for 'MaxResults'
       end
@@ -144,11 +143,11 @@ plugin "aws_eks" do
     output "endpoint","status","createdAt","certificateAuthority","arn","roleArn","clientRequestToken","version","name","resourcesVpcConfig"
 
     polling do
-     field_values do
-       cluster_name parent_field('name')
-     end
-       period 60
-         action 'list'
+      field_values do
+        cluster_name parent_field('name')
+      end
+      period 60
+      action 'list'
       parent 'clustersname'
     end
   end
@@ -164,14 +163,14 @@ plugin "aws_eks" do
     output_path 'clusters'
 
     output 'name' do
-     body_path '@'
+      body_path '@'
     end
 
-   polling do
-     field_values do
-     end
-       period 60
-     action 'list'
+    polling do
+      field_values do
+      end
+      period 60
+      action 'list'
     end
   end
 
@@ -194,7 +193,7 @@ plugin "aws_eks" do
     output_path "nodegroups"
 
     output 'name' do
-     body_path '@'
+      body_path '@'
     end
     output 'cluster_name' do
       body_path "$cluster_name"
@@ -209,7 +208,7 @@ plugin "aws_eks" do
     end
   end
 
-   type "nodegroups" do
+  type "nodegroups" do
     href_templates "{{nodegroups.name}}"
 
     provision "provision_resource"
@@ -327,7 +326,7 @@ plugin "aws_eks" do
       end
       parent 'nodegroupname'
       period 60
-    action 'list'
+      action 'list'
     end
   end
 end
