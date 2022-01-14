@@ -1737,6 +1737,22 @@ plugin "gce" do
       type "object"
     end
 
+    field "minCpuPlatform" do
+      type "string"
+    end
+
+    field "items" do
+      type "object"
+    end
+
+    field "cpuPlatform" do
+      type "string"
+    end
+
+    field "deletionProtection" do
+      type "boolean"
+    end
+
     output "canIpForward","cpuPlatform","creationTimestamp","description","disks","id","kind","machineType","metadata","name","networkInterfaces","scheduling","selfLink","serviceAccounts","status","statusMessage","tags","zone"
 
     # This action was generated using the documentation from https://cloud.google.com/compute/docs/reference/latest/instances/addAccessConfig.
@@ -3617,19 +3633,23 @@ define no_operation() do
 end
 
 define provision_resource(@raw) return @resource on_error: stop_debugging() do
-  call start_debugging()
   $raw = to_object(@raw)
   $fields = $raw["fields"]
   $type = $raw["type"]
   call sys_log.set_task_target(@@deployment)
   call sys_log.summary(join(["Provision ",$type]))
   call sys_log.detail($raw)
+  call start_debugging()
   @operation = gce.$type.insert($fields)
+  call stop_debugging()
   call sys_log.detail(to_object(@operation))
   sub timeout: 2m, on_timeout: skip do
+    call start_debugging()
     sleep_until @operation.status == "DONE"
+    call stop_debugging()
   end
   call sys_log.detail(to_object(@resource))
+  call start_debugging()
   @resource = @operation.targetLink()
   call stop_debugging()
 end

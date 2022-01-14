@@ -13,31 +13,35 @@ credentials "auth_google" do
 end
 
 parameter "gce_project" do
-  like $gce.project
+  like $gce.gce_project
 end
 
 parameter "gce_region" do
   type "string"
   label "GCE Region"
   category "GCE"
+  default "us-central1"
 end
 
 parameter "gce_zone" do
   type "string"
   label "GCE Zone"
   category "GCE"
+  default "us-central1-a"
 end
 
 parameter "network_1" do
   type "string"
   label "GCE Network 1"
   category "GCE Network"
+  default "default"
 end
 
 parameter "sub_network_1" do
   type "string"
   label "GCE Sub Network 1"
   category "GCE Network"
+  default "default"
 end
 
 
@@ -46,17 +50,11 @@ resource "gce_ip", type: "gce.address" do
   name join(["fw-ip", last(split(@@deployment.href, "/"))])
 end
 
-resource "instance", type: "gce.instance" do
-  name join(["instance-", last(split(@@deployment.href, "/"))])
+resource "instance1", type: "gce.instance" do
+  name join(["instance", last(split(@@deployment.href, "/"))])
   zone $gce_zone
   description "Self Service Instance"
-  minCpuPlatform "Automatic"
   machineType join(["projects/", $gce_project, "/zones/", $gce_zone, "/machineTypes/n1-standard-4"])
-  tags do {
-    "items" => [
-     $firewall_tag
-    ]
-  } end
   canIpForward true
   networkInterfaces [
     {
@@ -84,18 +82,10 @@ resource "instance", type: "gce.instance" do
        ],
       "interface": "SCSI",
       "initializeParams": {
-        "sourceImage": join(["projects/", $gce_project, "/global/images/centos-stream-8-v20211214"]),
+        "sourceImage": join(["projects/centos-cloud/global/images/centos-stream-8-v20211214"]),
         "diskType": join(["projects/", $gce_project, "/zones/", $gce_zone, "/diskTypes/pd-balanced"]),
         "diskSizeGb": "80"
       }
-    }
-  ]
-  serviceAccounts [
-    {
-     "email": $service_account,
-     "scopes": [
-      "https://www.googleapis.com/auth/cloud-platform"
-     ]
     }
   ]
   scheduling do {
@@ -103,7 +93,6 @@ resource "instance", type: "gce.instance" do
     "automaticRestart": true,
     "preemptible": false
   } end
-  cpuPlatform "Intel Haswell"
   deletionProtection false
 end
 
@@ -114,9 +103,10 @@ operation "launch" do
  } end
 end
 
-define launch_handler(@gce_ip,@instance) return @gce_ip,@instance do
+define launch_handler(@gce_ip,@instance1) return @gce_ip,@instance1 do
   provision(@gce_ip)
-  provision(@instance)
+  call start_debugging()
+  provision(@instance1)
 end
 
 define start_debugging() do
