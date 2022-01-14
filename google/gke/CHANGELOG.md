@@ -1,4 +1,8 @@
-# GKE Plugin changelog
+# Changelog
+
+## v2.0
+
+- Added syntax for Resource Browser
 
 ## v1.1
 
