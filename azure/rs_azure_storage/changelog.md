@@ -1,9 +1,9 @@
-Storage Account Plugin changelog
+# Storage Account Plugin changelog
 
-v1.1
------
+## v1.1
+
 - Added "update" action
 
-v1.0
------
+## v1.0
+
 - initial release

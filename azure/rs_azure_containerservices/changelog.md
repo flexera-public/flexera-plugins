@@ -1,10 +1,10 @@
-Container Services Plugin changelog
+# Container Services Plugin changelog
 
-v1.1
------
+## v1.1
+
 - adding update
 - Adding delete retries
 
-v1.0
------
+## v1.0
+
 - initial release

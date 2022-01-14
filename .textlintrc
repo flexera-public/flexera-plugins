@@ -1,0 +1,22 @@
+{
+  "rules": {
+    "editorconfig": {
+      "charset": false
+    },
+    "no-dead-link": {
+      "checkRelative": true,
+      "baseURI": null,
+      "ignore": [
+        "https://storageAccount_name.blob.core.windows.net/?comp=list",
+        "https://storageAccount_name.blob.core.windows.net/container_name&comp=list&restype=container"
+      ],
+      "preferGET": [],
+      "ignoreRedirects": true,
+      "retry": 3,
+      "userAgent": "textlint-rule-no-dead-link/1.0"
+    }
+  },
+  "filters": {
+    "comments": true
+  }
+}
