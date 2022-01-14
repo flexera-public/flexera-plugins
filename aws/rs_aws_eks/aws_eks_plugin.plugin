@@ -177,7 +177,7 @@ plugin "aws_eks" do
   type "nodegroupname" do
     href_templates "{{nodegroups[]}}"
 
-   field "cluster_name" do
+    field "cluster_name" do
       location "path"
       type "string"
     end
