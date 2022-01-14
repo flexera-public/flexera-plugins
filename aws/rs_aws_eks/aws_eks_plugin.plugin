@@ -111,7 +111,7 @@ plugin "aws_eks" do
       location 'query'
       alias_for 'MaxResults'
     end
-    
+
     action "create" do
       verb "POST"
       path "/clusters"
@@ -200,11 +200,11 @@ plugin "aws_eks" do
       body_path "$cluster_name"
     end
     polling do
-     field_values do
-       cluster_name parent_field('name')
-     end
-       period 60
-         action 'list'
+      field_values do
+        cluster_name parent_field('name')
+      end
+      period 60
+      action 'list'
       parent 'clustersname'
     end
   end
