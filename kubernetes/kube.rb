@@ -1,10 +1,13 @@
 name 'kubernetes'
-type 'plugin'
 rs_ca_ver 20161221
 short_description "kubernetes"
-long_description "Version: 0.3"
+long_description ""
+type 'plugin'
 package "kubernetes"
 import "sys_log"
+info(
+  provider: "Kubernetes"
+)
 
 
 parameter "kubernetes_host" do
@@ -17,9 +20,34 @@ parameter "kubernetes_key" do
   label "kubernetes_key"
 end
 
+pagination "kubernetes_pagination" do
+  get_page_marker do
+    body_path "metadata.continue"
+  end
+  set_page_marker do
+    query "continue"
+  end
+end
+
 plugin "kubernetes" do
+  short_description "Kubernetes plugin"
+  long_description "Supports a Kubernetes cluster and select resources."
+  version "2.0.0"
+
+  documentation_link 'source' do
+    label 'Source'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/kubernetes/kube.rb'
+  end
+
+  documentation_link 'readme' do
+    label 'ReadMe'
+    url 'https://github.com/flexera/flexera-plugins/blob/master/kubernetes/README.md'
+  end
+
   endpoint do
     default_scheme "https"
+    default_host '$kubernetes_host'
+    path "/api/v1"
     no_cert_check true
   end
 
@@ -34,7 +62,7 @@ plugin "kubernetes" do
   end  
 
   type "pods" do
-    href_templates "{{metadata.selfLink}}","{{items[*].metadata.selfLink}}","{{selfLink}}"
+    href_templates "{{items[].metadata[].uid}}"
     provision "provision_resource"
     delete    "delete_resource"
 
@@ -57,9 +85,15 @@ plugin "kubernetes" do
 
     action "list" do
       type "pods"
-      path "/api/v1/namespaces/default/pods/"
+      path "/pods"
       verb "GET"
+      pagination $kubernetes_pagination
       output_path "items[*]"
+    end
+
+    polling  do
+      period 60
+      action 'list'
     end
 
     action "destroy" do
