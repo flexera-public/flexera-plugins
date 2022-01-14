@@ -1,12 +1,14 @@
 # AWS MQ Plugin
 
 ## Overview
-The AWS MQ Plugin integrates RightScale Self-Service with the basic functionality of the AWS MQ API. 
+
+The AWS MQ Plugin integrates RightScale Self-Service with the basic functionality of the AWS MQ API.
 
 ## Requirements
+
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
-- The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrived the RightScale Credential values identified below.
+- The `admin`, `ss_designer` & `ss_end_user` roles, in a RightScale account with SelfService enabled.  `admin` is needed to retrieved the RightScale Credential values identified below.
 - The following RightScale Credentials
   - `AWS_ACCESS_KEY_ID`
   - `AWS_SECRET_ACCESS_KEY`
@@ -14,6 +16,7 @@ The AWS MQ Plugin integrates RightScale Self-Service with the basic functionalit
   - [sys_log](../../libraries/sys_log.rb)
 
 ## Installation
+
 1. Be sure your RightScale account has Self-Service enabled
 1. Connect AWS Cloud credentials to your RightScale account (if not already completed)
 1. Navigate to the appropriate Self-Service portal
@@ -21,22 +24,29 @@ The AWS MQ Plugin integrates RightScale Self-Service with the basic functionalit
 1. In the Design section, use the `Upload CAT` interface to complete the following:
    1. Upload each of packages listed in the Requirements Section
    1. Upload the `aws_lambda_plugin.rb` file located in this repository
- 
+
 ## How to Use
+
 The MQ Plugin has been packaged as `plugins/rs_aws_mq`. In order to use this plugin you must import this plugin into a CAT.
-```
+
+```ruby
+
 import "plugins/rs_aws_mq"
 ```
-For more information on using packages, please refer to the RightScale online documenataion. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
+
+For more information on using packages, please refer to the RightScale online documentation. [Importing a Package](http://docs.rightscale.com/ss/guides/ss_packaging_cats.html#importing-a-package)
 
 ## Supported Resources
+
 - brokers
 - configurations
 - configuration_revisions
 - users
 
 ## Usage
-```
+
+```ruby
+
 resource "my_broker", type: "rs_aws_mq.brokers" do
   broker_name join(["RightScale-",last(split(@@deployment.href, "/"))])
   host_instance_type "mq.m4.large"
@@ -57,8 +67,11 @@ end
 ```
 
 ## Resources
+
 ### brokers
+
 #### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 | broker_name | Yes | The name of the broker.  |
@@ -66,7 +79,7 @@ end
 | configuration | No | A list of information about the configuration. |
 | creator_request_id | No | The unique ID that the requester receives for the created broker. |
 | deployment_mode | Yes | The deployment mode of the broker. |
-| engine_type | Yes | The type of broker engine. | 
+| engine_type | Yes | The type of broker engine. |
 | engine_version | Yes | The version of the broker engine. |
 | host_instance_type | Yes | The broker's instance type. |
 | maintenance_window_start_time | No | The parameters that determine the WeeklyStartTime. |
@@ -78,6 +91,7 @@ end
 See the [AWS CreateBrokerInput Documentation](https://docs.aws.amazon.com/amazon-mq/latest/api-reference/rest-api-brokers.html#rest-api-brokers-attributes-createbrokerinput-table) for detailed field validation.
 
 #### Supported Actions
+
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
 | create | [POST /v1/brokers](https://docs.aws.amazon.com/amazon-mq/latest/api-reference/rest-api-brokers.html) | Supported |
@@ -88,6 +102,7 @@ See the [AWS CreateBrokerInput Documentation](https://docs.aws.amazon.com/amazon
 | reboot | [POST /v1/brokers/broker-id/reboot](https://docs.aws.amazon.com/amazon-mq/latest/api-reference/rest-api-broker-reboot.html) | Untested |
 
 #### Outputs
+
 - brokerArn
 - brokerId
 - brokerName
@@ -106,11 +121,14 @@ See the [AWS CreateBrokerInput Documentation](https://docs.aws.amazon.com/amazon
 - consoleURL
 - endpoints
 
-#### Links 
+#### Links
+
 - users()
 
 ### configurations
+
 #### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 | engine_type | Yes | The type of broker engine. |
@@ -122,6 +140,7 @@ See the [AWS CreateBrokerInput Documentation](https://docs.aws.amazon.com/amazon
 See the [AWS CreateConfigurationInput Documentation](https://docs.aws.amazon.com/amazon-mq/latest/api-reference/rest-api-configurations.html#rest-api-configurations-attributes-createconfigurationinput-table) for detailed field validation.
 
 #### Supported Actions
+
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
 | create | [POST /v1/configurations](https://docs.aws.amazon.com/amazon-mq/latest/api-reference/rest-api-configurations.html) | Untested |
@@ -130,6 +149,7 @@ See the [AWS CreateConfigurationInput Documentation](https://docs.aws.amazon.com
 | update | [PUT /v1/configurations/configurations-id](https://docs.aws.amazon.com/amazon-mq/latest/api-reference/rest-api-configuration.html) | Untested |
 
 #### Outputs
+
 - id
 - name
 - arn
@@ -139,11 +159,14 @@ See the [AWS CreateConfigurationInput Documentation](https://docs.aws.amazon.com
 - created
 - latestRevision
 
-#### Links 
+#### Links
+
 - configuration_revisions()
 
 ### configuration_revisions
+
 #### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 | configuration_id | No | The ID of the configuration. |
@@ -152,23 +175,28 @@ See the [AWS CreateConfigurationInput Documentation](https://docs.aws.amazon.com
 See the [AWS CreateConfigurationInput Documentation](https://docs.aws.amazon.com/amazon-mq/latest/api-reference/rest-api-configurations.html#rest-api-configurations-attributes-createconfigurationinput-table) for detailed field validation.
 
 #### Supported Actions
+
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
 | get & show | [GET /v1/configurations/configuration-id/revisions](https://docs.aws.amazon.com/amazon-mq/latest/api-reference/rest-api-configuration-revision.html) | Untested |
 | list | [GET /v1/configurations/configuration-id/revisions](https://docs.aws.amazon.com/amazon-mq/latest/api-reference/rest-api-configuration-revisions.html) | Untested |
 
 #### Outputs
+
 - revision
 - description
 - created
 - configurationId
 - data
 
-#### Links 
+#### Links
+
 - configuration()
 
 ### users
+
 #### Supported Fields
+
 | Field Name | Required? | Description |
 |------------|-----------|-------------|
 | password | Yes | The password of the newly created user. |
@@ -180,6 +208,7 @@ See the [AWS CreateConfigurationInput Documentation](https://docs.aws.amazon.com
 See the [AWS CreateUserInput Documentation](https://docs.aws.amazon.com/amazon-mq/latest/api-reference/rest-api-user.html#rest-api-user-attributes-createuserinput-table) for detailed field validation.
 
 #### Supported Actions
+
 | Action | API Implementation | Support Level |
 |--------------|:----:|:-------------:|
 | create | [POST /v1/brokers/broker-id/users/username](https://docs.aws.amazon.com/amazon-mq/latest/api-reference/rest-api-user.html) | Untested |
@@ -188,26 +217,32 @@ See the [AWS CreateUserInput Documentation](https://docs.aws.amazon.com/amazon-m
 | list | [GET /v1/brokers/broker-id/users](https://docs.aws.amazon.com/amazon-mq/latest/api-reference/rest-api-user.html) | Untested |
 | update | [PUT /v1/brokers/broker-id/users/username](https://docs.aws.amazon.com/amazon-mq/latest/api-reference/rest-api-user.html) | Untested |
 
-
 #### Outputs
+
 - brokerId
 - username
 - consoleAccess
 - groups
 - pending
 
-#### Links 
+#### Links
+
 - broker()
 
 ## Implementation Notes
-- The AWS MQ Plugin makes no attempt to support non-AWS resources. (i.e. Allow the passing the RightScale or other resources as arguments to an MQ resource.) 
+
+- The AWS MQ Plugin makes no attempt to support non-AWS resources. (i.e. Allow the passing the RightScale or other resources as arguments to an MQ resource.)
 
 ## Examples
+
 Please review [mq_test_cat.rb](./mq_test_cat.rb) for a basic example implementation.
-	
+
 ## Known Issues / Limitations
-- - Currently only supports a single region.  To support a different region, edit the `host` & `region` fields of the `resource_pool` declaration in the Plugin:
-```
+
+- Currently only supports a single region.  To support a different region, edit the `host` & `region` fields of the `resource_pool` declaration in the Plugin:
+
+```ruby
+
 resource_pool "rs_aws_mq" do
   plugin $rs_aws_mq
   host "mq.us-east-1.amazonaws.com"
@@ -221,9 +256,6 @@ resource_pool "rs_aws_mq" do
 end
 ```
 
-## Getting Help
-Support for this plugin will be provided though GitHub Issues and the RightScale public slack channel #plugins.
-Visit http://chat.rightscale.com/ to join!
-
 ## License
+
 The AWS MQ Plugin source code is subject to the MIT license, see the [LICENSE](../../LICENSE) file.

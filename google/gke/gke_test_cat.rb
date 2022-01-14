@@ -10,7 +10,7 @@ import "plugins/gke"
 ##########################
 
 parameter "google_project" do
-    like $gke.google_project
+  like $gke.google_project
 end
 
 ##########################
@@ -32,10 +32,8 @@ resource "my_cluster", type: "gke.clusters" do
     "name" => join(["rs-cluster-", last(split(@@deployment.href, "/"))]),
     "initialNodeCount" => 3,
     "initialClusterVersion" => "1.7.11-gke.1"
-  } end 
-end 
-
-
+  } end
+end
 
 ##########################
 ##########################
