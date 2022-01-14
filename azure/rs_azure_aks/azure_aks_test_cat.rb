@@ -6,7 +6,6 @@ import "azure_aks"
 
 parameter "subscription_id" do
   like $azure_aks.subscription_id
-  default "8beb7791-9302-4ae4-97b4-afd482aadc59"
 end
 
 permission "read_creds" do
@@ -20,7 +19,7 @@ resource "my_resource_group", type: "rs_cm.resource_group" do
   description join(["container resource group for ", @@deployment.name])
 end
 
- 
+
 resource "my_k8s", type: "azure_aks.managedClusters" do
   name join(["aks", last(split(@@deployment.href, "/"))])
   resource_group @my_resource_group.name
