@@ -106,11 +106,12 @@ plugin "aws_eks" do
       location "query"
     end
 
-	field "page_size" do
+    field "page_size" do
       type 'string'
-        location 'query'
-        alias_for 'MaxResults'
-      end
+      location 'query'
+      alias_for 'MaxResults'
+    end
+    
     action "create" do
       verb "POST"
       path "/clusters"
@@ -147,8 +148,8 @@ plugin "aws_eks" do
        cluster_name parent_field('name')
      end
        period 60
-	   	  action 'list'
-		  parent 'clustersname'
+         action 'list'
+      parent 'clustersname'
     end
   end
 
@@ -170,7 +171,7 @@ plugin "aws_eks" do
      field_values do
      end
        period 60
-	   action 'list'
+     action 'list'
     end
   end
 
@@ -203,8 +204,8 @@ plugin "aws_eks" do
        cluster_name parent_field('name')
      end
        period 60
-	   	  action 'list'
-		  parent 'clustersname'
+         action 'list'
+      parent 'clustersname'
     end
   end
 
@@ -326,7 +327,7 @@ plugin "aws_eks" do
       end
       parent 'nodegroupname'
       period 60
-	  action 'list'
+    action 'list'
     end
   end
 end
