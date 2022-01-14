@@ -1,4 +1,5 @@
 *.plugin linguist-language=ruby
+*.pt linguist=ruby
 # Force Unix line endings even on Windows
 * text=auto eol=lf
 *.png -text
