@@ -97,10 +97,10 @@ resource "instance1", type: "gce.instance" do
 end
 
 operation "launch" do
- description "Launch the application"
- definition "launch_handler"
- output_mappings do {
- } end
+  description "Launch the application"
+  definition "launch_handler"
+  output_mappings do {
+  } end
 end
 
 define launch_handler(@gce_ip,@instance1) return @gce_ip,@instance1 do
