@@ -9,17 +9,16 @@
 
 The GCE Plugin consumes the Google Compute v1 API and exposes the supported resources to RightScale SelfService. This allows for easy extension of a SelfService Cloud Application to use GCE resources not natively supported in RightScale.
 
+## Prerequisites
+
+This plugin uses [credentials](https://docs.flexera.com/flexera/EN/Automation/ManagingCredentialsExternal.htm) for connecting to the cloud -- in order to apply this plugin you must have a credential registered in the system that is compatible with this plugin. If there are no credentials listed when you apply the plugin, please contact your cloud admin and ask them to register a credential that is compatible with this plugin. The information below should be consulted when creating the credential.
+
 ## Requirements
 
 - A general understanding CAT development and definitions
   - Refer to the guide documentation for details [SS Guides](http://docs.rightscale.com/ss/guides/)
 - Admin rights to a RightScale account with SelfService enabled
   - Admin is needed to set/retrieve the RightScale Credentials for the GCE API.
-- GCE Service Account credentials
-  - Refer to the Getting Started section for details on creating this account.
-- The following RightScale Credentials must exist with the appropriate values
-  - `GCE_PLUGIN_ACCOUNT`
-  - `GCE_PLUGIN_PRIVATE_KEY`
 - The following packages are also required (See the Installation section for details):
   - [sys_log](../../libraries/sys_log.rb)
 
