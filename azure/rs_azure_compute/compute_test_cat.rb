@@ -6,6 +6,13 @@ import "azure/cloud_parameters"
 import "plugins/azure_compute"
 import "plugins/rs_azure_networking"
 
+credentials "azure_auth" do
+  schemes "oauth2"
+  label "Azure"
+  description "Select the Azure Resource Manager Credential from the list."
+  tags "provider=azure_rm"
+end
+
 parameter "tenant_id" do
   like $cloud_parameters.tenant_id
 end
@@ -125,7 +132,7 @@ operation "change_size" do
   definition "supersize_me"
 end
 
-define launch_handler($tenant_id, $subscription_id, @azure_nic, @server1, @my_vm_extension) return @server1,@my_vm_extension,$vms,$vmss do
+define launch_handler($tenant_id, $subscription_id, @azure_nic, @server1, @my_vm_extension, $azure_auth) return @server1,@my_vm_extension,$vms,$vmss do
   call start_debugging()
   provision(@azure_nic)
   provision(@server1)
@@ -148,7 +155,7 @@ define getSizes() return $values do
   end
 end
 
-define supersize_me(@server1,$vmSize) return @server1 do
+define supersize_me(@server1, $vmSize, $azure_auth) return @server1 do
   @vm=rs_azure_compute.virtualmachine.show(resource_group: @@deployment.name, virtualMachineName: @server1.name)
   $vm_object=to_object(@vm)
   $vm_fields=$vm_object["details"][0]
