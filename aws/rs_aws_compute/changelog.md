@@ -3,6 +3,7 @@
 ## v3.0.0
 
 - Support for credential service
+- Updated Compute Test CAT to use credential service
 
 ## v2.1.1
 
