@@ -14,6 +14,7 @@ parameter "param_instance_count" do
   default 2
 end
 
+# Credential for plugin must be named `auth_aws` to match credential name in plugin
 credentials "auth_aws" do
   schemes "aws","aws_sts"
   label "AWS"
@@ -56,7 +57,7 @@ operation "terminate" do
   definition "generated_terminate"
 end
 
-define generated_launch($param_region, @instances, $auth_aws) return @instances do
+define generated_launch($param_region, @instances) return @instances do
   provision(@instances)
 end
 
