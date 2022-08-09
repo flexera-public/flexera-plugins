@@ -6,6 +6,7 @@ import "azure/cloud_parameters"
 import "plugins/azure_compute"
 import "plugins/rs_azure_networking"
 
+# Credential for plugin must be named `azure_auth` to match credential name in plugin
 credentials "azure_auth" do
   schemes "oauth2"
   label "Azure"
@@ -132,7 +133,7 @@ operation "change_size" do
   definition "supersize_me"
 end
 
-define launch_handler($tenant_id, $subscription_id, @azure_nic, @server1, @my_vm_extension, $azure_auth) return @server1,@my_vm_extension,$vms,$vmss do
+define launch_handler($tenant_id, $subscription_id, @azure_nic, @server1, @my_vm_extension) return @server1,@my_vm_extension,$vms,$vmss do
   call start_debugging()
   provision(@azure_nic)
   provision(@server1)
@@ -155,7 +156,7 @@ define getSizes() return $values do
   end
 end
 
-define supersize_me(@server1, $vmSize, $azure_auth) return @server1 do
+define supersize_me(@server1, $vmSize) return @server1 do
   @vm=rs_azure_compute.virtualmachine.show(resource_group: @@deployment.name, virtualMachineName: @server1.name)
   $vm_object=to_object(@vm)
   $vm_fields=$vm_object["details"][0]
